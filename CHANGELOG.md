@@ -29,6 +29,11 @@ En résumé :
 
 #### 06/02
 
+**[00:22:50] 🐛 [FIX]** Corriger le warning JSIgnoredPromiseFromCall dans App.tsx
+- Ajouter l'opérateur void pour marquer explicitement que la Promise retournée par initConfig est intentionnellement ignorée
+**[00:20:20] 🐛 [FIX]** Corriger l'erreur TS2339 Property command does not exist on type AICommandText dans ChatPanel.tsx
+- Ajouter un type guard isCommandShell pour vérifier que msg.command est bien de type AICommandShell
+- Le type guard permet à TypeScript de déduire correctement que la propriété command existe
 **[00:17:27] 🔧 [CHORE]** Corriger l'erreur TS2307 Cannot find module @shared/types
 - Ajouter baseUrl et paths dans tsconfig.json pour configurer les alias @/, @electron, @shared
 - Ajouter @shared sans wildcard pour supporter les imports directs
