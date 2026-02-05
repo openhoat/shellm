@@ -6,8 +6,15 @@
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@electron/*": ["./electron/*"],
+      "@shared": ["./shared"],
+      "@shared/*": ["./shared/*"]
+    }
   },
-  "include": ["vite.config.ts", "src/**/*.tsx", "src/**/*.ts"],
+  "include": ["vite.config.ts", "src/**/*.tsx", "src/**/*.ts", "shared/**/*.ts"],
   "exclude": ["electron", "dist", "node_modules"]
 }

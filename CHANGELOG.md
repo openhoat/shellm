@@ -26,8 +26,13 @@ En résumé :
 ### 2026
 
 
+
 #### 06/02
 
+**[00:17:27] 🔧 [CHORE]** Corriger l'erreur TS2307 Cannot find module @shared/types
+- Ajouter baseUrl et paths dans tsconfig.json pour configurer les alias @/, @electron, @shared
+- Ajouter @shared sans wildcard pour supporter les imports directs
+- Inclure shared/**/*.ts dans la section include
 **[00:15:40] 🔧 [CHORE]** Activer la règle subject-case en lower-case dans commitlint.config.mjs
 - Corriger le message de commit pour utiliser la casse minuscule
 - Changer la règle de 0 (désactivé) à 2 (lower-case)
