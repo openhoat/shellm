@@ -135,7 +135,8 @@ function partitionSections(sections) {
 
     // Vérifier si toutes les dates de la section sont anciennes
     // Ou forcer l'archivage si RETENTION_DAYS est 0
-    const allOld = forceArchiveAll || sectionDates.every(d => d.date && isOlderThanRetention(d.date))
+    const allOld =
+      forceArchiveAll || sectionDates.every(d => d.date && isOlderThanRetention(d.date))
 
     if (allOld) {
       old.push(section)
