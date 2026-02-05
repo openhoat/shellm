@@ -32,6 +32,11 @@ function isOlderThanRetention(date) {
   const now = new Date()
   const cutoffDate = new Date(now)
   cutoffDate.setDate(cutoffDate.getDate() - RETENTION_DAYS)
+  // Si RETENTION_DAYS est 0, considérer que toutes les dates sont anciennes
+  // (incluant aujourd'hui)
+  if (RETENTION_DAYS === 0) {
+    return date <= cutoffDate
+  }
   return date < cutoffDate
 }
 
@@ -48,7 +53,7 @@ function parseChangelog(content) {
   }
 
   // Trouver la première section d'année
-  const firstYearIndex = lines.findIndex(line => line.match(/^## \d{4}$/))
+  const firstYearIndex = lines.findIndex(line => line.match(/^### \d{4}$/))
 
   // Le header est tout ce qui est avant la première section d'année
   if (firstYearIndex !== -1) {
@@ -62,8 +67,8 @@ function parseChangelog(content) {
   for (let i = firstYearIndex; i < lines.length; i++) {
     const line = lines[i]
 
-    // Header d'année (## YYYY)
-    const yearMatch = line.match(/^## (\d{4})$/)
+    // Header d'année (### YYYY)
+    const yearMatch = line.match(/^### (\d{4})$/)
     if (yearMatch) {
       if (result.currentSection) {
         result.sections.push(result.currentSection)
@@ -77,8 +82,8 @@ function parseChangelog(content) {
       continue
     }
 
-    // Header de date (### DD/MM)
-    const dateMatch = line.match(/^### (\d{2})\/(\d{2})$/)
+    // Header de date (#### DD/MM)
+    const dateMatch = line.match(/^#### (\d{2})\/(\d{2})$/)
     if (dateMatch) {
       const day = parseInt(dateMatch[1], 10)
       const month = parseInt(dateMatch[2], 10)
@@ -118,15 +123,19 @@ function partitionSections(sections) {
   const recent = []
   const old = []
 
+  // Si RETENTION_DAYS est 0, archiver TOUTES les sections
+  const forceArchiveAll = RETENTION_DAYS === 0
+
   for (const section of sections) {
     const sectionDates = section.dates
-    if (sectionDates.length === 0) {
+    if (sectionDates.length === 0 && !forceArchiveAll) {
       recent.push(section)
       continue
     }
 
     // Vérifier si toutes les dates de la section sont anciennes
-    const allOld = sectionDates.every(d => d.date && isOlderThanRetention(d.date))
+    // Ou forcer l'archivage si RETENTION_DAYS est 0
+    const allOld = forceArchiveAll || sectionDates.every(d => d.date && isOlderThanRetention(d.date))
 
     if (allOld) {
       old.push(section)
@@ -229,7 +238,8 @@ Voir \`.clinerules/task_format.md\` pour les règles de format détaillées.
   const archiveSectionEnd = archiveContent.indexOf('## Archives\n') + '## Archives\n'.length
   // Ajouter le header du CHANGELOG (sans le titre "# Changelog") en haut des entrées archivées
   const changelogHeader = parsed.header.join('\n').replace(/^# Changelog\n/, '')
-  const finalArchiveContent = archiveContent.slice(0, archiveSectionEnd) + '\n' + changelogHeader + '\n\n' + oldContent + '\n'
+  const finalArchiveContent =
+    archiveContent.slice(0, archiveSectionEnd) + '\n' + changelogHeader + '\n\n' + oldContent + '\n'
 
   fs.writeFileSync(ARCHIVE_PATH, finalArchiveContent.trim() + '\n', 'utf-8')
   console.log('✅ CHANGELOG_ARCHIVE.md mis à jour')
