@@ -19,12 +19,18 @@ En résumé :
 
 
 
+
 ## Historique des modifications
 
 ### 2026
 
 #### 05/02
 
+**[21:41:54] 🔧 [CHORE]** Configurer les messages de commit pour qu'ils soient en anglais
+- Mettre à jour commitlint.config.mjs avec les descriptions en anglais
+- Créer .clinerules/commit_messages.md pour définir les règles de rédaction des messages
+- Réécrire tout l'historique Git pour convertir les messages existants en anglais
+- Nettoyer les fichiers temporaires créés par git filter-branch
 **[21:29:39] 🎨 [STYLE]** Mettre à jour l'année de copyright dans le README de 2025 à 2026
 **[21:27:10] 📝 [DOCS]** Mettre à jour le README avec les badges GitHub et les meilleures pratiques open source (licence MIT, stars, forks, issues, section Démarrage rapide)
 **[21:19:30] 🔧 [CHORE]** Archiver exceptionnellement toutes les entrées du CHANGELOG vers CHANGELOG_ARCHIVE.md
