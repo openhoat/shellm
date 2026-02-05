@@ -31,8 +31,8 @@ Chaque tâche doit utiliser le format avec emojis et tags entre crochets :
 - **⚡ [PERF]** : Performance
 - **📝 [DOCS]** : Documentation
 - **🎨 [STYLE]** : Style/Cosmétique
-- **✅ [TEST]** : Tests
-- **🔧 [CHORE]** : Configuration/Maintenance
+- **✅ [TEST]** - Tests
+- **🔧 [CHORE]** - Configuration/Maintenance
 
 ### Dates et heures
 
@@ -57,7 +57,6 @@ Les sous-tâches peuvent être indentées avec 4 espaces :
 ```
 
 Les sous-tâches n'ont pas besoin d'emoji ni de tag : l'information de catégorie est portée par la tâche parente.
-
 
 ## Règles spécifiques par fichier
 
@@ -91,7 +90,13 @@ Les sous-tâches n'ont pas besoin d'emoji ni de tag : l'information de catégori
 ### CHANGELOG.md
 
 - Contient uniquement des entrées de modifications réalisées
-- Format : `**[HH:MM:SS] Emoji [TAG]** Description`
+- Structure :
+  - Titre de niveau 1 : `# Historique`
+  - Règles de format détaillées (en dessous du titre principal)
+  - Titre de niveau 2 : `## Historique des modifications`
+  - Pour chaque année : titre de niveau 3 `### YYYY`
+  - Pour chaque mois/jour : titre de niveau 4 `#### MM/DD`
+  - Entrées de modifications avec le format : `**[HH:MM:SS] Emoji [TAG]** Description`
 - Tags et emojis :
   - `✨ [FEAT]` - Nouvelle fonctionnalité
   - `🐛 [FIX]` - Correction de bug
@@ -102,8 +107,6 @@ Les sous-tâches n'ont pas besoin d'emoji ni de tag : l'information de catégori
   - `✅ [TEST]` - Tests
   - `🔧 [CHORE]` - Configuration/Maintenance
 - Classé par ordre antéchronologique (plus récent en haut)
-- Organisation par année/mois/jour (la date complète est dans les sections)
-
 
 ## Utilisation
 

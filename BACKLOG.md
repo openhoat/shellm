@@ -13,5 +13,4 @@ En résumé :
 
 <!-- Ajoutez vos idées de features ici -->
 
-[//]: # Exemple :
-[//]: # - [ ] **[05/02/2026 17:00:00] 💡 [IDEA]** Ajouter un système de thèmes sombre/clair
+- [x] **[05/02/2026 19:03:35] 💡 [IDEA]** Créer un système d'archive pour CHANGELOG.md afin d'éviter l'inflation : un fichier CHANGELOG_ARCHIVE.md contenant l'historique complet, CHANGELOG.md gardant uniquement les modifications récentes/en cours, et un workflow Cline pour gérer l'archivage automatique

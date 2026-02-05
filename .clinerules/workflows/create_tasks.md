@@ -37,6 +37,7 @@ En résumé pour TASKS.md :
 ### 4. Créer les tâches dans TASKS.md
 - Pour chaque idée sélectionnée, créez une ou plusieurs tâches dans `/TASKS.md`
 - Utilisez `replace_in_file` pour ajouter les tâches dans la section "## Tâches à faire"
+- **Important : Les nouvelles tâches doivent être ajoutées au début de la liste (ordre antéchronologique, plus récent en haut)**
 - Le format des tâches doit être : `- [ ] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
 - Utilisez la date et l'heure actuelles
 - Choisissez l'emoji et le tag appropriés selon la nature de la tâche :

@@ -12,7 +12,12 @@ En résumé :
 
 ## Tâches à faire
 
-- [x] **[04/02/2026 09:50:10] 🔧 [CHORE]** Vérifier et normaliser le format des messages de commit avec commitlint
+- [x] **[05/02/2026 19:11:53] 🔧 [CHORE]** Modifier le workflow create_tasks.md pour classer systématiquement les tâches dans TASKS.md de la plus récente à la plus ancienne.
 
-- [x] **[04/02/2026 09:51:35] ✅ [TEST]** Créer un test end to end pour valider que l'application est opérationnelle en
-  couvrant tous les cas
+- [x] **[05/02/2026 19:09:00] 📝 [DOCS]** Documenter le système d'archivage dans README.md avec les instructions d'utilisation et ajouter des commentaires explicatifs dans le workflow
+
+- [x] **[05/02/2026 19:08:55] ✨ [FEAT]** Configurer les règles d'archivage avec une période de rétention configurable et ajouter une commande npm pour l'archivage manuel
+
+- [x] **[05/02/2026 19:08:50] ✨ [FEAT]** Développer le workflow d'archivage automatique dans .clinerules/workflows/archive_changelog.md pour déplacer les entrées anciennes vers l'archive
+
+- [x] **[05/02/2026 19:08:45] 🔧 [CHORE]** Créer le fichier CHANGELOG_ARCHIVE.md avec la même structure que CHANGELOG.md et définir une politique de rétention (ex: 30 jours dans CHANGELOG.md actif)
