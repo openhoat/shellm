@@ -20,9 +20,18 @@ En résumé :
 
 
 
+
 ## 2026
 
 ### 05/02
+
+**[18:58:00] 🔧 [CHORE]** Configurer commitlint pour normaliser les messages de commit
+- Installer @commitlint/cli, @commitlint/config-conventional et husky
+- Créer commitlint.config.mjs avec les règles conventionnelles (feat, fix, docs, style, refactor, perf, test, chore, revert)
+- Configurer le hook Git commit-msg avec husky pour valider automatiquement les commits
+- Ajouter le script npm commit:lint pour validation manuelle
+- Documenter les conventions de commit dans README.md avec exemples
+- Les commits sont désormais automatiquement validés avant d'être appliqués
 
 **[18:03:15] ♻️ [REFACTOR]** Restructurer l'architecture de gestion des tâches et idées
 - Renommer BACKLOG.md en TASKS.md (préservation du contenu existant)

@@ -235,6 +235,53 @@ src/
 2. Utilisez les mocks de `window.electronAPI` définis dans `src/test/setup.ts`
 3. Exécutez les tests avec `npm test`
 
+## 📝 Conventions de commit
+
+Ce projet utilise **commitlint** pour normaliser les messages de commit selon le format [Conventional Commits](https://www.conventionalcommits.org/).
+
+### Format de commit
+
+```
+<type>(<scope>): <subject>
+```
+
+### Types autorisés
+
+- **feat** : Nouvelle fonctionnalité
+- **fix** : Correction de bug
+- **docs** : Documentation
+- **style** : Style/formatage (pas de changement de code)
+- **refactor** : Refactorisation
+- **perf** : Performance
+- **test** : Tests
+- **chore** : Maintenance/Configuration
+- **revert** : Revert d'un commit
+
+### Exemples
+
+```bash
+git commit -m "feat: ajouter le support de la configuration Ollama"
+git commit -m "fix: corriger l'erreur de connexion au terminal"
+git commit -m "docs: mettre à jour le README"
+git commit -m "style: formater le code avec Biome"
+git commit -m "refactor: simplifier la logique du store Zustand"
+git commit -m "perf: optimiser les performances de rendu"
+git commit -m "test: ajouter des tests pour le composant Terminal"
+git commit -m "chore: mettre à jour les dépendances"
+```
+
+### Validation automatique
+
+Un hook Git automatique valide le format de chaque commit avant son application. Si le format est incorrect, le commit sera rejeté.
+
+### Validation manuelle
+
+Pour valider un message de commit manuellement :
+
+```bash
+npm run commit:lint
+```
+
 ## 🔒 Sécurité
 
 - Les commandes proposées par l'IA ne sont pas exécutées automatiquement

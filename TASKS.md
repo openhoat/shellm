@@ -12,7 +12,7 @@ En résumé :
 
 ## Tâches à faire
 
-- [ ] **[04/02/2026 09:50:10] 🔧 [CHORE]** Vérifier et normaliser le format des messages de commit avec commitlint
+- [x] **[04/02/2026 09:50:10] 🔧 [CHORE]** Vérifier et normaliser le format des messages de commit avec commitlint
 
 - [x] **[04/02/2026 09:51:35] ✅ [TEST]** Créer un test end to end pour valider que l'application est opérationnelle en
   couvrant tous les cas
