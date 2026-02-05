@@ -23,6 +23,7 @@
     "test:ui": "vitest --ui",
     "validate": "concurrently \"npm run qa\" \"npm run build\" \"npm run test\"",
     "commit:lint": "commitlint --edit",
+    "archive-changelog": "node scripts/archive-changelog.js",
     "prepare": "husky"
   },
   "keywords": [],

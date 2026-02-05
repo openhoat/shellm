@@ -187,6 +187,35 @@ shellm/
 - **Ollama** : LLM local
 - **Axios** : Client HTTP
 
+## 📦 Archivage du CHANGELOG
+
+SheLLM dispose d'un système d'archivage automatique pour maintenir un CHANGELOG.md concis tout en conservant l'historique complet.
+
+### Politique de rétention
+
+- **Changements récents (30 derniers jours)** : conservés dans `CHANGELOG.md`
+- **Changements anciens (plus de 30 jours)** : archivés dans `CHANGELOG_ARCHIVE.md`
+
+### Commande d'archivage manuel
+
+```bash
+npm run archive-changelog
+```
+
+### Période de rétention configurable
+
+La période de rétention peut être personnalisée via une variable d'environnement :
+
+```bash
+CHANGELOG_RETENTION_DAYS=60 npm run archive-changelog
+```
+
+### Fichiers concernés
+
+- **CHANGELOG.md** : Contient les changements récents (≤ 30 jours)
+- **CHANGELOG_ARCHIVE.md** : Contient l'historique archivé (> 30 jours)
+- **.clinerules/workflows/archive_changelog.md** : Workflow d'archivage détaillé
+
 ## 🧪 Tests
 
 SheLLM utilise une architecture de test avec **Vitest** qui sépare la logique métier de la couche Electron, permettant de tester environ **80% du code** sans dépendre d'Electron.
