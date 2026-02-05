@@ -25,8 +25,12 @@ En résumé :
 
 ### 2026
 
+
 #### 06/02
 
+**[00:15:40] 🔧 [CHORE]** Activer la règle subject-case en lower-case dans commitlint.config.mjs
+- Corriger le message de commit pour utiliser la casse minuscule
+- Changer la règle de 0 (désactivé) à 2 (lower-case)
 **[00:12:40] 🔧 [CHORE]** Configurer tsconfig.json pour utiliser 'react-jsx' au lieu de 'react'
 - Corriger l'erreur TS2686 dans ConfigPanel.tsx
 - Passer le paramètre jsx de 'react' à 'react-jsx' dans tsconfig.json
