@@ -38,10 +38,15 @@ export const ChatPanel = () => {
     setIsLoading(true)
 
     try {
+      // Type guard to check if AICommand is a shell command
+      const isCommandShell = (command?: AICommand): command is { type: 'command'; command: string; intent: string; explanation: string; confidence: number } => {
+        return command?.type === 'command'
+      }
+
       // Get recent commands for context
       const recentCommands = conversation
-        .filter(msg => msg.type === 'ai' && msg.command?.command)
-        .map(msg => msg.command?.command)
+        .filter(msg => msg.type === 'ai' && isCommandShell(msg.command))
+        .map(msg => msg.command!.command)
         .slice(-5)
 
       // Generate command using AI
