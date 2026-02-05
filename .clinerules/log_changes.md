@@ -63,9 +63,19 @@ Ou :
 ### 3. Placement dans le fichier
 
 Utilisez `replace_in_file` pour ajouter l'entrée :
-- Trouver la section correspondante à la date actuelle (année/mois/jour)
-- Ajouter l'entrée au début de la section correspondante
-- Si la section n'existe pas, créer la structure année/mois/jour appropriée
+
+**Si la date du jour existe déjà :**
+- Trouver le header de la date `### DD/MM` correspondant
+- Insérer la nouvelle entrée immédiatement après ce header (après les deux sauts de ligne)
+- Les entrées doivent être classées antéchronologiquement (plus récent en haut)
+
+**Si la date du jour n'existe pas :**
+- Créer le header de date sous le header de l'année `## YYYY`
+- Format : `### DD/MM\n\n**[HH:MM:SS] Emoji [TAG]** Description`
+
+**Si l'année n'existe pas :**
+- Créer le header d'année en haut du fichier
+- Format : `## YYYY\n\n### DD/MM\n\n**[HH:MM:SS] Emoji [TAG]** Description`
 
 ### 4. Exemples concrets
 

@@ -1,6 +1,4 @@
-# Changelog
-
-## Règles de format
+# Historique
 
 Voir `.clinerules/task_format.md` pour les règles de format détaillées.
 
@@ -18,12 +16,20 @@ En résumé :
 - Classé par ordre antéchronologique (plus récent en haut)
 - Organisation par année/mois/jour (la date complète est dans les sections)
 
+## Historique des modifications
 
+### 2026
 
+#### 05/02
 
-## 2026
-
-### 05/02
+**[20:21:00] 🐛 [FIX]** Corriger et tester le script d'archivage du CHANGELOG
+- Corriger le bug de vérification de la variable d'environnement CHANGELOG_RETENTION_DAYS pour accepter 0
+- Réécrire la logique de parsing pour gérer la structure du CHANGELOG sans séparateur
+- Conserver le header (titre + règles de format) lors de l'archivage
+- Ajouter les règles de format du CHANGELOG dans les entrées archivées (sans le titre "Changelog")
+- Tester l'archivage avec CHANGELOG_RETENTION_DAYS=0 pour archiver toutes les entrées
+- Vérifier que les fichiers sont correctement encodés en UTF-8
+- Le script d'archivage fonctionne maintenant correctement avec toutes les périodes de rétention
 
 **[18:58:00] 🔧 [CHORE]** Configurer commitlint pour normaliser les messages de commit
 - Installer @commitlint/cli, @commitlint/config-conventional et husky
@@ -73,7 +79,7 @@ En résumé :
 
 **[15:11:34] 🐛 [FIX]** Corriger le bouton Exécuter en ajoutant un mécanisme de retry pour attendre que le terminal soit prêt
 
-### 05/02
+#### 05/02
 
 **[14:22:15] ♻️ [REFACTOR]** Extraire la configuration par défaut et le chargement dynamique dans shared/config.ts
 - Créer le fichier shared/config.ts avec DEFAULT_CONFIG, getEnvConfig, mergeConfig et getEnvSources
@@ -122,7 +128,6 @@ En résumé :
 - Corriger le mock dans src/test/setup.ts en ajoutant le champ 'intent' requis
 - Total : 92 tests qui passent avec succès (84 tests existants + 8 nouveaux)
 - Les tests blindent complètement le cas d'usage du bouton Exécuter
-
 
 **[12:09:00] 🐛 [FIX]** Corriger les erreurs Biome bloquant le script validate
 - Supprimer l'import `vi` inutilisé dans src/store/useStore.test.ts
@@ -195,6 +200,8 @@ En résumé :
 
 ### 04/02
 
+#### 04/02
+
 **[10:04:20] ✅ [TEST]** Créer des tests end-to-end complets pour l'application SheLLM
 - Installer Playwright pour les tests E2E Electron
 - Créer la configuration Playwright avec support Electron
@@ -228,6 +235,8 @@ En résumé :
 - Permettre à l'utilisateur de continuer à chatter immédiatement après une réponse textuelle
 
 ### 03/02
+
+#### 03/02
 
 **[17:49:10] ✨ [FEAT]** Simplifier BACKLOG.md en supprimant la gestion des commentaires
 - Les commentaires sont désormais optionnels et servent uniquement à documenter le contexte
