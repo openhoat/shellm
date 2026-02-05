@@ -5,20 +5,20 @@ export default {
       2,
       'always',
       [
-        'feat', // Nouvelle fonctionnalité
-        'fix', // Correction de bug
+        'feat', // New feature
+        'fix', // Bug fix
         'docs', // Documentation
-        'style', // Style/formatage (pas de changement de code)
-        'refactor', // Refactorisation
-        'perf', // Performance
+        'style', // Styling/formatting (no code changes)
+        'refactor', // Refactoring
+        'perf', // Performance improvement
         'test', // Tests
         'chore', // Maintenance/Configuration
-        'revert', // Revert d'un commit
+        'revert', // Revert commit
       ],
     ],
     'type-case': [2, 'always', 'lower-case'],
     'type-empty': [2, 'never'],
-    'subject-case': [0], // Désactivé pour permettre plus de flexibilité
+    'subject-case': [0], // Disabled to allow more flexibility
     'subject-max-length': [2, 'always', 72],
   },
 }
