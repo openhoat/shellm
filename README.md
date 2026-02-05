@@ -1,5 +1,12 @@
 # SheLLM - AI-Powered Terminal
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub Stars](https://img.shields.io/github/stars/openhoat/shellm?style=social)](https://github.com/openhoat/shellm/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/openhoat/shellm?style=social)](https://github.com/openhoat/shellm/network/members)
+[![GitHub issues](https://img.shields.io/github/issues/openhoat/shellm)](https://github.com/openhoat/shellm/issues)
+
+[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://github.com/openhoat/shellm)
+
 Un terminal moderne alimenté par l'intelligence artificielle avec Ollama, inspiré de WARP. SheLLM vous permet de décrire ce que vous voulez faire en langage naturel et l'IA génère les commandes shell appropriées.
 
 ## 🚀 Fonctionnalités
@@ -10,6 +17,12 @@ Un terminal moderne alimenté par l'intelligence artificielle avec Ollama, inspi
 - **Interface moderne** : Design sombre par défaut avec thème clair optionnel
 - **Configuration flexible** : URL Ollama, modèle, température, et plus encore
 - **Historique** : Suivi des conversations et des commandes exécutées
+
+## ⭐ Star us on GitHub!
+
+Si ce projet vous est utile, n'oubliez pas de le [starer sur GitHub](https://github.com/openhoat/shellm) ! 🚀
+
+---
 
 ## 📋 Prérequis
 
@@ -54,6 +67,19 @@ ollama pull llama2
 #### Utilisation d'une instance distante
 
 Si vous utilisez Ollama sur une machine distante, configurez l'URL dans le panneau de configuration de SheLLM.
+
+## 🚀 Démarrage rapide
+
+```bash
+git clone https://github.com/openhoat/shellm.git
+cd shellm
+npm install
+npm run dev
+```
+
+Pour une utilisation complète, assurez-vous d'avoir [Ollama](https://ollama.ai) installé et en cours d'exécution.
+
+---
 
 ## 🎮 Utilisation
 
@@ -360,7 +386,9 @@ Les contributions sont les bienvenues ! N'hésitez pas à :
 
 ## 📄 Licence
 
-ISC
+Ce projet est sous licence MIT - voir le fichier [LICENSE.txt](LICENSE.txt) pour plus de détails.
+
+Copyright © 2026 Olivier Penhoat
 
 ## 👨‍💻 Auteur
 
