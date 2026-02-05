@@ -22,7 +22,14 @@ En résumé :
 
 ## Historique des modifications
 
+
 ### 2026
+
+#### 06/02
+
+**[00:12:40] 🔧 [CHORE]** Configurer tsconfig.json pour utiliser 'react-jsx' au lieu de 'react'
+- Corriger l'erreur TS2686 dans ConfigPanel.tsx
+- Passer le paramètre jsx de 'react' à 'react-jsx' dans tsconfig.json
 
 #### 05/02
 
