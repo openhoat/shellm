@@ -1,0 +1,46 @@
+{
+  "translation": {
+    "app": {
+      "title": "SheLLM",
+      "subtitle": "Terminal intelligent avec IA"
+    },
+    "header": {
+      "models": "Modèles",
+      "config": "Configuration",
+      "settings": "Paramètres"
+    },
+    "chat": {
+      "title": "Chat IA",
+      "placeholder": "Posez une question ou entrez une commande...",
+      "send": "Envoyer",
+      "clear": "Effacer",
+      "empty": "Aucun message"
+    },
+    "terminal": {
+      "title": "Terminal",
+      "clear": "Effacer le terminal"
+    },
+    "config": {
+      "title": "Configuration",
+      "ollama": {
+        "title": "Configuration Ollama",
+        "url": "URL du serveur Ollama",
+        "model": "Modèle par défaut",
+        "save": "Enregistrer"
+      },
+      "language": {
+        "title": "Langue"
+      }
+    },
+    "models": {
+      "title": "Sélection du modèle",
+      "select": "Sélectionner",
+      "current": "Modèle actuel"
+    },
+    "errors": {
+      "connection": "Erreur de connexion",
+      "loadModels": "Erreur lors du chargement des modèles",
+      "saveConfig": "Erreur lors de l'enregistrement de la configuration"
+    }
+  }
+}

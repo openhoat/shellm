@@ -1,0 +1,46 @@
+{
+  "translation": {
+    "app": {
+      "title": "SheLLM",
+      "subtitle": "Smart AI Terminal"
+    },
+    "header": {
+      "models": "Models",
+      "config": "Configuration",
+      "settings": "Settings"
+    },
+    "chat": {
+      "title": "AI Chat",
+      "placeholder": "Ask a question or enter a command...",
+      "send": "Send",
+      "clear": "Clear",
+      "empty": "No messages"
+    },
+    "terminal": {
+      "title": "Terminal",
+      "clear": "Clear terminal"
+    },
+    "config": {
+      "title": "Configuration",
+      "ollama": {
+        "title": "Ollama Configuration",
+        "url": "Ollama server URL",
+        "model": "Default model",
+        "save": "Save"
+      },
+      "language": {
+        "title": "Language"
+      }
+    },
+    "models": {
+      "title": "Model Selection",
+      "select": "Select",
+      "current": "Current model"
+    },
+    "errors": {
+      "connection": "Connection error",
+      "loadModels": "Error loading models",
+      "saveConfig": "Error saving configuration"
+    }
+  }
+}
