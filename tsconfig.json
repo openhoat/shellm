@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.node.json",
   "compilerOptions": {
+    "target": "ES2022",
     "jsx": "react-jsx",
     "composite": true,
     "skipLibCheck": true,

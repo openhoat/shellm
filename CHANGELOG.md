@@ -19,9 +19,14 @@ En résumé :
 ## Historique des modifications
 
 
+
 ### 2026
 
 ### 06/02
+
+**[03:19:30] 🐛 [FIX]** Corriger l'erreur TypeScript TS18028 dans tsconfig.json
+- Ajouter "target": "ES2022" dans les compilerOptions
+- Permettre l'utilisation des identifiants privés avec # syntaxe
 
 **[03:13:50] 🐛 [FIX]** Corriger l'erreur ENOENT lors du chargement des prompts Ollama
 - Modifier package.json pour copier le dossier electron/prompts/ vers dist-electron/electron/prompts/
