@@ -1,7 +1,7 @@
 import type { AppConfig } from '@shared/types'
 import { useCallback, useEffect, useState } from 'react'
-import { useStore } from '../store/useStore'
 import { useTranslation } from 'react-i18next'
+import { useStore } from '../store/useStore'
 import { ModelSelector } from './ModelSelector'
 import './ConfigPanel.css'
 

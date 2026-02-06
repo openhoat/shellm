@@ -1,22 +1,22 @@
-import { useTranslation } from "react-i18nnext";
+import { useTranslation } from 'react-i18nnext'
 
 const LanguageSelector = () => {
-	const { i18n } = useTranslation();
+  const { i18n } = useTranslation()
 
-	const changeLanguage = (lng: string) => {
-		i18n.changeLanguage(lng);
-	};
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng)
+  }
 
-	return (
-		<select
-			value={i18n.language}
-			onChange={(e) => changeLanguage(e.target.value)}
-			className="language-selector"
-		>
-			<option value="fr">Français</option>
-			<option value="en">English</option>
-		</select>
-	);
-};
+  return (
+    <select
+      value={i18n.language}
+      onChange={e => changeLanguage(e.target.value)}
+      className="language-selector"
+    >
+      <option value="fr">Français</option>
+      <option value="en">English</option>
+    </select>
+  )
+}
 
-export default LanguageSelector;
+export default LanguageSelector
