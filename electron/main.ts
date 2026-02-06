@@ -12,7 +12,7 @@ interface StoreType {
   set: (key: string, value: unknown) => void
 }
 
-function isStoreType(value: unknown): value is StoreType {
+const isStoreType = (value: unknown): value is StoreType => {
   if (!value || typeof value !== 'object') {
     return false
   }
@@ -21,7 +21,7 @@ function isStoreType(value: unknown): value is StoreType {
   return typeof store.get === 'function' && typeof store.set === 'function'
 }
 
-function isAppConfig(value: unknown): value is AppConfig {
+const isAppConfig = (value: unknown): value is AppConfig => {
   if (!value || typeof value !== 'object') {
     return false
   }
@@ -69,7 +69,7 @@ const store = isStoreType(rawStore)
 
 let mainWindow: BrowserWindow | null = null
 
-function createWindow(): void {
+const createWindow = (): void => {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,

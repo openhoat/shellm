@@ -6,7 +6,7 @@ import { Terminal } from './components/Terminal'
 import { useStore } from './store/useStore'
 import './App.css'
 
-function App() {
+const App = () => {
   const { initConfig, showConfigPanel } = useStore()
 
   useEffect(() => {

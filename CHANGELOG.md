@@ -37,7 +37,18 @@ En résumé :
 
 
 
+
 #### 06/02
+
+**[01:27:50] ♻️ [REFACTOR]** Convertir toutes les déclarations function en arrow functions dans le codebase
+- Convertir 5 déclarations function en const avec arrow functions
+- electron/main.ts : isStoreType, isAppConfig, createWindow
+- src/App.tsx : App
+- electron/ipc-handlers/config.ts : isAppConfig
+
+**[01:23:20] 🔧 [CHORE]** Créer 7 tâches depuis le BACKLOG pour le support multilangue et l'utilisation d'arrow functions dans Biome
+- Convertir l'idée de support multilangue en 5 tâches : installation i18n, création fichiers de traduction, externalisation textes composants, externalisation textes services, création sélecteur de langue
+- Convertir l'idée d'arrow functions en 2 tâches : configuration Biome, exécution auto-fix
 
 **[01:01:00] 🐛 [FIX]** Corriger les problèmes d'encodage UTF-8 dans electron/ipc-handlers/
 - Corriger les erreurs internalError/io Biome dans electron/ipc-handlers/config.ts et electron/ipc-handlers/terminal.ts

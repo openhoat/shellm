@@ -7,14 +7,14 @@ interface StoreType {
   set: (key: string, value: unknown) => void
 }
 
-function isAppConfig(value: unknown): value is AppConfig {
+const isAppConfig = (value: unknown): value is AppConfig => {
   if (!value || typeof value !== 'object') {
     return false
   }
 
   const config = value as Partial<AppConfig>
 
-  // V�rifier les champs obligatoires
+  // Vérifier les champs obligatoires
   if (!config.ollama || typeof config.ollama !== 'object') {
     return false
   }
