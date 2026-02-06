@@ -1,6 +1,14 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import axios, { type AxiosInstance } from 'axios'
 import { type BrowserWindow, ipcMain } from 'electron'
 import type { AICommand } from '../types/types'
+
+function loadPrompt(filename: string): string {
+  const promptsDir = path.join(__dirname, '..', 'prompts')
+  const filePath = path.join(promptsDir, filename)
+  return fs.readFileSync(filePath, 'utf-8')
+}
 
 interface OllamaConfig {
   url: string
@@ -31,27 +39,7 @@ class OllamaService {
   }
 
   async generateCommand(prompt: string, context?: string[]): Promise<AICommand> {
-    const systemPrompt = `You are a helpful assistant that converts natural language requests into shell commands.
-
-IMPORTANT: You MUST respond with ONLY valid JSON. No additional text before or after the JSON.
-
-Analyze the user's request and determine the appropriate response type:
-
-IF the request is a greeting, general conversation, or does not require a shell command:
-Respond with this JSON:
-{"type": "text", "content": "your response in natural language"}
-
-IF the request requires a shell command to be executed:
-Respond with this JSON:
-{"type": "command", "intent": "brief description", "command": "exact shell command", "explanation": "clear explanation", "confidence": 0.95}
-
-Examples:
-"Hello" -> {"type": "text", "content": "Hello! How can I help you today?"}
-"List files" -> {"type": "command", "intent": "list files", "command": "ls -la", "explanation": "Lists all files", "confidence": 0.95}
-"What is 2+2?" -> {"type": "text", "content": "2+2 equals 4."}
-"What time is it?" -> {"type": "command", "intent": "show current time", "command": "date", "explanation": "Displays current date and time", "confidence": 0.95}
-
-Remember: Respond with ONLY the JSON, nothing else.`
+    const systemPrompt = loadPrompt('system-prompt.md')
 
     let fullPrompt = `${systemPrompt}\n\nUser request: ${prompt}`
 
@@ -96,12 +84,8 @@ Remember: Respond with ONLY the JSON, nothing else.`
   }
 
   async explainCommand(command: string): Promise<string> {
-    const prompt = `Explain this shell command in simple terms: ${command}
-Focus on:
-1. What the command does
-2. What each flag/parameter means
-3. Any important side effects or risks
-Keep it concise and clear.`
+    const promptTemplate = loadPrompt('explain-command-prompt.md')
+    const prompt = promptTemplate.replace('{command}', command)
     const response = await this.#axiosInstance.post('/api/generate', {
       model: this.#model,
       prompt: prompt,
