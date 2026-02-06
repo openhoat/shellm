@@ -3,7 +3,10 @@ import { Terminal as XTerm } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import 'xterm/css/xterm.css'
 import { useStore } from '../store/useStore'
+import Logger from '../utils/logger'
 import './Terminal.css'
+
+const logger = new Logger('Terminal')
 
 export const Terminal = () => {
   const terminalRef = useRef<HTMLDivElement>(null)
@@ -39,7 +42,7 @@ export const Terminal = () => {
     if (terminalCreatedRef.current || !terminalRef.current || xtermRef.current) return
 
     const initializeTerminal = async () => {
-      console.log('[Terminal] Creating terminal...')
+      logger.debug('Creating terminal...')
 
       // Create xterm instance first
       const xterm = new XTerm({
@@ -82,26 +85,21 @@ export const Terminal = () => {
       xtermRef.current = xterm
       fitAddonRef.current = fitAddon
 
-      console.log('[Terminal] xterm initialized')
+      logger.debug('xterm initialized')
 
       // Handle terminal data from main process
       const handleTerminalData = (data: { pid: number; data: string }) => {
-        console.log(
-          '[Terminal] Received data for PID:',
-          data.pid,
-          'Current PID:',
-          terminalPidRef.current
-        )
+        logger.debug(`Received data for PID: ${data.pid}, Current PID: ${terminalPidRef.current}`)
         if (terminalPidRef.current === null) {
           // Terminal not created yet, ignore data
-          console.log('[Terminal] Ignoring data - terminal not created yet')
+          logger.debug('Ignoring data - terminal not created yet')
           return
         }
         if (data.pid === terminalPidRef.current) {
-          console.log('[Terminal] Writing data to xterm:', data.data)
+          logger.debug(`Writing data to xterm: ${data.data}`)
           xterm.write(data.data)
         } else {
-          console.log('[Terminal] Ignoring data - PID mismatch')
+          logger.debug('Ignoring data - PID mismatch')
         }
       }
 
@@ -109,11 +107,11 @@ export const Terminal = () => {
 
       // Handle user input
       xterm.onData(data => {
-        console.log('[Terminal] User input:', data, 'Current PID:', terminalPidRef.current)
+        logger.debug(`User input: ${data}, Current PID: ${terminalPidRef.current}`)
         if (terminalPidRef.current) {
           window.electronAPI.terminalWrite(terminalPidRef.current, data)
         } else {
-          console.log('[Terminal] Cannot write - no terminal PID')
+          logger.debug('Cannot write - no terminal PID')
         }
       })
 
@@ -127,17 +125,17 @@ export const Terminal = () => {
 
       window.addEventListener('resize', handleResize)
 
-      console.log('[Terminal] Event handlers attached')
+      logger.debug('Event handlers attached')
 
       // Now create the PTY
       try {
         const pid = await window.electronAPI.terminalCreate()
-        console.log('[Terminal] Terminal PTY created with PID:', pid)
+        logger.info(`Terminal PTY created with PID: ${pid}`)
         terminalPidRef.current = pid
         setTerminalPid(pid)
         terminalCreatedRef.current = true
       } catch (error) {
-        console.error('[Terminal] Failed to create terminal:', error)
+        logger.error('Failed to create terminal', error)
       }
 
       // Cleanup function
