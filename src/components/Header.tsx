@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next'
 import { useStore } from '../store/useStore'
-import LanguageSelector from './LanguageSelector'
 import './Header.css'
 
 export const Header = () => {
@@ -25,7 +24,6 @@ export const Header = () => {
               : `Ollama: ${config.ollama.url}`}
           </span>
         </div>
-        <LanguageSelector />
         <button
           type="button"
           className="icon-button"

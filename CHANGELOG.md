@@ -18,9 +18,15 @@ En résumé :
 
 ## Historique des modifications
 
+
 ### 2026
 
 #### 06/02
+
+**[02:58:19] ♻️ [REFACTOR]** Déplacer le sélecteur de langue du header vers les paramètres
+- Supprimer LanguageSelector du composant Header
+- Ajouter LanguageSelector dans ConfigPanel (section Interface)
+- Améliorer l'accessibilité avec htmlFor et id
 
 **[02:53:43] ♻️ [REFACTOR]** Convertir toutes les propriétés private vers la syntaxe moderne avec #
 - Modifier electron/ipc-handlers/ollama.ts (OllamaService)

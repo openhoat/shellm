@@ -2,6 +2,7 @@ import type { AppConfig } from '@shared/types'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useStore } from '../store/useStore'
+import LanguageSelector from './LanguageSelector'
 import { ModelSelector } from './ModelSelector'
 import './ConfigPanel.css'
 
@@ -292,6 +293,11 @@ export const ConfigPanel = () => {
                 <option value="dark">Sombre</option>
                 <option value="light">Clair</option>
               </select>
+            </div>
+
+            <div className="config-field">
+              <label htmlFor="language-selector">Langue</label>
+              <LanguageSelector />
             </div>
 
             <div className="config-field">

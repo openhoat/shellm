@@ -9,6 +9,7 @@ const LanguageSelector = () => {
 
   return (
     <select
+      id="language-selector"
       value={i18n.language}
       onChange={e => changeLanguage(e.target.value)}
       className="language-selector"
