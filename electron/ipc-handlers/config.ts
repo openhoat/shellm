@@ -1,5 +1,5 @@
-import { DEFAULT_CONFIG, getEnvSources, mergeConfig } from '@shared/config'
-import type { AppConfig } from '@shared/types'
+import { DEFAULT_CONFIG, getEnvSources, mergeConfig } from '../../shared/config'
+import type { AppConfig } from '../../shared/types'
 import { type BrowserWindow, ipcMain } from 'electron'
 
 interface StoreType {

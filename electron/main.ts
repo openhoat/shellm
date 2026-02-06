@@ -1,6 +1,6 @@
 import * as path from 'node:path'
-import { DEFAULT_CONFIG, mergeConfig } from '@shared/config'
-import type { AppConfig } from '@shared/types'
+import { DEFAULT_CONFIG, mergeConfig } from '../shared/config'
+import type { AppConfig } from '../shared/types'
 import { app, BrowserWindow } from 'electron'
 import Store from 'electron-store'
 import { createConfigHandlers } from './ipc-handlers/config'

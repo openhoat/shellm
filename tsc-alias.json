@@ -1,5 +1,5 @@
 {
-  "verbose": false,
+  "verbose": true,
   "resolveFullPaths": true,
   "watch": false
 }

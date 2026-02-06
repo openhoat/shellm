@@ -25,7 +25,15 @@ En résumé :
 
 ### 2026
 
+#### 06/02
 
+**[02:24:00] 🔧 [CHORE]** Corriger la configuration Electron et désactiver tsc-alias
+- Corriger le chemin main dans package.json (dist-electron/main.js → dist-electron/electron/main.js)
+- Désactiver tsc-alias dans package.json car il remplaçait incorrectement l'import 'electron' standard
+- Modifier les imports @shared/* en ../shared/* dans electron/main.ts et electron/ipc-handlers/config.ts
+- Supprimer la configuration paths dans electron/tsconfig.json
+- Modifier tsc-alias.json pour utiliser aliasMap explicite
+- Le serveur de développement npm run dev fonctionne maintenant correctement
 
 
 

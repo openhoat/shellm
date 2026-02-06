@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18nnext'
+import { useTranslation } from 'react-i18next'
 
 const LanguageSelector = () => {
   const { i18n } = useTranslation()
