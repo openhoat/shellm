@@ -1,5 +1,5 @@
 import type { AppConfig, OllamaConfig } from '@shared/types'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { configService } from './configService'
 
 describe('configService', () => {
@@ -180,6 +180,7 @@ describe('configService', () => {
       const override: Partial<AppConfig> = {
         theme: 'light',
         ollama: {
+          url: 'http://localhost:11434',
           model: 'mistral',
         },
       }

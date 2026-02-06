@@ -103,7 +103,13 @@ export function createHistoryEntryFromConversation(
 
   return {
     userMessage: previousEntry.content,
-    aiResponse: lastEntry.command,
+    aiResponse: {
+      type: 'command',
+      intent: 'unknown',
+      command: lastEntry.command.command,
+      explanation: '',
+      confidence: 0,
+    },
     executed: true,
   }
 }

@@ -13,4 +13,5 @@ En résumé :
 
 <!-- Ajoutez vos idées de features ici -->
 
+- [x] **[06/02/2026 00:43:00] 💡 [IDEA]** Forcer l'utilisation de arrow functions plutôt que `function` dans Biome
 - [x] **[05/02/2026 19:03:35] 💡 [IDEA]** Créer un système d'archive pour CHANGELOG.md afin d'éviter l'inflation : un fichier CHANGELOG_ARCHIVE.md contenant l'historique complet, CHANGELOG.md gardant uniquement les modifications récentes/en cours, et un workflow Cline pour gérer l'archivage automatique

@@ -1,7 +1,10 @@
 import type { AICommand } from '@shared/types'
 import { type FormEvent, useState } from 'react'
-import { useStore } from '../store/useStore'
+import { useStore } from '@/store/useStore'
+import Logger from '@/utils/logger'
 import './ChatPanel.css'
+
+const logger = new Logger('ChatPanel')
 
 export const ChatPanel = () => {
   const [userInput, setUserInput] = useState('')
@@ -39,14 +42,36 @@ export const ChatPanel = () => {
 
     try {
       // Type guard to check if AICommand is a shell command
-      const isCommandShell = (command?: AICommand): command is { type: 'command'; command: string; intent: string; explanation: string; confidence: number } => {
+      const isCommandShell = (
+        command?: AICommand
+      ): command is {
+        type: 'command'
+        command: string
+        intent: string
+        explanation: string
+        confidence: number
+      } => {
         return command?.type === 'command'
       }
 
       // Get recent commands for context
       const recentCommands = conversation
-        .filter(msg => msg.type === 'ai' && isCommandShell(msg.command))
-        .map(msg => msg.command!.command)
+        .filter(
+          (
+            msg
+          ): msg is {
+            type: 'ai'
+            content: string
+            command: {
+              type: 'command'
+              command: string
+              intent: string
+              explanation: string
+              confidence: number
+            }
+          } => msg.type === 'ai' && isCommandShell(msg.command)
+        )
+        .map(msg => msg.command.command)
         .slice(-5)
 
       // Generate command using AI
@@ -75,26 +100,26 @@ export const ChatPanel = () => {
   }
 
   const executeCommand = async (command: string) => {
-    console.log('[ChatPanel] executeCommand called with:', command)
-    console.log('[ChatPanel] Current terminalPid:', terminalPid)
+    logger.debug('executeCommand called with:', command)
+    logger.debug('Current terminalPid:', terminalPid)
 
     // Wait for terminal to be ready with retry mechanism
     const maxRetries = 20 // 10 seconds total (20 * 500ms)
     let retries = 0
 
     while (!terminalPid && retries < maxRetries) {
-      console.log(`[ChatPanel] Waiting for terminal... (${retries + 1}/${maxRetries})`)
+      logger.debug(`Waiting for terminal... (${retries + 1}/${maxRetries})`)
       await new Promise(resolve => setTimeout(resolve, 500))
       retries++
     }
 
     if (!terminalPid) {
-      console.error('[ChatPanel] Terminal not ready after retries')
+      logger.error('Terminal not ready after retries')
       setError("Le terminal n'est pas prêt. Veuillez réinitialiser l'application.")
       return
     }
 
-    console.log('[ChatPanel] Terminal is ready, PID:', terminalPid)
+    logger.info('Terminal is ready, PID:', terminalPid)
 
     try {
       // Add to history
@@ -110,16 +135,15 @@ export const ChatPanel = () => {
       }
 
       // Execute command in terminal
-      console.log('[ChatPanel] Writing command to terminal:', command)
-      console.log('[ChatPanel] electronAPI available:', typeof window.electronAPI)
-      console.log('[ChatPanel] terminalWrite available:', typeof window.electronAPI?.terminalWrite)
+      logger.debug('Writing command to terminal:', command)
+      logger.debug('electronAPI available:', typeof window.electronAPI)
+      logger.debug('terminalWrite available:', typeof window.electronAPI?.terminalWrite)
 
       await window.electronAPI.terminalWrite(terminalPid, `${command}\r`)
-      console.log('[ChatPanel] Command written successfully')
-
+      logger.info('Command written successfully')
       setAiCommand(null)
     } catch (error) {
-      console.error('[ChatPanel] Error writing command:', error)
+      logger.error('Error writing command:', error)
       setError(
         `Erreur lors de l'exécution: ${error instanceof Error ? error.message : 'Erreur inconnue'}`
       )
@@ -206,8 +230,8 @@ export const ChatPanel = () => {
             onClick={e => {
               e.preventDefault()
               e.stopPropagation()
-              console.log('[ChatPanel] Execute button clicked!')
-              console.log('[ChatPanel] Button terminalPid check:', terminalPid)
+              logger.debug('Execute button clicked!')
+              logger.debug('Button terminalPid check:', terminalPid)
               executeCommand(aiCommand.command)
             }}
             title={!terminalPid ? "Le terminal n'est pas encore prêt" : 'Exécuter la commande'}

@@ -21,6 +21,7 @@ En résumé :
 ## Historique des modifications
 
 
+
 ### 2026
 
 #### 05/02
@@ -30,8 +31,6 @@ En résumé :
 - Vérifier que toutes les entrées sont de moins de 30 jours
 - Exécuter npm run validate et npm run qa:fix pour corriger les erreurs de linting
 - L'archivage n'est pas nécessaire car toutes les modifications sont récentes
-
-#### 05/02
 
 **[20:21:00] 🐛 [FIX]** Corriger et tester le script d'archivage du CHANGELOG
 - Corriger le bug de vérification de la variable d'environnement CHANGELOG_RETENTION_DAYS pour accepter 0
@@ -88,9 +87,8 @@ En résumé :
 - Solution : initialiser xterm et attacher les handlers AVANT de créer le PTY
 - La sortie du terminal s'affiche maintenant correctement quand on clique sur "Exécuter"
 
-**[15:11:34] 🐛 [FIX]** Corriger le bouton Exécuter en ajoutant un mécanisme de retry pour attendre que le terminal soit prêt
 
-#### 05/02
+**[15:11:34] 🐛 [FIX]** Corriger le bouton Exécuter en ajoutant un mécanisme de retry pour attendre que le terminal soit prêt
 
 **[14:22:15] ♻️ [REFACTOR]** Extraire la configuration par défaut et le chargement dynamique dans shared/config.ts
 - Créer le fichier shared/config.ts avec DEFAULT_CONFIG, getEnvConfig, mergeConfig et getEnvSources
@@ -209,9 +207,8 @@ En résumé :
 - Couverture complète de la logique d'exécution de commande (bouton "Exécuter")
 - Les tests couvrent la validation, le formatage et la sécurité des commandes
 
-### 04/02
 
-#### 04/02
+### 04/02
 
 **[10:04:20] ✅ [TEST]** Créer des tests end-to-end complets pour l'application SheLLM
 - Installer Playwright pour les tests E2E Electron

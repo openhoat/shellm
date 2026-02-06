@@ -5,8 +5,8 @@
  * Déplace les entrées anciennes de CHANGELOG.md vers CHANGELOG_ARCHIVE.md
  */
 
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 
 // Configuration de la période de rétention (30 jours par défaut)
 const RETENTION_DAYS =
@@ -20,7 +20,7 @@ const ARCHIVE_PATH = path.join(__dirname, '..', 'CHANGELOG_ARCHIVE.md')
 /**
  * Parse une date au format DD/MM/YYYY
  */
-function parseDate(dateStr) {
+function _parseDate(dateStr) {
   const [day, month, year] = dateStr.split('/').map(Number)
   return new Date(year, month - 1, day)
 }
@@ -161,7 +161,7 @@ function buildChangelogContent(header, recentSections) {
 
   const entriesContent = recentSections.map(s => s.content.join('\n')).join('\n')
 
-  return headerContent + '\n' + entriesContent
+  return `${headerContent}\n${entriesContent}`
 }
 
 /**
@@ -175,11 +175,8 @@ function buildArchiveContent(oldSections) {
  * Point d'entrée principal
  */
 function main() {
-  console.log(`📦 Archivage du CHANGELOG (période de rétention : ${RETENTION_DAYS} jours)`)
-
   // Lire le CHANGELOG
   if (!fs.existsSync(CHANGELOG_PATH)) {
-    console.error(`❌ Erreur : ${CHANGELOG_PATH} n'existe pas`)
     process.exit(1)
   }
 
@@ -192,19 +189,14 @@ function main() {
   const { recent, old } = partitionSections(parsed.sections)
 
   if (old.length === 0) {
-    console.log('✅ Aucune entrée à archiver (toutes sont récentes)')
     process.exit(0)
   }
-
-  console.log(`📊 ${old.length} section(s) à archiver`)
-  console.log(`📊 ${recent.length} section(s) à conserver`)
 
   // Construire le nouveau contenu du CHANGELOG
   const newChangelogContent = buildChangelogContent(parsed.header, recent)
 
   // Écrire le nouveau contenu du CHANGELOG
-  fs.writeFileSync(CHANGELOG_PATH, newChangelogContent.trim() + '\n', 'utf-8')
-  console.log('✅ CHANGELOG.md mis à jour')
+  fs.writeFileSync(CHANGELOG_PATH, `${newChangelogContent.trim()}\n`, 'utf-8')
 
   // Construire le contenu de l'archive
   const oldContent = buildArchiveContent(old)
@@ -239,13 +231,9 @@ Voir \`.clinerules/task_format.md\` pour les règles de format détaillées.
   const archiveSectionEnd = archiveContent.indexOf('## Archives\n') + '## Archives\n'.length
   // Ajouter le header du CHANGELOG (sans le titre "# Changelog") en haut des entrées archivées
   const changelogHeader = parsed.header.join('\n').replace(/^# Changelog\n/, '')
-  const finalArchiveContent =
-    archiveContent.slice(0, archiveSectionEnd) + '\n' + changelogHeader + '\n\n' + oldContent + '\n'
+  const finalArchiveContent = `${archiveContent.slice(0, archiveSectionEnd)}\n${changelogHeader}\n\n${oldContent}\n`
 
-  fs.writeFileSync(ARCHIVE_PATH, finalArchiveContent.trim() + '\n', 'utf-8')
-  console.log('✅ CHANGELOG_ARCHIVE.md mis à jour')
-
-  console.log('✨ Archivage terminé avec succès')
+  fs.writeFileSync(ARCHIVE_PATH, `${finalArchiveContent.trim()}\n`, 'utf-8')
 }
 
 main()

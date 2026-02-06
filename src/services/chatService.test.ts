@@ -1,5 +1,5 @@
 import type { AICommand, ConversationHistory } from '@shared/types'
-import { describe, expect } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { chatService } from './chatService'
 
 describe('chatService', () => {
@@ -43,6 +43,7 @@ describe('chatService', () => {
         userMessage: 'Liste les fichiers',
         aiResponse: {
           type: 'command',
+          intent: 'list_files',
           command: 'ls -la',
           explanation: 'Liste',
           confidence: 0.95,
@@ -65,6 +66,7 @@ describe('chatService', () => {
         userMessage: 'Détails du dossier',
         aiResponse: {
           type: 'command',
+          intent: 'list_files',
           command: 'ls -lh',
           explanation: 'Détails',
           confidence: 0.9,
@@ -85,6 +87,7 @@ describe('chatService', () => {
         userMessage: 'Test',
         aiResponse: {
           type: 'command',
+          intent: 'test',
           command: `command${i}`,
           explanation: 'Test',
           confidence: 0.9,
@@ -106,6 +109,7 @@ describe('chatService', () => {
     test('should create a history entry with required fields', () => {
       const aiResponse: AICommand = {
         type: 'command',
+        intent: 'list_files',
         command: 'ls -la',
         explanation: 'Liste',
         confidence: 0.95,
@@ -123,6 +127,7 @@ describe('chatService', () => {
     test('should create entry with executed = true when specified', () => {
       const aiResponse: AICommand = {
         type: 'command',
+        intent: 'list_files',
         command: 'ls -la',
         explanation: 'Liste',
         confidence: 0.95,
@@ -183,6 +188,7 @@ describe('chatService', () => {
     test('should return true for command response', () => {
       const response: AICommand = {
         type: 'command',
+        intent: 'list_files',
         command: 'ls -la',
         explanation: 'Liste',
         confidence: 0.95,
@@ -214,6 +220,7 @@ describe('chatService', () => {
     test('should extract explanation from command response', () => {
       const response: AICommand = {
         type: 'command',
+        intent: 'list_files',
         command: 'ls -la',
         explanation: 'Liste les fichiers',
         confidence: 0.95,

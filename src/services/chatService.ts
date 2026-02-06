@@ -25,7 +25,7 @@ export const chatService = {
   extractRecentCommands(conversation: ConversationHistory[], limit = 5): string[] {
     return conversation
       .filter(entry => entry.aiResponse.type === 'command')
-      .map(entry => entry.aiResponse.command)
+      .map(entry => (entry.aiResponse as { type: 'command'; command: string }).command)
       .slice(-limit)
   },
 

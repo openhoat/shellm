@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, vi } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import {
   canExecuteCommand,
   createHistoryEntryFromConversation,
@@ -172,7 +172,13 @@ describe('commandExecutionService', () => {
 
       expect(entry).toEqual({
         userMessage: 'Liste les fichiers',
-        aiResponse: { command: 'ls -la' },
+        aiResponse: {
+          type: 'command',
+          intent: 'unknown',
+          command: 'ls -la',
+          explanation: '',
+          confidence: 0,
+        },
         executed: true,
       })
     })
