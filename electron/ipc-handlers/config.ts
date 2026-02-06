@@ -14,7 +14,7 @@ function isAppConfig(value: unknown): value is AppConfig {
 
   const config = value as Partial<AppConfig>
 
-  // Vérifier les champs obligatoires
+  // Vï¿½rifier les champs obligatoires
   if (!config.ollama || typeof config.ollama !== 'object') {
     return false
   }

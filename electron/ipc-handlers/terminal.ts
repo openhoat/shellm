@@ -13,7 +13,7 @@ export function createTerminalHandlers(mainWindow: BrowserWindow): void {
   ipcMain.handle('terminal:create', async () => {
     const shell = process.platform === 'win32' ? 'powershell.exe' : 'zsh'
 
-    // Créer une copie de l'environnement avec le type correct pour node-pty
+    // Crï¿½er une copie de l'environnement avec le type correct pour node-pty
     const env: Record<string, string | undefined> = {}
     for (const [key, value] of Object.entries(process.env)) {
       env[key] = value
