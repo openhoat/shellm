@@ -23,6 +23,17 @@ En résumé :
 
 ### 06/02
 
+**[03:13:50] 🐛 [FIX]** Corriger l'erreur ENOENT lors du chargement des prompts Ollama
+- Modifier package.json pour copier le dossier electron/prompts/ vers dist-electron/electron/prompts/
+- Ajouter une étape de copie dans le script build:electron
+- Les fichiers de prompts sont maintenant inclus dans le build
+
+**[03:11:15] ♻️ [REFACTOR]** Extraire les prompts Ollama dans des fichiers séparés
+- Créer electron/prompts/system-prompt.md
+- Créer electron/prompts/explain-command-prompt.md
+- Modifier electron/ipc-handlers/ollama.ts pour charger les prompts depuis les fichiers
+- Améliorer la maintenabilité des prompts
+
 **[03:04:30] 🐛 [FIX]** Corriger l'affichage incohérent des messages de test de connexion dans ConfigPanel (succès/échec affichaient le même message)
 
 ## 2026
