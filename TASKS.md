@@ -10,8 +10,11 @@ En résumé :
 - `- [x]` → tâche cochée (à ignorer pour le workflow)
 - Format : `- [ ] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
 
+
 ## Tâches à faire
 
+- [x] **[06/02/2026 01:32:30] 🔧 [CHORE]** Configurer le support multilangue (installer i18n, créer les fichiers de traduction fr.json et en.json)
+- [x] **[06/02/2026 01:32:35] ✨ [FEAT]** Externaliser les textes existants vers les fichiers de traduction et ajouter un sélecteur de langue
 - [x] **[06/02/2026 01:23:10] ✨ [FEAT]** Créer un composant LanguageSelector dans l'interface pour permettre le changement de langue
 - [x] **[06/02/2026 01:23:09] ♻️ [REFACTOR]** Externaliser tous les textes hardcoded des fichiers TypeScript (services, utils, etc.) vers les fichiers de traduction
 - [x] **[06/02/2026 01:23:08] ♻️ [REFACTOR]** Externaliser tous les textes hardcoded des composants React vers les fichiers de traduction
