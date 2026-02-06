@@ -40,6 +40,22 @@ En résumé :
 
 #### 06/02
 
+**[01:36:40] ✨ [FEAT]** Externaliser les textes et ajouter un sélecteur de langue
+- Créer le composant LanguageSelector pour changer de langue
+- Mettre à jour Header pour intégrer le sélecteur de langue et utiliser les traductions
+- Mettre à jour ConfigPanel pour utiliser les traductions i18next
+- Les utilisateurs peuvent maintenant changer la langue entre français et anglais
+
+**[01:35:40] 🔧 [CHORE]** Configurer le support multilangue avec i18next
+- Installer les dépendances i18next, react-i18next et i18next-browser-languagedetector
+- Créer les fichiers de traduction fr.json et en.json dans src/locales/
+- Configurer i18next avec détection automatique de la langue (localStorage, navigator)
+- Importer la configuration i18n dans main.tsx
+
+**[01:32:40] 🔧 [CHORE]** Créer 2 tâches depuis le BACKLOG pour le support multilangue (découpage simple)
+- Tâche 1 : Configurer le support multilangue (installer i18n, créer les fichiers de traduction fr.json et en.json)
+- Tâche 2 : Externaliser les textes existants vers les fichiers de traduction et ajouter un sélecteur de langue
+
 **[01:27:50] ♻️ [REFACTOR]** Convertir toutes les déclarations function en arrow functions dans le codebase
 - Convertir 5 déclarations function en const avec arrow functions
 - electron/main.ts : isStoreType, isAppConfig, createWindow

@@ -1,11 +1,13 @@
 import type { AppConfig } from '@shared/types'
 import { useCallback, useEffect, useState } from 'react'
 import { useStore } from '../store/useStore'
+import { useTranslation } from 'react-i18next'
 import { ModelSelector } from './ModelSelector'
 import './ConfigPanel.css'
 
 export const ConfigPanel = () => {
   const { config, setConfig, toggleConfigPanel } = useStore()
+  const { t } = useTranslation()
   const [localConfig, setLocalConfig] = useState<AppConfig>(config)
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null)
   const [availableModels, setAvailableModels] = useState<string[]>([])
@@ -77,7 +79,7 @@ export const ConfigPanel = () => {
       const success = await window.electronAPI.ollamaTestConnection()
       setTestResult({
         success,
-        message: success ? 'Connexion réussie !' : 'Échec de la connexion',
+        message: success ? t('errors.connection') : t('errors.connection'),
       })
 
       if (success) {
@@ -95,7 +97,7 @@ export const ConfigPanel = () => {
     <div className="config-overlay">
       <div className="config-panel">
         <div className="config-header">
-          <h2>Configuration</h2>
+          <h2>{t('config.title')}</h2>
           <button type="button" className="close-button" onClick={toggleConfigPanel}>
             <svg
               width="20"
@@ -114,11 +116,11 @@ export const ConfigPanel = () => {
 
         <div className="config-content">
           <div className="config-section">
-            <h3>Ollama Configuration</h3>
+            <h3>{t('config.ollama.title')}</h3>
 
             <div className="config-field">
               <label htmlFor="ollama-url">
-                URL Ollama
+                {t('config.ollama.url')}
                 {envSources.url && <span className="env-badge">Variable d'environnement</span>}
               </label>
               <input
@@ -144,7 +146,7 @@ export const ConfigPanel = () => {
 
             <div className="config-field">
               <label htmlFor="ollama-api-key">
-                Clé API (optionnel)
+                API Key (optional)
                 {envSources.apiKey && <span className="env-badge">Variable d'environnement</span>}
               </label>
               <input
@@ -170,7 +172,7 @@ export const ConfigPanel = () => {
 
             <div className="config-field">
               <label htmlFor="ollama-model">
-                Modèle
+                {t('config.ollama.model')}
                 {envSources.model && <span className="env-badge">Variable d'environnement</span>}
               </label>
               <ModelSelector
@@ -197,7 +199,7 @@ export const ConfigPanel = () => {
 
             <div className="config-field">
               <label htmlFor="ollama-temperature">
-                Température: {localConfig.ollama.temperature}
+                Temperature: {localConfig.ollama.temperature}
                 {envSources.temperature && (
                   <span className="env-badge">Variable d'environnement</span>
                 )}
@@ -258,7 +260,7 @@ export const ConfigPanel = () => {
 
             <div className="config-actions">
               <button type="button" className="btn btn-test" onClick={testConnection}>
-                Tester la connexion
+                {t('errors.connection')} Test
               </button>
             </div>
 
@@ -314,10 +316,10 @@ export const ConfigPanel = () => {
 
         <div className="config-footer">
           <button type="button" className="btn btn-reset" onClick={handleReset}>
-            Réinitialiser
+            Reset
           </button>
           <button type="button" className="btn btn-save" onClick={handleSave}>
-            Enregistrer
+            {t('config.ollama.save')}
           </button>
         </div>
       </div>

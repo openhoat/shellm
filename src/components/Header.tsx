@@ -1,8 +1,11 @@
 import { useStore } from '../store/useStore'
+import { useTranslation } from 'react-i18next'
+import LanguageSelector from './LanguageSelector'
 import './Header.css'
 
 export const Header = () => {
   const { config, toggleConfigPanel } = useStore()
+  const { t } = useTranslation()
 
   return (
     <header className="header">
@@ -22,11 +25,12 @@ export const Header = () => {
               : `Ollama: ${config.ollama.url}`}
           </span>
         </div>
+        <LanguageSelector />
         <button
           type="button"
           className="icon-button"
           onClick={toggleConfigPanel}
-          title="Configuration"
+          title={t('header.config')}
         >
           <svg
             width="20"
