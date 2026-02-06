@@ -21,6 +21,12 @@ En résumé :
 
 ### 2026
 
+### 06/02
+
+**[03:04:30] 🐛 [FIX]** Corriger l'affichage incohérent des messages de test de connexion dans ConfigPanel (succès/échec affichaient le même message)
+
+## 2026
+
 #### 06/02
 
 **[02:58:19] ♻️ [REFACTOR]** Déplacer le sélecteur de langue du header vers les paramètres

@@ -1,4 +1,4 @@
-import { AppConfig, AICommand } from '@shared/types'
+import type { AICommand, AppConfig } from '@shared/types'
 
 export interface ElectronAPI {
   // Config

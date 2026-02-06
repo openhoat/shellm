@@ -80,7 +80,7 @@ export const ConfigPanel = () => {
       const success = await window.electronAPI.ollamaTestConnection()
       setTestResult({
         success,
-        message: success ? t('errors.connection') : t('errors.connection'),
+        message: success ? t('errors.connectionSuccess') : t('errors.connection'),
       })
 
       if (success) {
@@ -261,7 +261,7 @@ export const ConfigPanel = () => {
 
             <div className="config-actions">
               <button type="button" className="btn btn-test" onClick={testConnection}>
-                {t('errors.connection')} Test
+                {t('test.connection')}
               </button>
             </div>
 

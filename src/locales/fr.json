@@ -39,8 +39,12 @@
     },
     "errors": {
       "connection": "Erreur de connexion",
+      "connectionSuccess": "Connexion réussie",
       "loadModels": "Erreur lors du chargement des modèles",
       "saveConfig": "Erreur lors de l'enregistrement de la configuration"
+    },
+    "test": {
+      "connection": "Tester la connexion"
     }
   }
 }
