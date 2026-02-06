@@ -11,13 +11,13 @@ interface OllamaConfig {
 }
 
 class OllamaService {
-  private axiosInstance: AxiosInstance
-  private model: string
-  private temperature: number
-  private maxTokens: number
+  #axiosInstance: AxiosInstance
+  #model: string
+  #temperature: number
+  #maxTokens: number
 
   constructor(config: OllamaConfig) {
-    this.axiosInstance = axios.create({
+    this.#axiosInstance = axios.create({
       baseURL: config.url,
       headers: {
         Authorization: config.apiKey ? `Bearer ${config.apiKey}` : '',
@@ -25,9 +25,9 @@ class OllamaService {
       },
       timeout: 60000,
     })
-    this.model = config.model || 'llama2'
-    this.temperature = config.temperature ?? 0.7
-    this.maxTokens = config.maxTokens ?? 1000
+    this.#model = config.model || 'llama2'
+    this.#temperature = config.temperature ?? 0.7
+    this.#maxTokens = config.maxTokens ?? 1000
   }
 
   async generateCommand(prompt: string, context?: string[]): Promise<AICommand> {
@@ -58,13 +58,13 @@ Remember: Respond with ONLY the JSON, nothing else.`
     if (context && context.length > 0) {
       fullPrompt += `\n\nRecent commands for context:\n${context.join('\n')}`
     }
-    const response = await this.axiosInstance.post('/api/generate', {
-      model: this.model,
+    const response = await this.#axiosInstance.post('/api/generate', {
+      model: this.#model,
       prompt: fullPrompt,
       stream: false,
       options: {
-        temperature: this.temperature * 0.5,
-        num_predict: this.maxTokens,
+        temperature: this.#temperature * 0.5,
+        num_predict: this.#maxTokens,
       },
     })
 
@@ -102,13 +102,13 @@ Focus on:
 2. What each flag/parameter means
 3. Any important side effects or risks
 Keep it concise and clear.`
-    const response = await this.axiosInstance.post('/api/generate', {
-      model: this.model,
+    const response = await this.#axiosInstance.post('/api/generate', {
+      model: this.#model,
       prompt: prompt,
       stream: false,
       options: {
-        temperature: this.temperature,
-        num_predict: Math.min(this.maxTokens, 500),
+        temperature: this.#temperature,
+        num_predict: Math.min(this.#maxTokens, 500),
       },
     })
 
@@ -117,7 +117,7 @@ Keep it concise and clear.`
 
   async testConnection(): Promise<boolean> {
     try {
-      const response = await this.axiosInstance.get('/api/tags')
+      const response = await this.#axiosInstance.get('/api/tags')
       return response.status === 200
     } catch (_error) {
       return false
@@ -126,7 +126,7 @@ Keep it concise and clear.`
 
   async listModels(): Promise<string[]> {
     try {
-      const response = await this.axiosInstance.get('/api/tags')
+      const response = await this.#axiosInstance.get('/api/tags')
       return response.data.models.map((model: { name: string }) => model.name)
     } catch (_error) {
       return []

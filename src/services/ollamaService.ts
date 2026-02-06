@@ -15,34 +15,38 @@ export interface ElectronOllamaAPI {
  * L'API Electron est injectée pour permettre le mocking dans les tests
  */
 export class OllamaService {
-  constructor(private electronAPI: ElectronOllamaAPI) {}
+  #electronAPI: ElectronOllamaAPI
+
+  constructor(electronAPI: ElectronOllamaAPI) {
+    this.#electronAPI = electronAPI
+  }
 
   /**
    * Génère une commande à partir d'une description en langage naturel
    */
   async generateCommand(prompt: string, recentCommands: string[] = []): Promise<AICommand> {
-    return this.electronAPI.generateCommand(prompt, recentCommands)
+    return this.#electronAPI.generateCommand(prompt, recentCommands)
   }
 
   /**
    * Initialise le service Ollama avec la configuration
    */
   async initialize(config: OllamaConfig): Promise<void> {
-    return this.electronAPI.init(config)
+    return this.#electronAPI.init(config)
   }
 
   /**
    * Teste la connexion au service Ollama
    */
   async testConnection(): Promise<boolean> {
-    return this.electronAPI.testConnection()
+    return this.#electronAPI.testConnection()
   }
 
   /**
    * Liste les modèles disponibles
    */
   async listModels(): Promise<string[]> {
-    return this.electronAPI.listModels()
+    return this.#electronAPI.listModels()
   }
 
   /**
