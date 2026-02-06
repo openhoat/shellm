@@ -18,5 +18,14 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+    rollupOptions: {
+      onwarn(warning, warn) {
+        // Ignore warnings about unresolved external dependencies
+        if (warning.code === 'UNRESOLVED_IMPORT') {
+          return
+        }
+        warn(warning)
+      },
+    },
   },
 })
