@@ -1,5 +1,4 @@
-
-# Historique
+# Changements
 
 Voir `.clinerules/task_format.md` pour les règles de format détaillées.
 
@@ -17,16 +16,17 @@ En résumé :
 - Classé par ordre antéchronologique (plus récent en haut)
 - Organisation par année/mois/jour (la date complète est dans les sections)
 
-
-
-
-
 ## Historique des modifications
 
 
 ### 2026
 
 #### 06/02
+
+**[02:36:20] 🔧 [CHORE]** Corriger l'erreur Biome lint/correctness/noUnusedVariables dans env.d.ts
+- Utiliser declare global pour étendre l'interface ImportMeta de Vite correctement
+- Ajouter env.d.ts dans tsconfig.json pour que les types soient chargés par TypeScript
+- Le logger peut maintenant accéder à import.meta.env sans erreur TypeScript
 
 **[02:26:30] 🐛 [FIX]** Corriger l'erreur TS2339 Property env does not exist on type ImportMeta dans src/utils/logger.ts
 - Créer le fichier env.d.ts avec les déclarations de types pour ImportMetaEnv et ImportMeta
@@ -40,19 +40,6 @@ En résumé :
 - Supprimer la configuration paths dans electron/tsconfig.json
 - Modifier tsc-alias.json pour utiliser aliasMap explicite
 - Le serveur de développement npm run dev fonctionne maintenant correctement
-
-
-
-
-
-
-
-
-
-
-
-
-#### 06/02
 
 **[01:36:40] ✨ [FEAT]** Externaliser les textes et ajouter un sélecteur de langue
 - Créer le composant LanguageSelector pour changer de langue
@@ -83,7 +70,6 @@ En résumé :
 **[01:01:00] 🐛 [FIX]** Corriger les problèmes d'encodage UTF-8 dans electron/ipc-handlers/
 - Corriger les erreurs internalError/io Biome dans electron/ipc-handlers/config.ts et electron/ipc-handlers/terminal.ts
 - Convertir les fichiers en encodage UTF-8 valide
-
 
 **[00:50:35] ✨ [FEAT]** Implémenter un service de logging en mémoire pour remplacer console.log
 - Créer src/utils/logger.ts avec gestion des niveaux de log (DEBUG, INFO, WARN, ERROR)
@@ -156,7 +142,6 @@ En résumé :
 - Passer le paramètre jsx de 'react' à 'react-jsx' dans tsconfig.json
 
 #### 05/02
-
 
 **[21:41:54] 🔧 [CHORE]** Configurer les messages de commit pour qu'ils soient en anglais
 - Mettre à jour commitlint.config.mjs avec les descriptions en anglais

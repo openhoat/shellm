@@ -1,5 +1,4 @@
-# Changelog
-# Historique
+# Archive des changements
 
 Voir `.clinerules/task_format.md` pour les règles de format détaillées.
 
@@ -17,10 +16,7 @@ En résumé :
 - Classé par ordre antéchronologique (plus récent en haut)
 - Organisation par année/mois/jour (la date complète est dans les sections)
 
-
 ## Historique des modifications
-
-
 
 ### 2026
 

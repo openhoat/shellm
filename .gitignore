@@ -36,6 +36,7 @@ release
 # Build
 build/
 out/
+tsconfig.tsbuildinfo
 
 # OS
 .DS_Store
