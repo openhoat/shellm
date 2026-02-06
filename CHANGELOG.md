@@ -20,12 +20,18 @@ En résumé :
 
 
 
+
 ## Historique des modifications
 
 
 ### 2026
 
 #### 06/02
+
+**[02:26:30] 🐛 [FIX]** Corriger l'erreur TS2339 Property env does not exist on type ImportMeta dans src/utils/logger.ts
+- Créer le fichier env.d.ts avec les déclarations de types pour ImportMetaEnv et ImportMeta
+- Configurer les propriétés MODE, BASE_URL, PROD, DEV pour import.meta.env de Vite
+- Le logger peut maintenant accéder à import.meta.env.MODE sans erreur TypeScript
 
 **[02:24:00] 🔧 [CHORE]** Corriger la configuration Electron et désactiver tsc-alias
 - Corriger le chemin main dans package.json (dist-electron/main.js → dist-electron/electron/main.js)
