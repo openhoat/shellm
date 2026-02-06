@@ -1,5 +1,5 @@
 import type { AICommand, AppConfig, ConversationHistory } from '@shared/types'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, test } from 'vitest'
 import { useStore } from './useStore'
 
 describe('useStore', () => {
@@ -87,6 +87,7 @@ describe('useStore', () => {
     test('should set AI command', () => {
       const command: AICommand = {
         type: 'command',
+        intent: 'list_files',
         command: 'ls -la',
         explanation: 'Liste tous les fichiers',
         confidence: 0.95,
@@ -133,6 +134,7 @@ describe('useStore', () => {
         userMessage: 'Liste les fichiers',
         aiResponse: {
           type: 'command',
+          intent: 'list_files',
           command: 'ls -la',
           explanation: 'Liste',
           confidence: 0.95,
