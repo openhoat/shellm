@@ -7,68 +7,68 @@
 
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://github.com/openhoat/shellm)
 
-Un terminal moderne alimenté par l'intelligence artificielle avec Ollama, inspiré de WARP. SheLLM vous permet de décrire ce que vous voulez faire en langage naturel et l'IA génère les commandes shell appropriées.
+A modern terminal powered by artificial intelligence with Ollama, inspired by WARP. SheLLM allows you to describe what you want to do in natural language and the AI generates the appropriate shell commands.
 
-## 🚀 Fonctionnalités
+## 🚀 Features
 
-- **Terminal de base** : Interface de terminal complète avec xterm.js
-- **IA Intégrée** : Génération de commandes shell à partir de descriptions en langage naturel
-- **Support Ollama** : Connexion configurable à des instances Ollama (locales ou distantes)
-- **Interface moderne** : Design sombre par défaut avec thème clair optionnel
-- **Configuration flexible** : URL Ollama, modèle, température, et plus encore
-- **Historique** : Suivi des conversations et des commandes exécutées
+- **Terminal Base**: Full terminal interface with xterm.js
+- **Integrated AI**: Generate shell commands from natural language descriptions
+- **Ollama Support**: Configurable connection to Ollama instances (local or remote)
+- **Modern Interface**: Dark theme by default with optional light theme
+- **Flexible Configuration**: Ollama URL, model, temperature, and more
+- **History**: Track conversations and executed commands
 
 ## ⭐ Star us on GitHub!
 
-Si ce projet vous est utile, n'oubliez pas de le [starer sur GitHub](https://github.com/openhoat/shellm) ! 🚀
+If this project is useful to you, don't forget to [star it on GitHub](https://github.com/openhoat/shellm)! 🚀
 
 ---
 
-## 📋 Prérequis
+## 📋 Prerequisites
 
-- Node.js 18+ et npm
-- Ollama installé et en cours d'exécution (pour l'utilisation locale)
-- Python 3 et make (pour la compilation de node-pty sur Linux)
+- Node.js 18+ and npm
+- Ollama installed and running (for local use)
+- Python 3 and make (for node-pty compilation on Linux)
 
 ## 🔧 Installation
 
-### 1. Cloner le projet
+### 1. Clone the project
 
 ```bash
 git clone <repository-url>
 cd shellm
 ```
 
-### 2. Installer les dépendances
+### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Installer et configurer Ollama
+### 3. Install and configure Ollama
 
-#### Installation d'Ollama
+#### Installing Ollama
 
-Visitez [ollama.ai](https://ollama.ai) et suivez les instructions d'installation pour votre système d'exploitation.
+Visit [ollama.ai](https://ollama.ai) and follow the installation instructions for your operating system.
 
-#### Démarrer Ollama
+#### Starting Ollama
 
 ```bash
 ollama serve
 ```
 
-#### Télécharger un modèle
+#### Download a model
 
 ```bash
 ollama pull llama2
-# ou tout autre modèle de votre choix
+# or any other model of your choice
 ```
 
-#### Utilisation d'une instance distante
+#### Using a remote instance
 
-Si vous utilisez Ollama sur une machine distante, configurez l'URL dans le panneau de configuration de SheLLM.
+If you're using Ollama on a remote machine, configure the URL in the SheLLM configuration panel.
 
-## 🚀 Démarrage rapide
+## 🚀 Quick Start
 
 ```bash
 git clone https://github.com/openhoat/shellm.git
@@ -77,41 +77,41 @@ npm install
 npm run dev
 ```
 
-Pour une utilisation complète, assurez-vous d'avoir [Ollama](https://ollama.ai) installé et en cours d'exécution.
+For full functionality, make sure you have [Ollama](https://ollama.ai) installed and running.
 
 ---
 
-## 🎮 Utilisation
+## 🎮 Usage
 
-### Mode développement
+### Development Mode
 
 ```bash
 npm run dev
 ```
 
-Cela lancera :
-- Le serveur de développement Vite (http://localhost:5173)
-- L'application Electron
+This will start:
+- The Vite development server (http://localhost:5173)
+- The Electron application
 
-#### Variables d'environnement pour Linux
+#### Environment Variables for Linux
 
-Sur Linux avec Wayland, vous pourriez rencontrer des avertissements liés à la compatibilité Wayland/Vulkan. Pour forcer l'utilisation de X11 :
+On Linux with Wayland, you may encounter warnings related to Wayland/Vulkan compatibility. To force X11 usage:
 
 ```bash
 ELECTRON_OZONE_PLATFORM_HINT=x11 npm run dev
 ```
 
-Cette variable d'environnement est recommandée pour éviter les avertissements :
+This environment variable is recommended to avoid warnings:
 - `--ozone-platform=wayland is not compatible with Vulkan`
-- Erreurs liées à systemd
+- Errors related to systemd
 
-### Build pour production
+### Production Build
 
 ```bash
 npm run build
 ```
 
-### Créer des exécutables
+### Create Executables
 
 #### Linux
 
@@ -131,81 +131,81 @@ npm run dist:mac
 npm run dist:win
 ```
 
-Les fichiers exécutables seront créés dans le dossier `release/`.
+Executable files will be created in the `release/` folder.
 
-## 📖 Guide d'utilisation
+## 📖 User Guide
 
-### Première utilisation
+### First Use
 
-1. Lancez l'application avec `npm run dev`
-2. Cliquez sur l'icône d'engrenage en haut à droite pour ouvrir la configuration
-3. Configurez l'URL de votre instance Ollama (par défaut : `http://localhost:11434`)
-4. Cliquez sur "Tester la connexion" pour vérifier la connexion
-5. Sélectionnez le modèle que vous souhaitez utiliser
-6. Cliquez sur "Enregistrer"
+1. Launch the application with `npm run dev`
+2. Click the gear icon in the top right to open configuration
+3. Configure your Ollama instance URL (default: `http://localhost:11434`)
+4. Click "Test connection" to verify the connection
+5. Select the model you want to use
+6. Click "Save"
 
-### Utiliser l'IA
+### Using the AI
 
-1. Dans le panneau de droite (AI Assistant), tapez votre demande en langage naturel
-   - Exemple : "Liste tous les fichiers de plus de 10MB dans le dossier courant"
-2. L'IA analysera votre demande et proposera une commande shell
-3. Vous pouvez :
-   - **Exécuter** : Lancer directement la commande dans le terminal
-   - **Modifier** : Ajuster la commande avant exécution
-   - **Annuler** : Ignorer la proposition
+1. In the right panel (AI Assistant), type your request in natural language
+   - Example: "List all files larger than 10MB in the current directory"
+2. The AI will analyze your request and propose a shell command
+3. You can:
+   - **Execute**: Run the command directly in the terminal
+   - **Edit**: Adjust the command before execution
+   - **Cancel**: Ignore the proposal
 
-### Utiliser le terminal
+### Using the Terminal
 
-Le terminal de gauche fonctionne comme un terminal classique. Vous pouvez :
-- Tapez des commandes directement
-- Naviguer dans les dossiers
-- Exécuter n'importe quelle commande shell
+The terminal on the left works like a classic terminal. You can:
+- Type commands directly
+- Navigate through directories
+- Run any shell command
 
 ## ⚙️ Configuration
 
 ### Ollama
 
-- **URL** : Adresse de votre instance Ollama (locale ou distante)
-- **Clé API** : Optionnel, si votre instance Ollama nécessite une authentification
-- **Modèle** : Modèle Ollama à utiliser (llama2, mistral, etc.)
-- **Température** : Contrôle la créativité de l'IA (0 = plus précis, 1 = plus créatif)
-- **Max Tokens** : Nombre maximum de tokens dans la réponse
+- **URL**: Address of your Ollama instance (local or remote)
+- **API Key**: Optional, if your Ollama instance requires authentication
+- **Model**: Ollama model to use (llama2, mistral, etc.)
+- **Temperature**: Controls AI creativity (0 = more precise, 1 = more creative)
+- **Max Tokens**: Maximum number of tokens in the response
 
 ### Interface
 
-- **Thème** : Sombre (par défaut) ou Clair
-- **Taille de police** : Ajustez la taille du texte (10-20px)
+- **Theme**: Dark (default) or Light
+- **Font Size**: Adjust text size (10-20px)
 
 ## 🏗️ Architecture
 
-### Structure du projet
+### Project Structure
 
 ```
 shellm/
-├── electron/              # Processus principal Electron
-│   ├── main.ts           # Point d'entrée
-│   ├── preload.ts        # Script de préchargement
-│   ├── ipc-handlers/     # Handlers IPC
-│   │   ├── terminal.ts   # Gestion du terminal
-│   │   ├── ollama.ts     # Service Ollama
-│   │   └── config.ts     # Gestion de la configuration
-│   └── tsconfig.json     # Configuration TypeScript
-├── src/                   # Processus de rendu (React)
-│   ├── components/       # Composants React
+├── electron/              # Electron main process
+│   ├── main.ts           # Entry point
+│   ├── preload.ts        # Preload script
+│   ├── ipc-handlers/     # IPC handlers
+│   │   ├── terminal.ts   # Terminal management
+│   │   ├── ollama.ts     # Ollama service
+│   │   └── config.ts     # Configuration management
+│   └── tsconfig.json     # TypeScript configuration
+├── src/                   # Renderer process (React)
+│   ├── components/       # React components
 │   │   ├── Terminal.tsx
 │   │   ├── ChatPanel.tsx
 │   │   ├── Header.tsx
 │   │   └── ConfigPanel.tsx
-│   ├── store/            # Gestion d'état (Zustand)
-│   ├── types/            # Types TypeScript
+│   ├── store/            # State management (Zustand)
+│   ├── types/            # TypeScript types
 │   ├── App.tsx
 │   ├── main.tsx
 │   └── App.css
-├── shared/               # Code partagé
-│   └── types.ts          # Types TypeScript communs
-├── dist/                 # Build React (généré)
-├── dist-electron/        # Build Electron (généré)
-├── release/              # Exécutables (généré)
+├── shared/               # Shared code
+│   └── types.ts          # Common TypeScript types
+├── dist/                 # React build (generated)
+├── dist-electron/        # Electron build (generated)
+├── release/              # Executables (generated)
 ├── index.html
 ├── package.json
 ├── tsconfig.json
@@ -213,201 +213,201 @@ shellm/
 └── README.md
 ```
 
-### Technologies utilisées
+### Technologies Used
 
-- **Electron** : Framework d'applications de bureau
-- **React** : Bibliothèque UI
-- **TypeScript** : Typage statique
-- **Vite** : Build tool et serveur de développement
-- **xterm.js** : Émulateur de terminal
-- **node-pty** : Émulation de terminal PTY
-- **Zustand** : Gestion d'état
-- **Ollama** : LLM local
-- **Axios** : Client HTTP
+- **Electron**: Desktop application framework
+- **React**: UI library
+- **TypeScript**: Static typing
+- **Vite**: Build tool and dev server
+- **xterm.js**: Terminal emulator
+- **node-pty**: PTY terminal emulation
+- **Zustand**: State management
+- **Ollama**: Local LLM
+- **Axios**: HTTP client
 
-## 📦 Archivage du CHANGELOG
+## 📦 CHANGELOG Archiving
 
-SheLLM dispose d'un système d'archivage automatique pour maintenir un CHANGELOG.md concis tout en conservant l'historique complet.
+SheLLM features an automatic archiving system to maintain a concise CHANGELOG.md while preserving full history.
 
-### Politique de rétention
+### Retention Policy
 
-- **Changements récents (30 derniers jours)** : conservés dans `CHANGELOG.md`
-- **Changements anciens (plus de 30 jours)** : archivés dans `CHANGELOG_ARCHIVE.md`
+- **Recent changes (last 30 days)**: kept in `CHANGELOG.md`
+- **Older changes (over 30 days)**: archived in `CHANGELOG_ARCHIVE.md`
 
-### Commande d'archivage manuel
+### Manual Archiving Command
 
 ```bash
 npm run archive-changelog
 ```
 
-### Période de rétention configurable
+### Configurable Retention Period
 
-La période de rétention peut être personnalisée via une variable d'environnement :
+The retention period can be customized via an environment variable:
 
 ```bash
 CHANGELOG_RETENTION_DAYS=60 npm run archive-changelog
 ```
 
-### Fichiers concernés
+### Affected Files
 
-- **CHANGELOG.md** : Contient les changements récents (≤ 30 jours)
-- **CHANGELOG_ARCHIVE.md** : Contient l'historique archivé (> 30 jours)
-- **.clinerules/workflows/archive_changelog.md** : Workflow d'archivage détaillé
+- **CHANGELOG.md**: Contains recent changes (≤ 30 days)
+- **CHANGELOG_ARCHIVE.md**: Contains archived history (> 30 days)
+- **.clinerules/workflows/archive_changelog.md**: Detailed archiving workflow
 
 ## 🧪 Tests
 
-SheLLM utilise une architecture de test avec **Vitest** qui sépare la logique métier de la couche Electron, permettant de tester environ **80% du code** sans dépendre d'Electron.
+SheLLM uses a test architecture with **Vitest** that separates business logic from the Electron layer, allowing approximately **80% of the code** to be tested without depending on Electron.
 
-### Ce qui est testé
+### What is Tested
 
-✅ **Logique d'état (Zustand)** : Gestion de l'état, actions (setConfig, setAiCommand, addToHistory, etc.)
-✅ **Composants React** : Logique de rendu et interactions utilisateur
-✅ **Types partagés** : Structures de données
+✅ **State Logic (Zustand)**: State management, actions (setConfig, setAiCommand, addToHistory, etc.)
+✅ **React Components**: Rendering logic and user interactions
+✅ **Shared Types**: Data structures
 
-### Ce qui n'est pas testé
+### What is NOT Tested
 
-❌ **Couche Electron IPC** : `electron/ipc-handlers/`
-❌ **Fenêtre Electron** : `electron/main.ts`
-❌ **Intégration complète** : Tests E2E
+❌ **Electron IPC Layer**: `electron/ipc-handlers/`
+❌ **Electron Window**: `electron/main.ts`
+❌ **Full Integration**: E2E tests
 
-### Exécution des tests
+### Running Tests
 
 ```bash
-# Exécuter les tests
+# Run tests
 npm test
 
-# Mode watch (re-exécution automatique)
+# Watch mode (auto-re-run)
 npm run test:watch
 
-# Mode UI (interface interactive)
+# UI mode (interactive interface)
 npm run test:ui
 ```
 
-### Structure des tests
+### Test Structure
 
 ```
 src/
 ├── test/
 │   ├── setup.ts              # Configuration + mocks window.electronAPI
-│   └── README.md             # Documentation des tests
+│   └── README.md             # Test documentation
 ├── store/
-│   └── useStore.test.ts      # Tests du store Zustand
+│   └── useStore.test.ts      # Zustand store tests
 └── components/
-    └── Header.test.tsx       # Tests des composants React
+    └── Header.test.tsx       # React component tests
 ```
 
-### Ajouter un nouveau test
+### Adding a New Test
 
-1. Créez un fichier `.test.ts` ou `.test.tsx` dans le dossier correspondant
-2. Utilisez les mocks de `window.electronAPI` définis dans `src/test/setup.ts`
-3. Exécutez les tests avec `npm test`
+1. Create a `.test.ts` or `.test.tsx` file in the corresponding folder
+2. Use the `window.electronAPI` mocks defined in `src/test/setup.ts`
+3. Run tests with `npm test`
 
-## 📝 Conventions de commit
+## 📝 Commit Conventions
 
-Ce projet utilise **commitlint** pour normaliser les messages de commit selon le format [Conventional Commits](https://www.conventionalcommits.org/).
+This project uses **commitlint** to standardize commit messages according to the [Conventional Commits](https://www.conventionalcommits.org/) format.
 
-### Format de commit
+### Commit Format
 
 ```
 <type>(<scope>): <subject>
 ```
 
-### Types autorisés
+### Allowed Types
 
-- **feat** : Nouvelle fonctionnalité
-- **fix** : Correction de bug
-- **docs** : Documentation
-- **style** : Style/formatage (pas de changement de code)
-- **refactor** : Refactorisation
-- **perf** : Performance
-- **test** : Tests
-- **chore** : Maintenance/Configuration
-- **revert** : Revert d'un commit
+- **feat**: New feature
+- **fix**: Bug fix
+- **docs**: Documentation
+- **style**: Styling/formatting (no code change)
+- **refactor**: Refactoring
+- **perf**: Performance
+- **test**: Tests
+- **chore**: Maintenance/Configuration
+- **revert**: Revert a commit
 
-### Exemples
+### Examples
 
 ```bash
-git commit -m "feat: ajouter le support de la configuration Ollama"
-git commit -m "fix: corriger l'erreur de connexion au terminal"
-git commit -m "docs: mettre à jour le README"
-git commit -m "style: formater le code avec Biome"
-git commit -m "refactor: simplifier la logique du store Zustand"
-git commit -m "perf: optimiser les performances de rendu"
-git commit -m "test: ajouter des tests pour le composant Terminal"
-git commit -m "chore: mettre à jour les dépendances"
+git commit -m "feat: add Ollama configuration support"
+git commit -m "fix: resolve terminal connection error"
+git commit -m "docs: update README"
+git commit -m "style: format code with Biome"
+git commit -m "refactor: simplify Zustand store logic"
+git commit -m "perf: optimize rendering performance"
+git commit -m "test: add tests for Terminal component"
+git commit -m "chore: update dependencies"
 ```
 
-### Validation automatique
+### Automatic Validation
 
-Un hook Git automatique valide le format de chaque commit avant son application. Si le format est incorrect, le commit sera rejeté.
+A Git hook automatically validates the format of each commit before applying it. If the format is incorrect, the commit will be rejected.
 
-### Validation manuelle
+### Manual Validation
 
-Pour valider un message de commit manuellement :
+To validate a commit message manually:
 
 ```bash
 npm run commit:lint
 ```
 
-## 🔒 Sécurité
+## 🔒 Security
 
-- Les commandes proposées par l'IA ne sont pas exécutées automatiquement
-- Vous avez toujours le contrôle : validation avant exécution
-- Possibilité de modifier les commandes avant exécution
-- Configuration stockée localement avec electron-store
+- Commands proposed by AI are not executed automatically
+- You always have control: validation before execution
+- Ability to modify commands before execution
+- Configuration stored locally with electron-store
 
-## 🐛 Dépannage
+## 🐛 Troubleshooting
 
-### Erreur de connexion Ollama
+### Ollama Connection Error
 
-1. Vérifiez qu'Ollama est en cours d'exécution : `ollama serve`
-2. Vérifiez l'URL dans la configuration
-3. Testez la connexion depuis votre navigateur : `http://localhost:11434/api/tags`
+1. Check that Ollama is running: `ollama serve`
+2. Verify the URL in configuration
+3. Test the connection from your browser: `http://localhost:11434/api/tags`
 
-### Problèmes de build
+### Build Issues
 
-- Linux : Assurez-vous d'avoir Python 3 et make installés
-- macOS : Assurez-vous d'avoir Xcode Command Line Tools installés
-- Windows : Assurez-vous d'avoir les outils de build Visual Studio installés
+- Linux: Make sure you have Python 3 and make installed
+- macOS: Make sure you have Xcode Command Line Tools installed
+- Windows: Make sure you have Visual Studio build tools installed
 
-### node-pty ne compile pas
+### node-pty won't compile
 
-Sur Linux :
+On Linux:
 ```bash
 sudo apt-get install build-essential python3
 npm rebuild node-pty
 ```
 
-## 📝 Exemples de requêtes
+## 📝 Query Examples
 
-- "Liste tous les fichiers Python dans le dossier courant"
-- "Trouve les fichiers de plus de 100MB dans /home"
-- "Affiche l'utilisation du disque"
-- "Compte le nombre de lignes dans tous les fichiers .txt"
-- "Crée un dossier avec la date d'aujourd'hui"
+- "List all Python files in the current directory"
+- "Find files larger than 100MB in /home"
+- "Show disk usage"
+- "Count the number of lines in all .txt files"
+- "Create a folder with today's date"
 
-## 🤝 Contribution
+## 🤝 Contributing
 
-Les contributions sont les bienvenues ! N'hésitez pas à :
+Contributions are welcome! Feel free to:
 
-1. Fork le projet
-2. Créer une branche pour votre fonctionnalité
-3. Commit vos changements
-4. Push vers la branche
-5. Ouvrir une Pull Request
+1. Fork the project
+2. Create a branch for your feature
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
 
-## 📄 Licence
+## 📄 License
 
-Ce projet est sous licence MIT - voir le fichier [LICENSE.txt](LICENSE.txt) pour plus de détails.
+This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
 Copyright © 2026 Olivier Penhoat
 
-## 👨‍💻 Auteur
+## 👨‍💻 Author
 
 Olivier Penhoat <openhoat@gmail.com>
 
-## 🙏 Remerciements
+## 🙏 Acknowledgments
 
-- WARP pour l'inspiration
-- L'équipe Ollama pour leur excellent outil
-- La communauté open-source
+- WARP for the inspiration
+- The Ollama team for their excellent tool
+- The open-source community
