@@ -8,13 +8,27 @@ import './Terminal.css'
 
 const logger = new Logger('Terminal')
 
+// Fonction pour nettoyer les codes ANSI d'une chaîne
+function stripAnsiCodes(str: string): string {
+  // Expression régulière pour les codes ANSI (séquences d'échappement)
+  const ansiRegex = /\x1B\[[0-9;]*[mGKH]/g
+  return str.replace(ansiRegex, '')
+}
+
+// Fonction pour nettoyer les séquences OSC (Operating System Command)
+function stripOscSequences(str: string): string {
+  // Expression régulière pour les séquences OSC (\x1B] ... \x07 ou \x1B\)
+  const oscRegex = /\x1B\][^\x07]*(?:\x07|\x1B\\)/g
+  return str.replace(oscRegex, '')
+}
+
 export const Terminal = () => {
   const terminalRef = useRef<HTMLDivElement>(null)
   const xtermRef = useRef<XTerm | null>(null)
   const fitAddonRef = useRef<FitAddon | null>(null)
   const terminalCreatedRef = useRef(false)
   const terminalPidRef = useRef<number | null>(null)
-  const { terminalPid, setTerminalPid } = useStore()
+  const { terminalPid, setTerminalPid, appendTerminalOutput, clearTerminalOutput } = useStore()
 
   // Keep terminalPidRef in sync with terminalPid
   useEffect(() => {
@@ -90,14 +104,56 @@ export const Terminal = () => {
       // Handle terminal data from main process
       const handleTerminalData = (data: { pid: number; data: string }) => {
         logger.debug(`Received data for PID: ${data.pid}, Current PID: ${terminalPidRef.current}`)
+        
         if (terminalPidRef.current === null) {
           // Terminal not created yet, ignore data
           logger.debug('Ignoring data - terminal not created yet')
           return
         }
+        
         if (data.pid === terminalPidRef.current) {
           logger.debug(`Writing data to xterm: ${data.data}`)
           xterm.write(data.data)
+          
+          // Capture terminal output for interpretation
+          // Split by newlines and filter out shell prompts, empty lines, and control sequences
+          const allLines = data.data.split('\n')
+          
+          const filteredLines = allLines
+            .map(line => {
+              // Nettoyer les séquences OSC
+              const cleanedOsc = stripOscSequences(line)
+              // Nettoyer les codes ANSI
+              const cleanedAnsi = stripAnsiCodes(cleanedOsc)
+              // Nettoyer les caractères de contrôle \r
+              const cleanedCr = cleanedAnsi.replace(/\r/g, '')
+              // Nettoyer les espaces en début et fin
+              return cleanedCr.trim()
+            })
+            .filter(line => {
+              // Skip empty lines
+              if (line.length === 0) {
+                return false
+              }
+              
+              // Skip bash prompts (format: user@hostname:~$)
+              // Le pattern est: word@word:word$
+              const isBashPrompt = /^[\w-]+@[\w-]+:[~\w-\/]*\$$/.test(line)
+              
+              if (isBashPrompt) {
+                logger.debug(`Filtering out bash prompt: "${line}"`)
+                return false
+              }
+              
+              return true
+            })
+          
+          logger.debug(`Total lines: ${allLines.length}, Filtered: ${filteredLines.length}`)
+          
+          if (filteredLines.length > 0) {
+            filteredLines.forEach(line => appendTerminalOutput(line))
+            logger.debug(`Appended ${filteredLines.length} lines to terminalOutput`)
+          }
         } else {
           logger.debug('Ignoring data - PID mismatch')
         }
@@ -150,7 +206,7 @@ export const Terminal = () => {
     }
 
     initializeTerminal()
-  }, [setTerminalPid])
+  }, [setTerminalPid, appendTerminalOutput])
 
   useEffect(() => {
     // Fit terminal when terminalPid changes
