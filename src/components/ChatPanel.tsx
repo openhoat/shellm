@@ -1,5 +1,6 @@
-import type { AICommand } from '@shared/types'
+import type { AICommand, CommandInterpretation } from '@shared/types'
 import { type FormEvent, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useStore } from '@/store/useStore'
 import Logger from '@/utils/logger'
 import './ChatPanel.css'
@@ -7,12 +8,16 @@ import './ChatPanel.css'
 const logger = new Logger('ChatPanel')
 
 export const ChatPanel = () => {
+  const { i18n } = useTranslation()
   const [userInput, setUserInput] = useState('')
+  const [currentCommandIndex, setCurrentCommandIndex] = useState<number | null>(null)
+  const [isInterpreting, setIsInterpreting] = useState(false)
   const [conversation, setConversation] = useState<
     Array<{
       type: 'user' | 'ai'
       content: string
       command?: AICommand
+      interpretation?: CommandInterpretation
     }>
   >([])
 
@@ -82,12 +87,19 @@ export const ChatPanel = () => {
 
       setAiCommand(response)
 
-      // Add AI response to conversation
+      // Add AI response to conversation and store the index
       const content = response.type === 'text' ? response.content : response.explanation
-      setConversation(prev => [
-        ...prev,
-        { type: 'ai', content, command: response.type === 'command' ? response : undefined },
-      ])
+      setConversation(prev => {
+        const newConversation = [
+          ...prev,
+          { type: 'ai', content, command: response.type === 'command' ? response : undefined },
+        ]
+        // Store the index of the newly added AI message if it's a command
+        if (response.type === 'command') {
+          setCurrentCommandIndex(newConversation.length - 1)
+        }
+        return newConversation
+      })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate command')
       setConversation(prev => [
@@ -99,7 +111,7 @@ export const ChatPanel = () => {
     }
   }
 
-  const executeCommand = async (command: string) => {
+  const executeCommand = async (command: string, messageIndex?: number) => {
     logger.debug('executeCommand called with:', command)
     logger.debug('Current terminalPid:', terminalPid)
 
@@ -134,16 +146,48 @@ export const ChatPanel = () => {
         })
       }
 
+      // Start capturing output
+      const _captureStarted = await window.electronAPI.terminalStartCapture(terminalPid)
+
       // Execute command in terminal
       logger.debug('Writing command to terminal:', command)
-      logger.debug('electronAPI available:', typeof window.electronAPI)
-      logger.debug('terminalWrite available:', typeof window.electronAPI?.terminalWrite)
-
       await window.electronAPI.terminalWrite(terminalPid, `${command}\r`)
       logger.info('Command written successfully')
       setAiCommand(null)
+
+      // Wait for command output
+      const waitTime = 3000 // 3 seconds total wait
+      logger.debug(`Waiting ${waitTime}ms for command output...`)
+      await new Promise(resolve => setTimeout(resolve, waitTime))
+
+      // Get captured output from backend
+      const output = await window.electronAPI.terminalGetCapture(terminalPid)
+
+      if (output.length > 0 && messageIndex !== undefined) {
+        try {
+          setIsInterpreting(true)
+          const interpretation = await window.electronAPI.ollamaInterpretOutput(
+            output,
+            i18n.language
+          )
+
+          // Update conversation with interpretation
+          setConversation(prev =>
+            prev.map((msg, idx) => (idx === messageIndex ? { ...msg, interpretation } : msg))
+          )
+        } catch (error) {
+          logger.error('Error interpreting output:', error)
+          setError(
+            `Erreur lors de l'interprétation: ${error instanceof Error ? error.message : 'Erreur inconnue'}`
+          )
+        } finally {
+          setIsInterpreting(false)
+        }
+      } else {
+        logger.warn('No output to interpret or message index undefined')
+      }
     } catch (error) {
-      logger.error('Error writing command:', error)
+      logger.error('Error executing command:', error)
       setError(
         `Erreur lors de l'exécution: ${error instanceof Error ? error.message : 'Erreur inconnue'}`
       )
@@ -197,6 +241,52 @@ export const ChatPanel = () => {
                     </div>
                   </div>
                 )}
+                {msg.interpretation && (
+                  <div className="command-interpretation">
+                    <div className="interpretation-label">Résultat :</div>
+                    <div className="interpretation-summary">{msg.interpretation.summary}</div>
+                    {msg.interpretation.key_findings.length > 0 && (
+                      <div className="interpretation-section">
+                        <strong>Points clés :</strong>
+                        <ul>
+                          {msg.interpretation.key_findings.map((finding, idx) => (
+                            <li key={idx}>{finding}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {msg.interpretation.warnings.length > 0 && (
+                      <div className="interpretation-section warnings">
+                        <strong>⚠️ Avertissements :</strong>
+                        <ul>
+                          {msg.interpretation.warnings.map((warning, idx) => (
+                            <li key={idx}>{warning}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {msg.interpretation.errors.length > 0 && (
+                      <div className="interpretation-section errors">
+                        <strong>❌ Erreurs :</strong>
+                        <ul>
+                          {msg.interpretation.errors.map((error, idx) => (
+                            <li key={idx}>{error}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {msg.interpretation.recommendations.length > 0 && (
+                      <div className="interpretation-section">
+                        <strong>💡 Recommandations :</strong>
+                        <ul>
+                          {msg.interpretation.recommendations.map((rec, idx) => (
+                            <li key={idx}>{rec}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -210,6 +300,19 @@ export const ChatPanel = () => {
                 <span></span>
                 <span></span>
               </div>
+            </div>
+          </div>
+        )}
+
+        {isInterpreting && (
+          <div className="chat-message ai">
+            <div className="message-content">
+              <div className="loading-spinner">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <p>Analyse des résultats en cours...</p>
             </div>
           </div>
         )}
@@ -232,7 +335,8 @@ export const ChatPanel = () => {
               e.stopPropagation()
               logger.debug('Execute button clicked!')
               logger.debug('Button terminalPid check:', terminalPid)
-              executeCommand(aiCommand.command)
+              logger.debug('Using currentCommandIndex:', currentCommandIndex)
+              executeCommand(aiCommand.command, currentCommandIndex ?? undefined)
             }}
             title={!terminalPid ? "Le terminal n'est pas encore prêt" : 'Exécuter la commande'}
           >

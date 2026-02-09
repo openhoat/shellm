@@ -10,6 +10,10 @@ interface AppState {
   // Terminal
   terminalPid: number | null
   setTerminalPid: (pid: number | null) => void
+  terminalOutput: string[]
+  setTerminalOutput: (output: string[]) => void
+  appendTerminalOutput: (line: string) => void
+  clearTerminalOutput: () => void
 
   // AI
   aiCommand: AICommand | null
@@ -52,6 +56,13 @@ export const useStore = create<AppState>((set, _get) => ({
   // Terminal
   terminalPid: null,
   setTerminalPid: pid => set({ terminalPid: pid }),
+  terminalOutput: [],
+  setTerminalOutput: output => set({ terminalOutput: output }),
+  appendTerminalOutput: line =>
+    set(state => ({
+      terminalOutput: [...state.terminalOutput, line].slice(-100),
+    })),
+  clearTerminalOutput: () => set({ terminalOutput: [] }),
 
   // AI
   aiCommand: null,
