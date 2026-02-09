@@ -93,6 +93,18 @@ Cela lancera :
 - Le serveur de développement Vite (http://localhost:5173)
 - L'application Electron
 
+#### Variables d'environnement pour Linux
+
+Sur Linux avec Wayland, vous pourriez rencontrer des avertissements liés à la compatibilité Wayland/Vulkan. Pour forcer l'utilisation de X11 :
+
+```bash
+ELECTRON_OZONE_PLATFORM_HINT=x11 npm run dev
+```
+
+Cette variable d'environnement est recommandée pour éviter les avertissements :
+- `--ozone-platform=wayland is not compatible with Vulkan`
+- Erreurs liées à systemd
+
 ### Build pour production
 
 ```bash
