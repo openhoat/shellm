@@ -14,6 +14,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   terminalResize: (pid: number, cols: number, rows: number) =>
     ipcRenderer.invoke('terminal:resize', pid, cols, rows),
   terminalDestroy: (pid: number) => ipcRenderer.invoke('terminal:destroy', pid),
+  terminalStartCapture: (pid: number) => ipcRenderer.invoke('terminal:startCapture', pid),
+  terminalGetCapture: (pid: number) => ipcRenderer.invoke('terminal:getCapture', pid),
 
   // Terminal events
   onTerminalData: (callback: (data: { pid: number; data: string }) => void) => {
@@ -34,6 +36,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   ollamaGenerateCommand: (prompt: string, context?: string[]) =>
     ipcRenderer.invoke('ollama:generate-command', prompt, context),
   ollamaExplainCommand: (command: string) => ipcRenderer.invoke('ollama:explain-command', command),
+  ollamaInterpretOutput: (output: string, language?: string) =>
+    ipcRenderer.invoke('ollama:interpret-output', output, language),
   ollamaTestConnection: () => ipcRenderer.invoke('ollama:test-connection'),
   ollamaListModels: () => ipcRenderer.invoke('ollama:list-models'),
 })
