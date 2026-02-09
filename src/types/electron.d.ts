@@ -1,4 +1,4 @@
-import type { AICommand, AppConfig } from '@shared/types'
+import type { AICommand, AppConfig, CommandInterpretation } from '@shared/types'
 
 export interface ElectronAPI {
   // Config
@@ -18,6 +18,8 @@ export interface ElectronAPI {
   terminalWrite: (pid: number, data: string) => Promise<void>
   terminalResize: (pid: number, cols: number, rows: number) => Promise<void>
   terminalDestroy: (pid: number) => Promise<void>
+  terminalStartCapture: (pid: number) => Promise<boolean>
+  terminalGetCapture: (pid: number) => Promise<string>
 
   // Terminal events
   onTerminalData: (callback: (data: { pid: number; data: string }) => void) => void
@@ -33,6 +35,7 @@ export interface ElectronAPI {
   }) => Promise<void>
   ollamaGenerateCommand: (prompt: string, context?: string[]) => Promise<AICommand>
   ollamaExplainCommand: (command: string) => Promise<string>
+  ollamaInterpretOutput: (output: string, language?: string) => Promise<CommandInterpretation>
   ollamaTestConnection: () => Promise<boolean>
   ollamaListModels: () => Promise<string[]>
 }
