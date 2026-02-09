@@ -42,6 +42,16 @@ export interface AICommandShell {
   confidence: number
 }
 
+// Interprétation de sortie de commande
+export interface CommandInterpretation {
+  summary: string
+  key_findings: string[]
+  warnings: string[]
+  errors: string[]
+  recommendations: string[]
+  successful: boolean
+}
+
 // Historique de conversation
 export interface ConversationHistory {
   id: string

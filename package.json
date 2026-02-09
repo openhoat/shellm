@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist-electron/electron/main.js",
   "scripts": {
-    "clean": "rimraf dist dist-electron release",
+    "clean": "rimraf -g -v dist dist-electron release **/tsconfig.tsbuildinfo",
     "dev": "concurrently \"npm run dev:vite\" \"npm run dev:electron\"",
     "dev:vite": "vite",
     "dev:electron": "npm run build:electron && electron .",

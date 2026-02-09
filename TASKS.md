@@ -14,7 +14,13 @@ En résumé :
 
 ## Tâches à faire
 
-- [ ] **[06/02/2026 03:23:15] ✨ [FEAT]** Interpréter les résultats d'exécution de commande pour répondre dans le chat
+- [x] **[06/02/2026 03:28:00] ✨ [FEAT]** Créer le prompt d'interprétation des résultats de commande (electron/prompts/interpret-output-prompt.md)
+- [x] **[06/02/2026 03:28:00] ✨ [FEAT]** Ajouter le type TypeScript CommandInterpretation dans shared/types.ts
+- [x] **[06/02/2026 03:28:00] ✨ [FEAT]** Implémenter la méthode interpretOutput() dans le service Ollama (electron/ipc-handlers/ollama.ts)
+- [x] **[06/02/2026 03:28:00] ✨ [FEAT]** Exposer l'API d'interprétation via IPC (handlers, preload, types)
+- [x] **[06/02/2026 03:28:00] ✨ [FEAT]** Implémenter la capture des résultats dans le composant Terminal
+- [x] **[06/02/2026 03:28:00] ✨ [FEAT]** Afficher l'interprétation des résultats dans ChatPanel après l'exécution d'une commande
+- [x] **[06/02/2026 03:28:00] ✅ [TEST]** Créer des tests pour le service d'interprétation des résultats
 - [x] **[06/02/2026 01:32:30] 🔧 [CHORE]** Configurer le support multilangue (installer i18n, créer les fichiers de traduction fr.json et en.json)
 - [x] **[06/02/2026 01:32:35] ✨ [FEAT]** Externaliser les textes existants vers les fichiers de traduction et ajouter un sélecteur de langue
 - [x] **[06/02/2026 01:23:10] ✨ [FEAT]** Créer un composant LanguageSelector dans l'interface pour permettre le changement de langue

@@ -77,7 +77,7 @@ const createWindow = (): void => {
     minHeight: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      devTools: false,
+      devTools: true,
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
@@ -92,6 +92,17 @@ const createWindow = (): void => {
   } else {
     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))
   }
+
+  // Add keyboard shortcut to open DevTools (Ctrl+Shift+I or Cmd+Option+I)
+  mainWindow.webContents.on('before-input-event', (_event, input) => {
+    if (
+      (input.control || input.meta) &&
+      input.shift &&
+      (input.key.toLowerCase() === 'i' || input.key === 'I')
+    ) {
+      mainWindow?.webContents.toggleDevTools()
+    }
+  })
 
   mainWindow.on('closed', () => {
     mainWindow = null
