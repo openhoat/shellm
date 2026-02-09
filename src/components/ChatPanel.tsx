@@ -249,8 +249,8 @@ export const ChatPanel = () => {
                       <div className="interpretation-section">
                         <strong>Points clés :</strong>
                         <ul>
-                          {msg.interpretation.key_findings.map((finding, idx) => (
-                            <li key={idx}>{finding}</li>
+                          {msg.interpretation.key_findings.map(finding => (
+                            <li key={finding}>{finding}</li>
                           ))}
                         </ul>
                       </div>
@@ -259,8 +259,8 @@ export const ChatPanel = () => {
                       <div className="interpretation-section warnings">
                         <strong>⚠️ Avertissements :</strong>
                         <ul>
-                          {msg.interpretation.warnings.map((warning, idx) => (
-                            <li key={idx}>{warning}</li>
+                          {msg.interpretation.warnings.map(warning => (
+                            <li key={warning}>{warning}</li>
                           ))}
                         </ul>
                       </div>
@@ -269,8 +269,8 @@ export const ChatPanel = () => {
                       <div className="interpretation-section errors">
                         <strong>❌ Erreurs :</strong>
                         <ul>
-                          {msg.interpretation.errors.map((error, idx) => (
-                            <li key={idx}>{error}</li>
+                          {msg.interpretation.errors.map(error => (
+                            <li key={error}>{error}</li>
                           ))}
                         </ul>
                       </div>
@@ -279,8 +279,8 @@ export const ChatPanel = () => {
                       <div className="interpretation-section">
                         <strong>💡 Recommandations :</strong>
                         <ul>
-                          {msg.interpretation.recommendations.map((rec, idx) => (
-                            <li key={idx}>{rec}</li>
+                          {msg.interpretation.recommendations.map(rec => (
+                            <li key={rec}>{rec}</li>
                           ))}
                         </ul>
                       </div>

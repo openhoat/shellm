@@ -48,6 +48,7 @@ describe('commandExecutionService', () => {
     })
 
     test('should handle terminalWrite errors', async () => {
+      // biome-ignore lint/suspicious/noConsole: Mocking console for error handling test
       const originalConsole = console.error
       console.error = vi.fn()
 
