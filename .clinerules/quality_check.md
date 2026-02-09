@@ -1,56 +1,56 @@
 # Quality Check
 
-## Objectif
+## Objective
 
-Cette règle assure que chaque modification du code respecte les standards de qualité définis par Biome.
+This rule ensures that each code modification respects the quality standards defined by Biome.
 
-## Règles de format des tâches
+## Task format rules
 
-Voir `.clinerules/task_format.md` pour les règles de format détaillées.
+See `.clinerules/task_format.md` for detailed format rules.
 
-En résumé pour TASKS.md :
-- `- [ ]` → tâche à faire (à exécuter)
-- `- [x]` → tâche cochée (à ignorer)
+Summary for TASKS.md:
+- `- [ ]` → task to do (to execute)
+- `- [x]` → checked task (to ignore)
 
-## Quand exécuter ce contrôle
+## When to execute this check
 
-Après chaque modification de code (création, édition, suppression de fichiers), exécutez systématiquement le contrôle qualité avant de passer à la tâche suivante.
+After each code modification (creation, editing, deletion of files), systematically run the quality check before moving to the next task.
 
-## Processus de vérification
+## Verification process
 
-### 1. Exécuter le script `validate`
+### 1. Run the `validate` script
 
 ```bash
 npm run validate
 ```
 
-### 2. Analyser le résultat
+### 2. Analyze the result
 
-- **Si le contrôle réussi** (pas d'erreur) : Continuez avec la tâche suivante
-- **Si le contrôle échoue** (erreurs détectées) : Procédez à l'étape 3
+- **If check passes** (no errors): Continue with the next task
+- **If check fails** (errors detected): Proceed to step 3
 
-### 3. Corriger les erreurs
+### 3. Fix errors
 
-Exécutez le script `qa:fix` pour corriger automatiquement les erreurs :
+Run the `qa:fix` script to automatically fix errors:
 
 ```bash
 npm run qa:fix
 ```
 
-### 4. Revérifier
+### 4. Re-verify
 
-Réexécutez `npm run validate` pour confirmer que toutes les erreurs sont corrigées.
+Re-run `npm run validate` to confirm all errors are fixed.
 
 ## Exceptions
 
-Si le script `qa:fix` ne parvient pas à corriger toutes les erreurs automatiquement :
+If the `qa:fix` script fails to fix all errors automatically:
 
-1. Identifiez les erreurs restantes
-2. Corrigez-les manuellement
-3. Réexécutez `npm run validate` pour confirmer la correction
+1. Identify remaining errors
+2. Fix them manually
+3. Re-run `npm run validate` to confirm the fix
 
-## Règles importantes
+## Important rules
 
-- **Ne jamais passer à une tâche suivante** sans avoir exécuté `npm run validate` avec succès
-- **Ne jamais cocher une tâche** dans TASKS.md sans avoir passé le contrôle qualité
-- En cas d'échec du contrôle qualité, **ne pas modifier TASKS.md**
+- **Never move to a next task** without successfully running `npm run validate`
+- **Never check a task** in TASKS.md without passing the quality check
+- In case of quality check failure, **do not modify TASKS.md**

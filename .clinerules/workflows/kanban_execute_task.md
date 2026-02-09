@@ -1,223 +1,223 @@
-# Workflow Cline pour exécuter les tâches du Kanban
+# Cline Workflow for Executing Kanban Tasks
 
-## Objectif
+## Objective
 
-Ce workflow automatise l'exécution des tâches du fichier `/KANBAN.md` et la création de commits Git. Pour les idées avec plusieurs tâches, un seul commit est créé avec le détail des tâches en description.
+This workflow automates the execution of tasks from the `/KANBAN.md` file and the creation of Git commits. For ideas with multiple tasks, a single commit is created with task details in the description.
 
-## Règles de format
+## Format rules
 
-Voir `.clinerules/task_format.md` pour les règles de format détaillées.
+See `.clinerules/task_format.md` for detailed format rules.
 
-En résumé :
-- `- [ ]` → tâche à faire
-- `- [x]` → tâche cochée (terminée)
-- Format tâche : `- [ ] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
+Summary:
+- `- [ ]` → task to do
+- `- [x]` → checked task (completed)
+- Task format: `- [ ] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
 
-## Instructions d'exécution
+## Execution instructions
 
-### 1. Lire le fichier KANBAN.md
+### 1. Read KANBAN.md
 
-Utilisez l'outil `read_file` pour lire le contenu du fichier `/KANBAN.md` à la racine du projet.
+Use the `read_file` tool to read the content of the `/KANBAN.md` file at the project root.
 
-### 2. Analyser les sections "In Progress"
+### 2. Analyze "In Progress" sections
 
-Identifiez toutes les sections dans "## 🚧 In Progress" :
-- **Sections d'idées** : commencent par `### [DATE] 💡 [IDEA]`
-  - Contiennent une ou plusieurs tâches sous-jacentes
-- **Tâches isolées** : lignes avec `- [ ] **[...]]` sans section idée
+Identify all sections in "## 🚧 In Progress":
+- **Idea sections**: start with `### [DATE] 💡 [IDEA]`
+  - Contain one or more underlying tasks
+- **Isolated tasks**: lines with `- [ ] **[...]]` without idea section
 
-### 3. Exécuter les tâches
+### 3. Execute tasks
 
-Pour chaque section ou tâche identifiée :
+For each section or task identified:
 
-#### 3a. Pour une section d'idée avec tâches
+#### 3a. For an idea section with tasks
 
-1. Exécuter chaque tâche non cochée dans l'ordre
-2. Utilisez les outils Cline appropriés (execute_command, write_to_file, replace_in_file, etc.)
-3. Après chaque tâche réussie, marquez-la comme cochée (`- [x]`) dans KANBAN.md
+1. Execute each unchecked task in order
+2. Use appropriate Cline tools (execute_command, write_to_file, replace_in_file, etc.)
+3. After each successful task, mark it as checked (`- [x]`) in KANBAN.md
 
-4. **Vérifier si toutes les tâches de l'idée sont terminées**
-   - Si toutes les tâches sont cochées → Passer à l'étape 4a
-   - Si des tâches restent à faire → Continuer avec la prochaine idée/tâche
+4. **Check if all tasks of the idea are completed**
+   - If all tasks are checked → Go to step 4a
+   - If tasks remain to do → Continue with next idea/task
 
-#### 3b. Pour une tâche isolée
+#### 3b. For an isolated task
 
-1. Exécuter la tâche
-2. Si succès → Passer à l'étape 4b
+1. Execute the task
+2. If successful → Go to step 4b
 
-### 4. Créer le commit Git
+### 4. Create Git commit
 
-#### 4a. Pour une idée terminée (toutes les tâches cochées)
+#### 4a. For a completed idea (all tasks checked)
 
-Générez le message de commit au format Conventional Commits :
+Generate the commit message in Conventional Commits format:
 
-**Format :**
+**Format:**
 ```
-[TAG]: Description de l'idée
+[TAG]: Description of the idea
 
-- Description de la tâche 1
-- Description de la tâche 2
-- Description de la tâche 3
-```
-
-**Règles :**
-- Utilisez le tag du type de modification principal (ex: `[FEAT]` pour les features)
-- La description principale est celle de l'idée originale
-- Listez toutes les tâches avec leur description
-- Commencez chaque ligne par "- " (puce)
-
-**Exemple :**
-```
-[FEAT]: Ajouter un système de thèmes sombre/clair
-
-- Installer les dépendances nécessaires (npm install theme-provider)
-- Créer le composant ThemeSwitcher dans src/components/
-- Créer les styles CSS pour le thème sombre
-- Ajouter le toggle dans le header de l'application
+- Description of task 1
+- Description of task 2
+- Description of task 3
 ```
 
-#### 4b. Pour une tâche isolée terminée
+**Rules:**
+- Use the tag of the main modification type (ex: `[FEAT]` for features)
+- The main description is the original idea's description
+- List all tasks with their description
+- Start each line with "- " (bullet point)
 
-Générez le message de commit au format Conventional Commits :
-
-**Format :**
+**Example:**
 ```
-[TAG]: Description de la tâche
+[FEAT]: Add a dark/light theme system
+
+- Install necessary dependencies (npm install theme-provider)
+- Create ThemeSwitcher component in src/components/
+- Create CSS styles for dark theme
+- Add toggle in application header
 ```
 
-**Exemple :**
+#### 4b. For a completed isolated task
+
+Generate the commit message in Conventional Commits format:
+
+**Format:**
 ```
-[FIX]: Corriger le bug de connexion dans le handler d'authentification
+[TAG]: Description of the task
 ```
 
-### 5. Ajouter les fichiers à Git
+**Example:**
+```
+[FIX]: Fix connection bug in authentication handler
+```
 
-Exécutez la commande :
+### 5. Add files to Git
+
+Execute the command:
 ```bash
-git add <fichiers_modifiés>
+git add <modified_files>
 ```
 
-Ajoutez tous les fichiers modifiés/créés/supprimés pour cette tâche/idée.
+Add all modified/created/deleted files for this task/idea.
 
-### 6. Créer le commit
+### 6. Create commit
 
-Exécutez la commande :
+Execute the command:
 ```bash
-git commit -m "Message du commit"
+git commit -m "Commit message"
 ```
 
-Utilisez toujours des guillemets doubles autour du message de commit pour gérer les retours à la ligne.
+Always use double quotes around the commit message to handle line breaks.
 
-### 7. Supprimer la section/tâche de KANBAN.md
+### 7. Delete section/task from KANBAN.md
 
-Une fois le commit créé avec succès :
+Once the commit is successfully created:
 
-- **Pour une idée** : Supprimer toute la section (header + tâches) de "## 🚧 In Progress"
-- **Pour une tâche isolée** : Supprimer la ligne de la tâche de "## 🚧 In Progress"
+- **For an idea**: Delete the entire section (header + tasks) from "## 🚧 In Progress"
+- **For an isolated task**: Delete the task line from "## 🚧 In Progress"
 
-Utilisez `replace_in_file` pour supprimer le bloc complet.
+Use `replace_in_file` to delete the complete block.
 
-### 8. Répéter pour les autres idées/tâches
+### 8. Repeat for other ideas/tasks
 
-Continuez avec les autres sections ou tâches de "## 🚧 In Progress" jusqu'à ce que tout soit traité.
+Continue with other sections or tasks in "## 🚧 In Progress" until everything is processed.
 
-### 9. Régénérer CHANGELOG.md
+### 9. Regenerate CHANGELOG.md
 
-Après avoir terminé toutes les tâches, exécutez :
+After completing all tasks, execute:
 ```bash
 npm run changelog
 ```
 
-Cela va régénérer le fichier `CHANGELOG.md` depuis l'historique Git.
+This will regenerate the `CHANGELOG.md` file from Git history.
 
-### 10. Rapport d'exécution
+### 10. Execution report
 
-Informez l'utilisateur de l'avancement après chaque étape :
-- Tâches exécutées avec succès
-- Commits créés avec leur hash et message
-- Sections/tâches supprimées de KANBAN.md
-- En cas d'erreur, expliquez la raison sans modifier KANBAN.md
+Inform the user of progress after each step:
+- Successfully executed tasks
+- Created commits with their hash and message
+- Deleted sections/tasks from KANBAN.md
+- In case of error, explain the reason without modifying KANBAN.md
 
-## Règles importantes
+## Important rules
 
-- **1 idée = 1 commit** : Toutes les tâches d'une idée sont commitées ensemble
-- **1 tâche isolée = 1 commit** : Chaque tâche isolée est commitée individuellement
-- Ne créez un commit que si **toutes** les tâches d'une idée sont terminées
-- Ne supprimez une section/tâche de KANBAN.md qu'après un commit **réussi**
-- Si une tâche échoue, marquez-la comme échouée et passez à la suivante (ne pas cocher)
-- Incluez toujours `CHANGELOG.md` dans le commit (car il sera régénéré)
+- **1 idea = 1 commit**: All tasks of an idea are committed together
+- **1 isolated task = 1 commit**: Each isolated task is committed individually
+- Only create a commit if **all** tasks of an idea are completed
+- Only delete a section/task from KANBAN.md after a **successful** commit
+- If a task fails, mark it as failed and move to next (don't check)
+- Always include `CHANGELOG.md` in the commit (as it will be regenerated)
 
-## Exemple de flux complet
+## Example complete flow
 
 ```
-1. Lire KANBAN.md → trouver 2 idées + 1 tâche isolée dans In Progress
+1. Read KANBAN.md → find 2 ideas + 1 isolated task in In Progress
 
-2. Idée #1 : "Ajouter un système de thèmes" avec 3 tâches
-   - Exécuter tâche 1 (Installer les dépendances) → succès → cocher
-   - Exécuter tâche 2 (Créer ThemeSwitcher) → succès → cocher
-   - Exécuter tâche 3 (Créer les styles) → succès → cocher
-   - Toutes les tâches cochées → créer commit
+2. Idea #1: "Add a theme system" with 3 tasks
+   - Execute task 1 (Install dependencies) → success → check
+   - Execute task 2 (Create ThemeSwitcher) → success → check
+   - Execute task 3 (Create styles) → success → check
+   - All tasks checked → create commit
    - git add ...
-   - git commit -m "[FEAT]: Ajouter un système de thèmes sombre/clair
+   - git commit -m "[FEAT]: Add a dark/light theme system
 
-   - Installer les dépendances nécessaires (npm install theme-provider)
-   - Créer le composant ThemeSwitcher dans src/components/
-   - Créer les styles CSS pour le thème sombre"
-   - Supprimer la section de KANBAN.md
+   - Install necessary dependencies (npm install theme-provider)
+   - Create ThemeSwitcher component in src/components/
+   - Create CSS styles for dark theme"
+   - Delete section from KANBAN.md
 
-3. Tâche isolée : "Corriger le bug de login"
-   - Exécuter la tâche → succès → cocher
-   - Créer commit
+3. Isolated task: "Fix login bug"
+   - Execute task → success → check
+   - Create commit
    - git add ...
-   - git commit -m "[FIX]: Corriger le bug de connexion dans le formulaire de login"
-   - Supprimer la tâche de KANBAN.md
+   - git commit -m "[FIX]: Fix connection bug in login form"
+   - Delete task from KANBAN.md
 
-4. Idée #2 : "Améliorer les performances" (tâches restantes)
-   - Exécuter tâche 1 → succès → cocher
-   - Tâche 2 non terminée → s'arrêter, ne pas créer de commit
+4. Idea #2: "Improve performance" (remaining tasks)
+   - Execute task 1 → success → check
+   - Task 2 not completed → stop, don't create commit
 
-5. npm run changelog → régénérer CHANGELOG.md
+5. npm run changelog → regenerate CHANGELOG.md
 
-6. Rapport : 2 commits créés, 1 idée en cours, 1 tâche restante
+6. Report: 2 commits created, 1 idea in progress, 1 remaining task
 ```
 
-## Exemple de KANBAN.md avant/après
+## Example KANBAN.md before/after
 
-**Avant - In Progress :**
+**Before - In Progress:**
 ```markdown
 ## 🚧 In Progress
-### [09/02/2026 08:00:00] 💡 [IDEA] Ajouter un système de thèmes sombre/clair
-- [ ] **[09/02/2026 08:30:15] 🔧 [CHORE]** Installer les dépendances nécessaires
-- [ ] **[09/02/2026 08:30:20] ✨ [FEAT]** Créer le composant ThemeSwitcher
-- [ ] **[09/02/2026 08:30:25] 🎨 [STYLE]** Créer les styles pour le thème sombre
+### [09/02/2026 08:00:00] 💡 [IDEA] Add a theme system
+- [ ] **[09/02/2026 08:30:15] 🔧 [CHORE]** Install necessary dependencies
+- [ ] **[09/02/2026 08:30:20] ✨ [FEAT]** Create ThemeSwitcher component
+- [ ] **[09/02/2026 08:30:25] 🎨 [STYLE]** Create styles for dark theme
 
-- [ ] **[09/02/2026 09:00:00] 🐛 [FIX]** Corriger le bug de login
+- [ ] **[09/02/2026 09:00:00] 🐛 [FIX]** Fix login bug
 ```
 
-**Après exécution partielle - In Progress :**
+**After partial execution - In Progress:**
 ```markdown
 ## 🚧 In Progress
-### [09/02/2026 08:00:00] 💡 [IDEA] Ajouter un système de thèmes sombre/clair
-- [x] **[09/02/2026 08:30:15] 🔧 [CHORE]** Installer les dépendances nécessaires
-- [x] **[09/02/2026 08:30:20] ✨ [FEAT]** Créer le composant ThemeSwitcher
-- [x] **[09/02/2026 08:30:25] 🎨 [STYLE]** Créer les styles pour le thème sombre
+### [09/02/2026 08:00:00] 💡 [IDEA] Add a theme system
+- [x] **[09/02/2026 08:30:15] 🔧 [CHORE]** Install necessary dependencies
+- [x] **[09/02/2026 08:30:20] ✨ [FEAT]** Create ThemeSwitcher component
+- [x] **[09/02/2026 08:30:25] 🎨 [STYLE]** Create styles for dark theme
 ```
 
-**Après commit - In Progress :**
+**After commit - In Progress:**
 ```markdown
 ## 🚧 In Progress
 
-(Aucun travail en cours pour le moment)
+(No work in progress for the moment)
 ```
 
-## Gestion des erreurs
+## Error handling
 
-Si une tâche échoue :
-1. Ne la cochez pas
-2. Informez l'utilisateur de l'erreur
-3. Passez à la tâche suivante
-4. Ne créez pas de commit si l'idée n'est pas complètement terminée
+If a task fails:
+1. Don't check it
+2. Inform the user of the error
+3. Move to next task
+4. Don't create commit if the idea is not completely completed
 
-## Note sur CHANGELOG.md
+## Note on CHANGELOG.md
 
-Le fichier `CHANGELOG.md` est généré automatiquement depuis Git par le script `scripts/generate-changelog.js`. Il ne doit pas être modifié manuellement.
+The `CHANGELOG.md` file is automatically generated from Git by the script `scripts/generate-changelog.js`. It should not be manually modified.

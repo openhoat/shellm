@@ -1,190 +1,190 @@
-# Workflow Cline pour nettoyer le Kanban
+# Cline Workflow for Kanban Cleanup
 
-## Objectif
+## Objective
 
-Ce workflow permet de nettoyer manuellement les entrées obsolètes du fichier `/KANBAN.md`. Il identifie les entrées candidates au nettoyage et demande confirmation avant suppression.
+This workflow allows manual cleanup of obsolete entries in the `/KANBAN.md` file. It identifies entries eligible for cleanup and requests confirmation before deletion.
 
-## Règles de format
+## Format rules
 
-Voir `.clinerules/task_format.md` pour les règles de format détaillées.
+See `.clinerules/task_format.md` for detailed format rules.
 
-En résumé :
-- `- [ ]` → tâche à faire
-- `- [x]` → tâche cochée (terminée)
-- Format tâche : `- [ ] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
+Summary:
+- `- [ ]` → task to do
+- `- [x]` → checked task (completed)
+- Task format: `- [ ] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
 
-## Instructions d'exécution
+## Execution instructions
 
-### 1. Lire le fichier KANBAN.md
+### 1. Read KANBAN.md
 
-Utilisez l'outil `read_file` pour lire le contenu du fichier `/KANBAN.md` à la racine du projet.
+Use the `read_file` tool to read the content of the `/KANBAN.md` file at the project root.
 
-### 2. Analyser les entrées candidates au nettoyage
+### 2. Analyze entries eligible for cleanup
 
-Identifiez les entrées dans les sections suivantes qui peuvent être nettoyées :
+Identify entries in the following sections that can be cleaned up:
 
 #### 2a. Section "## ✅ Done"
 
-Identifiez les tâches terminées dans cette section :
-- Tâches isolées terminées (`- [x]`)
-- Sections complètes (header idée + tâches) toutes terminées
+Identify completed tasks in this section:
+- Isolated completed tasks (`- [x]`)
+- Complete sections (idea header + tasks) all completed
 
 #### 2b. Section "## 🚧 In Progress"
 
-Identifiez les entrées inactives depuis longtemps :
-- Sections d'idées avec des tâches inachevées depuis > 30 jours
-- Tâches isolées inachevées depuis > 30 jours
-- Sections/tâches abandonnées (identifiable par un commentaire ou contexte)
+Identify entries inactive for a long time:
+- Idea sections with incomplete tasks for > 30 days
+- Isolated incomplete tasks for > 30 days
+- Abandoned sections/tasks (identifiable by comment or context)
 
-### 3. Présenter les entrées à l'utilisateur
+### 3. Present eligible entries to user
 
-Affichez la liste des entrées candidates au nettoyage avec un numéro pour chacune. Utilisez l'outil `ask_followup_question` pour demander à l'utilisateur :
-- Quelles entrées il souhaite supprimer
-- S'il souhaite supprimer toutes les entrées identifiées
-- S'il préfère les déplacer dans une section "## 📦 Archived" (optionnel)
+Display the list of entries eligible for cleanup with a number for each. Use the `ask_followup_question` tool to ask the user:
+- Which entries they want to delete
+- If they want to delete all identified entries
+- If they prefer to move them to a "## 📦 Archived" section (optional)
 
-### 4. Supprimer les entrées sélectionnées
+### 4. Delete selected entries
 
-Pour chaque entrée sélectionnée :
+For each selected entry:
 
-#### 4a. Suppression d'une tâche isolée
+#### 4a. Delete isolated task
 
-Utilisez `replace_in_file` pour supprimer la ligne de la tâche :
-- Le SEARCH block doit correspondre exactement à la ligne contenant la tâche
+Use `replace_in_file` to delete the task line:
+- The SEARCH block must match exactly the line containing the task
 
-#### 4b. Suppression d'une section d'idée
+#### 4b. Delete idea section
 
-Utilisez `replace_in_file` pour supprimer le bloc complet :
-- Le SEARCH block doit inclure le header de section (`### [DATE] 💡 [IDEA] ...`)
-- Et toutes les tâches associées
+Use `replace_in_file` to delete the complete block:
+- The SEARCH block must include the section header (`### [DATE] 💡 [IDEA] ...`)
+- And all associated tasks
 
-### 5. Optionnel : Déplacement vers Archive
+### 5. Optional: Move to Archive
 
-Si l'utilisateur préfère archiver plutôt que supprimer :
+If the user prefers to archive rather than delete:
 
-#### 5a. Créer la section Archive
+#### 5a. Create Archive section
 
-Si la section "## 📦 Archived" n'existe pas, créez-la en bas de KANBAN.md :
+If the "## 📦 Archived" section doesn't exist, create it at the bottom of KANBAN.md:
 
 ```markdown
 ## 📦 Archived
 
-(Aucune entrée archivée pour le moment)
+(No archived entries for the moment)
 ```
 
-#### 5b. Déplacer les entrées
+#### 5b. Move entries
 
-Pour chaque entrée à archiver :
-1. Extraire le bloc (header idée + tâches ou ligne de tâche isolée)
-2. Supprimer de la section d'origine
-3. Ajouter à la section "## 📦 Archived"
+For each entry to archive:
+1. Extract the block (idea header + tasks or isolated task line)
+2. Delete from original section
+3. Add to "## 📦 Archived" section
 
-### 6. Mettre à jour KANBAN.md
+### 6. Update KANBAN.md
 
-Utilisez `replace_in_file` pour appliquer les modifications de suppression ou d'archivage.
+Use `replace_in_file` to apply deletion or archiving modifications.
 
-### 7. Rapport d'exécution
+### 7. Execution report
 
-Informez l'utilisateur :
-- Des entrées supprimées ou archivées
-- Des sections modifiées dans KANBAN.md
-- En cas d'erreur, expliquez la raison sans modifier KANBAN.md
+Inform the user:
+- Of deleted or archived entries
+- Of modified sections in KANBAN.md
+- In case of error, explain the reason without modifying KANBAN.md
 
-## Règles importantes
+## Important rules
 
-- Ce workflow est **manuel** : il doit être explicitement demandé par l'utilisateur
-- **Toujours demander confirmation** avant de supprimer des entrées
-- Ne supprimez jamais d'entrées sans validation explicite de l'utilisateur
-- Pour les entrées "Done", considérez qu'elles sont déjà dans Git et peuvent être supprimées
-- Pour les entrées "In Progress" inactives, demandez confirmation avant suppression
+- This workflow is **manual**: it must be explicitly requested by the user
+- **Always request confirmation** before deleting entries
+- Never delete entries without explicit user validation
+- For "Done" entries, consider they are already in Git and can be deleted
+- For inactive "In Progress" entries, request confirmation before deletion
 
-## Exemple de flux
+## Example flow
 
 ```
-1. Lire KANBAN.md
+1. Read KANBAN.md
 
-2. Analyser les entrées candidates :
-   - Done : 3 tâches terminées
-   - In Progress : 1 section idée inactive depuis 45 jours
+2. Analyze eligible entries:
+   - Done: 3 completed tasks
+   - In Progress: 1 idea section inactive for 45 days
 
-3. Présenter à l'utilisateur :
-   # Entrées candidates au nettoyage
+3. Present to user:
+   # Entries eligible for cleanup
 
-   Done (3 tâches) :
-   1. [05/01/2026] ✨ [FEAT] Implémenter le système d'authentification
-   2. [08/01/2026] 🐛 [FIX] Corriger le bug de logout
-   3. [10/01/2026] 🔧 [CHORE] Mettre à jour les dépendances
+   Done (3 tasks):
+   1. [05/01/2026] ✨ [FEAT] Implement authentication system
+   2. [08/01/2026] 🐛 [FIX] Fix logout bug
+   3. [10/01/2026] 🔧 [CHORE] Update dependencies
 
-   In Progress inactif depuis > 30 jours :
-   4. [15/01/2026] 💡 [IDEA] Refactoriser le code base (3 tâches non terminées)
+   In Progress inactive for > 30 days:
+   4. [15/01/2026] 💡 [IDEA] Refactor code base (3 incomplete tasks)
 
-   Que souhaitez-vous faire ?
-   - Supprimer les entrées 1-3 (Done)
-   - Supprimer l'entrée 4 (In Progress abandonné)
-   - Archiver toutes les entrées
-   - Annuler
+   What do you want to do?
+   - Delete entries 1-3 (Done)
+   - Delete entry 4 (Abandoned In Progress)
+   - Archive all entries
+   - Cancel
 
-4. Utilisateur choisit de supprimer 1-3 et archiver 4
+4. User chooses to delete 1-3 and archive 4
 
-5. Supprimer les 3 tâches de Done
-6. Déplacer la section #4 vers Archive
+5. Delete 3 tasks from Done
+6. Move section #4 to Archive
 
-7. Rapport : 3 tâches supprimées, 1 section archivée
+7. Report: 3 tasks deleted, 1 section archived
 ```
 
-## Exemple de KANBAN.md avant/après
+## Example KANBAN.md before/after
 
-**Avant - Done :**
+**Before - Done:**
 ```markdown
 ## ✅ Done
-- [x] **[05/01/2026 15:30:00] ✨ [FEAT]** Implémenter le système d'authentification
-- [x] **[08/01/2026 10:15:00] 🐛 [FIX]** Corriger le bug de logout
-- [x] **[10/01/2026 09:00:00] 🔧 [CHORE]** Mettre à jour les dépendances
+- [x] **[05/01/2026 15:30:00] ✨ [FEAT]** Implement authentication system
+- [x] **[08/01/2026 10:15:00] 🐛 [FIX]** Fix logout bug
+- [x] **[10/01/2026 09:00:00] 🔧 [CHORE]** Update dependencies
 ```
 
-**Après suppression - Done :**
+**After deletion - Done:**
 ```markdown
 ## ✅ Done
 
-(Aucune tâche terminée pour le moment)
+(No completed tasks for the moment)
 ```
 
-**Avant - In Progress (inactif) :**
+**Before - In Progress (inactive):**
 ```markdown
 ## 🚧 In Progress
-### [15/01/2026 08:00:00] 💡 [IDEA] Refactoriser le code base
-- [x] **[15/01/2026 09:00:00] ♻️ [REFACTOR]** Restructurer les dossiers
-- [ ] **[15/01/2026 09:30:00] ♻️ [REFACTOR]** Renommer les composants
-- [ ] **[15/01/2026 10:00:00] ✅ [TEST]** Ajouter les tests unitaires
+### [15/01/2026 08:00:00] 💡 [IDEA] Refactor code base
+- [x] **[15/01/2026 09:00:00] ♻️ [REFACTOR]** Restructure folders
+- [ ] **[15/01/2026 09:30:00] ♻️ [REFACTOR]** Rename components
+- [ ] **[15/01/2026 10:00:00] ✅ [TEST]** Add unit tests
 ```
 
-**Après archivage - In Progress :**
+**After archiving - In Progress:**
 ```markdown
 ## 🚧 In Progress
 
-(Aucun travail en cours pour le moment)
+(No work in progress for the moment)
 ```
 
-**Après archivage - Archived :**
+**After archiving - Archived:**
 ```markdown
 ## 📦 Archived
-### [15/01/2026 08:00:00] 💡 [IDEA] Refactoriser le code base (abandonné)
-- [x] **[15/01/2026 09:00:00] ♻️ [REFACTOR]** Restructurer les dossiers
-- [ ] **[15/01/2026 09:30:00] ♻️ [REFACTOR]** Renommer les composants
-- [ ] **[15/01/2026 10:00:00] ✅ [TEST]** Ajouter les tests unitaires
+### [15/01/2026 08:00:00] 💡 [IDEA] Refactor code base (abandoned)
+- [x] **[15/01/2026 09:00:00] ♻️ [REFACTOR]** Restructure folders
+- [ ] **[15/01/2026 09:30:00] ♻️ [REFACTOR]** Rename components
+- [ ] **[15/01/2026 10:00:00] ✅ [TEST]** Add unit tests
 ```
 
-## Critères de nettoyage suggérés
+## Suggested cleanup criteria
 
-### Section Done
-- Tâches terminées depuis plus de 7 jours
-- Tâches déjà commitées dans Git
+### Done section
+- Tasks completed for more than 7 days
+- Tasks already committed to Git
 
-### Section In Progress
-- Sections/tâches inactives depuis plus de 30 jours
-- Sections/tâches abandonnées (identifiable par contexte)
-- Idées dépassées ou remplacées par d'autres
+### In Progress section
+- Sections/tasks inactive for more than 30 days
+- Abandoned sections/tasks (identifiable by context)
+- Outdated or replaced ideas
 
 ## Note
 
-Ce workflow est optionnel et doit être exécuté manuellement par l'utilisateur quand il le juge nécessaire. Il n'y a pas de nettoyage automatique programmé.
+This workflow is optional and must be executed manually by the user when they deem it necessary. There is no scheduled automatic cleanup.

@@ -1,5 +1,5 @@
 import type { CommandInterpretation } from '@shared/types'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
 // Mock window.electronAPI
 const mockOllamaInterpretOutput = vi.fn()
@@ -20,7 +20,7 @@ describe('Interpret Output Service', () => {
     vi.resetAllMocks()
   })
 
-  it('should successfully interpret command output', async () => {
+  test('should successfully interpret command output', async () => {
     const mockOutput =
       'total 24\ndrwxr-xr-x  2 user group 4096 Jan 15 10:30 .\ndrwxr-xr-x  3 user group 4096 Jan 15 10:30 ..\n-rw-r--r--  1 user group  123 Jan 15 10:30 file1.txt\n-rw-r--r--  1 user group  456 Jan 15 10:30 file2.txt\n-rw-r--r--  1 user group  789 Jan 15 10:30 file3.txt\n-rwxr-xr-x  1 user group  987 Jan 15 10:30 script.sh'
 
@@ -48,7 +48,7 @@ describe('Interpret Output Service', () => {
     expect(result.key_findings).toHaveLength(3)
   })
 
-  it('should interpret failed command output with errors', async () => {
+  test('should interpret failed command output with errors', async () => {
     const mockOutput =
       'ls: cannot access nonexistent.txt: No such file or directory\nls: cannot access missing.txt: No such file or directory'
 
@@ -78,7 +78,7 @@ describe('Interpret Output Service', () => {
     expect(result.recommendations).toHaveLength(2)
   })
 
-  it('should interpret command output with warnings', async () => {
+  test('should interpret command output with warnings', async () => {
     const mockOutput =
       'WARNING: This is a deprecated option\nWARNING: Another warning\nCommand completed with warnings'
 
@@ -104,7 +104,7 @@ describe('Interpret Output Service', () => {
     expect(result.warnings).toHaveLength(2)
   })
 
-  it('should handle empty output', async () => {
+  test('should handle empty output', async () => {
     const mockOutput = ''
 
     const mockInterpretation: CommandInterpretation = {
@@ -124,7 +124,7 @@ describe('Interpret Output Service', () => {
     expect(result).toEqual(mockInterpretation)
   })
 
-  it('should handle interpretation service errors', async () => {
+  test('should handle interpretation service errors', async () => {
     const mockOutput = 'some output'
 
     mockOllamaInterpretOutput.mockRejectedValue(new Error('Service unavailable'))
@@ -134,7 +134,7 @@ describe('Interpret Output Service', () => {
     )
   })
 
-  it('should provide recommendations for successful commands', async () => {
+  test('should provide recommendations for successful commands', async () => {
     const mockOutput = 'Disk usage: 85% used\nWarning: Low disk space'
 
     const mockInterpretation: CommandInterpretation = {

@@ -15,18 +15,18 @@ export function createTerminalHandlers(mainWindow: BrowserWindow): void {
   ipcMain.handle('terminal:create', async () => {
     const shell = process.platform === 'win32' ? 'powershell.exe' : 'bash'
 
-    // Crer une copie de l'environnement avec le type correct pour node-pty
+    // Create a copy of the environment with the correct type for node-pty
     const env: Record<string, string | undefined> = {}
     for (const [key, value] of Object.entries(process.env)) {
       env[key] = value
     }
 
-    // Configurer un prompt bash simple et prévisible
+    // Configure a simple and predictable bash prompt
     // Format: user@hostname:~$
     env.PS1 = '\\u@\\h:\\w\\$ '
 
-    // Lancer bash avec --norc pour ignorer .bashrc et autres fichiers de configuration
-    // Cela garantit que le prompt PS1 configuré est utilisé et non surchargé
+    // Launch bash with --norc to ignore .bashrc and other configuration files
+    // This ensures that the configured PS1 prompt is used and not overridden
     const ptyProcess = pty.spawn(shell, ['--norc'], {
       name: 'xterm-color',
       cols: 80,

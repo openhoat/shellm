@@ -2,12 +2,12 @@
 
 ## 📝 Backlog
 
-(Aucune idée pour le moment)
+(No ideas for the moment)
 
 ## 🚧 In Progress
 
-(Aucun travail en cours pour le moment)
+(No work in progress for the moment)
 
 ## ✅ Done
 
-(Aucune tâche terminée pour le moment)
+(No completed tasks for the moment)

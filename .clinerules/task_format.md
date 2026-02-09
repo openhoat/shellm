@@ -1,119 +1,119 @@
 # Task Format Rules
 
-## Objectif
+## Objective
 
-Définit les règles de format communes pour tous les fichiers de tâches du projet (BACKLOG.md, CHANGELOG.md, etc.).
+Defines common format rules for all task files in the project (BACKLOG.md, CHANGELOG.md, etc.).
 
-## Règles de format générales
+## General format rules
 
-### Cases à cocher
+### Checkboxes
 
-- **Tâche à faire** : `- [ ] Description de la tâche`
-- **Tâche cochée** : `- [x] Description de la tâche`
-- **Tâche ignorée** : Utiliser une case cochée pour mettre en pause ou exclure temporairement
+- **Task to do**: `- [ ] Task description`
+- **Checked task**: `- [x] Task description`
+- **Ignored task**: Use a checked checkbox to pause or exclude temporarily
 
-### Commentaires (optionnel)
+### Comments (optional)
 
-- Les commentaires peuvent être utilisés pour documenter ou expliquer le contexte
-- Utilisez le format HTML des commentaires Markdown :
+- Comments can be used to document or explain context
+- Use HTML Markdown comment format:
   ```markdown
-  [//]: # Ceci est un commentaire explicatif
+  [//]: # This is an explanatory comment
   ```
-- Pattern regex pour détection : `^\[\/\/\]: # (.*)$`
-- Les lignes correspondant à ce pattern doivent être ignorées lors des traitements
+- Regex pattern for detection: `^\[\/\/\]: # (.*)$`
+- Lines matching this pattern must be ignored during processing
 
-### Tags de catégorisation et Emojis
+### Categorization tags and Emojis
 
-Chaque tâche doit utiliser le format avec emojis et tags entre crochets :
-- **✨ [FEAT]** : Nouvelle fonctionnalité ou évolution
-- **🐛 [BUG]** : Correction de bug ou de problème
-- **♻️ [REFACTOR]** : Refactorisation
-- **⚡ [PERF]** : Performance
-- **📝 [DOCS]** : Documentation
-- **🎨 [STYLE]** : Style/Cosmétique
-- **✅ [TEST]** - Tests
-- **🔧 [CHORE]** - Configuration/Maintenance
+Each task must use the format with emojis and tags in brackets:
+- **✨ [FEAT]**: New feature or evolution
+- **🐛 [BUG]**: Bug fix or problem correction
+- **♻️ [REFACTOR]**: Refactoring
+- **⚡ [PERF]**: Performance
+- **📝 [DOCS]**: Documentation
+- **🎨 [STYLE]**: Style/Cosmetic
+- **✅ [TEST]**: Tests
+- **🔧 [CHORE]**: Configuration/Maintenance
 
-### Dates et heures
+### Dates and times
 
-- **Format** : `DD/MM/YYYY HH:mm:ss`
-- **Exemple** : `03/02/2026 17:30:15`
-- Utilisé dans CHANGELOG.md pour les entrées de modifications
+- **Format**: `DD/MM/YYYY HH:mm:ss`
+- **Example**: `03/02/2026 17:30:15`
+- Used in CHANGELOG.md for modification entries
 
-### Description des tâches
+### Task descriptions
 
-- Commencer par un verbe à l'infinitif ou l'impératif (ex: "Ajouter", "Corriger", "Implémenter")
-- Être concis mais informatif
-- Mentionner les fichiers modifiés si pertinent
+- Start with a verb in infinitive or imperative (ex: "Add", "Fix", "Implement")
+- Be concise but informative
+- Mention modified files if relevant
 
-### Hiérarchie et sous-tâches
+### Hierarchy and sub-tasks
 
-Les sous-tâches peuvent être indentées avec 4 espaces :
+Sub-tasks can be indented with 4 spaces:
 
 ```markdown
-- [ ] **[DD/MM/YYYY HH:mm:ss] ✨ [FEAT]** Tâche principale
-    - [ ] Sous-tâche 1
-    - [ ] Sous-tâche 2
+- [ ] **[DD/MM/YYYY HH:mm:ss] ✨ [FEAT]** Main task
+    - [ ] Sub-task 1
+    - [ ] Sub-task 2
 ```
 
-Les sous-tâches n'ont pas besoin d'emoji ni de tag : l'information de catégorie est portée par la tâche parente.
+Sub-tasks don't need emoji or tag: category information is carried by the parent task.
 
-## Règles spécifiques par fichier
+## File-specific rules
 
 ### TASKS.md
 
-- Contient les tâches **à exécuter** (`- [ ]`)
-- Les tâches cochées (`- [x]`) sont considérées comme ignorées/pausées
-- Format : `- [ ] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
-- Les emojis et tags sont les mêmes que pour CHANGELOG.md :
-  - `✨ [FEAT]` : Nouvelle fonctionnalité ou évolution
-  - `🐛 [BUG]` : Correction de bug ou de problème
-  - `♻️ [REFACTOR]` : Refactorisation
-  - `⚡ [PERF]` : Performance
-  - `📝 [DOCS]` : Documentation
-  - `🎨 [STYLE]` : Style/Cosmétique
-  - `✅ [TEST]` : Tests
-  - `🔧 [CHORE]` : Configuration/Maintenance
-- La date et l'heure indiquent le moment de création de la tâche
-- Les commentaires sont optionnels et servent uniquement à documenter le contexte
+- Contains tasks **to execute** (`- [ ]`)
+- Checked tasks (`- [x]`) are considered ignored/paused
+- Format: `- [ ] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
+- Emojis and tags are the same as for CHANGELOG.md:
+  - `✨ [FEAT]`: New feature or evolution
+  - `🐛 [BUG]`: Bug fix or problem correction
+  - `♻️ [REFACTOR]`: Refactoring
+  - `⚡ [PERF]`: Performance
+  - `📝 [DOCS]`: Documentation
+  - `🎨 [STYLE]`: Style/Cosmetic
+  - `✅ [TEST]`: Tests
+  - `🔧 [CHORE]`: Configuration/Maintenance
+- Date and time indicate the moment of task creation
+- Comments are optional and serve only to document context
 
 ### BACKLOG.md
 
-- Contient les **idées de features** à convertir en tâches (`- [ ]`)
-- Les idées cochées (`- [x]`) sont considérées comme déjà converties (à ignorer)
-- Format : `- [ ] **[DD/MM/YYYY HH:mm:ss] 💡 [IDEA]** Description de l'idée`
-- Utilise uniquement l'emoji `💡` et le tag `[IDEA]`
-- La date et l'heure indiquent le moment de création de l'idée dans le backlog
-- Les commentaires sont optionnels et servent uniquement à documenter le contexte
-- Ce fichier n'est pas utilisé par le workflow `do_tasks.md`
+- Contains **feature ideas** to convert to tasks (`- [ ]`)
+- Checked ideas (`- [x]`) are considered already converted (to ignore)
+- Format: `- [ ] **[DD/MM/YYYY HH:mm:ss] 💡 [IDEA]** Idea description`
+- Uses only emoji `💡` and tag `[IDEA]`
+- Date and time indicate the moment of idea creation in backlog
+- Comments are optional and serve only to document context
+- This file is not used by the `do_tasks.md` workflow
 
 ### CHANGELOG.md
 
-- Contient uniquement des entrées de modifications réalisées
-- Structure :
-  - Titre de niveau 1 : `# Historique`
-  - Règles de format détaillées (en dessous du titre principal)
-  - Titre de niveau 2 : `## Historique des modifications`
-  - Pour chaque année : titre de niveau 3 `### YYYY`
-  - Pour chaque mois/jour : titre de niveau 4 `#### MM/DD`
-  - Entrées de modifications avec le format : `**[HH:MM:SS] Emoji [TAG]** Description`
-- Tags et emojis :
-  - `✨ [FEAT]` - Nouvelle fonctionnalité
-  - `🐛 [FIX]` - Correction de bug
-  - `♻️ [REFACTOR]` - Refactorisation
+- Contains only entries of completed modifications
+- Structure:
+  - Level 1 title: `# History`
+  - Detailed format rules (below main title)
+  - Level 2 title: `## Modification History`
+  - For each year: level 3 title `### YYYY`
+  - For each month/day: level 4 title `#### MM/DD`
+  - Modification entries with format: `**[HH:MM:SS] Emoji [TAG]** Description`
+- Tags and emojis:
+  - `✨ [FEAT]` - New feature
+  - `🐛 [FIX]` - Bug fix
+  - `♻️ [REFACTOR]` - Refactoring
   - `⚡ [PERF]` - Performance
   - `📝 [DOCS]` - Documentation
-  - `🎨 [STYLE]` - Style/Cosmétique
+  - `🎨 [STYLE]` - Style/Cosmetic
   - `✅ [TEST]` - Tests
   - `🔧 [CHORE]` - Configuration/Maintenance
-- Classé par ordre antéchronologique (plus récent en haut)
+- Sorted in reverse chronological order (most recent at top)
 
-## Utilisation
+## Usage
 
-Cette règle est importée/utilisée par :
-- `.clinerules/workflows/do_tasks.md` (pour lire TASKS.md)
-- `.clinerules/workflows/create_tasks.md` (pour lire BACKLOG.md et créer des tâches dans TASKS.md)
-- `.clinerules/log_changes.md` (pour écrire dans CHANGELOG.md)
-- `.clinerules/quality_check.md` (pour valider les formats)
+This rule is imported/used by:
+- `.clinerules/workflows/do_tasks.md` (to read TASKS.md)
+- `.clinerules/workflows/create_tasks.md` (to read BACKLOG.md and create tasks in TASKS.md)
+- `.clinerules/log_changes.md` (to write in CHANGELOG.md)
+- `.clinerules/quality_check.md` (to validate formats)
 
-Toute modification des règles de format doit être faite **ici uniquement**.
+Any format rule modifications must be made **here only**.
