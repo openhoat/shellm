@@ -2,7 +2,7 @@
 
 ## Objective
 
-Defines common format rules for all task files in the project (BACKLOG.md, CHANGELOG.md, etc.).
+Defines common format rules for all task files in the project (KANBAN.md, CHANGELOG.md, etc.).
 
 ## General format rules
 
@@ -60,14 +60,29 @@ Sub-tasks don't need emoji or tag: category information is carried by the parent
 
 ## File-specific rules
 
-### TASKS.md
+### KANBAN.md
 
-- Contains tasks **to execute** (`- [ ]`)
-- Checked tasks (`- [x]`) are considered ignored/paused
-- Format: `- [ ] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
+Contains the Kanban board with three sections: Backlog, In Progress, Done
+
+#### Backlog section (## 📝 Backlog)
+
+- Contains **feature ideas** to convert to tasks (`- [ ]`)
+- Checked ideas (`- [x]`) are considered already converted (to ignore)
+- Format: `- [ ] **[DD/MM/YYYY HH:mm:ss] 💡 [IDEA]** Idea description`
+- Uses only emoji `💡` and tag `[IDEA]`
+- Date and time indicate the moment of idea creation in backlog
+- Comments are optional and serve only to document context
+
+#### In Progress section (## 🚧 In Progress)
+
+- Contains **ideas being worked on** with associated tasks OR **isolated tasks**
+- Idea sections: start with `### [DD/MM/YYYY HH:mm:ss] 💡 [IDEA] Description`
+- Under each idea: tasks with standard emoji/tag format
+- Isolated tasks: lines with `- [ ] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
+- Task format: `- [ ] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
 - Emojis and tags are the same as for CHANGELOG.md:
   - `✨ [FEAT]`: New feature or evolution
-  - `🐛 [BUG]`: Bug fix or problem correction
+  - `🐛 [FIX]`: Bug fix or problem correction
   - `♻️ [REFACTOR]`: Refactoring
   - `⚡ [PERF]`: Performance
   - `📝 [DOCS]`: Documentation
@@ -77,15 +92,11 @@ Sub-tasks don't need emoji or tag: category information is carried by the parent
 - Date and time indicate the moment of task creation
 - Comments are optional and serve only to document context
 
-### BACKLOG.md
+#### Done section (## ✅ Done)
 
-- Contains **feature ideas** to convert to tasks (`- [ ]`)
-- Checked ideas (`- [x]`) are considered already converted (to ignore)
-- Format: `- [ ] **[DD/MM/YYYY HH:mm:ss] 💡 [IDEA]** Idea description`
-- Uses only emoji `💡` and tag `[IDEA]`
-- Date and time indicate the moment of idea creation in backlog
-- Comments are optional and serve only to document context
-- This file is not used by the `do_tasks.md` workflow
+- Contains **completed tasks** (`- [x]`)
+- Format: `- [x] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
+- Uses the same emojis and tags as In Progress
 
 ### CHANGELOG.md
 
@@ -111,8 +122,9 @@ Sub-tasks don't need emoji or tag: category information is carried by the parent
 ## Usage
 
 This rule is imported/used by:
-- `.clinerules/workflows/do_tasks.md` (to read TASKS.md)
-- `.clinerules/workflows/create_tasks.md` (to read BACKLOG.md and create tasks in TASKS.md)
+- `.clinerules/workflows/kanban_convert_idea_to_task.md` (to read KANBAN.md and convert backlog ideas to tasks)
+- `.clinerules/workflows/kanban_execute_task.md` (to read KANBAN.md and execute tasks)
+- `.clinerules/workflows/kanban_clean.md` (to read KANBAN.md and clean up obsolete entries)
 - `.clinerules/log_changes.md` (to write in CHANGELOG.md)
 - `.clinerules/quality_check.md` (to validate formats)
 
