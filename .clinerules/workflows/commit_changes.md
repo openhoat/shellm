@@ -64,10 +64,9 @@ Ajouter les styles dans src/components/UserDashboard.css
 ```
 [REFACTOR]: Restructurer l'architecture de gestion des tâches et idées
 
-Renommer BACKLOG.md en TASKS.md (préservation du contenu existant)
-Créer un nouveau BACKLOG.md pour noter les idées de features
-Créer le workflow .clinerules/workflows/create_tasks.md
-Mettre à jour .clinerules/task_format.md avec les règles pour TASKS.md
+Créer le fichier KANBAN.md avec les sections Backlog, In Progress, Done
+Mettre à jour .clinerules/task_format.md avec les règles pour KANBAN.md
+Créer les workflows .clinerules/workflows/kanban_*.md
 ```
 
 ### 6. Exécuter les commits
@@ -110,12 +109,12 @@ Une fois tous les commits créés :
 1. git status → 25 fichiers modifiés, 8 fichiers non suivis
 2. Lire CHANGELOG.md → 3 entrées identifiées
 3. Entrée 1 : "[18:03:15] ♻️ [REFACTOR]** Restructurer l'architecture..."
-   - Fichiers identifiés : TASKS.md, BACKLOG.md, .clinerules/workflows/create_tasks.md, etc.
-   - git add TASKS.md BACKLOG.md .clinerules/workflows/create_tasks.md .clinerules/task_format.md ...
+   - Fichiers identifiés : KANBAN.md, .clinerules/workflows/kanban_*.md, .clinerules/task_format.md, etc.
+   - git add KANBAN.md .clinerules/workflows/kanban_*.md .clinerules/task_format.md ...
    - git commit -m "[REFACTOR]: Restructurer l'architecture de gestion des tâches et idées
    - 
-   - Renommer BACKLOG.md en TASKS.md (préservation du contenu existant)
-   - Créer un nouveau BACKLOG.md pour noter les idées de features
+   - Créer le fichier KANBAN.md avec les sections Backlog, In Progress, Done
+   - Mettre à jour .clinerules/task_format.md avec les règles pour KANBAN.md
    - ..."
 4. Entrée 2 : "[15:53:10] 🎨 [STYLE]** Renommer l'application de "ShellM" à "SheLLM""
    - Fichiers identifiés : README.md, package.json, index.html, src/components/Header.tsx, etc.

@@ -3,6 +3,14 @@
 
 ## 2026
 
+### 10/02
+
+**[07:19:05] 🔧 [CHORE]** Update commit_changes.md examples to reference KANBAN.md instead of obsolete TASKS.md/BACKLOG.md
+
+**[07:18:10] 🔧 [CHORE]** Remove task format section from quality_check.md to focus only on code quality validation
+
+**[07:17:15] 🔧 [CHORE]** Update task_format.md to reflect KANBAN.md system instead of obsolete TASKS.md/BACKLOG.md
+
 ### 09/02
 
 **[10:04:58] 🔧 [CHORE]** Fix Biome linting errors: replace forEach with for...of, add node: protocol to imports, fix React keys, and add biome-ignore comments
