@@ -4,14 +4,6 @@
 
 This rule ensures that each code modification respects the quality standards defined by Biome.
 
-## Task format rules
-
-See `.clinerules/task_format.md` for detailed format rules.
-
-Summary for TASKS.md:
-- `- [ ]` → task to do (to execute)
-- `- [x]` → checked task (to ignore)
-
 ## When to execute this check
 
 After each code modification (creation, editing, deletion of files), systematically run the quality check before moving to the next task.
@@ -52,5 +44,3 @@ If the `qa:fix` script fails to fix all errors automatically:
 ## Important rules
 
 - **Never move to a next task** without successfully running `npm run validate`
-- **Never check a task** in TASKS.md without passing the quality check
-- In case of quality check failure, **do not modify TASKS.md**
