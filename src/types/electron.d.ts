@@ -33,7 +33,11 @@ export interface ElectronAPI {
     temperature?: number
     maxTokens?: number
   }) => Promise<void>
-  ollamaGenerateCommand: (prompt: string, context?: string[]) => Promise<AICommand>
+  ollamaGenerateCommand: (
+    prompt: string,
+    context?: string[],
+    language?: string
+  ) => Promise<AICommand>
   ollamaExplainCommand: (command: string) => Promise<string>
   ollamaInterpretOutput: (output: string, language?: string) => Promise<CommandInterpretation>
   ollamaTestConnection: () => Promise<boolean>

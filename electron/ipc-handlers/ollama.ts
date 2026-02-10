@@ -38,7 +38,7 @@ class OllamaService {
     this.#maxTokens = config.maxTokens ?? 1000
   }
 
-  async generateCommand(prompt: string, context?: string[]): Promise<AICommand> {
+  async generateCommand(prompt: string, context?: string[], language: string = 'en'): Promise<AICommand> {
     const systemPrompt = loadPrompt('system-prompt.md')
 
     let fullPrompt = `${systemPrompt}\n\nUser request: ${prompt}`
@@ -46,6 +46,9 @@ class OllamaService {
     if (context && context.length > 0) {
       fullPrompt += `\n\nRecent commands for context:\n${context.join('\n')}`
     }
+
+    // Add language hint to help the AI detect the user's language
+    fullPrompt += `\n\n[Language hint: User interface language is ${language}]`
     const response = await this.#axiosInstance.post('/api/generate', {
       model: this.#model,
       prompt: fullPrompt,
@@ -58,29 +61,46 @@ class OllamaService {
 
     const responseText = response.data.response
 
-    const jsonMatch = responseText.match(/\{[\s\S]*}/)
+    // Try multiple patterns to find valid JSON
+    let jsonMatch = responseText.match(/\{[\s\S]*"type"[\s\S]*}/)
     if (!jsonMatch) {
-      throw new Error('No JSON found in response')
+      jsonMatch = responseText.match(/\{[\s\S]*}/)
     }
 
-    const result = JSON.parse(jsonMatch[0])
-
-    if (result.type === 'text') {
-      const textCommand = {
-        type: 'text' as const,
-        content: result.content,
+    if (!jsonMatch) {
+      // Fallback: return a text response instead of throwing an error
+      return {
+        type: 'text',
+        content: this.getFallbackMessage('unable_to_generate', language),
       }
-      return textCommand
     }
 
-    const shellCommand = {
-      type: 'command' as const,
-      intent: result.intent || 'Execute command',
-      command: result.command || '',
-      explanation: result.explanation || '',
-      confidence: result.confidence || 0.5,
+    try {
+      const result = JSON.parse(jsonMatch[0])
+
+      if (result.type === 'text') {
+        const textCommand = {
+          type: 'text' as const,
+          content: result.content,
+        }
+        return textCommand
+      }
+
+      const shellCommand = {
+        type: 'command' as const,
+        intent: result.intent || 'Execute command',
+        command: result.command || '',
+        explanation: result.explanation || '',
+        confidence: result.confidence || 0.5,
+      }
+      return shellCommand
+    } catch (_parseError) {
+      // Fallback: return a text response if JSON parsing fails
+      return {
+        type: 'text',
+        content: this.getFallbackMessage('parsing_failed', language),
+      }
     }
-    return shellCommand
   }
 
   async explainCommand(command: string): Promise<string> {
@@ -176,6 +196,23 @@ class OllamaService {
     }
   }
 
+  /**
+   * Get localized fallback messages for error cases
+   */
+  private getFallbackMessage(errorType: 'unable_to_generate' | 'parsing_failed', language: string): string {
+    const messages = {
+      unable_to_generate: {
+        en: "I couldn't generate a command for that request. Could you please clarify what you'd like me to do?",
+        fr: "Je n'ai pas pu générer de commande pour cette demande. Pourriez-vous préciser ce que vous souhaitez que je fasse ?",
+      },
+      parsing_failed: {
+        en: "I had trouble understanding that request. Could you try rephrasing it or providing more details?",
+        fr: "J'ai eu du mal à comprendre cette demande. Pourriez-vous la reformuler ou donner plus de détails ?",
+      },
+    }
+    return messages[errorType][language as keyof typeof messages['unable_to_generate']] || messages[errorType].en
+  }
+
   async testConnection(): Promise<boolean> {
     try {
       const response = await this.#axiosInstance.get('/api/tags')
@@ -209,11 +246,11 @@ export function createOllamaHandlers(
     service = new OllamaService(config)
   })
 
-  ipcMain.handle('ollama:generate-command', async (_event, prompt: string, context?: string[]) => {
+  ipcMain.handle('ollama:generate-command', async (_event, prompt: string, context?: string[], language?: string) => {
     if (!service) {
       throw new Error('Ollama service not initialized')
     }
-    return await service.generateCommand(prompt, context)
+    return await service.generateCommand(prompt, context, language)
   })
 
   ipcMain.handle('ollama:explain-command', async (_event, command: string) => {

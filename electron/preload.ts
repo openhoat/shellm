@@ -33,8 +33,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     temperature?: number
     maxTokens?: number
   }) => ipcRenderer.invoke('ollama:init', config),
-  ollamaGenerateCommand: (prompt: string, context?: string[]) =>
-    ipcRenderer.invoke('ollama:generate-command', prompt, context),
+  ollamaGenerateCommand: (prompt: string, context?: string[], language?: string) =>
+    ipcRenderer.invoke('ollama:generate-command', prompt, context, language),
   ollamaExplainCommand: (command: string) => ipcRenderer.invoke('ollama:explain-command', command),
   ollamaInterpretOutput: (output: string, language?: string) =>
     ipcRenderer.invoke('ollama:interpret-output', output, language),

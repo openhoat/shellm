@@ -7,11 +7,12 @@ import './ChatPanel.css'
 
 const logger = new Logger('ChatPanel')
 
-export const ChatPanel = () => {
+export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
   const { i18n } = useTranslation()
   const [userInput, setUserInput] = useState('')
   const [currentCommandIndex, setCurrentCommandIndex] = useState<number | null>(null)
   const [isInterpreting, setIsInterpreting] = useState(false)
+  const [previousUserInput, setPreviousUserInput] = useState('') // Track previous input to detect typing
   const [conversation, setConversation] = useState<
     Array<{
       type: 'user' | 'ai'
@@ -31,6 +32,17 @@ export const ChatPanel = () => {
     terminalPid,
     addToHistory,
   } = useStore()
+
+  // Auto-hide AI command when user starts typing
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value
+    // If user types something and there was an AI command, hide it
+    if (newValue.length > previousUserInput.length && aiCommand?.type === 'command') {
+      setAiCommand(null)
+    }
+    setPreviousUserInput(newValue)
+    setUserInput(newValue)
+  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -82,7 +94,8 @@ export const ChatPanel = () => {
       // Generate command using AI
       const response: AICommand = await window.electronAPI.ollamaGenerateCommand(
         prompt,
-        recentCommands
+        recentCommands,
+        i18n.language
       )
 
       setAiCommand(response)
@@ -203,7 +216,7 @@ export const ChatPanel = () => {
   }
 
   return (
-    <div className="chat-panel">
+    <div className="chat-panel" style={style}>
       <div className="chat-header">
         <h2>AI Assistant</h2>
       </div>
@@ -355,9 +368,9 @@ export const ChatPanel = () => {
         <input
           type="text"
           value={userInput}
-          onChange={e => setUserInput(e.target.value)}
+          onChange={handleInputChange}
           placeholder="Décrivez ce que vous voulez faire..."
-          disabled={isLoading || aiCommand?.type === 'command'}
+          disabled={isLoading}
         />
         <button
           type="submit"

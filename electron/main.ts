@@ -49,7 +49,7 @@ const isAppConfig = (value: unknown): value is AppConfig => {
   return true
 }
 
-const isDev = process.env.NODE_ENV === 'development'
+const isDev = process.env.NODE_ENV === 'development' && !app.isPackaged
 
 // Initialize store for configuration (with environment variables override)
 const rawStore = new Store({
@@ -75,6 +75,7 @@ const createWindow = (): void => {
     height: 800,
     minWidth: 800,
     minHeight: 600,
+    autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       devTools: true,
@@ -90,8 +91,23 @@ const createWindow = (): void => {
     mainWindow.loadURL('http://localhost:5173')
     mainWindow.webContents.openDevTools()
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))
+    // Use relative path from compiled main.js location
+    mainWindow.loadFile(path.join(__dirname, '../../dist/index.html'))
   }
+
+  // Add error handler for loading issues
+  mainWindow.webContents.on(
+    'did-fail-load',
+    (_event, errorCode, errorDescription, validatedURL) => {
+      // biome-ignore lint/suspicious/noConsole: Error logging for debugging
+      console.error('Failed to load:', errorCode, errorDescription, 'URL:', validatedURL)
+    }
+  )
+
+  mainWindow.webContents.on('did-finish-load', () => {
+    // biome-ignore lint/suspicious/noConsole: Success logging for debugging
+    console.log('Page loaded successfully')
+  })
 
   // Add keyboard shortcut to open DevTools (Ctrl+Shift+I or Cmd+Option+I)
   mainWindow.webContents.on('before-input-event', (_event, input) => {

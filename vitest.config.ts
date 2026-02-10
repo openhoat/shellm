@@ -8,6 +8,6 @@ export default defineConfig({
     environment: 'happy-dom',
     setupFiles: ['./src/test/setup.ts'],
     css: true,
-    exclude: ['node_modules', 'dist', 'dist-electron', 'tests/e2e'],
+    exclude: ['node_modules', 'dist', 'dist-electron', 'tests/e2e', 'release'],
   },
 })
