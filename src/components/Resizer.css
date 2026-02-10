@@ -1,0 +1,55 @@
+.resizer {
+  background-color: #333;
+  transition: background-color 0.2s ease;
+  z-index: 10;
+  position: relative;
+}
+
+.resizer-horizontal {
+  width: 8px;
+  cursor: col-resize;
+  flex-shrink: 0;
+}
+
+.resizer-horizontal:hover {
+  background-color: #555;
+}
+
+.resizer-horizontal.resizer-active {
+  background-color: #007acc;
+}
+
+.resizer-vertical {
+  height: 8px;
+  cursor: row-resize;
+  flex-shrink: 0;
+}
+
+.resizer-vertical:hover {
+  background-color: #555;
+}
+
+.resizer-vertical.resizer-active {
+  background-color: #007acc;
+}
+
+/* Add a visual indicator in the middle of the resizer */
+.resizer-horizontal::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 40px;
+  background-color: #666;
+  border-radius: 1px;
+}
+
+.resizer-horizontal:hover::after {
+  background-color: #888;
+}
+
+.resizer-horizontal.resizer-active::after {
+  background-color: #fff;
+}
