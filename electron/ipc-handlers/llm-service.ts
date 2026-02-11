@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import { type BrowserWindow, ipcMain } from 'electron'
 import { ChatOllama } from '@langchain/ollama'
 import { ChatPromptTemplate } from '@langchain/core/prompts'
 import { z } from 'zod'
@@ -12,9 +13,10 @@ function loadPrompt(filename: string): string {
 }
 
 /**
- * LangChain-based Ollama service with structured output parsing
+ * LLM service with LangChain for structured output parsing
+ * Designed to be provider-agnostic while currently using Ollama
  */
-class LangChainOllamaService {
+class LLMService {
   #model: ChatOllama
   #temperature: number
   #maxTokens: number
@@ -213,7 +215,7 @@ class LangChainOllamaService {
   }
 
   /**
-   * Test connection to Ollama
+   * Test connection to LLM provider
    */
   async testConnection(): Promise<boolean> {
     try {
@@ -229,11 +231,11 @@ class LangChainOllamaService {
   }
 
   /**
-   * List available models
+   * List available models from LLM provider
    */
   async listModels(): Promise<string[]> {
     try {
-      // Access the Ollama API directly through the model
+      // Access the Ollama API directly
       const response = await fetch(`${this.#model.baseUrl}/api/tags`)
       const data = (await response.json()) as { models: { name: string }[] }
       return data.models.map((model) => model.name)
@@ -262,71 +264,106 @@ class LangChainOllamaService {
 }
 
 /**
- * Create LangChain-based Ollama handlers for IPC
+ * Create LLM service handlers for IPC
+ * Provides a unified interface for LLM interactions (currently using LangChain + Ollama)
+ * 
+ * @param mainWindow - Electron main window (unused, kept for API compatibility)
+ * @param initialConfig - Initial LLM configuration
+ * @returns IPC handlers setup function
  */
-export function createLangChainOllamaHandlers(initialConfig?: OllamaConfig) {
-  let service: LangChainOllamaService | null = null
+export function createLLMHandlers(
+  mainWindow: BrowserWindow,
+  initialConfig?: OllamaConfig
+): void {
+  let service: LLMService | null = null
 
   if (initialConfig) {
-    service = new LangChainOllamaService(initialConfig)
+    service = new LLMService(initialConfig)
   }
 
-  return {
-    /**
-     * Initialize the service with configuration
-     */
-    async init(config: OllamaConfig): Promise<void> {
-      service = new LangChainOllamaService(config)
-    },
+  // Initialize the LLM service with configuration
+  ipcMain.handle('llm:init', async (_event, config: OllamaConfig) => {
+    service = new LLMService(config)
+  })
 
-    /**
-     * Generate command from natural language
-     */
-    async generateCommand(prompt: string, context?: string[], language?: string): Promise<AICommand> {
-      if (!service) {
-        throw new Error('LangChain Ollama service not initialized')
-      }
-      return await service.generateCommand(prompt, context, language)
-    },
+  // Generate command from natural language
+  ipcMain.handle('llm:generate-command', async (_event, prompt: string, context?: string[], language?: string) => {
+    if (!service) {
+      throw new Error('LLM service not initialized')
+    }
+    return await service.generateCommand(prompt, context, language)
+  })
 
-    /**
-     * Explain a shell command
-     */
-    async explainCommand(command: string): Promise<string> {
-      if (!service) {
-        throw new Error('LangChain Ollama service not initialized')
-      }
-      return await service.explainCommand(command)
-    },
+  // Explain a shell command
+  ipcMain.handle('llm:explain-command', async (_event, command: string) => {
+    if (!service) {
+      throw new Error('LLM service not initialized')
+    }
+    return await service.explainCommand(command)
+  })
 
-    /**
-     * Interpret terminal output
-     */
-    async interpretOutput(output: string, language?: string): Promise<CommandInterpretation> {
-      if (!service) {
-        throw new Error('LangChain Ollama service not initialized')
-      }
-      return await service.interpretOutput(output, language)
-    },
+  // Interpret terminal output
+  ipcMain.handle('llm:interpret-output', async (_event, output: string, language?: string) => {
+    if (!service) {
+      throw new Error('LLM service not initialized')
+    }
+    return await service.interpretOutput(output, language)
+  })
 
-    /**
-     * Test connection to Ollama
-     */
-    async testConnection(): Promise<boolean> {
-      if (!service) {
-        throw new Error('LangChain Ollama service not initialized')
-      }
-      return await service.testConnection()
-    },
+  // Test connection to LLM provider
+  ipcMain.handle('llm:test-connection', async () => {
+    if (!service) {
+      throw new Error('LLM service not initialized')
+    }
+    return await service.testConnection()
+  })
 
-    /**
-     * List available models
-     */
-    async listModels(): Promise<string[]> {
-      if (!service) {
-        throw new Error('LangChain Ollama service not initialized')
-      }
-      return await service.listModels()
-    },
-  }
+  // List available models
+  ipcMain.handle('llm:list-models', async () => {
+    if (!service) {
+      throw new Error('LLM service not initialized')
+    }
+    return await service.listModels()
+  })
+
+  // Legacy IPC channel names for backward compatibility
+  // These will eventually be deprecated in favor of the 'llm:*' channels above
+  ipcMain.handle('ollama:init', async (_event, config: OllamaConfig) => {
+    service = new LLMService(config)
+  })
+
+  ipcMain.handle('ollama:generate-command', async (_event, prompt: string, context?: string[], language?: string) => {
+    if (!service) {
+      throw new Error('LLM service not initialized')
+    }
+    return await service.generateCommand(prompt, context, language)
+  })
+
+  ipcMain.handle('ollama:explain-command', async (_event, command: string) => {
+    if (!service) {
+      throw new Error('LLM service not initialized')
+    }
+    return await service.explainCommand(command)
+  })
+
+  ipcMain.handle('ollama:interpret-output', async (_event, output: string, language?: string) => {
+    if (!service) {
+      throw new Error('LLM service not initialized')
+    }
+    return await service.interpretOutput(output, language)
+  })
+
+  ipcMain.handle('ollama:test-connection', async () => {
+    if (!service) {
+      throw new Error('LLM service not initialized')
+    }
+    return await service.testConnection()
+  })
+
+  ipcMain.handle('ollama:list-models', async () => {
+    if (!service) {
+      throw new Error('LLM service not initialized')
+    }
+    return await service.listModels()
+  })
 }

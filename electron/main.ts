@@ -4,7 +4,7 @@ import Store from 'electron-store'
 import { DEFAULT_CONFIG, mergeConfig } from '../shared/config'
 import type { AppConfig } from '../shared/types'
 import { createConfigHandlers } from './ipc-handlers/config'
-import { createOllamaHandlers } from './ipc-handlers/ollama'
+import { createLLMHandlers } from './ipc-handlers/llm-service'
 import { createTerminalHandlers } from './ipc-handlers/terminal'
 
 interface StoreType {
@@ -135,7 +135,7 @@ app.whenReady().then(() => {
     const storedConfig = store.get('config')
     const validConfig = isAppConfig(storedConfig) ? storedConfig : DEFAULT_CONFIG
     const mergedConfig = mergeConfig(validConfig)
-    createOllamaHandlers(mainWindow, mergedConfig.ollama)
+    createLLMHandlers(mainWindow, mergedConfig.ollama)
 
     createConfigHandlers(mainWindow, store)
   }
