@@ -22,7 +22,7 @@ The main service that wraps LangChain's ChatOllama model and provides:
 
 #### 2. IPC Handlers (`electron/ipc-handlers/llm-service.ts`)
 
-The service provides both new generic IPC channels (`llm:*`) and legacy channels (`ollama:*`) for backward compatibility. The IPC interface provides a unified abstraction for LLM interactions.
+The service provides generic IPC channels (`llm:*`) for a unified abstraction for LLM interactions. All handlers use provider-agnostic naming.
 
 ### Key Features
 
@@ -139,13 +139,15 @@ interface OllamaConfig {
 ```typescript
 import { createLLMHandlers } from './llm-service'
 
-const handlers = createLLMHandlers(mainWindow, {
+// Create handlers in Electron main process
+createLLMHandlers(mainWindow, {
   url: 'http://localhost:11434',
   model: 'llama2',
   temperature: 0.7,
   maxTokens: 1000,
 })
 
+// Initialize from renderer process
 await ipcRenderer.invoke('llm:init', config)
 ```
 
@@ -222,7 +224,7 @@ try {
 |--------|--------|-------|
 | Response Time | ~2s | ~2s (unchanged) |
 | Parsing Reliability | ~85% | >98% |
-| Code Lines (llm-service.ts) | 321 (2 files) | 320 (1 file) |
+| Code Lines (llm-service.ts) | 321 (2 files) | 260 (1 file) |
 | Bundle Size Increase | 0 | +2.5MB |
 
 ### Optimization Notes
@@ -263,21 +265,29 @@ describe('LLMService', () => {
 npm run test
 ```
 
-## Backward Compatibility
+## IPC Channels
 
-For existing code using the old `ollama:*` IPC channels, the service maintains backward compatibility:
+The service uses only `llm:*` IPC channels for provider-agnostic naming:
 
 ```typescript
-// Old way (still works)
-await ipcRenderer.invoke('ollama:init', config)
-await ipcRenderer.invoke('ollama:generate-command', prompt, context, language)
-
-// New recommended way
+// Initialize the LLM service
 await ipcRenderer.invoke('llm:init', config)
-await ipcRenderer.invoke('llm:generate-command', prompt, context, language)
-```
 
-The old `ollama:*` channels will be deprecated in a future version, but continue to work for now.
+// Generate command from natural language
+await ipcRenderer.invoke('llm:generate-command', prompt, conversationHistory, language)
+
+// Explain a shell command
+await ipcRenderer.invoke('llm:explain-command', command)
+
+// Interpret terminal output
+await ipcRenderer.invoke('llm:interpret-output', output, language)
+
+// Test connection to LLM provider
+await ipcRenderer.invoke('llm:test-connection')
+
+// List available models
+await ipcRenderer.invoke('llm:list-models')
+```
 
 ## Future Enhancements
 
@@ -377,8 +387,9 @@ When modifying the LangChain integration:
 - Refactored to provider-agnostic LLM service
 - Renamed `LangChainOllamaService` to `LLMService`
 - Merged `ollama.ts` and `langchain-ollama.ts` into `llm-service.ts`
-- Added new `llm:*` IPC channels for provider-agnostic naming
-- Maintained backward compatibility with `ollama:*` channels
+- Added `llm:*` IPC channels for provider-agnostic naming
+- Removed legacy `ollama:*` IPC channels
+- Simplified code from 321 to 260 lines
 - Prepared architecture for multi-provider support
 
 ### 2026-02-10
