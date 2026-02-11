@@ -25,19 +25,19 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.on('terminal:exit', (_event, data) => callback(data))
   },
 
-  // Ollama
-  ollamaInit: (config: {
+  // LLM
+  llmInit: (config: {
     url: string
     apiKey?: string
     model: string
     temperature?: number
     maxTokens?: number
-  }) => ipcRenderer.invoke('ollama:init', config),
-  ollamaGenerateCommand: (prompt: string, context?: string[], language?: string) =>
-    ipcRenderer.invoke('ollama:generate-command', prompt, context, language),
-  ollamaExplainCommand: (command: string) => ipcRenderer.invoke('ollama:explain-command', command),
-  ollamaInterpretOutput: (output: string, language?: string) =>
-    ipcRenderer.invoke('ollama:interpret-output', output, language),
-  ollamaTestConnection: () => ipcRenderer.invoke('ollama:test-connection'),
-  ollamaListModels: () => ipcRenderer.invoke('ollama:list-models'),
+  }) => ipcRenderer.invoke('llm:init', config),
+  llmGenerateCommand: (prompt: string, conversationHistory?: unknown[], language?: string) =>
+    ipcRenderer.invoke('llm:generate-command', prompt, conversationHistory, language),
+  llmExplainCommand: (command: string) => ipcRenderer.invoke('llm:explain-command', command),
+  llmInterpretOutput: (output: string, language?: string) =>
+    ipcRenderer.invoke('llm:interpret-output', output, language),
+  llmTestConnection: () => ipcRenderer.invoke('llm:test-connection'),
+  llmListModels: () => ipcRenderer.invoke('llm:list-models'),
 })

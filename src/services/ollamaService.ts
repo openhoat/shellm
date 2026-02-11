@@ -5,9 +5,9 @@ import type { AICommand, OllamaConfig } from '@shared/types'
  */
 export interface ElectronOllamaAPI {
   init(config: OllamaConfig): Promise<void>
-  generateCommand(prompt: string, recentCommands: string[]): Promise<AICommand>
-  testConnection(): Promise<boolean>
-  listModels(): Promise<string[]>
+  generateCommand(prompt: string, recentCommands?: string[]): Promise<AICommand>
+  testConnection: () => Promise<boolean>
+  listModels: () => Promise<string[]>
 }
 
 /**
@@ -24,7 +24,7 @@ export class OllamaService {
   /**
    * Génère une commande à partir d'une description en langage naturel
    */
-  async generateCommand(prompt: string, recentCommands: string[] = []): Promise<AICommand> {
+  async generateCommand(prompt: string, recentCommands?: string[]): Promise<AICommand> {
     return this.#electronAPI.generateCommand(prompt, recentCommands)
   }
 
@@ -54,11 +54,11 @@ export class OllamaService {
    */
   static createWithRealAPI(): OllamaService {
     return new OllamaService({
-      init: config => window.electronAPI.ollamaInit(config),
+      init: config => window.electronAPI.llmInit(config),
       generateCommand: (prompt, recentCommands) =>
-        window.electronAPI.ollamaGenerateCommand(prompt, recentCommands),
-      testConnection: () => window.electronAPI.ollamaTestConnection(),
-      listModels: () => window.electronAPI.ollamaListModels(),
+        window.electronAPI.llmGenerateCommand(prompt, recentCommands),
+      testConnection: () => window.electronAPI.llmTestConnection(),
+      listModels: () => window.electronAPI.llmListModels(),
     })
   }
 }

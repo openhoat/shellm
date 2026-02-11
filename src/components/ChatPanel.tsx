@@ -1,5 +1,5 @@
-import type { AICommand, CommandInterpretation } from '@shared/types'
-import { type FormEvent, useState } from 'react'
+import type { AICommand, CommandInterpretation, ConversationMessage } from '@shared/types'
+import { type FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useStore } from '@/store/useStore'
 import Logger from '@/utils/logger'
@@ -31,7 +31,16 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
     setError,
     terminalPid,
     addToHistory,
+    currentConversation,
+    createConversation,
+    addMessageToConversation,
+    loadConversations,
   } = useStore()
+
+  // Load conversations on mount
+  useEffect(() => {
+    loadConversations()
+  }, [loadConversations])
 
   // Auto-hide AI command when user starts typing
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,8 +61,25 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
     setUserInput('')
     setError(null)
 
-    // Add user message to conversation
+    // Add user message to local conversation state
     setConversation(prev => [...prev, { type: 'user', content: prompt }])
+
+    // Create new conversation if none exists
+    if (!currentConversation) {
+      await createConversation(prompt)
+    }
+
+    // Build conversation history for LLM context
+    const conversationHistory: ConversationMessage[] = conversation.map(msg => ({
+      role: msg.type === 'user' ? 'user' : 'assistant',
+      content: msg.content,
+    }))
+
+    // Add current user message to history
+    conversationHistory.push({ role: 'user', content: prompt })
+
+    // Save user message to persistent storage
+    await addMessageToConversation({ role: 'user', content: prompt })
 
     setIsLoading(true)
 
@@ -71,30 +97,10 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
         return command?.type === 'command'
       }
 
-      // Get recent commands for context
-      const recentCommands = conversation
-        .filter(
-          (
-            msg
-          ): msg is {
-            type: 'ai'
-            content: string
-            command: {
-              type: 'command'
-              command: string
-              intent: string
-              explanation: string
-              confidence: number
-            }
-          } => msg.type === 'ai' && isCommandShell(msg.command)
-        )
-        .map(msg => msg.command.command)
-        .slice(-5)
-
-      // Generate command using AI
+      // Generate command using AI with full conversation history
       const response: AICommand = await window.electronAPI.ollamaGenerateCommand(
         prompt,
-        recentCommands,
+        conversationHistory,
         i18n.language
       )
 
@@ -113,6 +119,9 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
         }
         return newConversation
       })
+
+      // Save AI response to persistent storage
+      await addMessageToConversation({ role: 'assistant', content })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate command')
       setConversation(prev => [

@@ -1,10 +1,41 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useStore } from '../store/useStore'
 import './Header.css'
 
 export const Header = () => {
-  const { config, toggleConfigPanel } = useStore()
+  const {
+    config,
+    toggleConfigPanel,
+    conversations,
+    currentConversationId,
+    loadConversation,
+    deleteConversation,
+  } = useStore()
   const { t } = useTranslation()
+  const [showConversationList, setShowConversationList] = useState(false)
+
+  const handleNewConversation = () => {
+    // This will be handled by ChatPanel when the user sends a message
+    setShowConversationList(false)
+  }
+
+  const handleLoadConversation = (id: string) => {
+    loadConversation(id)
+    setShowConversationList(false)
+    // Reload page to reset ChatPanel state
+    window.location.reload()
+  }
+
+  const handleDeleteConversation = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (confirm('Are you sure you want to delete this conversation?')) {
+      await deleteConversation(id)
+      if (currentConversationId === id) {
+        window.location.reload()
+      }
+    }
+  }
 
   return (
     <header className="header">
@@ -23,6 +54,64 @@ export const Header = () => {
               ? 'Ollama: Local'
               : `Ollama: ${config.ollama.url}`}
           </span>
+        </div>
+        <div className="conversation-controls">
+          <button
+            type="button"
+            className="icon-button"
+            onClick={handleNewConversation}
+            title="New conversation"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <title>New conversation</title>
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+          <button
+            type="button"
+            className="icon-button"
+            onClick={() => setShowConversationList(!showConversationList)}
+            title="Conversations"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <title>Conversations</title>
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </button>
+          {showConversationList && (
+            <div className="conversation-dropdown">
+              <div className="conversation-dropdown-header">
+                <span>Conversations</span>
+                <button type="button" onClick={() => setShowConversationList(false)}>
+                  ✕
+                </button>
+              </div>
+              {conversations.length === 0 ? (
+                <div className="conversation-dropdown-empty">No conversations yet</div>
+              ) : (
+                <ul className="conversation-list">
+                  {conversations.map(conv => (
+                    <li
+                      key={conv.id}
+                      className={`conversation-item ${conv.id === currentConversationId ? 'active' : ''}`}
+                      onClick={() => handleLoadConversation(conv.id)}
+                    >
+                      <span className="conversation-title">{conv.title}</span>
+                      <button
+                        type="button"
+                        className="conversation-delete"
+                        onClick={e => handleDeleteConversation(conv.id, e)}
+                        title="Delete conversation"
+                      >
+                        ✕
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
         </div>
         <button
           type="button"

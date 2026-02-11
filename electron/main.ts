@@ -4,6 +4,7 @@ import Store from 'electron-store'
 import { DEFAULT_CONFIG, mergeConfig } from '../shared/config'
 import type { AppConfig } from '../shared/types'
 import { createConfigHandlers } from './ipc-handlers/config'
+import { createConversationHandlers } from './ipc-handlers/conversation'
 import { createLLMHandlers } from './ipc-handlers/llm-service'
 import { createTerminalHandlers } from './ipc-handlers/terminal'
 
@@ -126,10 +127,11 @@ const createWindow = (): void => {
 }
 
 // App lifecycle
-app.whenReady().then(() => {
+  app.whenReady().then(() => {
   createWindow()
   if (mainWindow) {
     createTerminalHandlers(mainWindow)
+    createConversationHandlers(mainWindow)
 
     // Get initial config and merge with environment variables
     const storedConfig = store.get('config')

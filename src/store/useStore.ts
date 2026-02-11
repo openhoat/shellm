@@ -1,4 +1,4 @@
-import type { AICommand, AppConfig, ConversationHistory } from '@shared/types'
+import type { AICommand, AppConfig, Conversation, ConversationHistory, ConversationMessage } from '@shared/types'
 import { create } from 'zustand'
 
 interface AppState {
@@ -23,7 +23,18 @@ interface AppState {
   error: string | null
   setError: (error: string | null) => void
 
-  // Conversation
+  // Conversation (new system)
+  conversations: Conversation[]
+  currentConversationId: string | null
+  currentConversation: Conversation | null
+  loadConversations: () => Promise<void>
+  loadConversation: (id: string) => Promise<void>
+  createConversation: (firstMessage: string) => Promise<void>
+  addMessageToConversation: (message: ConversationMessage) => Promise<void>
+  deleteConversation: (id: string) => Promise<void>
+  clearAllConversations: () => Promise<void>
+
+  // Conversation (old system - kept for backward compatibility)
   conversationHistory: ConversationHistory[]
   addToHistory: (entry: ConversationHistory) => void
   clearHistory: () => void
@@ -72,7 +83,69 @@ export const useStore = create<AppState>((set, _get) => ({
   error: null,
   setError: error => set({ error }),
 
-  // Conversation
+  // Conversation (new system)
+  conversations: [],
+  currentConversationId: null,
+  currentConversation: null,
+  loadConversations: async () => {
+    const conversations = await window.electronAPI.conversationGetAll()
+    set({ conversations })
+  },
+  loadConversation: async id => {
+    const conversation = await window.electronAPI.conversationGet(id)
+    if (conversation) {
+      set({ currentConversationId: id, currentConversation: conversation })
+    }
+  },
+  createConversation: async firstMessage => {
+    const newConversation = await window.electronAPI.conversationCreate(firstMessage)
+    set(state => ({
+      conversations: [newConversation, ...state.conversations],
+      currentConversationId: newConversation.id,
+      currentConversation: newConversation,
+    }))
+  },
+  addMessageToConversation: async message => {
+    const { currentConversationId, currentConversation } = get()
+    if (!currentConversationId) return
+
+    const updatedConversation = await window.electronAPI.conversationAddMessage(
+      currentConversationId,
+      message
+    )
+    if (updatedConversation) {
+      set(state => ({
+        currentConversation: updatedConversation,
+        conversations: state.conversations.map(conv =>
+          conv.id === updatedConversation.id ? updatedConversation : conv
+        ),
+      }))
+    }
+  },
+  deleteConversation: async id => {
+    await window.electronAPI.conversationDelete(id)
+    set(state => {
+      const newConversations = state.conversations.filter(conv => conv.id !== id)
+      if (state.currentConversationId === id) {
+        return {
+          conversations: newConversations,
+          currentConversationId: null,
+          currentConversation: null,
+        }
+      }
+      return { conversations: newConversations }
+    })
+  },
+  clearAllConversations: async () => {
+    await window.electronAPI.conversationClearAll()
+    set({
+      conversations: [],
+      currentConversationId: null,
+      currentConversation: null,
+    })
+  },
+
+  // Conversation (old system - kept for backward compatibility)
   conversationHistory: [],
   addToHistory: entry =>
     set(state => ({

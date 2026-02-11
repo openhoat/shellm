@@ -2,7 +2,8 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { type BrowserWindow, ipcMain } from 'electron'
 import { ChatOllama } from '@langchain/ollama'
-import { ChatPromptTemplate } from '@langchain/core/prompts'
+import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts'
+import { HumanMessage, AIMessage } from '@langchain/core/messages'
 import { z } from 'zod'
 import type { AICommand, CommandInterpretation, OllamaConfig } from '../types/types'
 
@@ -35,26 +36,38 @@ class LLMService {
   /**
    * Generate a shell command from natural language description
    */
-  async generateCommand(prompt: string, context?: string[], language: string = 'en'): Promise<AICommand> {
+  async generateCommand(
+    prompt: string,
+    conversationHistory?: string[],
+    language: string = 'en'
+  ): Promise<AICommand> {
     const systemPrompt = loadPrompt('system-prompt.md')
 
-    // Add language hint and instructions for JSON output
-    let fullInput = prompt
-    if (context && context.length > 0) {
-      fullInput += `\n\nRecent commands for context:\n${context.join('\n')}`
-    }
-    fullInput += `\n\n[Language hint: User interface language is ${language}]`
+    // Build messages from conversation history
+    const messages: (HumanMessage | AIMessage)[] = []
 
-    // Create prompt template
+    // Add conversation history (limited to last 50 messages to avoid token limits)
+    if (conversationHistory && conversationHistory.length > 0) {
+      const limitedHistory = conversationHistory.slice(-50)
+      for (const cmd of limitedHistory) {
+        messages.push(new HumanMessage(`Command: ${cmd}`))
+      }
+    }
+
+    // Add language hint to the system prompt
+    const enhancedSystemPrompt = `${systemPrompt}\n\n[Language hint: User interface language is ${language}]`
+
+    // Create prompt template with conversation history support
     const promptTemplate = ChatPromptTemplate.fromMessages([
-      ['system', systemPrompt],
+      ['system', enhancedSystemPrompt],
+      new MessagesPlaceholder('history'),
       ['human', '{input}'],
     ])
 
     const chain = promptTemplate.pipe(this.#model)
 
     try {
-      const result = await chain.invoke({ input: fullInput })
+      const result = await chain.invoke({ input: prompt, history: messages })
       const responseText = result.content as string
 
       // Try to parse JSON response
@@ -287,12 +300,15 @@ export function createLLMHandlers(
   })
 
   // Generate command from natural language
-  ipcMain.handle('llm:generate-command', async (_event, prompt: string, context?: string[], language?: string) => {
-    if (!service) {
-      throw new Error('LLM service not initialized')
+  ipcMain.handle(
+    'llm:generate-command',
+    async (_event, prompt: string, conversationHistory?: string[], language?: string) => {
+      if (!service) {
+        throw new Error('LLM service not initialized')
+      }
+      return await service.generateCommand(prompt, conversationHistory, language)
     }
-    return await service.generateCommand(prompt, context, language)
-  })
+  )
 
   // Explain a shell command
   ipcMain.handle('llm:explain-command', async (_event, command: string) => {
@@ -320,47 +336,6 @@ export function createLLMHandlers(
 
   // List available models
   ipcMain.handle('llm:list-models', async () => {
-    if (!service) {
-      throw new Error('LLM service not initialized')
-    }
-    return await service.listModels()
-  })
-
-  // Legacy IPC channel names for backward compatibility
-  // These will eventually be deprecated in favor of the 'llm:*' channels above
-  ipcMain.handle('ollama:init', async (_event, config: OllamaConfig) => {
-    service = new LLMService(config)
-  })
-
-  ipcMain.handle('ollama:generate-command', async (_event, prompt: string, context?: string[], language?: string) => {
-    if (!service) {
-      throw new Error('LLM service not initialized')
-    }
-    return await service.generateCommand(prompt, context, language)
-  })
-
-  ipcMain.handle('ollama:explain-command', async (_event, command: string) => {
-    if (!service) {
-      throw new Error('LLM service not initialized')
-    }
-    return await service.explainCommand(command)
-  })
-
-  ipcMain.handle('ollama:interpret-output', async (_event, output: string, language?: string) => {
-    if (!service) {
-      throw new Error('LLM service not initialized')
-    }
-    return await service.interpretOutput(output, language)
-  })
-
-  ipcMain.handle('ollama:test-connection', async () => {
-    if (!service) {
-      throw new Error('LLM service not initialized')
-    }
-    return await service.testConnection()
-  })
-
-  ipcMain.handle('ollama:list-models', async () => {
     if (!service) {
       throw new Error('LLM service not initialized')
     }

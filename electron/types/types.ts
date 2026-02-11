@@ -42,7 +42,7 @@ export interface AICommandShell {
   confidence: number
 }
 
-// Interpr�tation de sortie de commande
+// Interprétation de sortie de commande
 export interface CommandInterpretation {
   summary: string
   key_findings: string[]
@@ -52,11 +52,31 @@ export interface CommandInterpretation {
   successful: boolean
 }
 
-// Historique de conversation
+// Historique de conversation (ancien format, à migrer vers Conversation)
 export interface ConversationHistory {
   id: string
   timestamp: number
   userMessage: string
   aiResponse: AICommand
   executed: boolean
+}
+
+// Message de conversation pour le LLM
+export interface ConversationMessage {
+  role: 'user' | 'assistant'
+  content: string
+}
+
+// Conversation complète avec persistance
+export interface Conversation {
+  id: string
+  title: string
+  createdAt: number
+  updatedAt: number
+  messages: ConversationMessage[]
+}
+
+// Liste des conversations
+export interface ConversationsList {
+  conversations: Conversation[]
 }
