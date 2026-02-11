@@ -4,11 +4,13 @@
 
 SheLLM now integrates LangChain for improved LLM interactions with Ollama. This integration provides better structured output parsing, cleaner code, and a foundation for advanced features like conversation memory and multi-agent systems.
 
+The architecture is designed to be provider-agnostic, allowing for future integration with other LLM providers (OpenAI, Anthropic, etc.) while currently using LangChain + Ollama.
+
 ## Architecture
 
 ### Core Components
 
-#### 1. LangChain Service (`electron/ipc-handlers/langchain-ollama.ts`)
+#### 1. LLM Service (`electron/ipc-handlers/llm-service.ts`)
 
 The main service that wraps LangChain's ChatOllama model and provides:
 
@@ -18,9 +20,9 @@ The main service that wraps LangChain's ChatOllama model and provides:
 - **Connection Testing**: Validates Ollama connectivity
 - **Model Listing**: Retrieves available Ollama models
 
-#### 2. IPC Handlers (`electron/ipc-handlers/ollama.ts`)
+#### 2. IPC Handlers (`electron/ipc-handlers/llm-service.ts`)
 
-Updated to use the LangChain service instead of the manual Axios implementation. The IPC interface remains unchanged for backward compatibility.
+The service provides both new generic IPC channels (`llm:*`) and legacy channels (`ollama:*`) for backward compatibility. The IPC interface provides a unified abstraction for LLM interactions.
 
 ### Key Features
 
@@ -135,22 +137,22 @@ interface OllamaConfig {
 ### Initialize Service
 
 ```typescript
-import { createLangChainOllamaHandlers } from './langchain-ollama'
+import { createLLMHandlers } from './llm-service'
 
-const handlers = createLangChainOllamaHandlers({
+const handlers = createLLMHandlers(mainWindow, {
   url: 'http://localhost:11434',
   model: 'llama2',
   temperature: 0.7,
   maxTokens: 1000,
 })
 
-await handlers.init(config)
+await ipcRenderer.invoke('llm:init', config)
 ```
 
 ### Generate Command
 
 ```typescript
-const command = await handlers.generateCommand(
+const command = await ipcRenderer.invoke('llm:generate-command',
   'List all files in the current directory',
   ['ls -la', 'pwd'], // Optional context
   'en' // Language
@@ -169,7 +171,7 @@ const command = await handlers.generateCommand(
 ### Explain Command
 
 ```typescript
-const explanation = await handlers.explainCommand('ls -la')
+const explanation = await ipcRenderer.invoke('llm:explain-command', 'ls -la')
 // Returns: string
 // "Lists all files in the current directory with detailed information..."
 ```
@@ -177,7 +179,7 @@ const explanation = await handlers.explainCommand('ls -la')
 ### Interpret Output
 
 ```typescript
-const interpretation = await handlers.interpretOutput(
+const interpretation = await ipcRenderer.invoke('llm:interpret-output',
   'total 16\ndrwxr-xr-x 2 user user 4096 Jan 1 12:00 .',
   'en'
 )
@@ -220,7 +222,7 @@ try {
 |--------|--------|-------|
 | Response Time | ~2s | ~2s (unchanged) |
 | Parsing Reliability | ~85% | >98% |
-| Code Lines (ollama.ts) | 300 | 50 |
+| Code Lines (llm-service.ts) | 321 (2 files) | 320 (1 file) |
 | Bundle Size Increase | 0 | +2.5MB |
 
 ### Optimization Notes
@@ -236,16 +238,18 @@ try {
 
 ```typescript
 import { describe, it, expect } from 'vitest'
-import { createLangChainOllamaHandlers } from './langchain-ollama'
+import { createLLMHandlers } from './llm-service'
 
-describe('LangChainOllamaService', () => {
+describe('LLMService', () => {
   it('should generate command from natural language', async () => {
-    const handlers = createLangChainOllamaHandlers({
+    // Create handlers in Electron main process
+    createLLMHandlers(mainWindow, {
       url: 'http://localhost:11434',
       model: 'llama2',
     })
 
-    const command = await handlers.generateCommand('List files')
+    // Call from renderer process
+    const command = await ipcRenderer.invoke('llm:generate-command', 'List files')
 
     expect(command.type).toBe('command')
     expect(command.command).toBeTruthy()
@@ -259,9 +263,54 @@ describe('LangChainOllamaService', () => {
 npm run test
 ```
 
+## Backward Compatibility
+
+For existing code using the old `ollama:*` IPC channels, the service maintains backward compatibility:
+
+```typescript
+// Old way (still works)
+await ipcRenderer.invoke('ollama:init', config)
+await ipcRenderer.invoke('ollama:generate-command', prompt, context, language)
+
+// New recommended way
+await ipcRenderer.invoke('llm:init', config)
+await ipcRenderer.invoke('llm:generate-command', prompt, context, language)
+```
+
+The old `ollama:*` channels will be deprecated in a future version, but continue to work for now.
+
 ## Future Enhancements
 
-The LangChain integration enables the following future features:
+The LLM service architecture enables the following future features:
+
+### Multi-Provider Support
+
+```typescript
+// Example: OpenAI Provider
+class OpenAILLMService implements LLMProvider {
+  constructor(config: OpenAIConfig) {
+    this.#model = new ChatOpenAI(config)
+  }
+  // ... implement same interface as LLMService
+}
+```
+
+### Provider Selection
+
+```typescript
+export function createLLMHandlers(
+  mainWindow: BrowserWindow,
+  provider: 'ollama' | 'openai' | 'anthropic',
+  initialConfig?: LLMConfig
+): void {
+  const service = provider === 'openai' 
+    ? new OpenAILLMService(initialConfig)
+    : new LLMService(initialConfig)
+  // ... same IPC handlers
+}
+```
+
+### Conversation Memory
 
 ### 1. Conversation Memory
 
@@ -272,41 +321,7 @@ const memory = ConversationBufferMemory()
 const chain = promptTemplate.pipe(this.#model).pipe(memory)
 ```
 
-### 2. Multi-Agent Systems
-
-```typescript
-import { initializeAgent } from '@langchain/agents'
-
-const tools = [
-  executeCommandTool,
-  explainCommandTool,
-  interpretOutputTool,
-]
-const agent = initializeAgent(tools, model)
-```
-
-### 3. Chain of Thought
-
-```typescript
-import { SequentialChain } from '@langchain/chains'
-
-const chain = new SequentialChain({
-  chains: [
-    analyzeChain,    // Understand user intent
-    generateChain,   // Generate command
-    validateChain,   // Verify safety
-  ],
-})
-```
-
-### 4. Retrieval Augmented Generation (RAG)
-
-```typescript
-import { VectorStore } from '@langchain/vectorstores'
-
-const retriever = VectorStore.fromTexts(commands, embeddings)
-const chain = RetrievalQA.fromChain(model, retriever)
-```
+The LangChain integration enables the following advanced features:
 
 ## Troubleshooting
 
@@ -357,13 +372,21 @@ When modifying the LangChain integration:
 
 ## Changelog
 
+### 2026-02-11
+
+- Refactored to provider-agnostic LLM service
+- Renamed `LangChainOllamaService` to `LLMService`
+- Merged `ollama.ts` and `langchain-ollama.ts` into `llm-service.ts`
+- Added new `llm:*` IPC channels for provider-agnostic naming
+- Maintained backward compatibility with `ollama:*` channels
+- Prepared architecture for multi-provider support
+
 ### 2026-02-10
 
 - Initial LangChain integration
 - Replaced manual Axios implementation with ChatOllama
 - Added Zod schema validation
 - Migrated all IPC handlers to use LangChain
-- Reduced code complexity from 300 to 50 lines
 - Improved JSON parsing reliability to >98%
 
 ---
