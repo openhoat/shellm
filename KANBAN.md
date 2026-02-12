@@ -1,13 +1,57 @@
 # Kanban Board
 
+**Priority Legend:**
+- 🔴 **P1** = High Priority (critical, security, blocking issues)
+- 🟡 **P2** = Medium Priority (important improvements)
+- 🟢 **P3** = Low Priority (nice to have, enhancements)
+
+**Category Icons (for Ideas):**
+- 🔒 **[SECURITY]**: Security improvements (validation, sanitization, etc.)
+- ✅ **[TEST]**: Testing improvements (unit tests, integration tests, coverage)
+- 🚀 **[PERFORMANCE]**: Performance optimizations (caching, memoization, etc.)
+- 🏗️ **[ARCHITECTURE]**: Code architecture improvements (refactoring, patterns)
+- 🎨 **[UX]**: User experience improvements (shortcuts, tooltips, feedback)
+- 🔧 **[DEVOPS]**: DevOps improvements (CI/CD, scripts, workflows)
+- 🌍 **[I18N]**: Internationalization improvements (translations, locales)
+- 📦 **[DEPENDENCIES]**: Dependency updates (package updates, upgrades)
+- ⚙️ **[CONFIG]**: Configuration improvements (build tools, setup)
 
 ## 📝 Backlog
 
-- [ ] **[12/02/2026 10:29:32] 💡 [IDEA]** Use WireIt to optimize NPM scripts
+### 🔴 P1 - High Priority
 
+- [ ] **[12/02/2026 12:37:00] 🔴 P1 🔒 [SECURITY]** Implement command validation (blacklist for dangerous commands like sudo rm -rf, mkfs, etc.)
+- [ ] **[12/02/2026 12:37:00] 🔴 P1 🔒 [SECURITY]** Add input sanitization for user input in ChatPanel (prevent command injection)
+- [ ] **[12/02/2026 12:37:00] 🔴 P1 ✅ [TEST]** Add React component tests (ChatPanel, Terminal, ConfigPanel, Header, ModelSelector, LanguageSelector)
 
+### 🟡 P2 - Medium Priority
 
+- [ ] **[12/02/2026 12:37:00] 🟡 P2 🏗️ [ARCHITECTURE]** Refactor ChatPanel.tsx - extract useChat custom hook
+- [ ] **[12/02/2026 12:37:00] 🟡 P2 🏗️ [ARCHITECTURE]** Implement centralized error handling with toast notifications
+- [ ] **[12/02/2026 12:37:00] 🟡 P2 🚀 [PERFORMANCE]** Implement React.memo and virtualization for ChatPanel messages
+- [ ] **[12/02/2026 12:37:00] 🟡 P2 🔧 [DEVOPS]** Create CI/CD pipeline (GitHub Actions or GitLab CI) for tests, lint, and build
+- [ ] **[12/02/2026 10:29:32] 🟡 P2 ⚙️ [CONFIG]** Use WireIt to optimize NPM scripts
 
+### 🟢 P3 - Low Priority
+
+- [ ] **[12/02/2026 12:37:00] 🟢 P3 ✅ [TEST]** Add Electron IPC Layer tests with mocks
+- [ ] **[12/02/2026 12:37:00] 🟢 P3 ✅ [TEST]** Add test coverage script and report
+- [ ] **[12/02/2026 12:37:00] 🟢 P3 🔒 [SECURITY]** Add URL validation for Ollama connection
+- [ ] **[12/02/2026 12:37:00] 🟢 P3 🚀 [PERFORMANCE]** Add lazy loading for ConfigPanel component
+- [ ] **[12/02/2026 12:37:00] 🟢 P3 🚀 [PERFORMANCE]** Implement LLM response caching
+- [ ] **[12/02/2026 12:37:00] 🟢 P3 🚀 [PERFORMANCE]** Add debounce on user input in ChatPanel
+- [ ] **[12/02/2026 12:37:00] 🟢 P3 🏗️ [ARCHITECTURE]** Centralize logging with proper log levels across the application
+- [ ] **[12/02/2026 12:37:00] 🟢 P3 🏗️ [ARCHITECTURE]** Remove deprecated conversationHistory from useStore
+- [ ] **[12/02/2026 12:37:00] 🟢 P3 🎨 [UX]** Add tooltips to UI elements
+- [ ] **[12/02/2026 12:37:00] 🟢 P3 🎨 [UX]** Improve error messages to be more explicit
+- [ ] **[12/02/2026 12:37:00] 🟢 P3 🎨 [UX]** Add progress indicator for long-running commands
+- [ ] **[12/02/2026 12:37:00] 🟢 P3 🎨 [UX]** Implement keyboard shortcuts (Ctrl+Enter to execute, Ctrl+K to clear, Esc to cancel)
+- [ ] **[12/02/2026 12:37:00] 🟢 P3 🎨 [UX]** Implement dark/light theme toggle in components
+- [ ] **[12/02/2026 12:37:00] 🟢 P3 ✨ [FEAT]** Add conversation export/import functionality
+- [ ] **[12/02/2026 12:37:00] 🟢 P3 📝 [DOCS]** Add JSDoc documentation to functions
+- [ ] **[12/02/2026 12:37:00] 🟢 P3 🌍 [I18N]** Replace hardcoded strings in components with i18n translations
+- [ ] **[12/02/2026 12:37:00] 🟢 P3 📦 [DEPENDENCIES]** Update axios dependency from 1.13.4 to latest version
+- [ ] **[12/02/2026 12:37:00] 🟢 P3 📦 [DEPENDENCIES]** Update vitest dependency from 4.0.18 to latest version
 
 ## 🚧 In Progress
 

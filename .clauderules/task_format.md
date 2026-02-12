@@ -22,7 +22,30 @@ Defines common format rules for all task files in the project (KANBAN.md, CHANGE
 - Regex pattern for detection: `^\[\/\/\]: # (.*)$`
 - Lines matching this pattern must be ignored during processing
 
-### Categorization tags and Emojis
+### Priority Levels
+
+For KANBAN Backlog and In Progress sections, each idea/task must include a priority level:
+- **🔴 P1** = High Priority (critical, security, blocking issues)
+- **🟡 P2** = Medium Priority (important improvements)
+- **🟢 P3** = Low Priority (nice to have, enhancements)
+
+Priority must be placed after the timestamp and before the category emoji:
+`**[DD/MM/YYYY HH:mm:ss] Priority CategoryEmoji [CATEGORY]** Description`
+
+### Category Icons (for Backlog Ideas)
+
+Each idea in the backlog must use a category with its associated icon:
+- **🔒 [SECURITY]**: Security improvements (validation, sanitization, etc.)
+- **✅ [TEST]**: Testing improvements (unit tests, integration tests, coverage)
+- **🚀 [PERFORMANCE]**: Performance optimizations (caching, memoization, etc.)
+- **🏗️ [ARCHITECTURE]**: Code architecture improvements (refactoring, patterns)
+- **🎨 [UX]**: User experience improvements (shortcuts, tooltips, feedback)
+- **🔧 [DEVOPS]**: DevOps improvements (CI/CD, scripts, workflows)
+- **🌍 [I18N]**: Internationalization improvements (translations, locales)
+- **📦 [DEPENDENCIES]**: Dependency updates (package updates, upgrades)
+- **⚙️ [CONFIG]**: Configuration improvements (build tools, setup)
+
+### Categorization tags and Emojis (for Tasks)
 
 Each task must use the format with emojis and tags in brackets:
 - **✨ [FEAT]**: New feature or evolution
@@ -68,10 +91,28 @@ Contains the Kanban board with three sections: Backlog, In Progress, Done
 
 - Contains **feature ideas** to convert to tasks (`- [ ]`)
 - Checked ideas (`- [x]`) are considered already converted (to ignore)
-- Format: `- [ ] **[DD/MM/YYYY HH:mm:ss] 💡 [IDEA]** Idea description`
-- Uses only emoji `💡` and tag `[IDEA]`
+- Format: `- [ ] **[DD/MM/YYYY HH:mm:ss] Priority CategoryEmoji [CATEGORY]** Idea description`
+  - `Priority` is one of: `🔴 P1`, `🟡 P2`, `🟢 P3`
+  - `CategoryEmoji [CATEGORY]` is one of the category icons listed below
 - Date and time indicate the moment of idea creation in backlog
 - Comments are optional and serve only to document context
+- Ideas should be sorted by priority (P1 first, then P2, then P3)
+
+**Priority Legend:**
+- 🔴 **P1** = High Priority (critical, security, blocking issues)
+- 🟡 **P2** = Medium Priority (important improvements)
+- 🟢 **P3** = Low Priority (nice to have, enhancements)
+
+**Category Icons (for Ideas):**
+- 🔒 **[SECURITY]**: Security improvements (validation, sanitization, etc.)
+- ✅ **[TEST]**: Testing improvements (unit tests, integration tests, coverage)
+- 🚀 **[PERFORMANCE]**: Performance optimizations (caching, memoization, etc.)
+- 🏗️ **[ARCHITECTURE]**: Code architecture improvements (refactoring, patterns)
+- 🎨 **[UX]**: User experience improvements (shortcuts, tooltips, feedback)
+- 🔧 **[DEVOPS]**: DevOps improvements (CI/CD, scripts, workflows)
+- 🌍 **[I18N]**: Internationalization improvements (translations, locales)
+- 📦 **[DEPENDENCIES]**: Dependency updates (package updates, upgrades)
+- ⚙️ **[CONFIG]**: Configuration improvements (build tools, setup)
 
 #### In Progress section (## 🚧 In Progress)
 
