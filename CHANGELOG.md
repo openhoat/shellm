@@ -11,6 +11,10 @@ Pour visualiser l'historique complet, utilisez : `git log`
 
 ### 2026
 
+### 12/02
+
+**[16:09:45] 📝 [DOCS]** Add idea to backlog: Fix the test:ui NPM script by installing @vitest/ui package
+
 #### 12/02
 
 **[11:57:40] ✨ [FEAT]** Implement subagent management system with Claude including skills, agents, rules and workflows for quality validation, testing, and kanban execution

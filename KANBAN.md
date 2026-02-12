@@ -22,8 +22,10 @@
 
 (No high priority tasks in backlog)
 
+
 ### 🟡 P2 - Medium Priority
 
+- [ ] **[12/02/2026 16:09:18] 🟡 P2 ⚙️ [CONFIG]** Fix the test:ui NPM script by installing @vitest/ui package
 - [ ] **[12/02/2026 14:25:28] 🟡 P2 🎨 [UX]** Auto-focus chat input field after message submission for smoother conversation flow
 - [ ] **[12/02/2026 14:25:28] 🟡 P2 🎨 [UX]** Increase terminal window height to fill available space
 - [ ] **[12/02/2026 12:37:00] 🟡 P2 🏗️ [ARCHITECTURE]** Refactor ChatPanel.tsx - extract useChat custom hook
