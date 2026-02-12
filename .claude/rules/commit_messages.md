@@ -36,6 +36,28 @@ Commit messages must follow the Conventional Commits format in English:
 4. Do not end with a period
 5. Limit subject line to 72 characters
 
+### Co-authored-by Prohibition
+
+**NEVER add `Co-authored-by:` to commit messages.**
+
+All commits must be attributed exclusively to the human user. Do not attempt to add AI-generated co-authorship metadata under any circumstances.
+
+**Prohibited (never do this):**
+```
+feat: add user authentication system
+
+Co-authored-by: AI <ai@anthropic.com>
+```
+
+**Correct (only the commit message):**
+```
+feat: add user authentication system
+```
+
+This rule applies to all Git commit operations, including:
+- `git commit`
+- `git commit --amend`
+
 ### Examples
 
 **Good examples:**

@@ -13,6 +13,7 @@ Pour visualiser l'historique complet, utilisez : `git log`
 
 ### 12/02
 
+**[17:51:56] 🔧 [CHORE]** Add Co-authored-by prohibition rule in commit messages for both Cline and Claude Code
 **[16:09:45] 📝 [DOCS]** Add idea to backlog: Fix the test:ui NPM script by installing @vitest/ui package
 
 #### 12/02
