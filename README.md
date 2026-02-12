@@ -187,8 +187,12 @@ shellm/
 │   ├── preload.ts        # Preload script
 │   ├── ipc-handlers/     # IPC handlers
 │   │   ├── terminal.ts   # Terminal management
-│   │   ├── ollama.ts     # Ollama service
+│   │   ├── llm-service.ts # LLM service (Ollama)
+│   │   ├── conversation.ts # Conversation management
 │   │   └── config.ts     # Configuration management
+│   ├── services/         # Electron services
+│   │   └── conversationService.ts
+│   ├── prompts/          # LLM prompt templates
 │   └── tsconfig.json     # TypeScript configuration
 ├── src/                   # Renderer process (React)
 │   ├── components/       # React components
@@ -222,8 +226,11 @@ shellm/
 - **xterm.js**: Terminal emulator
 - **node-pty**: PTY terminal emulation
 - **Zustand**: State management
+- **LangChain**: LLM framework for structured outputs
 - **Ollama**: Local LLM
 - **Axios**: HTTP client
+- **Vitest**: Test framework
+- **Biome**: Code quality and formatting
 
 ## 📦 CHANGELOG Archiving
 
@@ -263,10 +270,7 @@ SheLLM uses a test architecture with **Vitest** that separates business logic fr
 ✅ **State Logic (Zustand)**: State management, actions (setConfig, setAiCommand, addToHistory, etc.)
 ✅ **React Components**: Rendering logic and user interactions
 ✅ **Shared Types**: Data structures
-
-### What is NOT Tested
-
-❌ **Electron IPC Layer**: `electron/ipc-handlers/`
+✅ **Electron IPC Layer**: Config, Conversation, LLM Service, Terminal handlers
 ❌ **Electron Window**: `electron/main.ts`
 ❌ **Full Integration**: E2E tests
 
@@ -294,6 +298,13 @@ src/
 │   └── useStore.test.ts      # Zustand store tests
 └── components/
     └── Header.test.tsx       # React component tests
+
+electron/
+├── ipc-handlers/
+│   ├── config.test.ts        # Config IPC handlers tests
+│   ├── conversation.test.ts  # Conversation IPC handlers tests
+│   ├── llm-service.test.ts   # LLM service IPC handlers tests
+│   └── terminal.test.ts      # Terminal IPC handlers tests
 ```
 
 ### Adding a New Test
