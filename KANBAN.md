@@ -59,14 +59,13 @@
 
 ## 🚧 In Progress
 
-### [12/02/2026 12:37:00] 🔴 P1 ✅ [TEST] Add React component tests (ChatPanel, Terminal, ConfigPanel, Header, ModelSelector, LanguageSelector)
+(No work in progress for the moment)
 
-- [ ] **[12/02/2026 14:00:00] 🎨 [STYLE]** Create ChatPanel.test.tsx
-- [ ] **[12/02/2026 14:00:00] 🎨 [STYLE]** Create Terminal.test.tsx
-- [ ] **[12/02/2026 14:00:00] 🎨 [STYLE]** Create ConfigPanel.test.tsx
-- [ ] **[12/02/2026 14:00:00] 🎨 [STYLE]** Create Header.test.tsx
-- [ ] **[12/02/2026 14:00:00] 🎨 [STYLE]** Create ModelSelector.test.tsx
-- [ ] **[12/02/2026 14:00:00] 🎨 [STYLE]** Create LanguageSelector.test.tsx
+## ✅ Done
+
+- [x] **[12/02/2026 12:37:00] 🔴 P1 🔒 [SECURITY]** Implement command validation (blacklist for dangerous commands like sudo rm -rf, mkfs, etc.)
+- [x] **[12/02/2026 12:37:00] 🔴 P1 🔒 [SECURITY]** Add input sanitization for user input in ChatPanel (prevent command injection)
+- [x] **[12/02/2026 12:37:00] 🔴 P1 ✅ [TEST]** Add React component tests (ChatPanel, Terminal, ConfigPanel, Header, ModelSelector, LanguageSelector)
 
 ## ✅ Done
 
