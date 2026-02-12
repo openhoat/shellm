@@ -12,7 +12,11 @@
     "resolveJsonModule": true,
     "moduleResolution": "node",
     "types": ["node"],
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@shared": ["../shared"],
+      "@shared/*": ["../shared/*"]
+    }
   },
   "include": ["./**/*.ts", "../shared/**/*.ts"],
   "exclude": ["node_modules", "../node_modules", "../dist", "../dist-electron"],

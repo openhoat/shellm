@@ -48,7 +48,7 @@ class ConversationService {
   private save(data: ConversationsList): void {
     try {
       fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8')
-    } catch (_error) {
+    } catch (error) {
       // Error saving conversations
       throw error
     }
@@ -70,7 +70,7 @@ class ConversationService {
     const data = this.read()
     const now = Date.now()
     const newConversation: Conversation = {
-      id: `${now}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `${now}-${Math.random().toString(36).slice(2, 11)}`,
       title: this.generateTitle(firstMessage),
       createdAt: now,
       updatedAt: now,

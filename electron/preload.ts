@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type { AppConfig, Conversation, ConversationMessage } from './types/types'
+import type { AppConfig, Conversation, ConversationMessage } from '@shared/types'
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // Config

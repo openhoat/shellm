@@ -41,9 +41,9 @@ export const ConfigPanel = () => {
   const loadModels = useCallback(async () => {
     setIsLoadingModels(true)
     try {
-      // Initialize Ollama service with current config
-      await window.electronAPI.ollamaInit(localConfig.ollama)
-      const models = await window.electronAPI.ollamaListModels()
+      // Initialize LLM service with current config
+      await window.electronAPI.llmInit(localConfig.ollama)
+      const models = await window.electronAPI.llmListModels()
       setAvailableModels(models)
     } catch (_error) {
       // Silently fail, user can still type model name
@@ -76,10 +76,10 @@ export const ConfigPanel = () => {
   const testConnection = async () => {
     setTestResult(null)
     try {
-      // Initialize Ollama service with current config
-      await window.electronAPI.ollamaInit(localConfig.ollama)
+      // Initialize LLM service with current config
+      await window.electronAPI.llmInit(localConfig.ollama)
 
-      const success = await window.electronAPI.ollamaTestConnection()
+      const success = await window.electronAPI.llmTestConnection()
       setTestResult({
         success,
         message: success ? t('errors.connectionSuccess') : t('errors.connection'),

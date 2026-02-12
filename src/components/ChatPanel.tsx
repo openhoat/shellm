@@ -7,6 +7,9 @@ import './ChatPanel.css'
 
 const logger = new Logger('ChatPanel')
 
+// Constants
+const COMMAND_OUTPUT_WAIT_TIME_MS = 3000 // 3 seconds wait for command output
+
 export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
   const { i18n } = useTranslation()
   const [userInput, setUserInput] = useState('')
@@ -84,19 +87,6 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
     setIsLoading(true)
 
     try {
-      // Type guard to check if AICommand is a shell command
-      const _isCommandShell = (
-        command?: AICommand
-      ): command is {
-        type: 'command'
-        command: string
-        intent: string
-        explanation: string
-        confidence: number
-      } => {
-        return command?.type === 'command'
-      }
-
       // Generate command using AI with full conversation history
       const response: AICommand = await window.electronAPI.llmGenerateCommand(
         prompt,
@@ -189,7 +179,7 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
       setAiCommand(null)
 
       // Wait for command output
-      const waitTime = 3000 // 3 seconds total wait
+      const waitTime = COMMAND_OUTPUT_WAIT_TIME_MS
       logger.debug(`Waiting ${waitTime}ms for command output...`)
       await new Promise(resolve => setTimeout(resolve, waitTime))
 

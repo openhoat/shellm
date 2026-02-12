@@ -10,7 +10,13 @@ import type {
   CommandInterpretation,
   ConversationMessage,
   OllamaConfig,
-} from '../types/types'
+} from '@shared/types'
+
+// Constants
+const MAX_CONVERSATION_HISTORY = 50
+const MAX_OUTPUT_LINES = 50
+const DEFAULT_TEMPERATURE = 0.7
+const DEFAULT_MAX_TOKENS = 1000
 
 function loadPrompt(filename: string): string {
   const promptsDir = path.join(__dirname, '..', 'prompts')
@@ -31,11 +37,11 @@ class LLMService {
     this.#model = new ChatOllama({
       model: config.model || 'llama2',
       baseUrl: config.url,
-      temperature: config.temperature ?? 0.7,
-      numPredict: config.maxTokens ?? 1000,
+      temperature: config.temperature ?? DEFAULT_TEMPERATURE,
+      numPredict: config.maxTokens ?? DEFAULT_MAX_TOKENS,
     })
-    this.#temperature = config.temperature ?? 0.7
-    this.#maxTokens = config.maxTokens ?? 1000
+    this.#temperature = config.temperature ?? DEFAULT_TEMPERATURE
+    this.#maxTokens = config.maxTokens ?? DEFAULT_MAX_TOKENS
   }
 
   /**
@@ -51,9 +57,9 @@ class LLMService {
     // Build messages from conversation history
     const messages: (HumanMessage | AIMessage)[] = []
 
-    // Add conversation history (limited to last 50 messages to avoid token limits)
+    // Add conversation history (limited to last MAX_CONVERSATION_HISTORY messages to avoid token limits)
     if (conversationHistory && conversationHistory.length > 0) {
-      const limitedHistory = conversationHistory.slice(-50)
+      const limitedHistory = conversationHistory.slice(-MAX_CONVERSATION_HISTORY)
       for (const msg of limitedHistory) {
         if (msg.role === 'user') {
           messages.push(new HumanMessage(msg.content))
@@ -160,8 +166,8 @@ class LLMService {
    * Interpret terminal output
    */
   async interpretOutput(output: string, language = 'en'): Promise<CommandInterpretation> {
-    // Limit output to first 50 lines to reduce processing time
-    const lines = output.split('\n').slice(0, 50).join('\n')
+    // Limit output to first MAX_OUTPUT_LINES lines to reduce processing time
+    const lines = output.split('\n').slice(0, MAX_OUTPUT_LINES).join('\n')
     const systemPrompt = loadPrompt('interpret-output-prompt.md')
 
     // Escape the output to prevent template injection issues
