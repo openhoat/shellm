@@ -78,6 +78,7 @@ export const configService = {
       },
       theme: 'dark',
       fontSize: 14,
+      shell: 'auto',
     }
   },
 

@@ -175,6 +175,7 @@ describe('configService', () => {
         },
         theme: 'dark',
         fontSize: 14,
+        shell: 'auto',
       }
 
       const override: Partial<AppConfig> = {

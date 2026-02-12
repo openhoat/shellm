@@ -63,6 +63,7 @@ export const useStore = create<AppState>((set, _get) => ({
     },
     theme: 'dark',
     fontSize: 14,
+    shell: 'auto',
   },
   setConfig: config => set({ config }),
   initConfig: async () => {

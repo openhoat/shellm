@@ -1,11 +1,15 @@
-import type { AICommand, OllamaConfig } from '@shared/types'
+import type { AICommand, ConversationMessage, OllamaConfig } from '@shared/types'
 
 /**
  * Interface pour l'API Electron (injectée pour testabilité)
  */
 export interface ElectronOllamaAPI {
   init(config: OllamaConfig): Promise<void>
-  generateCommand(prompt: string, recentCommands?: string[]): Promise<AICommand>
+  generateCommand(
+    prompt: string,
+    conversationHistory?: ConversationMessage[],
+    language?: string
+  ): Promise<AICommand>
   testConnection: () => Promise<boolean>
   listModels: () => Promise<string[]>
 }
@@ -24,8 +28,12 @@ export class OllamaService {
   /**
    * Génère une commande à partir d'une description en langage naturel
    */
-  async generateCommand(prompt: string, recentCommands?: string[]): Promise<AICommand> {
-    return this.#electronAPI.generateCommand(prompt, recentCommands)
+  async generateCommand(
+    prompt: string,
+    conversationHistory?: ConversationMessage[],
+    language?: string
+  ): Promise<AICommand> {
+    return this.#electronAPI.generateCommand(prompt, conversationHistory, language)
   }
 
   /**
