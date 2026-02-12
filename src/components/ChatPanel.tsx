@@ -2,6 +2,7 @@ import type { AICommand, CommandInterpretation, ConversationMessage } from '@sha
 import { type FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useStore } from '@/store/useStore'
+import { sanitizeUserInput, hasInjectionPatterns } from '@/services/commandExecutionService'
 import Logger from '@/utils/logger'
 import './ChatPanel.css'
 
@@ -215,9 +216,18 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
   }
 
   const modifyCommand = () => {
-    // Allow user to modify the command
+    // Allow user to modify the command with sanitization
     if (aiCommand && aiCommand.type === 'command') {
-      setUserInput(aiCommand.command)
+      const sanitized = sanitizeUserInput(aiCommand.command)
+      const injectionCheck = hasInjectionPatterns(aiCommand.command)
+
+      if (injectionCheck.hasInjection) {
+        setError(
+          `Attention: caractères d'injection détectés et supprimés: ${injectionCheck.patterns.join(', ')}`
+        )
+      }
+
+      setUserInput(sanitized)
       setAiCommand(null)
     }
   }

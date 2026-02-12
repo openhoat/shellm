@@ -20,12 +20,12 @@
 
 ### 🔴 P1 - High Priority
 
-- [ ] **[12/02/2026 12:37:00] 🔴 P1 🔒 [SECURITY]** Implement command validation (blacklist for dangerous commands like sudo rm -rf, mkfs, etc.)
-- [ ] **[12/02/2026 12:37:00] 🔴 P1 🔒 [SECURITY]** Add input sanitization for user input in ChatPanel (prevent command injection)
-- [ ] **[12/02/2026 12:37:00] 🔴 P1 ✅ [TEST]** Add React component tests (ChatPanel, Terminal, ConfigPanel, Header, ModelSelector, LanguageSelector)
+(No high priority tasks in backlog)
 
 ### 🟡 P2 - Medium Priority
 
+- [ ] **[12/02/2026 14:25:28] 🟡 P2 🎨 [UX]** Auto-focus chat input field after message submission for smoother conversation flow
+- [ ] **[12/02/2026 14:25:28] 🟡 P2 🎨 [UX]** Increase terminal window height to fill available space
 - [ ] **[12/02/2026 12:37:00] 🟡 P2 🏗️ [ARCHITECTURE]** Refactor ChatPanel.tsx - extract useChat custom hook
 - [ ] **[12/02/2026 12:37:00] 🟡 P2 🏗️ [ARCHITECTURE]** Implement centralized error handling with toast notifications
 - [ ] **[12/02/2026 12:37:00] 🟡 P2 🚀 [PERFORMANCE]** Implement React.memo and virtualization for ChatPanel messages
@@ -34,6 +34,8 @@
 
 ### 🟢 P3 - Low Priority
 
+- [ ] **[12/02/2026 14:22:39] 🟢 P3 ⚙️ [CONFIG]** Sort NPM scripts alphabetically in package.json
+- [ ] **[12/02/2026 14:20:41] 🟢 P3 🏗️ [ARCHITECTURE]** Fix TypeScript UMD global variable warnings across project by importing explicit types (e.g., React.CSSProperties → CSSProperties)
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 ✅ [TEST]** Add Electron IPC Layer tests with mocks
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 ✅ [TEST]** Add test coverage script and report
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 🔒 [SECURITY]** Add URL validation for Ollama connection
@@ -55,8 +57,16 @@
 
 ## 🚧 In Progress
 
-(No work in progress for the moment)
+### [12/02/2026 12:37:00] 🔴 P1 ✅ [TEST] Add React component tests (ChatPanel, Terminal, ConfigPanel, Header, ModelSelector, LanguageSelector)
+
+- [ ] **[12/02/2026 14:00:00] 🎨 [STYLE]** Create ChatPanel.test.tsx
+- [ ] **[12/02/2026 14:00:00] 🎨 [STYLE]** Create Terminal.test.tsx
+- [ ] **[12/02/2026 14:00:00] 🎨 [STYLE]** Create ConfigPanel.test.tsx
+- [ ] **[12/02/2026 14:00:00] 🎨 [STYLE]** Create Header.test.tsx
+- [ ] **[12/02/2026 14:00:00] 🎨 [STYLE]** Create ModelSelector.test.tsx
+- [ ] **[12/02/2026 14:00:00] 🎨 [STYLE]** Create LanguageSelector.test.tsx
 
 ## ✅ Done
 
-(No completed tasks for the moment)
+- [x] **[12/02/2026 12:37:00] 🔴 P1 🔒 [SECURITY]** Implement command validation (blacklist for dangerous commands like sudo rm -rf, mkfs, etc.)
+- [x] **[12/02/2026 12:37:00] 🔴 P1 🔒 [SECURITY]** Add input sanitization for user input in ChatPanel (prevent command injection)
