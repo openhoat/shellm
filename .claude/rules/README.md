@@ -9,6 +9,7 @@ This directory contains project rules adapted for Claude Code.
 | `commit_messages.md` | Git commit messages in Conventional Commits (English) |
 | `language.md` | All content must be in English (except src/locales/fr.json) |
 | `log_changes.md` | Log modifications in CHANGELOG.md |
+| `mcp_intellij.md` | MCP IntelliJ integration for code analysis and navigation |
 | `quality_check.md` | Run `npm run validate` after code modifications |
 | `task_format.md` | Task format for KANBAN.md and CHANGELOG.md |
 
