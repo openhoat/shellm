@@ -10,17 +10,14 @@ const logger = new Logger('ChatPanel')
 
 // Constants
 const COMMAND_OUTPUT_WAIT_TIME_MS = 3000 // 3 seconds wait for command output
-const DEBOUNCE_DELAY_MS = 300 // Debounce delay for LLM generation
 
 export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
   // Ref for the chat input element
   const inputRef = useRef<HTMLInputElement>(null)
   const { i18n } = useTranslation()
   const [userInput, setUserInput] = useState('')
-  const [isModifyingCommand, setIsModifyingCommand] = useState(false) // Track if user is modifying a command
   const [currentCommandIndex, setCurrentCommandIndex] = useState<number | null>(null)
   const [isInterpreting, setIsInterpreting] = useState(false)
-  const [previousUserInput, setPreviousUserInput] = useState('') // Track previous input to detect typing
   const [conversation, setConversation] = useState<
     Array<{
       type: 'user' | 'ai'
@@ -61,15 +58,9 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value
     // If user types something and there was an AI command, hide it
-    if (newValue.length > previousUserInput.length && aiCommand?.type === 'command') {
+    if (aiCommand?.type === 'command') {
       setAiCommand(null)
-      setIsModifyingCommand(true)
     }
-    // Reset modification flag when input is cleared
-    if (newValue.length === 0) {
-      setIsModifyingCommand(false)
-    }
-    setPreviousUserInput(newValue)
     setUserInput(newValue)
   }
 
@@ -165,18 +156,6 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
     ]
   )
 
-  // Debounced LLM generation - auto-generate when typing settles
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      // Only auto-generate if not modifying a command and not loading
-      if (userInput.trim() && !isModifyingCommand && !isLoading) {
-        generateAICommand(userInput.trim())
-        setUserInput('') // Clear input after generation
-      }
-    }, DEBOUNCE_DELAY_MS)
-
-    return () => clearTimeout(timeoutId)
-  }, [userInput, isModifyingCommand, isLoading, generateAICommand])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -184,8 +163,6 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
 
     const prompt = userInput.trim()
     setUserInput('')
-    // Reset modification flag on manual submit
-    setIsModifyingCommand(false)
 
     // Use the shared generateAICommand function
     await generateAICommand(prompt)
@@ -285,7 +262,6 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
 
       setUserInput(sanitized)
       setAiCommand(null)
-      setIsModifyingCommand(true) // Mark that user is modifying a command
     }
   }
 
