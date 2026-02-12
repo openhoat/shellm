@@ -46,12 +46,7 @@ class ConversationService {
    * Save conversations to disk
    */
   private save(data: ConversationsList): void {
-    try {
-      fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8')
-    } catch (error) {
-      // Error saving conversations
-      throw error
-    }
+    fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8')
   }
 
   /**
