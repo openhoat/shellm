@@ -3,14 +3,14 @@ import path from 'node:path'
 import { AIMessage, HumanMessage } from '@langchain/core/messages'
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts'
 import { ChatOllama } from '@langchain/ollama'
-import { type BrowserWindow, ipcMain } from 'electron'
-import { z } from 'zod'
 import type {
   AICommand,
   CommandInterpretation,
   ConversationMessage,
   OllamaConfig,
 } from '@shared/types'
+import { type BrowserWindow, ipcMain } from 'electron'
+import { z } from 'zod'
 
 // Constants
 const MAX_CONVERSATION_HISTORY = 50
@@ -72,6 +72,16 @@ class LLMService {
     // Add language hint to the system prompt
     const enhancedSystemPrompt = `${systemPrompt}\n\n[Language hint: User interface language is ${language}]`
 
+    // Define the Zod schema for structured output
+    const commandSchema = z.object({
+      type: z.enum(['command', 'text']),
+      intent: z.string().optional(),
+      command: z.string().optional(),
+      explanation: z.string().optional(),
+      confidence: z.number().optional(),
+      content: z.string().optional(),
+    })
+
     // Create prompt template with conversation history support
     const promptTemplate = ChatPromptTemplate.fromMessages([
       ['system', enhancedSystemPrompt],
@@ -79,39 +89,56 @@ class LLMService {
       ['human', '{input}'],
     ])
 
-    const chain = promptTemplate.pipe(this.#model)
+    // Use LangChain's withStructuredOutput for better parsing
+    const chain = promptTemplate.pipe(this.#model.withStructuredOutput(commandSchema))
 
     try {
       const result = await chain.invoke({ input: prompt, history: messages })
-      const responseText = result.content as string
 
-      // Try to parse JSON response
-      let jsonMatch = responseText.match(/\{[\s\S]*"type"[\s\S]*\}/)
-      if (!jsonMatch) {
-        jsonMatch = responseText.match(/\{[\s\S]*\}/)
-      }
-
-      if (!jsonMatch) {
+      // Convert LangChain result to AICommand format
+      if (result.type === 'text') {
         return {
           type: 'text',
-          content: this.getFallbackMessage('unable_to_generate', language),
+          content: result.content || '',
         }
       }
 
-      try {
-        const parsed = JSON.parse(jsonMatch[0])
-        const commandSchema = z.object({
-          type: z.enum(['command', 'text']),
-          intent: z.string().optional(),
-          command: z.string().optional(),
-          explanation: z.string().optional(),
-          confidence: z.number().optional(),
-          content: z.string().optional(),
-        })
+      return {
+        type: 'command',
+        intent: result.intent || 'Execute command',
+        command: result.command || '',
+        explanation: result.explanation || '',
+        confidence: result.confidence || 0.5,
+      }
+    } catch (_error) {
+      // Error in generateCommand - fall back to manual parsing
 
+      try {
+        const fallbackChain = ChatPromptTemplate.fromMessages([
+          ['system', enhancedSystemPrompt],
+          new MessagesPlaceholder('history'),
+          ['human', '{input}'],
+        ]).pipe(this.#model)
+
+        const fallbackResult = await fallbackChain.invoke({ input: prompt, history: messages })
+        const responseText = fallbackResult.content as string
+
+        // Try to parse JSON response manually
+        let jsonMatch = responseText.match(/\{[\s\S]*"type"[\s\S]*\}/)
+        if (!jsonMatch) {
+          jsonMatch = responseText.match(/\{[\s\S]*\}/)
+        }
+
+        if (!jsonMatch) {
+          return {
+            type: 'text',
+            content: this.getFallbackMessage('unable_to_generate', language),
+          }
+        }
+
+        const parsed = JSON.parse(jsonMatch[0])
         const validated = commandSchema.parse(parsed)
 
-        // Convert LangChain result to AICommand format
         if (validated.type === 'text') {
           return {
             type: 'text',
@@ -126,18 +153,12 @@ class LLMService {
           explanation: validated.explanation || '',
           confidence: validated.confidence || 0.5,
         }
-      } catch (_parseError) {
+      } catch {
         // Error parsing JSON response
         return {
           type: 'text',
           content: this.getFallbackMessage('parsing_failed', language),
         }
-      }
-    } catch (_error) {
-      // Error in generateCommand
-      return {
-        type: 'text',
-        content: this.getFallbackMessage('unable_to_generate', language),
       }
     }
   }

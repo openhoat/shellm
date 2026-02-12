@@ -8,10 +8,13 @@ Pour visualiser l'historique complet, utilisez : `git log`
 
 
 
+
 ### 2026
 
 #### 12/02
 
+**[11:57:40] ✨ [FEAT]** Implement subagent management system with Claude including skills, agents, rules and workflows for quality validation, testing, and kanban execution
+**[11:55:30] 🐛 [FIX]** Fix irrelevant AI responses by improving system prompt with package management examples and using LangChain's withStructuredOutput for better parsing
 **[10:32:50] ✨ [FEAT]** Create interactive workflow for adding ideas to Kanban backlog
 
 #### 11/02

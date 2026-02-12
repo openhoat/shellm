@@ -72,7 +72,6 @@
 }
 
 /* Cursor enhancement - Terminator-like green cursor with glow */
-/* biome-ignore lint/complexity/noImportantStyles: xterm.js requires !important for cursor styling */
 .xterm .xterm-cursor-layer .xterm-cursor {
   background-color: #16b614;
   border-radius: 2px;
@@ -98,7 +97,6 @@
 }
 
 /* Selection styling */
-/* biome-ignore lint/complexity/noImportantStyles: xterm.js requires !important for selection styling */
 .xterm .xterm-selection div {
   background-color: #b4d5fe;
   opacity: 0.3;
