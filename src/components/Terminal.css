@@ -1,6 +1,8 @@
 .terminal-container {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 200px;
   background-color: #2d2d2d;
   border-right: 1px solid #4a4a4a;
   border-top: 1px solid #4a4a4a;

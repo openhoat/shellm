@@ -1,5 +1,5 @@
 import type { AICommand, CommandInterpretation, ConversationMessage } from '@shared/types'
-import { type FormEvent, useEffect, useState } from 'react'
+import { type FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { hasInjectionPatterns, sanitizeUserInput } from '@/services/commandExecutionService'
 import { useStore } from '@/store/useStore'
@@ -10,10 +10,14 @@ const logger = new Logger('ChatPanel')
 
 // Constants
 const COMMAND_OUTPUT_WAIT_TIME_MS = 3000 // 3 seconds wait for command output
+const DEBOUNCE_DELAY_MS = 300 // Debounce delay for LLM generation
 
 export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
+  // Ref for the chat input element
+  const inputRef = useRef<HTMLInputElement>(null)
   const { i18n } = useTranslation()
   const [userInput, setUserInput] = useState('')
+  const [isModifyingCommand, setIsModifyingCommand] = useState(false) // Track if user is modifying a command
   const [currentCommandIndex, setCurrentCommandIndex] = useState<number | null>(null)
   const [isInterpreting, setIsInterpreting] = useState(false)
   const [previousUserInput, setPreviousUserInput] = useState('') // Track previous input to detect typing
@@ -46,16 +50,133 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
     loadConversations()
   }, [loadConversations])
 
+  // Auto-focus chat input field on mount and when loading completes
+  useEffect(() => {
+    if (!isLoading && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [isLoading])
+
   // Auto-hide AI command when user starts typing
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value
     // If user types something and there was an AI command, hide it
     if (newValue.length > previousUserInput.length && aiCommand?.type === 'command') {
       setAiCommand(null)
+      setIsModifyingCommand(true)
+    }
+    // Reset modification flag when input is cleared
+    if (newValue.length === 0) {
+      setIsModifyingCommand(false)
     }
     setPreviousUserInput(newValue)
     setUserInput(newValue)
   }
+
+  // Function to generate AI command
+  const generateAICommand = useCallback(
+    async (prompt: string) => {
+      if (!prompt.trim() || isLoading) return
+
+      setError(null)
+
+      // Add user message to local conversation state
+      setConversation(prev => [...prev, { type: 'user', content: prompt }])
+
+      // Create new conversation if none exists
+      if (!currentConversation) {
+        await createConversation(prompt)
+      }
+
+      // Build conversation history for LLM context
+      const conversationHistory: ConversationMessage[] = conversation.map(msg => ({
+        role: msg.type === 'user' ? 'user' : 'assistant',
+        content: msg.content,
+      }))
+
+      // Add current user message to history
+      conversationHistory.push({ role: 'user', content: prompt })
+
+      // Save user message to persistent storage
+      await addMessageToConversation({ role: 'user', content: prompt })
+
+      setIsLoading(true)
+
+      try {
+        // Generate command using AI with full conversation history
+        const response: AICommand = await window.electronAPI.llmGenerateCommand(
+          prompt,
+          conversationHistory,
+          i18n.language
+        )
+
+        setAiCommand(response)
+
+        // Build full AI response content for display and storage
+        let aiContent: string
+        if (response.type === 'text') {
+          aiContent = response.content
+        } else {
+          // For command responses, include both explanation and command details
+          aiContent = `${response.explanation}\n\nCommand: ${response.command}`
+        }
+
+        setConversation(prev => {
+          const newMessage: {
+            type: 'user' | 'ai'
+            content: string
+            command?: AICommand
+            interpretation?: CommandInterpretation
+          } = {
+            type: 'ai',
+            content: aiContent,
+            command: response.type === 'command' ? response : undefined,
+          }
+          const newConversation = [...prev, newMessage]
+          // Store the index of the newly added AI message if it's a command
+          if (response.type === 'command') {
+            setCurrentCommandIndex(newConversation.length - 1)
+          }
+          return newConversation
+        })
+
+        // Save AI response to persistent storage
+        await addMessageToConversation({ role: 'assistant', content: aiContent })
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to generate command')
+        setConversation(prev => [
+          ...prev,
+          { type: 'ai', content: `Error: ${err instanceof Error ? err.message : 'Unknown error'}` },
+        ])
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    [
+      isLoading,
+      currentConversation,
+      conversation,
+      i18n.language,
+      addMessageToConversation,
+      setAiCommand,
+      setIsLoading,
+      createConversation,
+      setError,
+    ]
+  )
+
+  // Debounced LLM generation - auto-generate when typing settles
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      // Only auto-generate if not modifying a command and not loading
+      if (userInput.trim() && !isModifyingCommand && !isLoading) {
+        generateAICommand(userInput.trim())
+        setUserInput('') // Clear input after generation
+      }
+    }, DEBOUNCE_DELAY_MS)
+
+    return () => clearTimeout(timeoutId)
+  }, [userInput, isModifyingCommand, isLoading, generateAICommand])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -63,79 +184,11 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
 
     const prompt = userInput.trim()
     setUserInput('')
-    setError(null)
+    // Reset modification flag on manual submit
+    setIsModifyingCommand(false)
 
-    // Add user message to local conversation state
-    setConversation(prev => [...prev, { type: 'user', content: prompt }])
-
-    // Create new conversation if none exists
-    if (!currentConversation) {
-      await createConversation(prompt)
-    }
-
-    // Build conversation history for LLM context
-    const conversationHistory: ConversationMessage[] = conversation.map(msg => ({
-      role: msg.type === 'user' ? 'user' : 'assistant',
-      content: msg.content,
-    }))
-
-    // Add current user message to history
-    conversationHistory.push({ role: 'user', content: prompt })
-
-    // Save user message to persistent storage
-    await addMessageToConversation({ role: 'user', content: prompt })
-
-    setIsLoading(true)
-
-    try {
-      // Generate command using AI with full conversation history
-      const response: AICommand = await window.electronAPI.llmGenerateCommand(
-        prompt,
-        conversationHistory,
-        i18n.language
-      )
-
-      setAiCommand(response)
-
-      // Build full AI response content for display and storage
-      let aiContent: string
-      if (response.type === 'text') {
-        aiContent = response.content
-      } else {
-        // For command responses, include both explanation and command details
-        aiContent = `${response.explanation}\n\nCommand: ${response.command}`
-      }
-
-      setConversation(prev => {
-        const newMessage: {
-          type: 'user' | 'ai'
-          content: string
-          command?: AICommand
-          interpretation?: CommandInterpretation
-        } = {
-          type: 'ai',
-          content: aiContent,
-          command: response.type === 'command' ? response : undefined,
-        }
-        const newConversation = [...prev, newMessage]
-        // Store the index of the newly added AI message if it's a command
-        if (response.type === 'command') {
-          setCurrentCommandIndex(newConversation.length - 1)
-        }
-        return newConversation
-      })
-
-      // Save AI response to persistent storage
-      await addMessageToConversation({ role: 'assistant', content: aiContent })
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to generate command')
-      setConversation(prev => [
-        ...prev,
-        { type: 'ai', content: `Error: ${err instanceof Error ? err.message : 'Unknown error'}` },
-      ])
-    } finally {
-      setIsLoading(false)
-    }
+    // Use the shared generateAICommand function
+    await generateAICommand(prompt)
   }
 
   const executeCommand = async (command: string, messageIndex?: number) => {
@@ -232,6 +285,7 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
 
       setUserInput(sanitized)
       setAiCommand(null)
+      setIsModifyingCommand(true) // Mark that user is modifying a command
     }
   }
 
@@ -391,6 +445,9 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
           onChange={handleInputChange}
           placeholder="Décrivez ce que vous voulez faire..."
           disabled={isLoading}
+          // biome-ignore lint/a11y/noAutofocus: Intentional auto-focus for chat input UX
+          autoFocus
+          ref={inputRef}
         />
         <button
           type="submit"
