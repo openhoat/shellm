@@ -15,6 +15,7 @@ describe('useStore', () => {
         },
         theme: 'dark',
         fontSize: 14,
+        shell: 'auto',
       },
       terminalPid: null,
       aiCommand: null,
@@ -47,6 +48,7 @@ describe('useStore', () => {
         },
         theme: 'light',
         fontSize: 16,
+        shell: 'bash',
       }
 
       useStore.getState().setConfig(newConfig)

@@ -25,6 +25,7 @@ const defaultAppConfig: AppConfig = {
   },
   theme: 'dark',
   fontSize: 14,
+  shell: 'auto',
 }
 
 const mockGetConfig = vi.fn().mockResolvedValue(defaultAppConfig)

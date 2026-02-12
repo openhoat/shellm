@@ -1,8 +1,8 @@
 import type { AICommand, CommandInterpretation, ConversationMessage } from '@shared/types'
 import { type FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { hasInjectionPatterns, sanitizeUserInput } from '@/services/commandExecutionService'
 import { useStore } from '@/store/useStore'
-import { sanitizeUserInput, hasInjectionPatterns } from '@/services/commandExecutionService'
 import Logger from '@/utils/logger'
 import './ChatPanel.css'
 
@@ -107,14 +107,17 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
       }
 
       setConversation(prev => {
-        const newConversation = [
-          ...prev,
-          {
-            type: 'ai',
-            content: aiContent,
-            command: response.type === 'command' ? response : undefined,
-          },
-        ]
+        const newMessage: {
+          type: 'user' | 'ai'
+          content: string
+          command?: AICommand
+          interpretation?: CommandInterpretation
+        } = {
+          type: 'ai',
+          content: aiContent,
+          command: response.type === 'command' ? response : undefined,
+        }
+        const newConversation = [...prev, newMessage]
         // Store the index of the newly added AI message if it's a command
         if (response.type === 'command') {
           setCurrentCommandIndex(newConversation.length - 1)

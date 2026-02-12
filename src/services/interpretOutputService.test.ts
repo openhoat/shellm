@@ -2,11 +2,11 @@ import type { CommandInterpretation } from '@shared/types'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
 // Mock window.electronAPI
-const mockOllamaInterpretOutput = vi.fn()
+const mockLlmInterpretOutput = vi.fn()
 
 Object.defineProperty(window, 'electronAPI', {
   value: {
-    ollamaInterpretOutput: mockOllamaInterpretOutput,
+    llmInterpretOutput: mockLlmInterpretOutput,
   },
   writable: true,
 })
@@ -37,11 +37,11 @@ describe('Interpret Output Service', () => {
       successful: true,
     }
 
-    mockOllamaInterpretOutput.mockResolvedValue(mockInterpretation)
+    mockLlmInterpretOutput.mockResolvedValue(mockInterpretation)
 
-    const result = await window.electronAPI.ollamaInterpretOutput(mockOutput)
+    const result = await window.electronAPI.llmInterpretOutput(mockOutput)
 
-    expect(mockOllamaInterpretOutput).toHaveBeenCalledWith(mockOutput)
+    expect(mockLlmInterpretOutput).toHaveBeenCalledWith(mockOutput)
     expect(result).toEqual(mockInterpretation)
     expect(result.successful).toBe(true)
     expect(result.summary).toBeTruthy()
@@ -67,11 +67,11 @@ describe('Interpret Output Service', () => {
       successful: false,
     }
 
-    mockOllamaInterpretOutput.mockResolvedValue(mockInterpretation)
+    mockLlmInterpretOutput.mockResolvedValue(mockInterpretation)
 
-    const result = await window.electronAPI.ollamaInterpretOutput(mockOutput)
+    const result = await window.electronAPI.llmInterpretOutput(mockOutput)
 
-    expect(mockOllamaInterpretOutput).toHaveBeenCalledWith(mockOutput)
+    expect(mockLlmInterpretOutput).toHaveBeenCalledWith(mockOutput)
     expect(result).toEqual(mockInterpretation)
     expect(result.successful).toBe(false)
     expect(result.errors).toHaveLength(2)
@@ -94,11 +94,11 @@ describe('Interpret Output Service', () => {
       successful: true,
     }
 
-    mockOllamaInterpretOutput.mockResolvedValue(mockInterpretation)
+    mockLlmInterpretOutput.mockResolvedValue(mockInterpretation)
 
-    const result = await window.electronAPI.ollamaInterpretOutput(mockOutput)
+    const result = await window.electronAPI.llmInterpretOutput(mockOutput)
 
-    expect(mockOllamaInterpretOutput).toHaveBeenCalledWith(mockOutput)
+    expect(mockLlmInterpretOutput).toHaveBeenCalledWith(mockOutput)
     expect(result).toEqual(mockInterpretation)
     expect(result.successful).toBe(true)
     expect(result.warnings).toHaveLength(2)
@@ -116,20 +116,20 @@ describe('Interpret Output Service', () => {
       successful: true,
     }
 
-    mockOllamaInterpretOutput.mockResolvedValue(mockInterpretation)
+    mockLlmInterpretOutput.mockResolvedValue(mockInterpretation)
 
-    const result = await window.electronAPI.ollamaInterpretOutput(mockOutput)
+    const result = await window.electronAPI.llmInterpretOutput(mockOutput)
 
-    expect(mockOllamaInterpretOutput).toHaveBeenCalledWith(mockOutput)
+    expect(mockLlmInterpretOutput).toHaveBeenCalledWith(mockOutput)
     expect(result).toEqual(mockInterpretation)
   })
 
   test('should handle interpretation service errors', async () => {
     const mockOutput = 'some output'
 
-    mockOllamaInterpretOutput.mockRejectedValue(new Error('Service unavailable'))
+    mockLlmInterpretOutput.mockRejectedValue(new Error('Service unavailable'))
 
-    await expect(window.electronAPI.ollamaInterpretOutput(mockOutput)).rejects.toThrow(
+    await expect(window.electronAPI.llmInterpretOutput(mockOutput)).rejects.toThrow(
       'Service unavailable'
     )
   })
@@ -150,11 +150,11 @@ describe('Interpret Output Service', () => {
       successful: true,
     }
 
-    mockOllamaInterpretOutput.mockResolvedValue(mockInterpretation)
+    mockLlmInterpretOutput.mockResolvedValue(mockInterpretation)
 
-    const result = await window.electronAPI.ollamaInterpretOutput(mockOutput)
+    const result = await window.electronAPI.llmInterpretOutput(mockOutput)
 
-    expect(mockOllamaInterpretOutput).toHaveBeenCalledWith(mockOutput)
+    expect(mockLlmInterpretOutput).toHaveBeenCalledWith(mockOutput)
     expect(result.recommendations).toHaveLength(3)
     expect(result.recommendations[0]).toContain('cleaning up')
   })
