@@ -11,6 +11,7 @@ Pour visualiser l'historique complet, utilisez : `git log`
 
 ### 13/02
 
+**[00:50:00] 🔧 [CHORE]** Add French language preference rule in .claude/rules for automatic French responses
 **[00:40:00] ✅ [TEST]** Add Electron IPC Layer tests with mocks (config, conversation, llm-service, terminal)
 
 ### 12/02
