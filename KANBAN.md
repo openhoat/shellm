@@ -34,8 +34,10 @@
 - [ ] **[12/02/2026 12:37:00] 🟡 P2 🔧 [DEVOPS]** Create CI/CD pipeline (GitHub Actions or GitLab CI) for tests, lint, and build
 - [ ] **[12/02/2026 10:29:32] 🟡 P2 ⚙️ [CONFIG]** Use WireIt to optimize NPM scripts
 
+
 ### 🟢 P3 - Low Priority
 
+- [ ] **[12/02/2026 16:43:01] 🟢 P3 ⚙️ [CONFIG]** Clean up docs directory - remove LangChain feasibility and integration files
 - [ ] **[12/02/2026 14:22:39] 🟢 P3 ⚙️ [CONFIG]** Sort NPM scripts alphabetically in package.json
 - [ ] **[12/02/2026 14:20:41] 🟢 P3 🏗️ [ARCHITECTURE]** Fix TypeScript UMD global variable warnings across project by importing explicit types (e.g., React.CSSProperties → CSSProperties)
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 ✅ [TEST]** Add Electron IPC Layer tests with mocks
