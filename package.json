@@ -5,9 +5,9 @@
   "main": "dist-electron/electron/main.js",
   "homepage": "https://github.com/openhoat/shellm",
   "scripts": {
-    "build": "npm run build:vite && npm run build:electron",
-    "build:electron": "tsc -p electron/tsconfig.json && node -e \"const fs=require('fs');const path=require('path');const src=path.join('electron','prompts');const dest=path.join('dist-electron','electron','prompts');if(fs.existsSync(src)){fs.mkdirSync(dest,{recursive:true});fs.readdirSync(src).forEach(f=>fs.copyFileSync(path.join(src,f),path.join(dest,f)))}\"",
-    "build:vite": "vite build",
+    "build": "wireit",
+    "build:electron": "wireit",
+    "build:vite": "wireit",
     "changelog": "node scripts/generate-changelog.js",
     "clean": "rimraf -g -v dist dist-electron release **/tsconfig.tsbuildinfo",
     "commit:lint": "commitlint --edit",
@@ -25,7 +25,7 @@
     "test": "vitest run",
     "test:ui": "vitest --ui",
     "test:watch": "vitest",
-    "validate": "concurrently \"npm run qa\" \"npm run build\" \"npm run test\""
+    "validate": "wireit"
   },
   "keywords": [],
   "author": "Olivier Penhoat <openhoat@gmail.com> (http://headwood.net/)",
@@ -72,7 +72,68 @@
     "tsc-alias": "1.8.16",
     "typescript": "5.9.3",
     "vite": "7.3.1",
-    "vitest": "5.0.2"
+    "vitest": "5.0.2",
+    "wireit": "^0.14.5"
+  },
+  "wireit": {
+    "build:vite": {
+      "command": "vite build",
+      "files": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "vite.config.ts",
+        "index.html"
+      ],
+      "output": [
+        "dist/**/*"
+      ]
+    },
+    "build:electron": {
+      "command": "tsc -p electron/tsconfig.json && node -e \"const fs=require('fs');const path=require('path');const src=path.join('electron','prompts');const dest=path.join('dist-electron','electron','prompts');if(fs.existsSync(src)){fs.mkdirSync(dest,{recursive:true});fs.readdirSync(src).forEach(f=>fs.copyFileSync(path.join(src,f),path.join(dest,f)))}\"",
+      "dependencies": [
+        "build:vite"
+      ],
+      "files": [
+        "electron/**/*.ts",
+        "electron/tsconfig.json",
+        "electron/prompts/**/*"
+      ],
+      "output": [
+        "dist-electron/**/*"
+      ]
+    },
+    "build": {
+      "dependencies": [
+        "build:vite",
+        "build:electron"
+      ]
+    },
+    "qa": {
+      "command": "biome check .",
+      "files": [
+        ".biomerc",
+        "biome.json"
+      ],
+      "output": []
+    },
+    "test": {
+      "command": "vitest run",
+      "files": [
+        "src/**/*.test.{ts,tsx}",
+        "vitest.config.ts",
+        "src/**/*.{ts,tsx}"
+      ],
+      "output": [
+        "coverage/**/*"
+      ]
+    },
+    "validate": {
+      "dependencies": [
+        "qa",
+        "build",
+        "test"
+      ]
+    }
   },
   "build": {
     "appId": "com.openhoat.shellm",

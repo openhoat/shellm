@@ -1,267 +1,49 @@
-import type { AICommand, CommandInterpretation, ConversationMessage } from '@shared/types'
-import { type FormEvent, useCallback, useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { hasInjectionPatterns, sanitizeUserInput } from '@/services/commandExecutionService'
+import type { CSSProperties } from 'react'
+import { type FormEvent, useEffect, useRef } from 'react'
+import { useChat } from '@/hooks/useChat'
 import { useStore } from '@/store/useStore'
 import Logger from '@/utils/logger'
+import { ChatMessage } from './chat'
 import './ChatPanel.css'
 
 const logger = new Logger('ChatPanel')
 
-// Constants
-const COMMAND_OUTPUT_WAIT_TIME_MS = 3000 // 3 seconds wait for command output
-
-export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
+export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
   // Ref for the chat input element
   const inputRef = useRef<HTMLInputElement>(null)
-  const { i18n } = useTranslation()
-  const [userInput, setUserInput] = useState('')
-  const [currentCommandIndex, setCurrentCommandIndex] = useState<number | null>(null)
-  const [isInterpreting, setIsInterpreting] = useState(false)
-  const [conversation, setConversation] = useState<
-    Array<{
-      type: 'user' | 'ai'
-      content: string
-      command?: AICommand
-      interpretation?: CommandInterpretation
-    }>
-  >([])
 
-  const {
-    aiCommand,
-    setAiCommand,
-    isLoading,
-    setIsLoading,
-    error,
-    setError,
-    terminalPid,
-    addToHistory,
-    currentConversation,
-    createConversation,
-    addMessageToConversation,
-    loadConversations,
-  } = useStore()
+  // Use the custom chat hook for chat logic
+  const chat = useChat()
 
-  // Load conversations on mount
-  useEffect(() => {
-    loadConversations()
-  }, [loadConversations])
+  // Use setAiCommand from store directly for the cancel button
+  const { setAiCommand } = useStore()
 
   // Auto-focus chat input field on mount and when loading completes
   useEffect(() => {
-    if (!isLoading && inputRef.current) {
+    if (!chat.isLoading && inputRef.current) {
       inputRef.current.focus()
     }
-  }, [isLoading])
-
-  // Auto-hide AI command when user starts typing
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value
-    // If user types something and there was an AI command, hide it
-    if (aiCommand?.type === 'command') {
-      setAiCommand(null)
-    }
-    setUserInput(newValue)
-  }
-
-  // Function to generate AI command
-  const generateAICommand = useCallback(
-    async (prompt: string) => {
-      if (!prompt.trim() || isLoading) return
-
-      setError(null)
-
-      // Add user message to local conversation state
-      setConversation(prev => [...prev, { type: 'user', content: prompt }])
-
-      // Create new conversation if none exists
-      if (!currentConversation) {
-        await createConversation(prompt)
-      }
-
-      // Build conversation history for LLM context
-      const conversationHistory: ConversationMessage[] = conversation.map(msg => ({
-        role: msg.type === 'user' ? 'user' : 'assistant',
-        content: msg.content,
-      }))
-
-      // Add current user message to history
-      conversationHistory.push({ role: 'user', content: prompt })
-
-      // Save user message to persistent storage
-      await addMessageToConversation({ role: 'user', content: prompt })
-
-      setIsLoading(true)
-
-      try {
-        // Generate command using AI with full conversation history
-        const response: AICommand = await window.electronAPI.llmGenerateCommand(
-          prompt,
-          conversationHistory,
-          i18n.language
-        )
-
-        setAiCommand(response)
-
-        // Build full AI response content for display and storage
-        let aiContent: string
-        if (response.type === 'text') {
-          aiContent = response.content
-        } else {
-          // For command responses, include both explanation and command details
-          aiContent = `${response.explanation}\n\nCommand: ${response.command}`
-        }
-
-        setConversation(prev => {
-          const newMessage: {
-            type: 'user' | 'ai'
-            content: string
-            command?: AICommand
-            interpretation?: CommandInterpretation
-          } = {
-            type: 'ai',
-            content: aiContent,
-            command: response.type === 'command' ? response : undefined,
-          }
-          const newConversation = [...prev, newMessage]
-          // Store the index of the newly added AI message if it's a command
-          if (response.type === 'command') {
-            setCurrentCommandIndex(newConversation.length - 1)
-          }
-          return newConversation
-        })
-
-        // Save AI response to persistent storage
-        await addMessageToConversation({ role: 'assistant', content: aiContent })
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to generate command')
-        setConversation(prev => [
-          ...prev,
-          { type: 'ai', content: `Error: ${err instanceof Error ? err.message : 'Unknown error'}` },
-        ])
-      } finally {
-        setIsLoading(false)
-      }
-    },
-    [
-      isLoading,
-      currentConversation,
-      conversation,
-      i18n.language,
-      addMessageToConversation,
-      setAiCommand,
-      setIsLoading,
-      createConversation,
-      setError,
-    ]
-  )
-
+  }, [chat.isLoading])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    if (!userInput.trim() || isLoading) return
+    if (!chat.userInput.trim() || chat.isLoading) return
 
-    const prompt = userInput.trim()
-    setUserInput('')
+    const prompt = chat.userInput.trim()
+    chat.setUserInput('')
 
-    // Use the shared generateAICommand function
-    await generateAICommand(prompt)
+    // Use the generateAICommand function from the hook
+    await chat.generateAICommand(prompt)
   }
 
-  const executeCommand = async (command: string, messageIndex?: number) => {
-    logger.debug('executeCommand called with:', command)
-    logger.debug('Current terminalPid:', terminalPid)
-
-    // Wait for terminal to be ready with retry mechanism
-    const maxRetries = 20 // 10 seconds total (20 * 500ms)
-    let retries = 0
-
-    while (!terminalPid && retries < maxRetries) {
-      logger.debug(`Waiting for terminal... (${retries + 1}/${maxRetries})`)
-      await new Promise(resolve => setTimeout(resolve, 500))
-      retries++
-    }
-
-    if (!terminalPid) {
-      logger.error('Terminal not ready after retries')
-      setError("Le terminal n'est pas prêt. Veuillez réinitialiser l'application.")
-      return
-    }
-
-    logger.info('Terminal is ready, PID:', terminalPid)
-
-    try {
-      // Add to history
-      const lastEntry = conversation[conversation.length - 1]
-      if (lastEntry?.command) {
-        addToHistory({
-          id: Date.now().toString(),
-          timestamp: Date.now(),
-          userMessage: conversation[conversation.length - 2]?.content || '',
-          aiResponse: lastEntry.command,
-          executed: true,
-        })
-      }
-
-      // Start capturing output
-      const _captureStarted = await window.electronAPI.terminalStartCapture(terminalPid)
-
-      // Execute command in terminal
-      logger.debug('Writing command to terminal:', command)
-      await window.electronAPI.terminalWrite(terminalPid, `${command}\r`)
-      logger.info('Command written successfully')
-      setAiCommand(null)
-
-      // Wait for command output
-      const waitTime = COMMAND_OUTPUT_WAIT_TIME_MS
-      logger.debug(`Waiting ${waitTime}ms for command output...`)
-      await new Promise(resolve => setTimeout(resolve, waitTime))
-
-      // Get captured output from backend
-      const output = await window.electronAPI.terminalGetCapture(terminalPid)
-
-      if (output.length > 0 && messageIndex !== undefined) {
-        try {
-          setIsInterpreting(true)
-          const interpretation = await window.electronAPI.llmInterpretOutput(output, i18n.language)
-
-          // Update conversation with interpretation
-          setConversation(prev =>
-            prev.map((msg, idx) => (idx === messageIndex ? { ...msg, interpretation } : msg))
-          )
-        } catch (error) {
-          logger.error('Error interpreting output:', error)
-          setError(
-            `Erreur lors de l'interprétation: ${error instanceof Error ? error.message : 'Erreur inconnue'}`
-          )
-        } finally {
-          setIsInterpreting(false)
-        }
-      } else {
-        logger.warn('No output to interpret or message index undefined')
-      }
-    } catch (error) {
-      logger.error('Error executing command:', error)
-      setError(
-        `Erreur lors de l'exécution: ${error instanceof Error ? error.message : 'Erreur inconnue'}`
-      )
-    }
-  }
-
-  const modifyCommand = () => {
-    // Allow user to modify the command with sanitization
-    if (aiCommand && aiCommand.type === 'command') {
-      const sanitized = sanitizeUserInput(aiCommand.command)
-      const injectionCheck = hasInjectionPatterns(aiCommand.command)
-
-      if (injectionCheck.hasInjection) {
-        setError(
-          `Attention: caractères d'injection détectés et supprimés: ${injectionCheck.patterns.join(', ')}`
-        )
-      }
-
-      setUserInput(sanitized)
-      setAiCommand(null)
+  const handleExecuteCommand = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    logger.debug('Execute button clicked!')
+    logger.debug('Button terminalPid check:', chat.terminalPid)
+    logger.debug('Using currentCommandIndex:', chat.currentCommandIndex)
+    if (chat.aiCommand?.type === 'command') {
+      await chat.executeCommand(chat.aiCommand.command, chat.currentCommandIndex ?? undefined)
     }
   }
 
@@ -272,7 +54,7 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
       </div>
 
       <div className="chat-messages">
-        {conversation.length === 0 && (
+        {chat.conversation.length === 0 && (
           <div className="chat-welcome">
             <h3>Bienvenue dans SheLLM !</h3>
             <p>
@@ -288,74 +70,11 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
           </div>
         )}
 
-        {conversation.map((msg, index) => (
-          <div key={`${index}-${msg.type}`} className={`chat-message ${msg.type}`}>
-            {msg.type === 'user' ? (
-              <div className="message-content">{msg.content}</div>
-            ) : (
-              <div className="message-content">
-                <p>{msg.content}</p>
-                {msg.command && msg.command.type === 'command' && (
-                  <div className="ai-command">
-                    <div className="command-label">Commande proposée :</div>
-                    <code className="command-code">{msg.command.command}</code>
-                    <div className="command-meta">
-                      <span>Confiance : {(msg.command.confidence * 100).toFixed(0)}%</span>
-                    </div>
-                  </div>
-                )}
-                {msg.interpretation && (
-                  <div className="command-interpretation">
-                    <div className="interpretation-label">Résultat :</div>
-                    <div className="interpretation-summary">{msg.interpretation.summary}</div>
-                    {msg.interpretation.key_findings.length > 0 && (
-                      <div className="interpretation-section">
-                        <strong>Points clés :</strong>
-                        <ul>
-                          {msg.interpretation.key_findings.map(finding => (
-                            <li key={finding}>{finding}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {msg.interpretation.warnings.length > 0 && (
-                      <div className="interpretation-section warnings">
-                        <strong>⚠️ Avertissements :</strong>
-                        <ul>
-                          {msg.interpretation.warnings.map(warning => (
-                            <li key={warning}>{warning}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {msg.interpretation.errors.length > 0 && (
-                      <div className="interpretation-section errors">
-                        <strong>❌ Erreurs :</strong>
-                        <ul>
-                          {msg.interpretation.errors.map(error => (
-                            <li key={error}>{error}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {msg.interpretation.recommendations.length > 0 && (
-                      <div className="interpretation-section">
-                        <strong>💡 Recommandations :</strong>
-                        <ul>
-                          {msg.interpretation.recommendations.map(rec => (
-                            <li key={rec}>{rec}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+        {chat.conversation.map(msg => (
+          <ChatMessage key={msg.id} id={msg.id} message={msg} />
         ))}
 
-        {isLoading && (
+        {chat.isLoading && (
           <div className="chat-message ai">
             <div className="message-content">
               <div className="loading-spinner">
@@ -367,7 +86,7 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
           </div>
         )}
 
-        {isInterpreting && (
+        {chat.isInterpreting && (
           <div className="chat-message ai">
             <div className="message-content">
               <div className="loading-spinner">
@@ -380,32 +99,25 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
           </div>
         )}
 
-        {error && (
+        {chat.error && (
           <div className="chat-message ai error">
-            <div className="message-content">{error}</div>
+            <div className="message-content">{chat.error}</div>
           </div>
         )}
       </div>
 
-      {aiCommand && aiCommand.type === 'command' && (
+      {chat.aiCommand && chat.aiCommand.type === 'command' && (
         <div className="command-actions">
           <button
             type="button"
             className="btn btn-execute"
-            disabled={!terminalPid}
-            onClick={e => {
-              e.preventDefault()
-              e.stopPropagation()
-              logger.debug('Execute button clicked!')
-              logger.debug('Button terminalPid check:', terminalPid)
-              logger.debug('Using currentCommandIndex:', currentCommandIndex)
-              executeCommand(aiCommand.command, currentCommandIndex ?? undefined)
-            }}
-            title={!terminalPid ? "Le terminal n'est pas encore prêt" : 'Exécuter la commande'}
+            disabled={!chat.terminalPid}
+            onClick={handleExecuteCommand}
+            title={!chat.terminalPid ? "Le terminal n'est pas encore prêt" : 'Exécuter la commande'}
           >
-            {!terminalPid ? 'Préparation...' : 'Exécuter'}
+            {!chat.terminalPid ? 'Préparation...' : 'Exécuter'}
           </button>
-          <button type="button" className="btn btn-modify" onClick={modifyCommand}>
+          <button type="button" className="btn btn-modify" onClick={chat.modifyCommand}>
             Modifier
           </button>
           <button type="button" className="btn btn-cancel" onClick={() => setAiCommand(null)}>
@@ -417,17 +129,17 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
       <form onSubmit={handleSubmit} className="chat-input">
         <input
           type="text"
-          value={userInput}
-          onChange={handleInputChange}
+          value={chat.userInput}
+          onChange={chat.handleInputChange}
           placeholder="Décrivez ce que vous voulez faire..."
-          disabled={isLoading}
+          disabled={chat.isLoading}
           // biome-ignore lint/a11y/noAutofocus: Intentional auto-focus for chat input UX
           autoFocus
           ref={inputRef}
         />
         <button
           type="submit"
-          disabled={isLoading || !userInput.trim() || aiCommand?.type === 'command'}
+          disabled={chat.isLoading || !chat.userInput.trim() || chat.aiCommand?.type === 'command'}
         >
           <svg
             width="20"

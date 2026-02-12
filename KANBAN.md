@@ -25,37 +25,22 @@
 
 ### 🟡 P2 - Medium Priority
 
-- [ ] **[12/02/2026 16:09:18] 🟡 P2 ⚙️ [CONFIG]** Fix the test:ui NPM script by installing @vitest/ui package
-- [ ] **[12/02/2026 14:25:28] 🟡 P2 🎨 [UX]** Auto-focus chat input field after message submission for smoother conversation flow
-- [ ] **[12/02/2026 14:25:28] 🟡 P2 🎨 [UX]** Increase terminal window height to fill available space
-- [ ] **[12/02/2026 12:37:00] 🟡 P2 🏗️ [ARCHITECTURE]** Refactor ChatPanel.tsx - extract useChat custom hook
-- [ ] **[12/02/2026 12:37:00] 🟡 P2 🏗️ [ARCHITECTURE]** Implement centralized error handling with toast notifications
-- [ ] **[12/02/2026 12:37:00] 🟡 P2 🚀 [PERFORMANCE]** Implement React.memo and virtualization for ChatPanel messages
-- [ ] **[12/02/2026 12:37:00] 🟡 P2 🔧 [DEVOPS]** Create CI/CD pipeline (GitHub Actions or GitLab CI) for tests, lint, and build
-- [ ] **[12/02/2026 10:29:32] 🟡 P2 ⚙️ [CONFIG]** Use WireIt to optimize NPM scripts
+(No P2 tasks in backlog)
 
 
 ### 🟢 P3 - Low Priority
 
-- [ ] **[12/02/2026 16:43:01] 🟢 P3 ⚙️ [CONFIG]** Clean up docs directory - remove LangChain feasibility and integration files
 - [ ] **[12/02/2026 14:22:39] 🟢 P3 ⚙️ [CONFIG]** Sort NPM scripts alphabetically in package.json
 - [ ] **[12/02/2026 14:20:41] 🟢 P3 🏗️ [ARCHITECTURE]** Fix TypeScript UMD global variable warnings across project by importing explicit types (e.g., React.CSSProperties → CSSProperties)
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 ✅ [TEST]** Add Electron IPC Layer tests with mocks
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 ✅ [TEST]** Add test coverage script and report
-- [ ] **[12/02/2026 12:37:00] 🟢 P3 🔒 [SECURITY]** Add URL validation for Ollama connection
-- [ ] **[12/02/2026 12:37:00] 🟢 P3 🚀 [PERFORMANCE]** Add lazy loading for ConfigPanel component
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 🚀 [PERFORMANCE]** Implement LLM response caching
-- [ ] **[12/02/2026 12:37:00] 🟢 P3 🚀 [PERFORMANCE]** Add debounce on user input in ChatPanel
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 🏗️ [ARCHITECTURE]** Centralize logging with proper log levels across the application
-- [ ] **[12/02/2026 12:37:00] 🟢 P3 🏗️ [ARCHITECTURE]** Remove deprecated conversationHistory from useStore
-- [ ] **[12/02/2026 12:37:00] 🟢 P3 🎨 [UX]** Add tooltips to UI elements
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 🎨 [UX]** Improve error messages to be more explicit
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 🎨 [UX]** Add progress indicator for long-running commands
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 🎨 [UX]** Implement keyboard shortcuts (Ctrl+Enter to execute, Ctrl+K to clear, Esc to cancel)
-- [ ] **[12/02/2026 12:37:00] 🟢 P3 🎨 [UX]** Implement dark/light theme toggle in components
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 ✨ [FEAT]** Add conversation export/import functionality
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 📝 [DOCS]** Add JSDoc documentation to functions
-- [ ] **[12/02/2026 12:37:00] 🟢 P3 🌍 [I18N]** Replace hardcoded strings in components with i18n translations
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 📦 [DEPENDENCIES]** Update axios dependency from 1.13.4 to latest version
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 📦 [DEPENDENCIES]** Update vitest dependency from 4.0.18 to latest version
 
@@ -65,11 +50,47 @@
 
 ## ✅ Done
 
-- [x] **[12/02/2026 12:37:00] 🔴 P1 🔒 [SECURITY]** Implement command validation (blacklist for dangerous commands like sudo rm -rf, mkfs, etc.)
-- [x] **[12/02/2026 12:37:00] 🔴 P1 🔒 [SECURITY]** Add input sanitization for user input in ChatPanel (prevent command injection)
-- [x] **[12/02/2026 12:37:00] 🔴 P1 ✅ [TEST]** Add React component tests (ChatPanel, Terminal, ConfigPanel, Header, ModelSelector, LanguageSelector)
+### Security
 
-## ✅ Done
+- [x] **[12/02/2026 12:37:00]** 🔒 [SECURITY] Implement command validation (blacklist for dangerous commands like sudo rm -rf, mkfs, etc.)
+- [x] **[12/02/2026 12:37:00]** 🔒 [SECURITY] Add input sanitization for user input in ChatPanel (prevent command injection)
+- [x] **[12/02/2026 12:37:00]** 🔒 [SECURITY] Add URL validation for Ollama connection
 
-- [x] **[12/02/2026 12:37:00] 🔴 P1 🔒 [SECURITY]** Implement command validation (blacklist for dangerous commands like sudo rm -rf, mkfs, etc.)
-- [x] **[12/02/2026 12:37:00] 🔴 P1 🔒 [SECURITY]** Add input sanitization for user input in ChatPanel (prevent command injection)
+### Tests
+
+- [x] **[12/02/2026 12:37:00]** ✅ [TEST] Add React component tests (ChatPanel, Terminal, ConfigPanel, Header, ModelSelector, LanguageSelector)
+- [x] **[12/02/2026 16:09:18]** ✅ [TEST] Fix the test:ui NPM script by installing @vitest/ui package
+
+### Configuration
+
+- [x] **[12/02/2026 16:43:01]** ⚙️ [CONFIG] Clean up docs directory - remove LangChain feasibility and integration files
+- [x] **[12/02/2026 14:22:39]** ⚙️ [CONFIG] Sort NPM scripts alphabetically in package.json
+- [x] **[12/02/2026 10:29:32]** ⚙️ [CONFIG] Use WireIt to optimize NPM scripts
+
+### Architecture
+
+- [x] **[12/02/2026 14:20:41]** 🏗️ [ARCHITECTURE] Fix TypeScript UMD global variable warnings across project by importing explicit types
+- [x] **[12/02/2026 12:37:00]** 🏗️ [ARCHITECTURE] Remove deprecated conversationHistory from useStore
+- [x] **[12/02/2026 12:37:00]** 🏗️ [ARCHITECTURE] Refactor ChatPanel.tsx - extract useChat custom hook
+- [x] **[12/02/2026 12:37:00]** 🏗️ [ARCHITECTURE] Implement centralized error handling with toast notifications
+
+### UX
+
+- [x] **[12/02/2026 14:25:28]** 🎨 [UX] Auto-focus chat input field after message submission for smoother conversation flow
+- [x] **[12/02/2026 14:25:28]** 🎨 [UX] Increase terminal window height to fill available space
+- [x] **[12/02/2026 12:37:00]** 🎨 [UX] Add tooltips to UI elements
+- [x] **[12/02/2026 12:37:00]** 🎨 [UX] Implement dark/light theme toggle in components
+
+### Performance
+
+- [x] **[12/02/2026 12:37:00]** 🚀 [PERFORMANCE] Add lazy loading for ConfigPanel component
+- [x] **[12/02/2026 12:37:00]** 🚀 [PERFORMANCE] Add debounce on user input in ChatPanel
+- [x] **[12/02/2026 12:37:00]** 🚀 [PERFORMANCE] Implement React.memo and virtualization for ChatPanel messages
+
+### DevOps
+
+- [x] **[12/02/2026 12:37:00]** 🔧 [DEVOPS] Create CI/CD pipeline (GitHub Actions or GitLab CI) for tests, lint, and build
+
+### I18N
+
+- [x] **[12/02/2026 12:37:00]** 🌍 [I18N] Replace hardcoded strings in components with i18n translations

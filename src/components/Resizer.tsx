@@ -51,7 +51,7 @@ export const Resizer = ({ onResize, direction = 'horizontal', minSize = 300 }: R
     }
   }, [isDragging, direction, minSize, onResize])
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = (e: MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setIsDragging(true)

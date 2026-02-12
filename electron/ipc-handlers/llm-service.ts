@@ -18,6 +18,26 @@ const MAX_OUTPUT_LINES = 50
 const DEFAULT_TEMPERATURE = 0.7
 const DEFAULT_MAX_TOKENS = 1000
 
+/**
+ * Validate Ollama URL format
+ */
+function validateOllamaUrl(url: string): boolean {
+  try {
+    const parsedUrl = new URL(url)
+    // Ensure protocol is http or https
+    if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+      return false
+    }
+    // Ensure hostname is not empty
+    if (!parsedUrl.hostname) {
+      return false
+    }
+    return true
+  } catch {
+    return false
+  }
+}
+
 function loadPrompt(filename: string): string {
   const promptsDir = path.join(__dirname, '..', 'prompts')
   const filePath = path.join(promptsDir, filename)
@@ -34,6 +54,11 @@ class LLMService {
   #maxTokens: number
 
   constructor(config: OllamaConfig) {
+    // Validate URL before creating the model
+    if (!validateOllamaUrl(config.url)) {
+      throw new Error(`Invalid Ollama URL: ${config.url}. URL must be a valid HTTP/HTTPS URL.`)
+    }
+
     this.#model = new ChatOllama({
       model: config.model || 'llama2',
       baseUrl: config.url,

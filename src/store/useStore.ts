@@ -1,10 +1,4 @@
-import type {
-  AICommand,
-  AppConfig,
-  Conversation,
-  ConversationHistory,
-  ConversationMessage,
-} from '@shared/types'
+import type { AICommand, AppConfig, Conversation, ConversationMessage } from '@shared/types'
 import { create } from 'zustand'
 
 interface AppState {
@@ -39,11 +33,6 @@ interface AppState {
   addMessageToConversation: (message: ConversationMessage) => Promise<void>
   deleteConversation: (id: string) => Promise<void>
   clearAllConversations: () => Promise<void>
-
-  // Conversation (old system - kept for backward compatibility)
-  conversationHistory: ConversationHistory[]
-  addToHistory: (entry: ConversationHistory) => void
-  clearHistory: () => void
 
   // UI
   showConfigPanel: boolean
@@ -151,14 +140,6 @@ export const useStore = create<AppState>((set, _get) => ({
       currentConversation: null,
     })
   },
-
-  // Conversation (old system - kept for backward compatibility)
-  conversationHistory: [],
-  addToHistory: entry =>
-    set(state => ({
-      conversationHistory: [entry, ...state.conversationHistory].slice(0, 100),
-    })),
-  clearHistory: () => set({ conversationHistory: [] }),
 
   // UI
   showConfigPanel: false,

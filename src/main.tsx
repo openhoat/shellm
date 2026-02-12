@@ -1,7 +1,23 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
+import { ToastContainer } from './components/Toast'
+import { ToastProvider, useToast } from './hooks/useToast'
 import './i18n'
+
+/**
+ * Inner component that renders the app with the toast container
+ */
+const AppWithToasts = () => {
+  const { toasts, removeToast } = useToast()
+
+  return (
+    <>
+      <App />
+      <ToastContainer toasts={toasts} onDismiss={removeToast} />
+    </>
+  )
+}
 
 const rootElement = document.getElementById('root')
 
@@ -11,6 +27,8 @@ if (!rootElement) {
 
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <App />
+    <ToastProvider>
+      <AppWithToasts />
+    </ToastProvider>
   </React.StrictMode>
 )

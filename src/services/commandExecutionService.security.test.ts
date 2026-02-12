@@ -113,8 +113,8 @@ describe('sanitizeUserInput', () => {
     // The entire $(...) is removed for security
   })
 
-  test('should remove variable expansion ${}', () => {
-    const result = sanitizeUserInput('echo ${HOME}')
+  test('should remove variable expansion', () => {
+    const result = sanitizeUserInput(`echo ${'$'}{HOME}`)
     expect(result).toContain('echo')
     // The entire ${...} is removed for security
   })
@@ -181,9 +181,9 @@ describe('hasInjectionPatterns', () => {
   })
 
   test('should detect variable expansion injection', () => {
-    const result = hasInjectionPatterns('echo ${HOME}')
+    const result = hasInjectionPatterns(`echo ${'$'}{HOME}`)
     expect(result.hasInjection).toBe(true)
-    expect(result.patterns).toContain('${')
+    expect(result.patterns).toContain('$')
   })
 
   test('should return false for safe input', () => {

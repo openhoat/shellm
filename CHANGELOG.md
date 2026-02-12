@@ -7,12 +7,16 @@ Pour visualiser l'historique complet, utilisez : `git log`
 ## Modification History
 
 
-
-
 ### 2026
 
 ### 12/02
 
+**[23:35:00] 🏗️ [ARCHITECTURE]** Refactor ChatPanel.tsx - extract useChat custom hook for better separation of concerns
+**[23:35:00] 🏗️ [ARCHITECTURE]** Implement centralized error handling with toast notifications system
+**[23:35:00] 🚀 [PERFORMANCE]** Implement React.memo and virtualization for ChatPanel messages to optimize rendering
+**[23:35:00] 🔧 [DEVOPS]** Create CI/CD pipeline (GitHub Actions or GitLab CI) for tests, lint, and build
+**[23:35:00] ⚙️ [CONFIG]** Use WireIt to optimize NPM scripts with caching and dependency management
+**[23:05:00] 🔧 [CHORE]** Create GitHub Actions CI/CD pipeline with linting, tests, and build steps
 **[17:51:56] 🔧 [CHORE]** Add Co-authored-by prohibition rule in commit messages for both Cline and Claude Code
 **[16:09:45] 📝 [DOCS]** Add idea to backlog: Fix the test:ui NPM script by installing @vitest/ui package
 
