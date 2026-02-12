@@ -22,7 +22,7 @@ vi.mock('electron', () => ({
   ipcMain: mockIpcMain,
 }))
 
-const { createLLMHandlers } = await import('./llm-service.ts')
+import { createLLMHandlers } from './llm-service'
 
 describe('LLM Service IPC Handlers', () => {
   beforeEach(() => {
