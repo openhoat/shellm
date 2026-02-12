@@ -85,7 +85,7 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
 
     try {
       // Type guard to check if AICommand is a shell command
-      const isCommandShell = (
+      const _isCommandShell = (
         command?: AICommand
       ): command is {
         type: 'command'
@@ -98,7 +98,7 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
       }
 
       // Generate command using AI with full conversation history
-      const response: AICommand = await window.electronAPI.ollamaGenerateCommand(
+      const response: AICommand = await window.electronAPI.llmGenerateCommand(
         prompt,
         conversationHistory,
         i18n.language
@@ -106,12 +106,23 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
 
       setAiCommand(response)
 
-      // Add AI response to conversation and store the index
-      const content = response.type === 'text' ? response.content : response.explanation
+      // Build full AI response content for display and storage
+      let aiContent: string
+      if (response.type === 'text') {
+        aiContent = response.content
+      } else {
+        // For command responses, include both explanation and command details
+        aiContent = `${response.explanation}\n\nCommand: ${response.command}`
+      }
+
       setConversation(prev => {
         const newConversation = [
           ...prev,
-          { type: 'ai', content, command: response.type === 'command' ? response : undefined },
+          {
+            type: 'ai',
+            content: aiContent,
+            command: response.type === 'command' ? response : undefined,
+          },
         ]
         // Store the index of the newly added AI message if it's a command
         if (response.type === 'command') {
@@ -121,7 +132,7 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
       })
 
       // Save AI response to persistent storage
-      await addMessageToConversation({ role: 'assistant', content })
+      await addMessageToConversation({ role: 'assistant', content: aiContent })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate command')
       setConversation(prev => [
@@ -188,10 +199,7 @@ export const ChatPanel = ({ style }: { style?: React.CSSProperties }) => {
       if (output.length > 0 && messageIndex !== undefined) {
         try {
           setIsInterpreting(true)
-          const interpretation = await window.electronAPI.ollamaInterpretOutput(
-            output,
-            i18n.language
-          )
+          const interpretation = await window.electronAPI.llmInterpretOutput(output, i18n.language)
 
           // Update conversation with interpretation
           setConversation(prev =>

@@ -127,7 +127,7 @@ const createWindow = (): void => {
 }
 
 // App lifecycle
-  app.whenReady().then(() => {
+app.whenReady().then(() => {
   createWindow()
   if (mainWindow) {
     createTerminalHandlers(mainWindow)

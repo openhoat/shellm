@@ -19,12 +19,14 @@ export const ConfigPanel = () => {
     model: boolean
     temperature: boolean
     maxTokens: boolean
+    shell: boolean
   }>({
     url: false,
     apiKey: false,
     model: false,
     temperature: false,
     maxTokens: false,
+    shell: false,
   })
 
   const loadEnvSources = useCallback(async () => {
@@ -316,6 +318,42 @@ export const ConfigPanel = () => {
                   })
                 }
               />
+            </div>
+          </div>
+
+          <div className="config-section">
+            <h3>Terminal</h3>
+
+            <div className="config-field">
+              <label htmlFor="shell-select">
+                Shell
+                {envSources.shell && <span className="env-badge">Variable d'environnement</span>}
+              </label>
+              <select
+                id="shell-select"
+                value={localConfig.shell}
+                onChange={e =>
+                  setLocalConfig({
+                    ...localConfig,
+                    shell: e.target.value,
+                  })
+                }
+                disabled={envSources.shell}
+                className={envSources.shell ? 'env-readonly' : ''}
+              >
+                <option value="auto">Auto (système)</option>
+                <option value="bash">Bash</option>
+                <option value="zsh">Zsh</option>
+                <option value="fish">Fish</option>
+                <option value="sh">Sh</option>
+                <option value="powershell.exe">PowerShell</option>
+                <option value="cmd.exe">Cmd</option>
+              </select>
+              {envSources.shell && (
+                <div className="env-hint">
+                  Valeur définie par la variable d'environnement <code>SHELLM_SHELL</code>
+                </div>
+              )}
             </div>
           </div>
         </div>

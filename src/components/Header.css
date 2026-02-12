@@ -137,6 +137,69 @@
   color: #d4d4d4;
 }
 
+.conversation-export-buttons {
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #3c3c3c;
+  background-color: #2d2d30;
+}
+
+.export-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid #3c3c3c;
+  background-color: #3c3c3c;
+  color: #d4d4d4;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+  flex: 1;
+}
+
+.export-button:hover:not(:disabled) {
+  background-color: #4c4c4c;
+  border-color: #5c5c5c;
+}
+
+.export-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.export-button svg {
+  flex-shrink: 0;
+}
+
+.export-status {
+  position: fixed;
+  top: 56px;
+  right: 16px;
+  padding: 8px 16px;
+  background-color: #0e639c;
+  color: #ffffff;
+  border-radius: 4px;
+  font-size: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .conversation-dropdown-empty {
   padding: 24px;
   text-align: center;
@@ -145,11 +208,13 @@
 }
 
 .conversation-list {
-  list-style: none;
   margin: 0;
   padding: 8px;
   max-height: 340px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .conversation-list::-webkit-scrollbar {
@@ -174,10 +239,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 12px;
-  margin-bottom: 4px;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-family: inherit;
+  font-size: inherit;
 }
 
 .conversation-item:hover {

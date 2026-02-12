@@ -1,4 +1,10 @@
-import type { AICommand, AppConfig, Conversation, ConversationHistory, ConversationMessage } from '@shared/types'
+import type {
+  AICommand,
+  AppConfig,
+  Conversation,
+  ConversationHistory,
+  ConversationMessage,
+} from '@shared/types'
 import { create } from 'zustand'
 
 interface AppState {
@@ -106,7 +112,7 @@ export const useStore = create<AppState>((set, _get) => ({
     }))
   },
   addMessageToConversation: async message => {
-    const { currentConversationId, currentConversation } = get()
+    const { currentConversationId } = _get()
     if (!currentConversationId) return
 
     const updatedConversation = await window.electronAPI.conversationAddMessage(

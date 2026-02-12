@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { app } from 'electron'
-import type { Conversation, ConversationsList, ConversationMessage } from '../../shared/types'
+import type { Conversation, ConversationMessage, ConversationsList } from '../../shared/types'
 
 /**
  * Service for managing conversation persistence on disk
@@ -36,8 +36,8 @@ class ConversationService {
     try {
       const data = fs.readFileSync(this.filePath, 'utf-8')
       return JSON.parse(data) as ConversationsList
-    } catch (error) {
-      console.error('Error reading conversations:', error)
+    } catch (_error) {
+      // Error reading conversations
       return { conversations: [] }
     }
   }
@@ -48,8 +48,8 @@ class ConversationService {
   private save(data: ConversationsList): void {
     try {
       fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8')
-    } catch (error) {
-      console.error('Error saving conversations:', error)
+    } catch (_error) {
+      // Error saving conversations
       throw error
     }
   }
@@ -154,6 +154,41 @@ class ConversationService {
    */
   clearAllConversations(): void {
     this.save({ conversations: [] })
+  }
+
+  /**
+   * Export a single conversation to JSON format
+   */
+  exportConversation(id: string): string {
+    const conversation = this.getConversation(id)
+    if (!conversation) {
+      throw new Error(`Conversation with id ${id} not found`)
+    }
+
+    const exportData = {
+      $schema: 'https://github.com/openhoat/shellm/schemas/conversation-export.schema.json',
+      exportDate: new Date().toISOString(),
+      version: '1.0.0',
+      conversations: [conversation],
+    }
+
+    return JSON.stringify(exportData, null, 2)
+  }
+
+  /**
+   * Export all conversations to JSON format
+   */
+  exportAllConversations(): string {
+    const conversations = this.getAllConversations()
+
+    const exportData = {
+      $schema: 'https://github.com/openhoat/shellm/schemas/conversation-export.schema.json',
+      exportDate: new Date().toISOString(),
+      version: '1.0.0',
+      conversations,
+    }
+
+    return JSON.stringify(exportData, null, 2)
   }
 }
 

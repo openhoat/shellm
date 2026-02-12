@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/openhoat/shellm/schemas/conversation-export.schema.json",
+  "title": "ShellM Conversation Export",
+  "description": "Schema for exporting ShellM conversations to JSON format",
+  "type": "object",
+  "required": ["exportDate", "version", "conversations"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for validation"
+    },
+    "exportDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when the export was created"
+    },
+    "version": {
+      "type": "string",
+      "description": "Version of the export schema",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$"
+    },
+    "conversations": {
+      "type": "array",
+      "description": "List of exported conversations",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "createdAt", "updatedAt", "messages"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the conversation",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the conversation",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "createdAt": {
+            "type": "integer",
+            "description": "Unix timestamp of creation",
+            "minimum": 0
+          },
+          "updatedAt": {
+            "type": "integer",
+            "description": "Unix timestamp of last update",
+            "minimum": 0
+          },
+          "messages": {
+            "type": "array",
+            "description": "Messages in the conversation",
+            "items": {
+              "type": "object",
+              "required": ["role", "content"],
+              "properties": {
+                "role": {
+                  "type": "string",
+                  "enum": ["user", "assistant"],
+                  "description": "Role of the message sender"
+                },
+                "content": {
+                  "type": "string",
+                  "description": "Message content",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

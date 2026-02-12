@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type { AppConfig } from './types/types'
+import type { AppConfig, Conversation, ConversationMessage } from './types/types'
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // Config
@@ -33,11 +33,28 @@ contextBridge.exposeInMainWorld('electronAPI', {
     temperature?: number
     maxTokens?: number
   }) => ipcRenderer.invoke('llm:init', config),
-  llmGenerateCommand: (prompt: string, conversationHistory?: unknown[], language?: string) =>
-    ipcRenderer.invoke('llm:generate-command', prompt, conversationHistory, language),
+  llmGenerateCommand: (
+    prompt: string,
+    conversationHistory?: ConversationMessage[],
+    language?: string
+  ) => ipcRenderer.invoke('llm:generate-command', prompt, conversationHistory, language),
   llmExplainCommand: (command: string) => ipcRenderer.invoke('llm:explain-command', command),
   llmInterpretOutput: (output: string, language?: string) =>
     ipcRenderer.invoke('llm:interpret-output', output, language),
   llmTestConnection: () => ipcRenderer.invoke('llm:test-connection'),
   llmListModels: () => ipcRenderer.invoke('llm:list-models'),
+
+  // Conversations
+  conversationGetAll: () => ipcRenderer.invoke('conversation:get-all'),
+  conversationGet: (id: string) => ipcRenderer.invoke('conversation:get', id),
+  conversationCreate: (firstMessage: string) =>
+    ipcRenderer.invoke('conversation:create', firstMessage),
+  conversationAddMessage: (conversationId: string, message: ConversationMessage) =>
+    ipcRenderer.invoke('conversation:add-message', conversationId, message),
+  conversationUpdate: (id: string, updates: Partial<Conversation>) =>
+    ipcRenderer.invoke('conversation:update', id, updates),
+  conversationDelete: (id: string) => ipcRenderer.invoke('conversation:delete', id),
+  conversationClearAll: () => ipcRenderer.invoke('conversation:clear-all'),
+  conversationExport: (id: string) => ipcRenderer.invoke('conversation:export', id),
+  conversationExportAll: () => ipcRenderer.invoke('conversation:export-all'),
 })

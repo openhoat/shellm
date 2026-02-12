@@ -1,4 +1,4 @@
-import type { AICommand, AppConfig } from '@shared/types'
+import type { AICommand, AppConfig, Conversation, ConversationMessage } from '@shared/types'
 
 export interface ElectronAPI {
   // Config
@@ -9,6 +9,7 @@ export interface ElectronAPI {
     model: boolean
     temperature: boolean
     maxTokens: boolean
+    shell: boolean
   }>
   setConfig: (config: AppConfig) => Promise<AppConfig>
   resetConfig: () => Promise<AppConfig>
@@ -35,11 +36,14 @@ export interface ElectronAPI {
   }) => Promise<void>
   llmGenerateCommand: (
     prompt: string,
-    conversationHistory?: string[],
+    conversationHistory?: ConversationMessage[],
     language?: string
   ) => Promise<AICommand>
   llmExplainCommand: (command: string) => Promise<string>
-  llmInterpretOutput: (output: string, language?: string) => Promise<{
+  llmInterpretOutput: (
+    output: string,
+    language?: string
+  ) => Promise<{
     summary: string
     key_findings: string[]
     warnings: string[]
@@ -49,6 +53,30 @@ export interface ElectronAPI {
   }>
   llmTestConnection: () => Promise<boolean>
   llmListModels: () => Promise<string[]>
+
+  // Conversations
+  conversationGetAll: () => Promise<Conversation[]>
+  conversationGet: (id: string) => Promise<Conversation | null>
+  conversationCreate: (firstMessage: string) => Promise<Conversation>
+  conversationAddMessage: (
+    conversationId: string,
+    message: ConversationMessage
+  ) => Promise<Conversation | null>
+  conversationUpdate: (id: string, updates: Partial<Conversation>) => Promise<Conversation | null>
+  conversationDelete: (id: string) => Promise<boolean>
+  conversationClearAll: () => Promise<void>
+  conversationExport: (id: string) => Promise<{
+    success: boolean
+    cancelled?: boolean
+    filePath?: string
+    error?: string
+  }>
+  conversationExportAll: () => Promise<{
+    success: boolean
+    cancelled?: boolean
+    filePath?: string
+    error?: string
+  }>
 }
 
 declare global {

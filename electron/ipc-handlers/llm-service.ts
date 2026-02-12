@@ -1,11 +1,16 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { type BrowserWindow, ipcMain } from 'electron'
-import { ChatOllama } from '@langchain/ollama'
+import { AIMessage, HumanMessage } from '@langchain/core/messages'
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts'
-import { HumanMessage, AIMessage } from '@langchain/core/messages'
+import { ChatOllama } from '@langchain/ollama'
+import { type BrowserWindow, ipcMain } from 'electron'
 import { z } from 'zod'
-import type { AICommand, CommandInterpretation, OllamaConfig } from '../types/types'
+import type {
+  AICommand,
+  CommandInterpretation,
+  ConversationMessage,
+  OllamaConfig,
+} from '../types/types'
 
 function loadPrompt(filename: string): string {
   const promptsDir = path.join(__dirname, '..', 'prompts')
@@ -38,7 +43,7 @@ class LLMService {
    */
   async generateCommand(
     prompt: string,
-    conversationHistory?: string[],
+    conversationHistory?: ConversationMessage[],
     language: string = 'en'
   ): Promise<AICommand> {
     const systemPrompt = loadPrompt('system-prompt.md')
@@ -49,8 +54,12 @@ class LLMService {
     // Add conversation history (limited to last 50 messages to avoid token limits)
     if (conversationHistory && conversationHistory.length > 0) {
       const limitedHistory = conversationHistory.slice(-50)
-      for (const cmd of limitedHistory) {
-        messages.push(new HumanMessage(`Command: ${cmd}`))
+      for (const msg of limitedHistory) {
+        if (msg.role === 'user') {
+          messages.push(new HumanMessage(msg.content))
+        } else {
+          messages.push(new AIMessage(msg.content))
+        }
       }
     }
 
@@ -111,15 +120,15 @@ class LLMService {
           explanation: validated.explanation || '',
           confidence: validated.confidence || 0.5,
         }
-      } catch (parseError) {
-        console.error('Error parsing JSON response:', parseError)
+      } catch (_parseError) {
+        // Error parsing JSON response
         return {
           type: 'text',
           content: this.getFallbackMessage('parsing_failed', language),
         }
       }
-    } catch (error) {
-      console.error('Error in generateCommand:', error)
+    } catch (_error) {
+      // Error in generateCommand
       return {
         type: 'text',
         content: this.getFallbackMessage('unable_to_generate', language),
@@ -134,17 +143,15 @@ class LLMService {
     const promptTemplate = loadPrompt('explain-command-prompt.md')
     const prompt = promptTemplate.replace('{command}', command)
 
-    const chatPrompt = ChatPromptTemplate.fromMessages([
-      ['human', prompt],
-    ])
+    const chatPrompt = ChatPromptTemplate.fromMessages([['human', prompt]])
 
     const chain = chatPrompt.pipe(this.#model)
 
     try {
       const result = await chain.invoke({})
       return result.content as string
-    } catch (error) {
-      console.error('Error in explainCommand:', error)
+    } catch (_error) {
+      // Error in explainCommand
       return 'Unable to explain the command. Please try again.'
     }
   }
@@ -156,16 +163,23 @@ class LLMService {
     // Limit output to first 50 lines to reduce processing time
     const lines = output.split('\n').slice(0, 50).join('\n')
     const systemPrompt = loadPrompt('interpret-output-prompt.md')
-    const prompt = systemPrompt.replace('{command_output}', lines).replace('{language}', language)
 
+    // Escape the output to prevent template injection issues
+    const _escapedOutput = lines.replace(/"/g, '\\"').replace(/\n/g, '\\n')
+
+    // Create the messages with the output as a separate message to avoid template issues
     const chatPrompt = ChatPromptTemplate.fromMessages([
-      ['system', prompt],
+      ['system', systemPrompt],
+      ['human', `{command_output}\n{language}`],
     ])
 
     const chain = chatPrompt.pipe(this.#model)
 
     try {
-      const result = await chain.invoke({})
+      const result = await chain.invoke({
+        command_output: lines,
+        language,
+      })
       const responseText = result.content as string
 
       // Try to parse JSON response
@@ -193,25 +207,110 @@ class LLMService {
             recommendations: validated.recommendations || [],
             successful: validated.successful ?? true,
           }
-        } catch (parseError) {
-          console.error('Error parsing interpretation JSON:', parseError)
+        } catch (_parseError) {
+          // Error parsing interpretation JSON
         }
       }
 
-      // Fallback: simple interpretation based on output
-      const hasErrors = /error|fail|permission denied|cannot|no such file/i.test(output)
+      // Fallback: intelligent interpretation based on output analysis
+      const hasErrors = /error|fail|permission denied|cannot|no such file|not found/i.test(output)
       const isSuccessful = !hasErrors && output.trim().length > 0
+
+      const keyFindings: string[] = []
+      const warnings: string[] = []
+      const errors: string[] = []
+
+      // Analyze specific command outputs
+      if (isSuccessful) {
+        // Memory analysis (free command)
+        if (/Mem:\s+/i.test(output)) {
+          const memTotal = output.match(/Mem:\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)/)
+          if (memTotal) {
+            keyFindings.push(`Total memory: ${memTotal[1]} used, ${memTotal[2]} free`)
+          }
+          const swapInfo = output.match(/Swap:\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)/)
+          if (swapInfo) {
+            keyFindings.push(`Swap: ${swapInfo[1]} used, ${swapInfo[2]} free`)
+          }
+        }
+
+        // Disk usage analysis (df command)
+        else if (/Filesystem.*Size.*Used.*Avail/i.test(output)) {
+          const lines = output.split('\n')
+          for (const line of lines) {
+            const match = line.match(
+              /\/dev\/[\w]+\s+([\d.]+[A-Z]+)\s+([\d.]+[A-Z]+)\s+([\d.]+[A-Z]+)\s+([\d.]+%)\s+([\d.]+[A-Z]+)/
+            )
+            if (match) {
+              keyFindings.push(`${match[1]}: ${match[2]} (${match[4]}% used)`)
+            }
+          }
+        }
+
+        // File listing (ls command)
+        else if (/^[\w-]+\s+/i.test(output)) {
+          const fileCount = output.split('\n').filter(line => line.trim().length > 0).length
+          keyFindings.push(`Listed ${fileCount} items`)
+        }
+
+        // Process listing (ps command)
+        else if (/PID\s+.*TIME.*COMMAND/i.test(output)) {
+          const processCount = output
+            .split('\n')
+            .filter(line => line.trim().length > 0 && !line.includes('PID')).length
+          keyFindings.push(`Found ${processCount} processes`)
+        }
+
+        // Network info (ping, ip, etc.)
+        else if (/ping|ICMP|bytes from/i.test(output)) {
+          if (/time=/i.test(output)) {
+            const timeMatch = output.match(/time=([\d.]+)\s*ms/)
+            if (timeMatch) {
+              keyFindings.push(`Response time: ${timeMatch[1]}ms`)
+            }
+          }
+        }
+
+        // Generic successful output
+        else {
+          const lines = output.split('\n').filter(line => line.trim().length > 0)
+          if (lines.length > 0) {
+            keyFindings.push(`Command executed successfully`)
+            keyFindings.push(`Output: ${lines[0].substring(0, 80)}`)
+          }
+        }
+
+        // Check for warnings
+        const warningMatches = output.match(/warning|deprecated|cannot/i)
+        if (warningMatches) {
+          warnings.push('Warnings present in output')
+        }
+      }
+
+      // Error extraction
+      if (hasErrors) {
+        const lines = output.split('\n').filter(line => line.trim().length > 0)
+        const errorLines = lines.filter(line =>
+          /error|fail|denied|cannot|no such file|not found/i.test(line)
+        )
+
+        if (errorLines.length > 0) {
+          errors.push(errorLines[0].substring(0, 120))
+        } else if (lines.length > 0) {
+          errors.push(lines[0].substring(0, 120))
+        }
+      }
 
       return {
         summary: isSuccessful ? 'Command executed successfully' : 'Command encountered issues',
-        key_findings: isSuccessful ? ['Output received from command'] : [],
-        warnings: [],
-        errors: hasErrors ? ['Command encountered errors'] : [],
+        key_findings: keyFindings.length > 0 ? keyFindings : ['Output received from command'],
+        warnings,
+        errors,
         recommendations: hasErrors ? ['Check command syntax and permissions'] : [],
         successful: isSuccessful,
       }
-    } catch (error) {
-      console.error('Error in interpretOutput:', error)
+    } catch (_error) {
+      // Error in interpretOutput
       // Fallback: simple interpretation based on output
       const hasErrors = /error|fail|permission denied|cannot|no such file/i.test(output)
       const isSuccessful = !hasErrors && output.trim().length > 0
@@ -233,12 +332,11 @@ class LLMService {
   async testConnection(): Promise<boolean> {
     try {
       // Simple test call
-      const chain = ChatPromptTemplate.fromMessages([['human', 'Hi']])
-        .pipe(this.#model)
+      const chain = ChatPromptTemplate.fromMessages([['human', 'Hi']]).pipe(this.#model)
       await chain.invoke({})
       return true
-    } catch (error) {
-      console.error('Connection test failed:', error)
+    } catch (_error) {
+      // Connection test failed
       return false
     }
   }
@@ -251,9 +349,9 @@ class LLMService {
       // Access the Ollama API directly
       const response = await fetch(`${this.#model.baseUrl}/api/tags`)
       const data = (await response.json()) as { models: { name: string }[] }
-      return data.models.map((model) => model.name)
-    } catch (error) {
-      console.error('Error listing models:', error)
+      return data.models.map(model => model.name)
+    } catch (_error) {
+      // Error listing models
       return []
     }
   }
@@ -261,33 +359,36 @@ class LLMService {
   /**
    * Get localized fallback messages for error cases
    */
-  private getFallbackMessage(errorType: 'unable_to_generate' | 'parsing_failed', language: string): string {
+  private getFallbackMessage(
+    errorType: 'unable_to_generate' | 'parsing_failed',
+    language: string
+  ): string {
     const messages = {
       unable_to_generate: {
         en: "I couldn't generate a command for that request. Could you please clarify what you'd like me to do?",
         fr: "Je n'ai pas pu générer de commande pour cette demande. Pourriez-vous préciser ce que vous souhaitez que je fasse ?",
       },
       parsing_failed: {
-        en: "I had trouble understanding that request. Could you try rephrasing it or providing more details?",
+        en: 'I had trouble understanding that request. Could you try rephrasing it or providing more details?',
         fr: "J'ai eu du mal à comprendre cette demande. Pourriez-vous la reformuler ou donner plus de détails ?",
       },
     }
-    return messages[errorType][language as keyof typeof messages['unable_to_generate']] || messages[errorType].en
+    return (
+      messages[errorType][language as keyof (typeof messages)['unable_to_generate']] ||
+      messages[errorType].en
+    )
   }
 }
 
 /**
  * Create LLM service handlers for IPC
  * Provides a unified interface for LLM interactions (currently using LangChain + Ollama)
- * 
+ *
  * @param mainWindow - Electron main window (unused, kept for API compatibility)
  * @param initialConfig - Initial LLM configuration
  * @returns IPC handlers setup function
  */
-export function createLLMHandlers(
-  mainWindow: BrowserWindow,
-  initialConfig?: OllamaConfig
-): void {
+export function createLLMHandlers(_mainWindow: BrowserWindow, initialConfig?: OllamaConfig): void {
   let service: LLMService | null = null
 
   if (initialConfig) {
@@ -302,7 +403,12 @@ export function createLLMHandlers(
   // Generate command from natural language
   ipcMain.handle(
     'llm:generate-command',
-    async (_event, prompt: string, conversationHistory?: string[], language?: string) => {
+    async (
+      _event,
+      prompt: string,
+      conversationHistory?: ConversationMessage[],
+      language?: string
+    ) => {
       if (!service) {
         throw new Error('LLM service not initialized')
       }

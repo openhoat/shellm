@@ -8,16 +8,16 @@ import './Terminal.css'
 
 const logger = new Logger('Terminal')
 
-// Fonction pour nettoyer les codes ANSI d'une chaîne
+// Function to strip ANSI escape codes from a string
 function stripAnsiCodes(str: string): string {
-  // Expression régulière pour les codes ANSI (séquences d'échappement)
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: ANSI codes require control characters
   const ansiRegex = /\x1B\[[0-9;]*[mGKH]/g
   return str.replace(ansiRegex, '')
 }
 
-// Fonction pour nettoyer les séquences OSC (Operating System Command)
+// Function to strip OSC sequences (Operating System Command)
 function stripOscSequences(str: string): string {
-  // Expression régulière pour les séquences OSC (\x1B] ... \x07 ou \x1B\)
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: OSC codes require control characters
   const oscRegex = /\x1B\][^\x07]*(?:\x07|\x1B\\)/g
   return str.replace(oscRegex, '')
 }
@@ -28,7 +28,7 @@ export const Terminal = () => {
   const fitAddonRef = useRef<FitAddon | null>(null)
   const terminalCreatedRef = useRef(false)
   const terminalPidRef = useRef<number | null>(null)
-  const { terminalPid, setTerminalPid, appendTerminalOutput, clearTerminalOutput } = useStore()
+  const { terminalPid, setTerminalPid, appendTerminalOutput } = useStore()
 
   // Keep terminalPidRef in sync with terminalPid
   useEffect(() => {
@@ -58,34 +58,41 @@ export const Terminal = () => {
     const initializeTerminal = async () => {
       logger.debug('Creating terminal...')
 
-      // Create xterm instance first
+      // Create xterm instance first with Terminator-like theme
       const xterm = new XTerm({
         theme: {
-          background: '#1e1e1e',
-          foreground: '#d4d4d4',
-          cursor: '#d4d4d4',
-          cursorAccent: '#1e1e1e',
+          // Terminator-like dark theme
+          background: '#2d2d2d',
+          foreground: '#e0e0e0',
+          selectionBackground: '#b4d5fe',
+          selectionInactiveBackground: '#5a5a5a',
+          cursor: '#16b614',
+          cursorAccent: '#2d2d2d',
+          // ANSI colors - more vibrant and closer to Terminator
           black: '#000000',
-          red: '#cd3131',
-          green: '#0dbc79',
-          yellow: '#e5e510',
-          blue: '#2472c8',
-          magenta: '#bc3fbc',
-          cyan: '#11a8cd',
-          white: '#e5e5e5',
-          brightBlack: '#666666',
-          brightRed: '#f14c4c',
-          brightGreen: '#23d18b',
-          brightYellow: '#f5f543',
-          brightBlue: '#3b8eea',
-          brightMagenta: '#d670d6',
-          brightCyan: '#29b8db',
+          red: '#c91b00',
+          green: '#00c800',
+          yellow: '#c7c400',
+          blue: '#0225c7',
+          magenta: '#c930c7',
+          cyan: '#00c5c7',
+          white: '#c7c7c7',
+          // Bright ANSI colors
+          brightBlack: '#676767',
+          brightRed: '#ff6e67',
+          brightGreen: '#5ffa68',
+          brightYellow: '#fef02a',
+          brightBlue: '#6a76fb',
+          brightMagenta: '#ff77ff',
+          brightCyan: '#5ffdff',
           brightWhite: '#ffffff',
         },
-        fontSize: 14,
-        fontFamily: 'Consolas, "Courier New", monospace',
+        fontSize: 13,
+        fontFamily: '"Ubuntu Mono", "DejaVu Sans Mono", "Consolas", "Courier New", monospace',
         cursorBlink: true,
         cursorStyle: 'block',
+        cursorWidth: 2,
+        allowProposedApi: true,
       })
 
       // Create fit addon
@@ -104,30 +111,30 @@ export const Terminal = () => {
       // Handle terminal data from main process
       const handleTerminalData = (data: { pid: number; data: string }) => {
         logger.debug(`Received data for PID: ${data.pid}, Current PID: ${terminalPidRef.current}`)
-        
+
         if (terminalPidRef.current === null) {
           // Terminal not created yet, ignore data
           logger.debug('Ignoring data - terminal not created yet')
           return
         }
-        
+
         if (data.pid === terminalPidRef.current) {
           logger.debug(`Writing data to xterm: ${data.data}`)
           xterm.write(data.data)
-          
+
           // Capture terminal output for interpretation
           // Split by newlines and filter out shell prompts, empty lines, and control sequences
           const allLines = data.data.split('\n')
-          
+
           const filteredLines = allLines
             .map(line => {
-              // Nettoyer les séquences OSC
+              // Clean OSC sequences
               const cleanedOsc = stripOscSequences(line)
-              // Nettoyer les codes ANSI
+              // Clean ANSI codes
               const cleanedAnsi = stripAnsiCodes(cleanedOsc)
-              // Nettoyer les caractères de contrôle \r
+              // Clean control characters \r
               const cleanedCr = cleanedAnsi.replace(/\r/g, '')
-              // Nettoyer les espaces en début et fin
+              // Clean spaces at beginning and end
               return cleanedCr.trim()
             })
             .filter(line => {
@@ -135,23 +142,25 @@ export const Terminal = () => {
               if (line.length === 0) {
                 return false
               }
-              
+
               // Skip bash prompts (format: user@hostname:~$)
-              // Le pattern est: word@word:word$
-              const isBashPrompt = /^[\w-]+@[\w-]+:[~\w-\/]*\$$/.test(line)
-              
+              // Pattern is: word@word:word$
+              const isBashPrompt = /^[\w-]+@[\w-]+:[~\w-/]*\$$/.test(line)
+
               if (isBashPrompt) {
                 logger.debug(`Filtering out bash prompt: "${line}"`)
                 return false
               }
-              
+
               return true
             })
-          
+
           logger.debug(`Total lines: ${allLines.length}, Filtered: ${filteredLines.length}`)
-          
+
           if (filteredLines.length > 0) {
-            filteredLines.forEach(line => appendTerminalOutput(line))
+            for (const line of filteredLines) {
+              appendTerminalOutput(line)
+            }
             logger.debug(`Appended ${filteredLines.length} lines to terminalOutput`)
           }
         } else {

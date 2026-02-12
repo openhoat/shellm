@@ -6,6 +6,7 @@ export const ENV_VAR_OLLAMA_API_KEY = 'SHELLM_OLLAMA_API_KEY'
 export const ENV_VAR_OLLAMA_MODEL = 'SHELLM_OLLAMA_MODEL'
 export const ENV_VAR_OLLAMA_TEMPERATURE = 'SHELLM_OLLAMA_TEMPERATURE'
 export const ENV_VAR_OLLAMA_MAX_TOKENS = 'SHELLM_OLLAMA_MAX_TOKENS'
+export const ENV_VAR_SHELL = 'SHELLM_SHELL'
 
 // Configuration par défaut de l'Ollama
 export const DEFAULT_OLLAMA_CONFIG: OllamaConfig = {
@@ -21,6 +22,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   ollama: DEFAULT_OLLAMA_CONFIG,
   theme: 'dark',
   fontSize: 14,
+  shell: 'auto',
 }
 
 interface EnvOllamaConfig {
@@ -31,10 +33,14 @@ interface EnvOllamaConfig {
   maxTokens?: number | undefined
 }
 
+interface EnvAppConfig {
+  shell: string | undefined
+}
+
 /**
  * Charge la configuration depuis les variables d'environnement
  */
-export function getEnvConfig(): { ollama: EnvOllamaConfig } {
+export function getEnvConfig(): { ollama: EnvOllamaConfig; app: EnvAppConfig } {
   return {
     ollama: {
       url: process.env[ENV_VAR_OLLAMA_URL] ?? undefined,
@@ -46,6 +52,9 @@ export function getEnvConfig(): { ollama: EnvOllamaConfig } {
       maxTokens: process.env[ENV_VAR_OLLAMA_MAX_TOKENS]
         ? parseInt(process.env[ENV_VAR_OLLAMA_MAX_TOKENS], 10)
         : undefined,
+    },
+    app: {
+      shell: process.env[ENV_VAR_SHELL] ?? undefined,
     },
   }
 }
@@ -69,6 +78,10 @@ export function mergeConfig(storedConfig: AppConfig): AppConfig {
     }
   }
 
+  if (envConfig.app) {
+    mergedConfig.shell = envConfig.app.shell ?? storedConfig.shell
+  }
+
   return mergedConfig
 }
 
@@ -81,6 +94,7 @@ export function getEnvSources(): {
   model: boolean
   temperature: boolean
   maxTokens: boolean
+  shell: boolean
 } {
   return {
     url: !!process.env[ENV_VAR_OLLAMA_URL],
@@ -88,5 +102,6 @@ export function getEnvSources(): {
     model: !!process.env[ENV_VAR_OLLAMA_MODEL],
     temperature: !!process.env[ENV_VAR_OLLAMA_TEMPERATURE],
     maxTokens: !!process.env[ENV_VAR_OLLAMA_MAX_TOKENS],
+    shell: !!process.env[ENV_VAR_SHELL],
   }
 }

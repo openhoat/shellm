@@ -12,6 +12,7 @@ export interface AppConfig {
   ollama: OllamaConfig
   theme: 'dark' | 'light'
   fontSize: number
+  shell: string
 }
 
 // Messages IPC
