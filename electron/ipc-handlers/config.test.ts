@@ -22,7 +22,7 @@ vi.mock('electron', () => ({
   ipcMain: mockIpcMain,
 }))
 
-const { createConfigHandlers } = await import('./config')
+import { createConfigHandlers } from './config'
 
 describe('Config IPC Handlers', () => {
   beforeEach(() => {

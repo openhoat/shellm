@@ -26,7 +26,7 @@ vi.mock('electron', () => ({
   ipcMain: mockIpcMain,
 }))
 
-const { createTerminalHandlers } = await import('./terminal.ts')
+import { createTerminalHandlers } from './terminal'
 
 describe('Terminal IPC Handlers', () => {
   let mockMainWindow: any
