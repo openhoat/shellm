@@ -30,23 +30,19 @@
 
 ### 🟢 P3 - Low Priority
 
-- [ ] **[12/02/2026 14:22:39] 🟢 P3 ⚙️ [CONFIG]** Sort NPM scripts alphabetically in package.json
-- [ ] **[12/02/2026 14:20:41] 🟢 P3 🏗️ [ARCHITECTURE]** Fix TypeScript UMD global variable warnings across project by importing explicit types (e.g., React.CSSProperties → CSSProperties)
-- [ ] **[12/02/2026 12:37:00] 🟢 P3 ✅ [TEST]** Add Electron IPC Layer tests with mocks
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 ✅ [TEST]** Add test coverage script and report
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 🚀 [PERFORMANCE]** Implement LLM response caching
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 🏗️ [ARCHITECTURE]** Centralize logging with proper log levels across the application
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 🎨 [UX]** Improve error messages to be more explicit
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 🎨 [UX]** Add progress indicator for long-running commands
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 🎨 [UX]** Implement keyboard shortcuts (Ctrl+Enter to execute, Ctrl+K to clear, Esc to cancel)
-- [ ] **[12/02/2026 12:37:00] 🟢 P3 ✨ [FEAT]** Add conversation export/import functionality
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 📝 [DOCS]** Add JSDoc documentation to functions
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 📦 [DEPENDENCIES]** Update axios dependency from 1.13.4 to latest version
 - [ ] **[12/02/2026 12:37:00] 🟢 P3 📦 [DEPENDENCIES]** Update vitest dependency from 4.0.18 to latest version
 
 ## 🚧 In Progress
 
-(No work in progress for the moment)
+(No tasks currently in progress)
 
 ## ✅ Done
 
@@ -60,6 +56,7 @@
 
 - [x] **[12/02/2026 12:37:00]** ✅ [TEST] Add React component tests (ChatPanel, Terminal, ConfigPanel, Header, ModelSelector, LanguageSelector)
 - [x] **[12/02/2026 16:09:18]** ✅ [TEST] Fix the test:ui NPM script by installing @vitest/ui package
+- [x] **[13/02/2026 00:10:00]** ✅ [TEST] Add Electron IPC Layer tests with mocks
 
 ### Configuration
 
