@@ -7,7 +7,12 @@ Pour visualiser l'historique complet, utilisez : `git log`
 ## Modification History
 
 
+
 ### 2026
+
+#### 12/02
+
+**[10:32:50] ✨ [FEAT]** Create interactive workflow for adding ideas to Kanban backlog
 
 #### 11/02
 

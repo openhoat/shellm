@@ -3,7 +3,7 @@
 
 ## 📝 Backlog
 
-(No ideas for the moment)
+- [ ] **[12/02/2026 10:29:32] 💡 [IDEA]** Use WireIt to optimize NPM scripts
 
 
 

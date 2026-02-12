@@ -57,3 +57,6 @@ coverage/
 .cache/
 .temp/
 .tmp/
+
+# Claude AI
+.claude/settings.local.json
