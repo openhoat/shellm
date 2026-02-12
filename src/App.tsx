@@ -1,11 +1,12 @@
-import { useCallback, useEffect, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import { ChatPanel } from './components/ChatPanel'
-import { ConfigPanel } from './components/ConfigPanel'
 import { Header } from './components/Header'
 import { Resizer } from './components/Resizer'
 import { Terminal } from './components/Terminal'
 import { useStore } from './store/useStore'
 import './App.css'
+
+const ConfigPanel = lazy(() => import('./components/ConfigPanel'))
 
 const App = () => {
   const { initConfig, showConfigPanel } = useStore()
@@ -43,7 +44,11 @@ const App = () => {
         <Resizer onResize={handleResize} direction="horizontal" minSize={300} />
         <ChatPanel style={{ flex: 1, minWidth: '300px' }} />
       </div>
-      {showConfigPanel && <ConfigPanel />}
+      {showConfigPanel && (
+        <Suspense fallback={<div>Loading...</div>}>
+          <ConfigPanel />
+        </Suspense>
+      )}
     </div>
   )
 }
