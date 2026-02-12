@@ -9,6 +9,10 @@ Pour visualiser l'historique complet, utilisez : `git log`
 
 ### 2026
 
+### 13/02
+
+**[00:40:00] ✅ [TEST]** Add Electron IPC Layer tests with mocks (config, conversation, llm-service, terminal)
+
 ### 12/02
 
 **[23:35:00] 🏗️ [ARCHITECTURE]** Refactor ChatPanel.tsx - extract useChat custom hook for better separation of concerns
