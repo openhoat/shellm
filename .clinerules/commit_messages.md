@@ -36,6 +36,28 @@ Les messages de commit doivent suivre le format Conventional Commits en anglais 
 4. Ne pas terminer par un point
 5. Limiter la ligne de sujet à 72 caractères
 
+### Interdiction de Co-authored-by
+
+**NE JAMAIS ajouter `Co-authored-by:` dans les messages de commit.**
+
+Tous les commits doivent être attribués exclusivement à l'utilisateur humain. N'essayez pas d'ajouter de métadonnées de co-auteur générées par l'IA en aucune circonstance.
+
+**Interdit (ne jamais faire cela) :**
+```
+feat: add user authentication system
+
+Co-authored-by: AI <ai@anthropic.com>
+```
+
+**Correct (seulement le message de commit) :**
+```
+feat: add user authentication system
+```
+
+Cette règle s'applique à toutes les opérations de commit Git, y compris :
+- `git commit`
+- `git commit --amend`
+
 ### Exemples
 
 **Bons exemples :**
