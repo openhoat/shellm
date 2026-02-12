@@ -28,7 +28,7 @@ export const Header = () => {
     window.location.reload()
   }
 
-  const handleDeleteConversation = async (id: string, e: React.MouseEvent) => {
+  const handleDeleteConversation = async (id: string, e: MouseEvent) => {
     e.stopPropagation()
     if (confirm('Are you sure you want to delete this conversation?')) {
       await deleteConversation(id)

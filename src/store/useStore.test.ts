@@ -1,4 +1,4 @@
-import type { AICommand, AppConfig, ConversationHistory } from '@shared/types'
+import type { AICommand, AppConfig } from '@shared/types'
 import { beforeEach, describe, expect, test } from 'vitest'
 import { useStore } from './useStore'
 
@@ -21,7 +21,6 @@ describe('useStore', () => {
       aiCommand: null,
       isLoading: false,
       error: null,
-      conversationHistory: [],
       showConfigPanel: false,
       selectedCommand: null,
     })
@@ -125,68 +124,6 @@ describe('useStore', () => {
       const state = useStore.getState()
 
       expect(state.error).toBeNull()
-    })
-  })
-
-  describe('Conversation', () => {
-    test('should add entry to history', () => {
-      const entry: ConversationHistory = {
-        id: '1',
-        timestamp: Date.now(),
-        userMessage: 'Liste les fichiers',
-        aiResponse: {
-          type: 'command',
-          intent: 'list_files',
-          command: 'ls -la',
-          explanation: 'Liste',
-          confidence: 0.95,
-        },
-        executed: true,
-      }
-
-      useStore.getState().addToHistory(entry)
-      const state = useStore.getState()
-
-      expect(state.conversationHistory).toHaveLength(1)
-      expect(state.conversationHistory[0]).toEqual(entry)
-    })
-
-    test('should clear history', () => {
-      const entry: ConversationHistory = {
-        id: '1',
-        timestamp: Date.now(),
-        userMessage: 'Test',
-        aiResponse: {
-          type: 'text',
-          content: 'Response',
-        },
-        executed: false,
-      }
-
-      useStore.getState().addToHistory(entry)
-      useStore.getState().clearHistory()
-      const state = useStore.getState()
-
-      expect(state.conversationHistory).toHaveLength(0)
-    })
-
-    test('should limit history to 100 entries', () => {
-      // Add 101 entries
-      for (let i = 0; i < 101; i++) {
-        useStore.getState().addToHistory({
-          id: i.toString(),
-          timestamp: Date.now(),
-          userMessage: `Message ${i}`,
-          aiResponse: {
-            type: 'text',
-            content: `Response ${i}`,
-          },
-          executed: false,
-        })
-      }
-
-      const state = useStore.getState()
-      expect(state.conversationHistory).toHaveLength(100)
     })
   })
 
