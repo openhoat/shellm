@@ -38,6 +38,9 @@ build/
 out/
 tsconfig.tsbuildinfo
 
+# Wireit cache
+.wireit/
+
 # OS
 .DS_Store
 Thumbs.db
@@ -57,6 +60,9 @@ coverage/
 .cache/
 .temp/
 .tmp/
+
+# Wireit
+.wireit/
 
 # Claude AI
 .claude/settings.local.json
