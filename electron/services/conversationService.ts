@@ -129,6 +129,37 @@ class ConversationService {
   }
 
   /**
+   * Update a specific message in a conversation
+   * Used to add command output and interpretation after execution
+   */
+  updateMessage(
+    conversationId: string,
+    messageIndex: number,
+    updates: Partial<ConversationMessage>
+  ): Conversation | null {
+    const data = this.read()
+    const conversation = data.conversations.find(conv => conv.id === conversationId)
+
+    if (!conversation) {
+      return null
+    }
+
+    if (messageIndex < 0 || messageIndex >= conversation.messages.length) {
+      return null
+    }
+
+    // Merge the updates into the existing message
+    conversation.messages[messageIndex] = {
+      ...conversation.messages[messageIndex],
+      ...updates,
+    }
+    conversation.updatedAt = Date.now()
+
+    this.save(data)
+    return conversation
+  }
+
+  /**
    * Delete a conversation
    */
   deleteConversation(id: string): boolean {

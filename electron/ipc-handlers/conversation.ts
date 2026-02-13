@@ -39,6 +39,19 @@ export function createConversationHandlers(_mainWindow: BrowserWindow): void {
     }
   )
 
+  // Update a specific message in a conversation
+  ipcMain.handle(
+    'conversation:update-message',
+    async (
+      _event,
+      conversationId: string,
+      messageIndex: number,
+      updates: Partial<ConversationMessage>
+    ) => {
+      return conversationService.updateMessage(conversationId, messageIndex, updates)
+    }
+  )
+
   // Delete a conversation
   ipcMain.handle('conversation:delete', async (_event, id: string) => {
     return conversationService.deleteConversation(id)

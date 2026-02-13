@@ -64,6 +64,48 @@
                   "type": "string",
                   "description": "Message content",
                   "minLength": 1
+                },
+                "command": {
+                  "type": "string",
+                  "description": "Shell command that was executed (for assistant messages with commands)"
+                },
+                "output": {
+                  "type": "string",
+                  "description": "Raw output from the executed command"
+                },
+                "interpretation": {
+                  "type": "object",
+                  "description": "AI interpretation of the command output",
+                  "properties": {
+                    "summary": {
+                      "type": "string",
+                      "description": "Brief summary of the command result"
+                    },
+                    "key_findings": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "description": "Key findings from the command output"
+                    },
+                    "warnings": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "description": "Warnings detected in the output"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "description": "Errors detected in the output"
+                    },
+                    "recommendations": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "description": "Recommendations based on the output"
+                    },
+                    "successful": {
+                      "type": "boolean",
+                      "description": "Whether the command executed successfully"
+                    }
+                  }
                 }
               }
             }
