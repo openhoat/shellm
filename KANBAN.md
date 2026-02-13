@@ -30,6 +30,7 @@
 
 ### 🟢 P3 - Low Priority
 
+- [ ] **[13/02/2026 12:06:58] 🟢 P3 ⚙️ [CONFIG]** Fix Wayland/Vulkan warning on dev launch by configuring ozone platform or disabling Vulkan
 - [ ] **[13/02/2026 12:03:33] 🟢 P3 🎨 [UX]** Improve terminal window height to use all available vertical space
 
 ## 🚧 In Progress
