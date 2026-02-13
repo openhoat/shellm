@@ -19,6 +19,40 @@ const DEFAULT_TEMPERATURE = 0.7
 const DEFAULT_MAX_TOKENS = 1000
 
 /**
+ * Strip ANSI escape codes from a string
+ * Handles standard ANSI color/style codes
+ */
+function stripAnsiCodes(str: string): string {
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: ANSI codes require control characters
+  const ansiRegex = /\x1B\[[0-9;]*[mGKH]/g
+  return str.replace(ansiRegex, '')
+}
+
+/**
+ * Strip OSC (Operating System Command) sequences from a string
+ * Handles OSC sequences like window titles, clipboard operations, etc.
+ */
+function stripOscSequences(str: string): string {
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: OSC codes require control characters
+  const oscRegex = /\x1B\][^\x07]*(?:\x07|\x1B\\)/g
+  return str.replace(oscRegex, '')
+}
+
+/**
+ * Clean terminal output by removing ANSI codes, OSC sequences, and control characters
+ * This makes the output readable for LLM interpretation
+ */
+function cleanTerminalOutput(str: string): string {
+  return stripOscSequences(stripAnsiCodes(str))
+    .replace(/\r/g, '')
+    .replace(/\x1B\[\?[0-9;]*[hl]/g, '') // DEC private mode (e.g., cursor visibility)
+    .replace(/\x1B\].*?(\x07|\x1B\\)/g, '') // Remaining OSC sequences
+    .replace(/\x1B\[[0-9;]*[A-Za-z]/g, '') // Other ANSI sequences
+    .replace(/[\x00-\x09\x0B-\x1F]/g, '') // Remove other control characters except newline
+    .trim()
+}
+
+/**
  * Validate Ollama URL format
  */
 function validateOllamaUrl(url: string): boolean {
@@ -212,8 +246,11 @@ class LLMService {
    * Interpret terminal output
    */
   async interpretOutput(output: string, language = 'en'): Promise<CommandInterpretation> {
+    // Clean the output first to remove ANSI codes and control characters
+    const cleanedOutput = cleanTerminalOutput(output)
+
     // Limit output to first MAX_OUTPUT_LINES lines to reduce processing time
-    const lines = output.split('\n').slice(0, MAX_OUTPUT_LINES).join('\n')
+    const lines = cleanedOutput.split('\n').slice(0, MAX_OUTPUT_LINES).join('\n')
     const systemPrompt = loadPrompt('interpret-output-prompt.md')
 
     // Escape the output to prevent template injection issues
@@ -265,8 +302,8 @@ class LLMService {
       }
 
       // Fallback: intelligent interpretation based on output analysis
-      const hasErrors = /error|fail|permission denied|cannot|no such file|not found/i.test(output)
-      const isSuccessful = !hasErrors && output.trim().length > 0
+      const hasErrors = /error|fail|permission denied|cannot|no such file|not found/i.test(cleanedOutput)
+      const isSuccessful = !hasErrors && cleanedOutput.trim().length > 0
 
       const keyFindings: string[] = []
       const warnings: string[] = []
@@ -275,21 +312,36 @@ class LLMService {
       // Analyze specific command outputs
       if (isSuccessful) {
         // Memory analysis (free command)
-        if (/Mem:\s+/i.test(output)) {
-          const memTotal = output.match(/Mem:\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)/)
-          if (memTotal) {
-            keyFindings.push(`Total memory: ${memTotal[1]} used, ${memTotal[2]} free`)
-          }
-          const swapInfo = output.match(/Swap:\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)/)
-          if (swapInfo) {
-            keyFindings.push(`Swap: ${swapInfo[1]} used, ${swapInfo[2]} free`)
+        // The output format is: Mem: total used free shared buff/cache available
+        // We need to capture units (Gi, Mi, etc.) in addition to numbers
+        const memLine = cleanedOutput.match(/Mem:\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)/)
+        if (memLine) {
+          keyFindings.push(`Total memory: ${memLine[1]}`)
+          keyFindings.push(`Used: ${memLine[2]}`)
+          keyFindings.push(`Free: ${memLine[3]}`)
+          keyFindings.push(`Available: ${memLine[6]}`)
+        } else {
+          // Fallback to simpler regex for older free output format
+          const memSimple = cleanedOutput.match(/Mem:\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)/)
+          if (memSimple) {
+            keyFindings.push(`Total memory: ${memSimple[1]}`)
+            keyFindings.push(`Used: ${memSimple[2]}`)
+            keyFindings.push(`Free: ${memSimple[3]}`)
           }
         }
 
+        // Swap analysis
+        const swapInfo = cleanedOutput.match(/Swap:\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)/)
+        if (swapInfo) {
+          keyFindings.push(`Swap total: ${swapInfo[1]}`)
+          keyFindings.push(`Swap used: ${swapInfo[2]}`)
+          keyFindings.push(`Swap free: ${swapInfo[3]}`)
+        }
+
         // Disk usage analysis (df command)
-        else if (/Filesystem.*Size.*Used.*Avail/i.test(output)) {
-          const lines = output.split('\n')
-          for (const line of lines) {
+        else if (/Filesystem.*Size.*Used.*Avail/i.test(cleanedOutput)) {
+          const dfLines = cleanedOutput.split('\n')
+          for (const line of dfLines) {
             const match = line.match(
               /\/dev\/[\w]+\s+([\d.]+[A-Z]+)\s+([\d.]+[A-Z]+)\s+([\d.]+[A-Z]+)\s+([\d.]+%)\s+([\d.]+[A-Z]+)/
             )
@@ -300,23 +352,23 @@ class LLMService {
         }
 
         // File listing (ls command)
-        else if (/^[\w-]+\s+/i.test(output)) {
-          const fileCount = output.split('\n').filter(line => line.trim().length > 0).length
+        else if (/^[\w-]+\s+/i.test(cleanedOutput)) {
+          const fileCount = cleanedOutput.split('\n').filter(line => line.trim().length > 0).length
           keyFindings.push(`Listed ${fileCount} items`)
         }
 
         // Process listing (ps command)
-        else if (/PID\s+.*TIME.*COMMAND/i.test(output)) {
-          const processCount = output
+        else if (/PID\s+.*TIME.*COMMAND/i.test(cleanedOutput)) {
+          const processCount = cleanedOutput
             .split('\n')
             .filter(line => line.trim().length > 0 && !line.includes('PID')).length
           keyFindings.push(`Found ${processCount} processes`)
         }
 
         // Network info (ping, ip, etc.)
-        else if (/ping|ICMP|bytes from/i.test(output)) {
-          if (/time=/i.test(output)) {
-            const timeMatch = output.match(/time=([\d.]+)\s*ms/)
+        else if (/ping|ICMP|bytes from/i.test(cleanedOutput)) {
+          if (/time=/i.test(cleanedOutput)) {
+            const timeMatch = cleanedOutput.match(/time=([\d.]+)\s*ms/)
             if (timeMatch) {
               keyFindings.push(`Response time: ${timeMatch[1]}ms`)
             }
@@ -325,15 +377,15 @@ class LLMService {
 
         // Generic successful output
         else {
-          const lines = output.split('\n').filter(line => line.trim().length > 0)
-          if (lines.length > 0) {
+          const outputLines = cleanedOutput.split('\n').filter(line => line.trim().length > 0)
+          if (outputLines.length > 0) {
             keyFindings.push(`Command executed successfully`)
-            keyFindings.push(`Output: ${lines[0].substring(0, 80)}`)
+            keyFindings.push(`Output: ${outputLines[0].substring(0, 80)}`)
           }
         }
 
         // Check for warnings
-        const warningMatches = output.match(/warning|deprecated|cannot/i)
+        const warningMatches = cleanedOutput.match(/warning|deprecated|cannot/i)
         if (warningMatches) {
           warnings.push('Warnings present in output')
         }
@@ -341,15 +393,15 @@ class LLMService {
 
       // Error extraction
       if (hasErrors) {
-        const lines = output.split('\n').filter(line => line.trim().length > 0)
-        const errorLines = lines.filter(line =>
+        const errorLinesList = cleanedOutput.split('\n').filter(line => line.trim().length > 0)
+        const errorLines = errorLinesList.filter(line =>
           /error|fail|denied|cannot|no such file|not found/i.test(line)
         )
 
         if (errorLines.length > 0) {
           errors.push(errorLines[0].substring(0, 120))
-        } else if (lines.length > 0) {
-          errors.push(lines[0].substring(0, 120))
+        } else if (errorLinesList.length > 0) {
+          errors.push(errorLinesList[0].substring(0, 120))
         }
       }
 
@@ -363,9 +415,10 @@ class LLMService {
       }
     } catch (_error) {
       // Error in interpretOutput
-      // Fallback: simple interpretation based on output
-      const hasErrors = /error|fail|permission denied|cannot|no such file/i.test(output)
-      const isSuccessful = !hasErrors && output.trim().length > 0
+      // Fallback: simple interpretation based on cleaned output
+      const cleanedFallbackOutput = cleanTerminalOutput(output)
+      const hasErrors = /error|fail|permission denied|cannot|no such file/i.test(cleanedFallbackOutput)
+      const isSuccessful = !hasErrors && cleanedFallbackOutput.trim().length > 0
 
       return {
         summary: isSuccessful ? 'Command executed successfully' : 'Command encountered issues',

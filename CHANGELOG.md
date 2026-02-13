@@ -11,6 +11,7 @@ To view the complete history, use: `git log`
 
 #### 13/02
 
+- **[18:48:00] 🐛 [FIX]** Improve command output interpretation by stripping ANSI codes before processing and enhancing memory regex to capture units and available column
 - **[18:35:00] ✨ [FEAT]** Add update-message functionality for command persistence - track command output and interpretation in conversation storage
 - **[19:29:00] 🐛 [FIX]** Fix terminal height to properly fill available space - add flex display to wrapper and height: 100% to container
 - **[19:05:00] 🎨 [UX]** Center application window on screen at startup with multi-monitor support using screen API
