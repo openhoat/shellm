@@ -36,7 +36,7 @@ class LogManager {
     }
 
     // Notify listeners
-    this.#listeners.forEach(listener => listener(entry))
+    void this.#listeners.forEach(listener => listener(entry))
   }
 
   getAllLogs(): LogEntry[] {

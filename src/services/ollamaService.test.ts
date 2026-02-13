@@ -1,5 +1,5 @@
-import { describe, expect, test, beforeEach, vi } from 'vitest'
 import type { OllamaConfig } from '@shared/types'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import type { ElectronOllamaAPI } from './ollamaService'
 import { OllamaService } from './ollamaService'
 
@@ -101,8 +101,6 @@ describe('OllamaService', () => {
     })
 
     test('should evict oldest entry when cache is full', async () => {
-      const maxSize = 3
-
       // Fill cache
       await service.generateCommand('command 1')
       await service.generateCommand('command 2')

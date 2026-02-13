@@ -14,16 +14,16 @@
     "dev": "concurrently \"npm run dev:vite\" \"npm run dev:electron\"",
     "dev:electron": "npm run build:electron && electron .",
     "dev:vite": "vite",
-    "dist": "npm run build && electron-builder",
-    "dist:linux": "npm run build && electron-builder --linux",
-    "dist:mac": "npm run build && electron-builder --mac",
-    "dist:win": "npm run build && electron-builder --win",
+    "dist": "wireit",
+    "dist:linux": "wireit",
+    "dist:mac": "wireit",
+    "dist:win": "wireit",
     "lint": "eslint src --ext .ts,.tsx",
     "prepare": "husky",
     "qa": "wireit",
     "qa:fix": "biome check --write .",
     "test": "wireit",
-    "test:coverage": "vitest run --coverage",
+    "test:coverage": "wireit",
     "test:ui": "vitest --ui",
     "test:watch": "vitest",
     "validate": "wireit"
@@ -118,8 +118,77 @@
       ],
       "output": []
     },
+    "dist": {
+      "command": "electron-builder",
+      "dependencies": [
+        "build"
+      ],
+      "files": [
+        "dist/**/*",
+        "dist-electron/**/*",
+        "package.json",
+        "electron-builder.yml"
+      ],
+      "output": [
+        "release/**/*"
+      ]
+    },
+    "dist:linux": {
+      "command": "electron-builder --linux",
+      "dependencies": [
+        "build"
+      ],
+      "files": [
+        "dist/**/*",
+        "dist-electron/**/*",
+        "package.json",
+        "electron-builder.yml"
+      ],
+      "output": [
+        "release/**/*"
+      ]
+    },
+    "dist:mac": {
+      "command": "electron-builder --mac",
+      "dependencies": [
+        "build"
+      ],
+      "files": [
+        "dist/**/*",
+        "dist-electron/**/*",
+        "package.json",
+        "electron-builder.yml"
+      ],
+      "output": [
+        "release/**/*"
+      ]
+    },
+    "dist:win": {
+      "command": "electron-builder --win",
+      "dependencies": [
+        "build"
+      ],
+      "files": [
+        "dist/**/*",
+        "dist-electron/**/*",
+        "package.json",
+        "electron-builder.yml"
+      ],
+      "output": [
+        "release/**/*"
+      ]
+    },
     "test": {
       "command": "vitest run",
+      "files": [
+        "src/**/*.test.{ts,tsx}",
+        "vitest.config.ts",
+        "src/**/*.{ts,tsx}"
+      ],
+      "output": []
+    },
+    "test:coverage": {
+      "command": "vitest run --coverage",
       "files": [
         "src/**/*.test.{ts,tsx}",
         "vitest.config.ts",

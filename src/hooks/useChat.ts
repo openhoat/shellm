@@ -166,10 +166,15 @@ export function useChat() {
         let errorMessage: string
         if (err instanceof Error) {
           // Provide specific error messages based on error type
-          if (err.message.includes('fetch') || err.message.includes('network') || err.message.includes('ECONNREFUSED')) {
+          if (
+            err.message.includes('fetch') ||
+            err.message.includes('network') ||
+            err.message.includes('ECONNREFUSED')
+          ) {
             errorMessage = i18n.t('errors.aiGenerationFailedOffline')
           } else if (err.message.includes('timeout')) {
-            errorMessage = 'Le service Ollama ne répond pas. Vérifiez que le serveur est en cours d\'exécution et que l\'URL est correcte.'
+            errorMessage =
+              "Le service Ollama ne répond pas. Vérifiez que le serveur est en cours d'exécution et que l'URL est correcte."
           } else {
             errorMessage = `${i18n.t('errors.aiGenerationFailed')} (${err.message})`
           }
@@ -312,7 +317,9 @@ export function useChat() {
       const injectionCheck = hasInjectionPatterns(aiCommand.command)
 
       if (injectionCheck.hasInjection) {
-        const warningMessage = i18n.t('errors.injectionWarning', { patterns: injectionCheck.patterns.join(', ') })
+        const warningMessage = i18n.t('errors.injectionWarning', {
+          patterns: injectionCheck.patterns.join(', '),
+        })
         setError(warningMessage)
         addToast('warning', warningMessage)
       }
