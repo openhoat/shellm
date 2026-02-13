@@ -11,9 +11,9 @@
     "changelog": "node scripts/generate-changelog.js",
     "clean": "rimraf -g -v dist dist-electron release **/tsconfig.tsbuildinfo",
     "commit:lint": "commitlint --edit",
-    "dev": "concurrently \"npm run dev:vite\" \"npm run dev:electron\"",
-    "dev:electron": "npm run build:electron && electron .",
-    "dev:vite": "vite",
+    "dev": "wireit",
+    "dev:electron": "wireit",
+    "dev:vite": "wireit",
     "dist": "wireit",
     "dist:linux": "wireit",
     "dist:mac": "wireit",
@@ -64,7 +64,6 @@
     "@vitejs/plugin-react": "5.1.3",
     "@vitest/coverage-v8": "4.0.18",
     "@vitest/ui": "4.0.18",
-    "concurrently": "8.2.2",
     "electron": "40.1.0",
     "electron-builder": "26.7.0",
     "fs-extra": "11.3.3",
@@ -204,6 +203,35 @@
         "build",
         "test"
       ]
+    },
+    "dev:vite": {
+      "command": "vite",
+      "files": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "vite.config.ts",
+        "index.html"
+      ],
+      "output": [],
+      "service": true
+    },
+    "dev:electron": {
+      "command": "electron .",
+      "dependencies": [
+        "build:electron"
+      ],
+      "files": [
+        "dist-electron/**/*"
+      ],
+      "output": [],
+      "service": true
+    },
+    "dev": {
+      "dependencies": [
+        "dev:vite",
+        "dev:electron"
+      ],
+      "service": true
     }
   },
   "build": {
