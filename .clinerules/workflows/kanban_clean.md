@@ -13,6 +13,10 @@ Summary:
 - `- [x]` → checked task (completed)
 - Task format: `- [ ] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
 
+## Important Note
+
+**There is NO "Done" section in KANBAN.** Completed tasks are deleted from In Progress immediately after commit. The complete history is tracked in Git and CHANGELOG.md.
+
 ## Execution instructions
 
 ### 1. Read KANBAN.md
@@ -21,17 +25,10 @@ Use the `read_file` tool to read the content of the `/KANBAN.md` file at the pro
 
 ### 2. Analyze entries eligible for cleanup
 
-Identify entries in the following sections that can be cleaned up:
+Identify entries in the "## 🚧 In Progress" section that can be cleaned up:
 
-#### 2a. Section "## ✅ Done"
+#### In Progress inactive for > 30 days
 
-Identify completed tasks in this section:
-- Isolated completed tasks (`- [x]`)
-- Complete sections (idea header + tasks) all completed
-
-#### 2b. Section "## 🚧 In Progress"
-
-Identify entries inactive for a long time:
 - Idea sections with incomplete tasks for > 30 days
 - Isolated incomplete tasks for > 30 days
 - Abandoned sections/tasks (identifiable by comment or context)
@@ -95,7 +92,6 @@ Inform the user:
 - This workflow is **manual**: it must be explicitly requested by the user
 - **Always request confirmation** before deleting entries
 - Never delete entries without explicit user validation
-- For "Done" entries, consider they are already in Git and can be deleted
 - For inactive "In Progress" entries, request confirmation before deletion
 
 ## Example flow
@@ -104,50 +100,27 @@ Inform the user:
 1. Read KANBAN.md
 
 2. Analyze eligible entries:
-   - Done: 3 completed tasks
    - In Progress: 1 idea section inactive for 45 days
 
 3. Present to user:
    # Entries eligible for cleanup
 
-   Done (3 tasks):
-   1. [05/01/2026] ✨ [FEAT] Implement authentication system
-   2. [08/01/2026] 🐛 [FIX] Fix logout bug
-   3. [10/01/2026] 🔧 [CHORE] Update dependencies
-
    In Progress inactive for > 30 days:
-   4. [15/01/2026] 💡 [IDEA] Refactor code base (3 incomplete tasks)
+   1. [15/01/2026] 💡 [IDEA] Refactor code base (3 incomplete tasks)
 
    What do you want to do?
-   - Delete entries 1-3 (Done)
-   - Delete entry 4 (Abandoned In Progress)
-   - Archive all entries
+   - Delete entry 1 (Abandoned In Progress)
+   - Archive entry 1
    - Cancel
 
-4. User chooses to delete 1-3 and archive 4
+4. User chooses to archive entry 1
 
-5. Delete 3 tasks from Done
-6. Move section #4 to Archive
+5. Move section #1 to Archive
 
-7. Report: 3 tasks deleted, 1 section archived
+6. Report: 1 section archived
 ```
 
 ## Example KANBAN.md before/after
-
-**Before - Done:**
-```markdown
-## ✅ Done
-- [x] **[05/01/2026 15:30:00] ✨ [FEAT]** Implement authentication system
-- [x] **[08/01/2026 10:15:00] 🐛 [FIX]** Fix logout bug
-- [x] **[10/01/2026 09:00:00] 🔧 [CHORE]** Update dependencies
-```
-
-**After deletion - Done:**
-```markdown
-## ✅ Done
-
-(No completed tasks for the moment)
-```
 
 **Before - In Progress (inactive):**
 ```markdown
@@ -175,10 +148,6 @@ Inform the user:
 ```
 
 ## Suggested cleanup criteria
-
-### Done section
-- Tasks completed for more than 7 days
-- Tasks already committed to Git
 
 ### In Progress section
 - Sections/tasks inactive for more than 30 days

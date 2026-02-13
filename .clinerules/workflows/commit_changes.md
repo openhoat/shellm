@@ -64,7 +64,7 @@ Ajouter les styles dans src/components/UserDashboard.css
 ```
 [REFACTOR]: Restructurer l'architecture de gestion des tâches et idées
 
-Créer le fichier KANBAN.md avec les sections Backlog, In Progress, Done
+Créer le fichier KANBAN.md avec les sections Backlog, In Progress
 Mettre à jour .clinerules/task_format.md avec les règles pour KANBAN.md
 Créer les workflows .clinerules/workflows/kanban_*.md
 ```
@@ -112,8 +112,8 @@ Une fois tous les commits créés :
    - Fichiers identifiés : KANBAN.md, .clinerules/workflows/kanban_*.md, .clinerules/task_format.md, etc.
    - git add KANBAN.md .clinerules/workflows/kanban_*.md .clinerules/task_format.md ...
    - git commit -m "[REFACTOR]: Restructurer l'architecture de gestion des tâches et idées
-   - 
-   - Créer le fichier KANBAN.md avec les sections Backlog, In Progress, Done
+   -
+   - Créer le fichier KANBAN.md avec les sections Backlog, In Progress
    - Mettre à jour .clinerules/task_format.md avec les règles pour KANBAN.md
    - ..."
 4. Entrée 2 : "[15:53:10] 🎨 [STYLE]** Renommer l'application de "ShellM" à "SheLLM""
