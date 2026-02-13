@@ -25,12 +25,15 @@
 
 ### 🟡 P2 - Medium Priority
 
-(No P2 tasks in backlog)
+- [ ] **[13/02/2026 10:45:00] 🟡 P2 🔧 [DEVOPS]** Ensure consistency between NPM test, test:coverage and wireit scripts
+- [ ] **[13/02/2026 10:45:00] 🟡 P2 ⚙️ [CONFIG]** Maximize WireIt usage in NPM scripts (eliminate concurrently, && chains)
+- [ ] **[13/02/2026 10:45:00] 🟡 P2 🏗️ [ARCHITECTURE]** Fix code warnings (import can be shortened, promise ignored, redundant regex, unused variable)
 
 
 ### 🟢 P3 - Low Priority
 
-(No P3 tasks in backlog)
+- [ ] **[13/02/2026 10:45:00] 🟢 P3 ✅ [TEST]** Investigate e2e test framework for real-world application testing
+- [ ] **[13/02/2026 10:45:00] 🟢 P3 🏗️ [ARCHITECTURE]** Investigate ollamaService singleton purpose and usage
 
 ## 🚧 In Progress
 
