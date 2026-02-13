@@ -5,21 +5,22 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 // Mock BrowserWindow and ipcMain
-const mockIpcMain = {
-  handle: vi.fn(),
-  on: vi.fn(),
-  removeHandler: vi.fn(),
-}
-
-const mockMainWindow = {
-  webContents: {
-    send: vi.fn(),
+const { ipcMain, mainWindow } = vi.hoisted(() => ({
+  ipcMain: {
+    handle: vi.fn(),
+    on: vi.fn(),
+    removeHandler: vi.fn(),
   },
-}
+  mainWindow: {
+    webContents: {
+      send: vi.fn(),
+    },
+  },
+}))
 
 vi.mock('electron', () => ({
   BrowserWindow: vi.fn(),
-  ipcMain: mockIpcMain,
+  ipcMain,
 }))
 
 import { createLLMHandlers } from './llm-service'
@@ -31,10 +32,10 @@ describe('LLM Service IPC Handlers', () => {
 
   describe('Handler Registration', () => {
     test('should register all LLM service IPC handlers', () => {
-      createLLMHandlers(mockMainWindow as any)
+      createLLMHandlers(mainWindow as any)
 
       // Get all handler registrations
-      const handlerNames = mockIpcMain.handle.mock.calls.map(call => call[0])
+      const handlerNames = ipcMain.handle.mock.calls.map((call: unknown[]) => call[0])
 
       // Verify LLM service handlers are registered
       expect(handlerNames).toContain('llm:generate-command')
@@ -44,10 +45,10 @@ describe('LLM Service IPC Handlers', () => {
 
   describe('llm:generate-command', () => {
     test('should have generate-command handler registered', () => {
-      createLLMHandlers(mockMainWindow as any)
+      createLLMHandlers(mainWindow as any)
 
-      const generateHandler = mockIpcMain.handle.mock.calls.find(
-        call => call[0] === 'llm:generate-command'
+      const generateHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'llm:generate-command'
       )?.[1]
 
       expect(typeof generateHandler).toBe('function')
@@ -56,10 +57,10 @@ describe('LLM Service IPC Handlers', () => {
 
   describe('llm:interpret-output', () => {
     test('should have interpret-output handler registered', () => {
-      createLLMHandlers(mockMainWindow as any)
+      createLLMHandlers(mainWindow as any)
 
-      const interpretHandler = mockIpcMain.handle.mock.calls.find(
-        call => call[0] === 'llm:interpret-output'
+      const interpretHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'llm:interpret-output'
       )?.[1]
 
       expect(typeof interpretHandler).toBe('function')

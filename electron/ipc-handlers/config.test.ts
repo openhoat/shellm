@@ -5,21 +5,25 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 // Mock BrowserWindow and ipcMain
-const mockIpcMain = {
-  handle: vi.fn(),
-  on: vi.fn(),
-  removeHandler: vi.fn(),
-}
-
-const mockMainWindow = {
-  webContents: {
-    send: vi.fn(),
+const { ipcMain, mainWindow } = vi.hoisted(() => ({
+  ipcMain: {
+    handle: vi.fn(),
+    on: vi.fn(),
+    removeHandler: vi.fn(),
   },
-}
+  mainWindow: {
+    webContents: {
+      send: vi.fn(),
+    },
+  },
+}))
 
 vi.mock('electron', () => ({
   BrowserWindow: vi.fn(),
-  ipcMain: mockIpcMain,
+  ipcMain,
+  app: {
+    getPath: vi.fn(() => '/tmp/test'),
+  },
 }))
 
 import { createConfigHandlers } from './config'
@@ -36,15 +40,12 @@ describe('Config IPC Handlers', () => {
         set: vi.fn(),
       }
 
-      createConfigHandlers(mockMainWindow as any, mockStore)
+      createConfigHandlers(mainWindow as any, mockStore as any)
 
-      expect(mockIpcMain.handle).toHaveBeenCalledWith('config:get', expect.any(Function))
-      expect(mockIpcMain.handle).toHaveBeenCalledWith(
-        'config:get-env-sources',
-        expect.any(Function)
-      )
-      expect(mockIpcMain.handle).toHaveBeenCalledWith('config:set', expect.any(Function))
-      expect(mockIpcMain.handle).toHaveBeenCalledWith('config:reset', expect.any(Function))
+      expect(ipcMain.handle).toHaveBeenCalledWith('config:get', expect.any(Function))
+      expect(ipcMain.handle).toHaveBeenCalledWith('config:get-env-sources', expect.any(Function))
+      expect(ipcMain.handle).toHaveBeenCalledWith('config:set', expect.any(Function))
+      expect(ipcMain.handle).toHaveBeenCalledWith('config:reset', expect.any(Function))
     })
   })
 
@@ -65,9 +66,11 @@ describe('Config IPC Handlers', () => {
         set: vi.fn(),
       }
 
-      createConfigHandlers(mockMainWindow as any, mockStore)
+      createConfigHandlers(mainWindow as any, mockStore as any)
 
-      const getHandler = mockIpcMain.handle.mock.calls.find(call => call[0] === 'config:get')?.[1]
+      const getHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'config:get'
+      )?.[1]
 
       if (getHandler) {
         const result = await getHandler()
@@ -82,9 +85,11 @@ describe('Config IPC Handlers', () => {
         set: vi.fn(),
       }
 
-      createConfigHandlers(mockMainWindow as any, mockStore)
+      createConfigHandlers(mainWindow as any, mockStore as any)
 
-      const getHandler = mockIpcMain.handle.mock.calls.find(call => call[0] === 'config:get')?.[1]
+      const getHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'config:get'
+      )?.[1]
 
       if (getHandler) {
         const result = await getHandler()
@@ -112,15 +117,17 @@ describe('Config IPC Handlers', () => {
         shell: 'zsh',
       }
 
-      createConfigHandlers(mockMainWindow as any, mockStore)
+      createConfigHandlers(mainWindow as any, mockStore as any)
 
-      const setHandler = mockIpcMain.handle.mock.calls.find(call => call[0] === 'config:set')?.[1]
+      const setHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'config:set'
+      )?.[1]
 
       if (setHandler) {
         const result = await setHandler({}, newConfig as any)
 
         expect(mockStore.set).toHaveBeenCalledWith('config', newConfig)
-        expect(mockMainWindow.webContents.send).toHaveBeenCalledWith('config:changed', newConfig)
+        expect(mainWindow.webContents.send).toHaveBeenCalledWith('config:changed', newConfig)
         expect(result).toBe(newConfig)
       }
     })
@@ -133,17 +140,17 @@ describe('Config IPC Handlers', () => {
         set: vi.fn(),
       }
 
-      createConfigHandlers(mockMainWindow as any, mockStore)
+      createConfigHandlers(mainWindow as any, mockStore as any)
 
-      const resetHandler = mockIpcMain.handle.mock.calls.find(
-        call => call[0] === 'config:reset'
+      const resetHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'config:reset'
       )?.[1]
 
       if (resetHandler) {
         const result = await resetHandler()
 
         expect(mockStore.set).toHaveBeenCalledWith('config', expect.any(Object))
-        expect(mockMainWindow.webContents.send).toHaveBeenCalledWith(
+        expect(mainWindow.webContents.send).toHaveBeenCalledWith(
           'config:changed',
           expect.any(Object)
         )

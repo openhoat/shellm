@@ -19,7 +19,7 @@
     }
   },
   "include": ["./**/*.ts", "../shared/**/*.ts"],
-  "exclude": ["node_modules", "../node_modules", "../dist", "../dist-electron"],
+  "exclude": ["node_modules", "../node_modules", "../dist", "../dist-electron", "./**/*.test.ts"],
   "ts-node": {
     "compilerOptions": {
       "module": "commonjs"
