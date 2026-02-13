@@ -122,7 +122,6 @@ Inform the user:
 
 To add an isolated task (not linked to an idea), the user can directly edit KANBAN.md and add:
 - In "## 🚧 In Progress": a task without idea section
-- In "## ✅ Done": a completed task
 
 Example:
 ```markdown

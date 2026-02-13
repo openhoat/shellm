@@ -16,7 +16,8 @@ Use this workflow when:
 
 - **## 📝 Backlog** - Ideas and tasks to do
 - **## 🚧 In Progress** - Tasks currently being worked on
-- **## ✅ Done** - Completed tasks (after commit)
+
+**Important:** There is NO "Done" section. Once tasks are committed and logged in CHANGELOG, they are deleted from KANBAN. The complete history is tracked in Git and CHANGELOG.md.
 
 ## Workflow Steps
 
