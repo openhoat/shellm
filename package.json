@@ -212,7 +212,6 @@
         "vite.config.ts",
         "index.html"
       ],
-      "output": [],
       "service": true
     },
     "dev:electron": {
@@ -223,15 +222,13 @@
       "files": [
         "dist-electron/**/*"
       ],
-      "output": [],
       "service": true
     },
     "dev": {
       "dependencies": [
         "dev:vite",
         "dev:electron"
-      ],
-      "service": true
+      ]
     }
   },
   "build": {
