@@ -11,6 +11,9 @@ To view the complete history, use: `git log`
 
 #### 13/02
 
+- **[15:12:00] 🐛 [FIX]** Fix ConfigPanel display by removing lazy loading - import ConfigPanel directly instead of using React.lazy and Suspense
+- **[15:12:00] 🐛 [FIX]** Prevent event propagation in export buttons - add preventDefault() and stopPropagation() to handleExportCurrent and handleExportAll to prevent screen clearing and crash
+- **[12:21:00] ✅ [TEST]** Add E2E testing ideas to backlog - P2 for Playwright infrastructure proof of concept, P3 for comprehensive E2E test suite
 - **[12:00:54] 🔧 [CHORE]** Fix Wireit configuration for dev script by removing invalid output properties from service scripts and service flag from dev script
 - **[11:39:45] ♻️ [REFACTOR]** Declare dev scripts as wireit services for proper process management
 - **[11:28:25] ♻️ [REFACTOR]** Migrate dev scripts to use wireit instead of concurrently for parallel execution

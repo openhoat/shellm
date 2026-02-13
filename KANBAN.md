@@ -36,7 +36,3 @@
 - [ ] **[13/02/2026 12:03:33] 🟢 P3 🎨 [UX]** Improve terminal window height to use all available vertical space
 
 ## 🚧 In Progress
-
-### [13/02/2026 12:10:57] 💡 [IDEA] Fix ConfigPanel and conversation export bugs
-- [x] **[13/02/2026 12:10:57] 🔧 [BUG]** Fix ConfigPanel not displaying with error
-- [x] **[13/02/2026 12:13:54] 🔧 [BUG]** Fix conversation export button causing screen to clear and crash
