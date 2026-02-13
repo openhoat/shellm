@@ -34,8 +34,4 @@
 
 ## 🚧 In Progress
 
-- [x] **[13/02/2026 10:45:00] 🔧 [DEVOPS]** Ensure consistency between NPM test, test:coverage and wireit scripts
-- [x] **[13/02/2026 10:45:00] ⚙️ [CONFIG]** Maximize WireIt usage in NPM scripts (eliminate concurrently, && chains)
-- [x] **[13/02/2026 10:45:00] 🏗️ [ARCHITECTURE]** Fix code warnings (import can be shortened, promise ignored, redundant regex, unused variable)
-- [x] **[13/02/2026 10:45:00] ✅ [TEST]** Investigate e2e test framework for real-world application testing
-- [x] **[13/02/2026 10:45:00] 🏗️ [ARCHITECTURE]** Investigate ollamaService singleton purpose and usage
+(No tasks currently in progress)
