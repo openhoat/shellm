@@ -34,15 +34,7 @@
 
 ## 🚧 In Progress
 
-- [x] **[13/02/2026 10:00:00] ✅ [TEST]** Add test coverage script and report
-- [x] **[13/02/2026 10:00:00] 🚀 [PERFORMANCE]** Implement LLM response caching
-- [x] **[13/02/2026 10:00:00] 🏗️ [ARCHITECTURE]** Centralize logging with proper log levels across the application
-- [x] **[13/02/2026 10:00:00] 🎨 [UX]** Improve error messages to be more explicit
-- [x] **[13/02/2026 10:00:00] 🎨 [UX]** Add progress indicator for long-running commands
-- [x] **[13/02/2026 10:00:00] 🎨 [UX]** Implement keyboard shortcuts (Ctrl+Enter to execute, Ctrl+K to clear, Esc to cancel)
-- [x] **[13/02/2026 10:00:00] 📝 [DOCS]** Add JSDoc documentation to functions
-- [x] **[13/02/2026 10:00:00] 📦 [DEPENDENCIES]** Update axios dependency from 1.13.4 to latest version
-- [x] **[13/02/2026 10:00:00] 📦 [DEPENDENCIES]** Update vitest dependency from 4.0.18 to latest version
+(No tasks currently in progress)
 
 ## ✅ Done
 
