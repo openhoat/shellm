@@ -10,6 +10,15 @@ To view the complete history, use: `git log`
 
 #### 13/02
 
+- **[01:25:00] ✅ [TEST]** Add test coverage script and report with vitest coverage
+- **[01:25:00] 🚀 [PERFORMANCE]** Implement LLM response caching with TTL and LRU eviction
+- **[01:25:00] 🏗️ [ARCHITECTURE]** Centralize logging with proper log levels and console output
+- **[01:25:00] 🎨 [UX]** Improve error messages to be more explicit and helpful
+- **[01:25:00] 🎨 [UX]** Add progress indicator for long-running commands
+- **[01:25:00] 🎨 [UX]** Implement keyboard shortcuts (Ctrl+Enter, Ctrl+K, Esc)
+- **[01:25:00] 📝 [DOCS]** Add JSDoc documentation to key functions
+- **[01:25:00] 📦 [DEPENDENCIES]** Update axios dependency to latest version (1.13.5)
+- **[01:25:00] 🔧 [CHORE]** Update vitest configuration with coverage settings
 - **[00:55:00] 📝 [DOCS]** Update README with latest project structure, test coverage, and technologies used
 - **[00:50:00] 🔧 [CHORE]** Add French language preference rule in .claude/rules for automatic French responses
 - **[00:40:00] ✅ [TEST]** Add Electron IPC Layer tests with mocks (config, conversation, llm-service, terminal)
