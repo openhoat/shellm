@@ -41,6 +41,8 @@ export function useChat() {
   const [userInput, setUserInput] = useState('')
   const [currentCommandIndex, setCurrentCommandIndex] = useState<number | null>(null)
   const [isInterpreting, setIsInterpreting] = useState(false)
+  const [isExecuting, setIsExecuting] = useState(false)
+  const [executionProgress, setExecutionProgress] = useState(0)
   const [conversation, setConversation] = useState<ChatMessageData[]>([])
   const [messageCounter, setMessageCounter] = useState(0)
 
@@ -161,7 +163,19 @@ export function useChat() {
         // Save AI response to persistent storage
         await addMessageToConversation({ role: 'assistant', content: aiContent })
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to generate command'
+        let errorMessage: string
+        if (err instanceof Error) {
+          // Provide specific error messages based on error type
+          if (err.message.includes('fetch') || err.message.includes('network') || err.message.includes('ECONNREFUSED')) {
+            errorMessage = i18n.t('errors.aiGenerationFailedOffline')
+          } else if (err.message.includes('timeout')) {
+            errorMessage = 'Le service Ollama ne répond pas. Vérifiez que le serveur est en cours d\'exécution et que l\'URL est correcte.'
+          } else {
+            errorMessage = `${i18n.t('errors.aiGenerationFailed')} (${err.message})`
+          }
+        } else {
+          errorMessage = i18n.t('errors.unknownError')
+        }
         setError(errorMessage)
         addToast('error', errorMessage)
         setConversation(prev => [
@@ -200,6 +214,9 @@ export function useChat() {
       logger.debug('executeCommand called with:', command)
       logger.debug('Current terminalPid:', terminalPid)
 
+      setIsExecuting(true)
+      setExecutionProgress(10)
+
       // Wait for terminal to be ready with retry mechanism
       const maxRetries = 20 // 10 seconds total (20 * 500ms)
       let retries = 0
@@ -210,11 +227,15 @@ export function useChat() {
         retries++
       }
 
+      setExecutionProgress(30)
+
       if (!terminalPid) {
         logger.error('Terminal not ready after retries')
-        const errorMessage = "Le terminal n'est pas prêt. Veuillez réinitialiser l'application."
+        const errorMessage = i18n.t('errors.terminalNotReady')
         setError(errorMessage)
         addToast('error', errorMessage)
+        setIsExecuting(false)
+        setExecutionProgress(0)
         return
       }
 
@@ -224,16 +245,22 @@ export function useChat() {
         // Start capturing output
         const _captureStarted = await window.electronAPI.terminalStartCapture(terminalPid)
 
+        setExecutionProgress(50)
+
         // Execute command in terminal
         logger.debug('Writing command to terminal:', command)
         await window.electronAPI.terminalWrite(terminalPid, `${command}\r`)
         logger.info('Command written successfully')
         setAiCommand(null)
 
+        setExecutionProgress(70)
+
         // Wait for command output
         const waitTime = COMMAND_OUTPUT_WAIT_TIME_MS
         logger.debug(`Waiting ${waitTime}ms for command output...`)
         await new Promise(resolve => setTimeout(resolve, waitTime))
+
+        setExecutionProgress(90)
 
         // Get captured output from backend
         const output = await window.electronAPI.terminalGetCapture(terminalPid)
@@ -241,6 +268,7 @@ export function useChat() {
         if (output.length > 0 && messageIndex !== undefined) {
           try {
             setIsInterpreting(true)
+            setExecutionProgress(95)
             const interpretation = await window.electronAPI.llmInterpretOutput(
               output,
               i18n.language
@@ -252,7 +280,7 @@ export function useChat() {
             )
           } catch (error) {
             logger.error('Error interpreting output:', error)
-            const errorMessage = `Erreur lors de l'interprétation: ${error instanceof Error ? error.message : 'Erreur inconnue'}`
+            const errorMessage = `${i18n.t('errors.outputInterpretationFailed')} ${error instanceof Error ? `(${error.message})` : ''}`
             setError(errorMessage)
             addToast('error', errorMessage)
           } finally {
@@ -263,9 +291,12 @@ export function useChat() {
         }
       } catch (error) {
         logger.error('Error executing command:', error)
-        const errorMessage = `Erreur lors de l'exécution: ${error instanceof Error ? error.message : 'Erreur inconnue'}`
+        const errorMessage = `${i18n.t('errors.commandExecutionFailed')} ${error instanceof Error ? `(${error.message})` : ''}`
         setError(errorMessage)
         addToast('error', errorMessage)
+      } finally {
+        setIsExecuting(false)
+        setExecutionProgress(0)
       }
     },
     [terminalPid, setAiCommand, setError, i18n.language, addToast]
@@ -281,7 +312,7 @@ export function useChat() {
       const injectionCheck = hasInjectionPatterns(aiCommand.command)
 
       if (injectionCheck.hasInjection) {
-        const warningMessage = `Attention: caractères d'injection détectés et supprimés: ${injectionCheck.patterns.join(', ')}`
+        const warningMessage = i18n.t('errors.injectionWarning', { patterns: injectionCheck.patterns.join(', ') })
         setError(warningMessage)
         addToast('warning', warningMessage)
       }
@@ -297,6 +328,8 @@ export function useChat() {
     conversation,
     currentCommandIndex,
     isInterpreting,
+    isExecuting,
+    executionProgress,
 
     // Global state from store
     aiCommand,
