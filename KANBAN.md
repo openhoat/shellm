@@ -24,7 +24,6 @@
 
 ### 🟡 P2 - Medium Priority
 
-- [ ] **[13/02/2026 12:19:00] 🟡 P2 ✅ [TEST]** Implement E2E testing infrastructure with Playwright proof of concept
 
 
 ### 🟢 P3 - Low Priority
@@ -33,4 +32,4 @@
 
 ## 🚧 In Progress
 
-(No tasks currently in progress)
+- [x] **[13/02/2026 12:19:00] 🟡 P2 ✅ [TEST]** Implement E2E testing infrastructure with Playwright proof of concept
