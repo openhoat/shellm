@@ -8,8 +8,16 @@ To view the complete history, use: `git log`
 
 ### 2026
 
+
 #### 13/02
 
+- **[11:39:45] ♻️ [REFACTOR]** Declare dev scripts as wireit services for proper process management
+- **[11:28:25] ♻️ [REFACTOR]** Migrate dev scripts to use wireit instead of concurrently for parallel execution
+- **[11:15:00] 🔧 [DEVOPS]** Ensure consistency between NPM test, test:coverage and wireit scripts
+- **[11:15:00] ⚙️ [CONFIG]** Maximize WireIt usage in NPM scripts (eliminate concurrently, && chains)
+- **[11:15:00] 🏗️ [ARCHITECTURE]** Fix code warnings (import can be shortened, promise ignored, redundant regex, unused variable)
+- **[11:15:00] ✅ [TEST]** Investigate e2e test framework for real-world application testing
+- **[11:15:00] 🏗️ [ARCHITECTURE]** Investigate ollamaService singleton purpose and usage
 - **[01:25:00] ✅ [TEST]** Add test coverage script and report with vitest coverage
 - **[01:25:00] 🚀 [PERFORMANCE]** Implement LLM response caching with TTL and LRU eviction
 - **[01:25:00] 🏗️ [ARCHITECTURE]** Centralize logging with proper log levels and console output
