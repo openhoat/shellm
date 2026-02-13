@@ -15,15 +15,17 @@ vi.mock('./config', () => ({
 }))
 
 // Mock BrowserWindow and ipcMain
-const mockIpcMain = {
-  handle: vi.fn(),
-  on: vi.fn(),
-  removeHandler: vi.fn(),
-}
+const { ipcMain } = vi.hoisted(() => ({
+  ipcMain: {
+    handle: vi.fn(),
+    on: vi.fn(),
+    removeHandler: vi.fn(),
+  },
+}))
 
 vi.mock('electron', () => ({
   BrowserWindow: vi.fn(),
-  ipcMain: mockIpcMain,
+  ipcMain,
 }))
 
 import { createTerminalHandlers } from './terminal'
@@ -41,7 +43,7 @@ describe('Terminal IPC Handlers', () => {
     }
 
     // Clear terminal handlers registry
-    mockIpcMain.handle.mockClear()
+    ipcMain.handle.mockClear()
   })
 
   describe('Handler Registration', () => {
@@ -49,12 +51,12 @@ describe('Terminal IPC Handlers', () => {
       createTerminalHandlers(mockMainWindow as any)
 
       // Verify all handlers are registered
-      expect(mockIpcMain.handle).toHaveBeenCalledWith('terminal:create', expect.any(Function))
-      expect(mockIpcMain.handle).toHaveBeenCalledWith('terminal:write', expect.any(Function))
-      expect(mockIpcMain.handle).toHaveBeenCalledWith('terminal:resize', expect.any(Function))
-      expect(mockIpcMain.handle).toHaveBeenCalledWith('terminal:startCapture', expect.any(Function))
-      expect(mockIpcMain.handle).toHaveBeenCalledWith('terminal:getCapture', expect.any(Function))
-      expect(mockIpcMain.handle).toHaveBeenCalledWith('terminal:destroy', expect.any(Function))
+      expect(ipcMain.handle).toHaveBeenCalledWith('terminal:create', expect.any(Function))
+      expect(ipcMain.handle).toHaveBeenCalledWith('terminal:write', expect.any(Function))
+      expect(ipcMain.handle).toHaveBeenCalledWith('terminal:resize', expect.any(Function))
+      expect(ipcMain.handle).toHaveBeenCalledWith('terminal:startCapture', expect.any(Function))
+      expect(ipcMain.handle).toHaveBeenCalledWith('terminal:getCapture', expect.any(Function))
+      expect(ipcMain.handle).toHaveBeenCalledWith('terminal:destroy', expect.any(Function))
     })
   })
 
@@ -62,8 +64,8 @@ describe('Terminal IPC Handlers', () => {
     test('should have write handler registered', () => {
       createTerminalHandlers(mockMainWindow as any)
 
-      const writeHandler = mockIpcMain.handle.mock.calls.find(
-        call => call[0] === 'terminal:write'
+      const writeHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'terminal:write'
       )?.[1]
 
       expect(typeof writeHandler).toBe('function')
@@ -74,8 +76,8 @@ describe('Terminal IPC Handlers', () => {
     test('should have resize handler registered', () => {
       createTerminalHandlers(mockMainWindow as any)
 
-      const resizeHandler = mockIpcMain.handle.mock.calls.find(
-        call => call[0] === 'terminal:resize'
+      const resizeHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'terminal:resize'
       )?.[1]
 
       expect(typeof resizeHandler).toBe('function')
@@ -86,8 +88,8 @@ describe('Terminal IPC Handlers', () => {
     test('should have startCapture handler registered', () => {
       createTerminalHandlers(mockMainWindow as any)
 
-      const startCaptureHandler = mockIpcMain.handle.mock.calls.find(
-        call => call[0] === 'terminal:startCapture'
+      const startCaptureHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'terminal:startCapture'
       )?.[1]
 
       expect(typeof startCaptureHandler).toBe('function')
@@ -98,8 +100,8 @@ describe('Terminal IPC Handlers', () => {
     test('should have getCapture handler registered', () => {
       createTerminalHandlers(mockMainWindow as any)
 
-      const getCaptureHandler = mockIpcMain.handle.mock.calls.find(
-        call => call[0] === 'terminal:getCapture'
+      const getCaptureHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'terminal:getCapture'
       )?.[1]
 
       expect(typeof getCaptureHandler).toBe('function')
@@ -110,8 +112,8 @@ describe('Terminal IPC Handlers', () => {
     test('should have destroy handler registered', () => {
       createTerminalHandlers(mockMainWindow as any)
 
-      const destroyHandler = mockIpcMain.handle.mock.calls.find(
-        call => call[0] === 'terminal:destroy'
+      const destroyHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'terminal:destroy'
       )?.[1]
 
       expect(typeof destroyHandler).toBe('function')

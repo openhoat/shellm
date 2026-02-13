@@ -5,25 +5,25 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 // Mock BrowserWindow and ipcMain
-const mockApp = {
-  getPath: vi.fn(() => '/tmp/test'),
-}
-
-const mockIpcMain = {
-  handle: vi.fn(),
-  on: vi.fn(),
-  removeHandler: vi.fn(),
-}
-
-const mockMainWindow = {
-  webContents: {
-    send: vi.fn(),
+const { ipcMain, mainWindow, mockApp } = vi.hoisted(() => ({
+  ipcMain: {
+    handle: vi.fn(),
+    on: vi.fn(),
+    removeHandler: vi.fn(),
   },
-}
+  mainWindow: {
+    webContents: {
+      send: vi.fn(),
+    },
+  },
+  mockApp: {
+    getPath: vi.fn(() => '/tmp/test'),
+  },
+}))
 
 vi.mock('electron', () => ({
   BrowserWindow: vi.fn(),
-  ipcMain: mockIpcMain,
+  ipcMain,
   app: mockApp,
 }))
 
@@ -36,11 +36,10 @@ describe('Conversation IPC Handlers', () => {
 
   describe('Handler Registration', () => {
     test('should register all conversation IPC handlers', () => {
-      // biome-ignore lint/suspicious/noExplicitAny: mock object for testing
-      createConversationHandlers(mockMainWindow as any)
+      createConversationHandlers(mainWindow as any)
 
       // Get all handler registrations
-      const handlerNames = mockIpcMain.handle.mock.calls.map(call => call[0])
+      const handlerNames = ipcMain.handle.mock.calls.map((call: unknown[]) => call[0])
 
       // Verify core conversation handlers are registered
       expect(handlerNames).toContain('conversation:get-all')
@@ -57,11 +56,10 @@ describe('Conversation IPC Handlers', () => {
 
   describe('conversation:get-all', () => {
     test('should have get-all handler registered', () => {
-      // biome-ignore lint/suspicious/noExplicitAny: mock object for testing
-      createConversationHandlers(mockMainWindow as any)
+      createConversationHandlers(mainWindow as any)
 
-      const getAllHandler = mockIpcMain.handle.mock.calls.find(
-        call => call[0] === 'conversation:get-all'
+      const getAllHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'conversation:get-all'
       )?.[1]
 
       expect(typeof getAllHandler).toBe('function')
@@ -70,11 +68,10 @@ describe('Conversation IPC Handlers', () => {
 
   describe('conversation:get', () => {
     test('should have get handler registered', () => {
-      // biome-ignore lint/suspicious/noExplicitAny: mock object for testing
-      createConversationHandlers(mockMainWindow as any)
+      createConversationHandlers(mainWindow as any)
 
-      const getHandler = mockIpcMain.handle.mock.calls.find(
-        call => call[0] === 'conversation:get'
+      const getHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'conversation:get'
       )?.[1]
 
       expect(typeof getHandler).toBe('function')
@@ -83,11 +80,10 @@ describe('Conversation IPC Handlers', () => {
 
   describe('conversation:create', () => {
     test('should have create handler registered', () => {
-      // biome-ignore lint/suspicious/noExplicitAny: mock object for testing
-      createConversationHandlers(mockMainWindow as any)
+      createConversationHandlers(mainWindow as any)
 
-      const createHandler = mockIpcMain.handle.mock.calls.find(
-        call => call[0] === 'conversation:create'
+      const createHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'conversation:create'
       )?.[1]
 
       expect(typeof createHandler).toBe('function')
@@ -96,11 +92,10 @@ describe('Conversation IPC Handlers', () => {
 
   describe('conversation:add-message', () => {
     test('should have add-message handler registered', () => {
-      // biome-ignore lint/suspicious/noExplicitAny: mock object for testing
-      createConversationHandlers(mockMainWindow as any)
+      createConversationHandlers(mainWindow as any)
 
-      const addMessageHandler = mockIpcMain.handle.mock.calls.find(
-        call => call[0] === 'conversation:add-message'
+      const addMessageHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'conversation:add-message'
       )?.[1]
 
       expect(typeof addMessageHandler).toBe('function')
@@ -109,11 +104,10 @@ describe('Conversation IPC Handlers', () => {
 
   describe('conversation:update', () => {
     test('should have update handler registered', () => {
-      // biome-ignore lint/suspicious/noExplicitAny: mock object for testing
-      createConversationHandlers(mockMainWindow as any)
+      createConversationHandlers(mainWindow as any)
 
-      const updateHandler = mockIpcMain.handle.mock.calls.find(
-        call => call[0] === 'conversation:update'
+      const updateHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'conversation:update'
       )?.[1]
 
       expect(typeof updateHandler).toBe('function')
@@ -122,11 +116,10 @@ describe('Conversation IPC Handlers', () => {
 
   describe('conversation:delete', () => {
     test('should have delete handler registered', () => {
-      // biome-ignore lint/suspicious/noExplicitAny: mock object for testing
-      createConversationHandlers(mockMainWindow as any)
+      createConversationHandlers(mainWindow as any)
 
-      const deleteHandler = mockIpcMain.handle.mock.calls.find(
-        call => call[0] === 'conversation:delete'
+      const deleteHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'conversation:delete'
       )?.[1]
 
       expect(typeof deleteHandler).toBe('function')
@@ -135,11 +128,10 @@ describe('Conversation IPC Handlers', () => {
 
   describe('conversation:clear-all', () => {
     test('should have clear-all handler registered', () => {
-      // biome-ignore lint/suspicious/noExplicitAny: mock object for testing
-      createConversationHandlers(mockMainWindow as any)
+      createConversationHandlers(mainWindow as any)
 
-      const clearAllHandler = mockIpcMain.handle.mock.calls.find(
-        call => call[0] === 'conversation:clear-all'
+      const clearAllHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'conversation:clear-all'
       )?.[1]
 
       expect(typeof clearAllHandler).toBe('function')
@@ -148,11 +140,10 @@ describe('Conversation IPC Handlers', () => {
 
   describe('conversation:export', () => {
     test('should have export handler registered', () => {
-      // biome-ignore lint/suspicious/noExplicitAny: mock object for testing
-      createConversationHandlers(mockMainWindow as any)
+      createConversationHandlers(mainWindow as any)
 
-      const exportHandler = mockIpcMain.handle.mock.calls.find(
-        call => call[0] === 'conversation:export'
+      const exportHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'conversation:export'
       )?.[1]
 
       expect(typeof exportHandler).toBe('function')
@@ -161,11 +152,10 @@ describe('Conversation IPC Handlers', () => {
 
   describe('conversation:export-all', () => {
     test('should have export-all handler registered', () => {
-      // biome-ignore lint/suspicious/noExplicitAny: mock object for testing
-      createConversationHandlers(mockMainWindow as any)
+      createConversationHandlers(mainWindow as any)
 
-      const exportAllHandler = mockIpcMain.handle.mock.calls.find(
-        call => call[0] === 'conversation:export-all'
+      const exportAllHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'conversation:export-all'
       )?.[1]
 
       expect(typeof exportAllHandler).toBe('function')
