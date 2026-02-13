@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import { type FormEvent, useEffect, useRef } from 'react'
+import { type FormEvent, useCallback, useEffect, useRef } from 'react'
 import { useChat } from '@/hooks/useChat'
 import { useStore } from '@/store/useStore'
 import Logger from '@/utils/logger'
@@ -24,6 +24,20 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
       inputRef.current.focus()
     }
   }, [chat.isLoading])
+
+  const handleExecuteCommand = useCallback(
+    async (e: React.MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      logger.debug('Execute button clicked!')
+      logger.debug('Button terminalPid check:', chat.terminalPid)
+      logger.debug('Using currentCommandIndex:', chat.currentCommandIndex)
+      if (chat.aiCommand?.type === 'command') {
+        await chat.executeCommand(chat.aiCommand.command, chat.currentCommandIndex ?? undefined)
+      }
+    },
+    [chat.aiCommand, chat.terminalPid, chat.currentCommandIndex, chat.executeCommand]
+  )
 
   // Handle keyboard shortcuts
   useEffect(() => {
@@ -58,7 +72,7 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [chat.aiCommand, chat.error, setAiCommand, clearAllConversations, chat])
+  }, [chat.aiCommand, chat.error, setAiCommand, clearAllConversations, chat, handleExecuteCommand])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -69,17 +83,6 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
 
     // Use the generateAICommand function from the hook
     await chat.generateAICommand(prompt)
-  }
-
-  const handleExecuteCommand = async (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    logger.debug('Execute button clicked!')
-    logger.debug('Button terminalPid check:', chat.terminalPid)
-    logger.debug('Using currentCommandIndex:', chat.currentCommandIndex)
-    if (chat.aiCommand?.type === 'command') {
-      await chat.executeCommand(chat.aiCommand.command, chat.currentCommandIndex ?? undefined)
-    }
   }
 
   return (
@@ -146,8 +149,12 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
                 </div>
                 <p className="progress-text">
                   {chat.executionProgress < 30 && 'Initialisation...'}
-                  {chat.executionProgress >= 30 && chat.executionProgress < 70 && 'Exécution de la commande...'}
-                  {chat.executionProgress >= 70 && chat.executionProgress < 90 && 'Récupération des résultats...'}
+                  {chat.executionProgress >= 30 &&
+                    chat.executionProgress < 70 &&
+                    'Exécution de la commande...'}
+                  {chat.executionProgress >= 70 &&
+                    chat.executionProgress < 90 &&
+                    'Récupération des résultats...'}
                   {chat.executionProgress >= 90 && 'Finalisation...'}
                 </p>
               </div>
