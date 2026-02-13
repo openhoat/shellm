@@ -208,6 +208,7 @@ export function useChat() {
       createConversation,
       setError,
       addToast,
+      i18n.t,
     ]
   )
 
@@ -304,7 +305,7 @@ export function useChat() {
         setExecutionProgress(0)
       }
     },
-    [terminalPid, setAiCommand, setError, i18n.language, addToast]
+    [terminalPid, setAiCommand, setError, i18n.language, addToast, i18n.t]
   )
 
   /**
@@ -327,7 +328,7 @@ export function useChat() {
       setUserInput(sanitized)
       setAiCommand(null)
     }
-  }, [aiCommand, setError, setAiCommand, addToast])
+  }, [aiCommand, setError, setAiCommand, addToast, i18n.t])
 
   return {
     // State
