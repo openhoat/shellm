@@ -16,7 +16,7 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
   const chat = useChat()
 
   // Use setAiCommand from store directly for the cancel button
-  const { setAiCommand } = useStore()
+  const { setAiCommand, clearAllConversations } = useStore()
 
   // Auto-focus chat input field on mount and when loading completes
   useEffect(() => {
@@ -24,6 +24,41 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
       inputRef.current.focus()
     }
   }, [chat.isLoading])
+
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl+Enter: Execute command
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault()
+        if (chat.aiCommand?.type === 'command') {
+          handleExecuteCommand(e as unknown as React.MouseEvent)
+        }
+      }
+
+      // Ctrl+K: Clear conversation
+      if (e.ctrlKey && e.key === 'k') {
+        e.preventDefault()
+        clearAllConversations()
+      }
+
+      // Esc: Cancel current action
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        if (chat.aiCommand) {
+          setAiCommand(null)
+        }
+        if (chat.error) {
+          chat.setUserInput('')
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [chat.aiCommand, chat.error, setAiCommand, clearAllConversations, chat])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -95,6 +130,27 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
                 <span></span>
               </div>
               <p>Analyse des résultats en cours...</p>
+            </div>
+          </div>
+        )}
+
+        {chat.isExecuting && (
+          <div className="chat-message ai">
+            <div className="message-content">
+              <div className="progress-indicator">
+                <div className="progress-bar">
+                  <div
+                    className="progress-fill"
+                    style={{ width: `${chat.executionProgress}%` }}
+                  ></div>
+                </div>
+                <p className="progress-text">
+                  {chat.executionProgress < 30 && 'Initialisation...'}
+                  {chat.executionProgress >= 30 && chat.executionProgress < 70 && 'Exécution de la commande...'}
+                  {chat.executionProgress >= 70 && chat.executionProgress < 90 && 'Récupération des résultats...'}
+                  {chat.executionProgress >= 90 && 'Finalisation...'}
+                </p>
+              </div>
             </div>
           </div>
         )}

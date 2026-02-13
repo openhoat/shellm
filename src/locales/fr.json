@@ -41,7 +41,14 @@
       "connection": "Erreur de connexion",
       "connectionSuccess": "Connexion réussie",
       "loadModels": "Erreur lors du chargement des modèles",
-      "saveConfig": "Erreur lors de l'enregistrement de la configuration"
+      "saveConfig": "Erreur lors de l'enregistrement de la configuration",
+      "aiGenerationFailed": "Impossible de générer la commande. Vérifiez votre connexion à Ollama et réessayez.",
+      "aiGenerationFailedOffline": "Impossible de se connecter au service Ollama. Vérifiez que le serveur est en cours d'exécution.",
+      "terminalNotReady": "Le terminal n'est pas prêt. Attendez quelques secondes que le terminal s'initialise ou réinitialisez l'application.",
+      "commandExecutionFailed": "La commande n'a pas pu être exécutée. Vérifiez que le terminal fonctionne correctement.",
+      "outputInterpretationFailed": "Impossible d'analyser le résultat de la commande. Le résultat sera affiché sans analyse.",
+      "unknownError": "Une erreur inattendue s'est produite. Si le problème persiste, veuillez redémarrer l'application.",
+      "injectionWarning": "Attention: caractères d'injection détectés et supprimés pour la sécurité: {{patterns}}"
     },
     "test": {
       "connection": "Tester la connexion"
