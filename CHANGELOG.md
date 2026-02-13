@@ -11,6 +11,7 @@ To view the complete history, use: `git log`
 
 #### 13/02
 
+- **[12:00:54] 🔧 [CHORE]** Fix Wireit configuration for dev script by removing invalid output properties from service scripts and service flag from dev script
 - **[11:39:45] ♻️ [REFACTOR]** Declare dev scripts as wireit services for proper process management
 - **[11:28:25] ♻️ [REFACTOR]** Migrate dev scripts to use wireit instead of concurrently for parallel execution
 - **[11:15:00] 🔧 [DEVOPS]** Ensure consistency between NPM test, test:coverage and wireit scripts
