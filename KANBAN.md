@@ -20,6 +20,7 @@
 
 ### 🔴 P1 - High Priority
 
+- [ ] **[13/02/2026 12:13:54] 🔴 P1 🐛 [BUG]** Fix conversation export button causing screen to clear and crash
 - [ ] **[13/02/2026 12:10:57] 🔴 P1 🐛 [BUG]** Fix ConfigPanel not displaying with error
 
 
