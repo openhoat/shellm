@@ -1,5 +1,5 @@
 import * as path from 'node:path'
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, screen } from 'electron'
 import Store from 'electron-store'
 import { DEFAULT_CONFIG, mergeConfig } from '../shared/config'
 import type { AppConfig } from '../shared/types'
@@ -71,11 +71,22 @@ const store = isStoreType(rawStore)
 let mainWindow: BrowserWindow | null = null
 
 const createWindow = (): void => {
+  const windowWidth = 1200
+  const windowHeight = 800
+
+  // Get the primary display to calculate center position
+  const primaryDisplay = screen.getPrimaryDisplay()
+  const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize
+  const x = Math.round((screenWidth - windowWidth) / 2 + primaryDisplay.bounds.x)
+  const y = Math.round((screenHeight - windowHeight) / 2 + primaryDisplay.bounds.y)
+
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: windowWidth,
+    height: windowHeight,
     minWidth: 800,
     minHeight: 600,
+    x,
+    y,
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
