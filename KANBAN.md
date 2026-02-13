@@ -30,7 +30,7 @@
 
 ### 🟢 P3 - Low Priority
 
-(No low priority tasks in backlog)
+- [ ] **[13/02/2026 12:03:33] 🟢 P3 🎨 [UX]** Improve terminal window height to use all available vertical space
 
 ## 🚧 In Progress
 
