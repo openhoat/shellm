@@ -36,7 +36,9 @@ class LogManager {
     }
 
     // Notify listeners
-    void this.#listeners.forEach(listener => listener(entry))
+    for (const listener of this.#listeners) {
+      listener(entry)
+    }
   }
 
   getAllLogs(): LogEntry[] {
@@ -108,15 +110,19 @@ class Logger {
   #consoleLog(level: LogLevel, formattedMessage: string): void {
     switch (level) {
       case LogLevel.DEBUG:
+        // biome-ignore lint/suspicious/noConsole: Logger intentionally outputs to console
         console.debug(formattedMessage)
         break
       case LogLevel.INFO:
+        // biome-ignore lint/suspicious/noConsole: Logger intentionally outputs to console
         console.info(formattedMessage)
         break
       case LogLevel.WARN:
+        // biome-ignore lint/suspicious/noConsole: Logger intentionally outputs to console
         console.warn(formattedMessage)
         break
       case LogLevel.ERROR:
+        // biome-ignore lint/suspicious/noConsole: Logger intentionally outputs to console
         console.error(formattedMessage)
         break
     }
