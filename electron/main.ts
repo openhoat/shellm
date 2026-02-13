@@ -90,7 +90,10 @@ const createWindow = (): void => {
   // Load the app
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173')
-    mainWindow.webContents.openDevTools()
+    // Only open DevTools if SHELLM_DEVTOOLS environment variable is set to 'true'
+    if (process.env.SHELLM_DEVTOOLS === 'true') {
+      mainWindow.webContents.openDevTools()
+    }
   } else {
     // Use relative path from compiled main.js location
     mainWindow.loadFile(path.join(__dirname, '../../dist/index.html'))

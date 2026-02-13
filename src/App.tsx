@@ -36,7 +36,7 @@ const App = () => {
       <div className="app-content">
         <div
           className="terminal-wrapper"
-          style={{ width: `${splitPosition}px`, minWidth: '300px', flex: 'none' }}
+          style={{ width: `${splitPosition}px`, minWidth: '300px', flex: 'none', height: '100%' }}
         >
           <Terminal />
         </div>

@@ -215,7 +215,7 @@
       "service": true
     },
     "dev:electron": {
-      "command": "electron .",
+      "command": "electron . --ozone-platform=x11 --disable-vulkan",
       "dependencies": [
         "build:electron"
       ],
