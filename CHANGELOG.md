@@ -11,6 +11,9 @@ To view the complete history, use: `git log`
 
 #### 13/02
 
+- **[19:29:00] 🐛 [FIX]** Fix terminal height to properly fill available space - add flex display to wrapper and height: 100% to container
+- **[19:05:00] 🎨 [UX]** Center application window on screen at startup with multi-monitor support using screen API
+- **[19:00:00] 🎨 [UX]** Center application window on screen at startup using BrowserWindow.center()
 - **[18:20:00] ✅ [TEST]** Enable headless E2E tests on Wayland - force X11 with --ozone-platform=x11 when HEADLESS=true (tests pass without visible window)
 - **[16:36:00] 🔧 [CHORE]** Implement E2E testing infrastructure with Playwright proof of concept - add smoke tests for Electron app
 - **[15:58:00] 🏗️ [ARCHITECTURE]** Remove unused docs/ollama-service-investigation.md file after investigation completion
