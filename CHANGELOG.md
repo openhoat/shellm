@@ -11,6 +11,10 @@ To view the complete history, use: `git log`
 
 #### 13/02
 
+- **[15:58:00] 🏗️ [ARCHITECTURE]** Remove unused docs/ollama-service-investigation.md file after investigation completion
+- **[15:58:00] 🔧 [DEVOPS]** Add SHELLM_DEVTOOLS environment variable to control DevTools visibility on launch (disabled by default)
+- **[15:58:00] ⚙️ [CONFIG]** Fix Wayland/Vulkan warning on dev launch by configuring ozone platform to x11 and disabling Vulkan
+- **[15:58:00] 🎨 [UX]** Improve terminal window height to use all available vertical space by adding height: 100% to terminal-wrapper
 - **[15:12:00] 🐛 [FIX]** Fix ConfigPanel display by removing lazy loading - import ConfigPanel directly instead of using React.lazy and Suspense
 - **[15:12:00] 🐛 [FIX]** Prevent event propagation in export buttons - add preventDefault() and stopPropagation() to handleExportCurrent and handleExportAll to prevent screen clearing and crash
 - **[12:21:00] ✅ [TEST]** Add E2E testing ideas to backlog - P2 for Playwright infrastructure proof of concept, P3 for comprehensive E2E test suite

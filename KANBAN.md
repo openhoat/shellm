@@ -33,7 +33,4 @@
 
 ## 🚧 In Progress
 
-- [x] **[13/02/2026 12:21:08] 🟢 P3 🏗️ [ARCHITECTURE]** Remove unused docs/ollama-service-investigation.md file if investigation is complete
-- [x] **[13/02/2026 12:08:59] 🟢 P3 🔧 [DEVOPS]** Add environment variable or command line argument to control devtools window visibility on launch (disabled by default if not set)
-- [x] **[13/02/2026 12:06:58] 🟢 P3 ⚙️ [CONFIG]** Fix Wayland/Vulkan warning on dev launch by configuring ozone platform or disabling Vulkan
-- [x] **[13/02/2026 12:03:33] 🟢 P3 🎨 [UX]** Improve terminal window height to use all available vertical space
+(No tasks currently in progress)
