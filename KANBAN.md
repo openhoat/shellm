@@ -20,7 +20,7 @@
 
 ### 🔴 P1 - High Priority
 
-(No high priority tasks in backlog)
+- [ ] **[13/02/2026 12:10:57] 🔴 P1 🐛 [BUG]** Fix ConfigPanel not displaying with error
 
 
 ### 🟡 P2 - Medium Priority
