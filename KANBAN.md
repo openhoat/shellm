@@ -20,8 +20,6 @@
 
 ### 🔴 P1 - High Priority
 
-- [ ] **[13/02/2026 12:13:54] 🔴 P1 🐛 [BUG]** Fix conversation export button causing screen to clear and crash
-- [ ] **[13/02/2026 12:10:57] 🔴 P1 🐛 [BUG]** Fix ConfigPanel not displaying with error
 
 
 ### 🟡 P2 - Medium Priority
@@ -39,4 +37,6 @@
 
 ## 🚧 In Progress
 
-(No tasks currently in progress)
+### [13/02/2026 12:10:57] 💡 [IDEA] Fix ConfigPanel and conversation export bugs
+- [x] **[13/02/2026 12:10:57] 🔧 [BUG]** Fix ConfigPanel not displaying with error
+- [x] **[13/02/2026 12:13:54] 🔧 [BUG]** Fix conversation export button causing screen to clear and crash

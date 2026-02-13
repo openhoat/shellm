@@ -38,7 +38,10 @@ export const Header = () => {
     }
   }
 
-  const handleExportCurrent = async () => {
+  const handleExportCurrent = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
     if (!currentConversationId) {
       setExportStatus('No active conversation to export')
       setTimeout(() => setExportStatus(null), 3000)
@@ -62,7 +65,10 @@ export const Header = () => {
     }
   }
 
-  const handleExportAll = async () => {
+  const handleExportAll = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
     try {
       const result = await window.electronAPI.conversationExportAll()
       if (result.success && result.filePath) {
@@ -139,7 +145,7 @@ export const Header = () => {
           <button
             type="button"
             className="icon-button"
-            onClick={handleExportAll}
+            onClick={e => handleExportAll(e)}
             title="Export all conversations"
           >
             <svg
@@ -172,7 +178,7 @@ export const Header = () => {
                     <button
                       type="button"
                       className="export-button"
-                      onClick={handleExportCurrent}
+                      onClick={e => handleExportCurrent(e)}
                       title="Export current conversation"
                       disabled={!currentConversationId}
                     >
