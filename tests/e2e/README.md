@@ -27,6 +27,20 @@ npm run test:e2e:ui
 npm run test:e2e:debug
 ```
 
+### Run tests in headless mode (CI/Linux)
+
+For CI environments or headless Linux servers, use Xvfb:
+
+```bash
+npm run test:e2e:headless
+```
+
+This uses `xvfb-run` to create a virtual display. Install Xvfb on Ubuntu/Debian:
+
+```bash
+sudo apt-get install xvfb
+```
+
 ### Run specific test file
 
 ```bash

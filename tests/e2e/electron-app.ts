@@ -20,9 +20,25 @@ export async function launchElectronApp(): Promise<{
     execSync('npm run build:electron', { cwd: projectRoot, stdio: 'inherit' })
   }
 
+  // Build args for Electron
+  const args = [
+    path.join(projectRoot, 'dist-electron', 'electron', 'main.js'),
+    // Start minimized to reduce visual distraction during tests
+    '--start-minimized',
+  ]
+
+  // Add X11 and headless flags when running in headless mode (via xvfb-run)
+  // This forces Electron to use X11 instead of Wayland, allowing xvfb to capture the display
+  if (process.env.HEADLESS === 'true') {
+    args.push('--ozone-platform=x11')
+    args.push('--disable-gpu')
+    args.push('--disable-software-rasterizer')
+    args.push('--disable-dev-shm-usage')
+  }
+
   // Launch Electron app
   const app = await electron.launch({
-    args: [path.join(projectRoot, 'dist-electron', 'electron', 'main.js')],
+    args,
     env: {
       ...process.env,
       NODE_ENV: 'test',

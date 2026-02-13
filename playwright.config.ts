@@ -10,8 +10,9 @@ export default defineConfig({
   timeout: 30000,
   use: {
     trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    // Disable visual captures in CI mode for headless execution
+    screenshot: process.env.CI ? 'off' : 'only-on-failure',
+    video: process.env.CI ? 'off' : 'retain-on-failure',
   },
   expect: {
     timeout: 10000,

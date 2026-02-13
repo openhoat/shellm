@@ -11,6 +11,8 @@ To view the complete history, use: `git log`
 
 #### 13/02
 
+- **[18:20:00] ✅ [TEST]** Enable headless E2E tests on Wayland - force X11 with --ozone-platform=x11 when HEADLESS=true (tests pass without visible window)
+- **[16:36:00] 🔧 [CHORE]** Implement E2E testing infrastructure with Playwright proof of concept - add smoke tests for Electron app
 - **[15:58:00] 🏗️ [ARCHITECTURE]** Remove unused docs/ollama-service-investigation.md file after investigation completion
 - **[15:58:00] 🔧 [DEVOPS]** Add SHELLM_DEVTOOLS environment variable to control DevTools visibility on launch (disabled by default)
 - **[15:58:00] ⚙️ [CONFIG]** Fix Wayland/Vulkan warning on dev launch by configuring ozone platform to x11 and disabling Vulkan
