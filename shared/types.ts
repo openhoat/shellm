@@ -66,6 +66,10 @@ export interface ConversationHistory {
 export interface ConversationMessage {
   role: 'user' | 'assistant'
   content: string
+  // Champs optionnels pour les commandes exécutées
+  command?: string // Commande shell exécutée
+  output?: string // Résultat brut de la commande
+  interpretation?: CommandInterpretation // Interprétation du résultat
 }
 
 // Conversation complète avec persistance

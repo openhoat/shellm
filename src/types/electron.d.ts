@@ -62,6 +62,11 @@ export interface ElectronAPI {
     conversationId: string,
     message: ConversationMessage
   ) => Promise<Conversation | null>
+  conversationUpdateMessage: (
+    conversationId: string,
+    messageIndex: number,
+    updates: Partial<ConversationMessage>
+  ) => Promise<Conversation | null>
   conversationUpdate: (id: string, updates: Partial<Conversation>) => Promise<Conversation | null>
   conversationDelete: (id: string) => Promise<boolean>
   conversationClearAll: () => Promise<void>

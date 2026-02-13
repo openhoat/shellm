@@ -40,6 +40,7 @@ export function useChat() {
   const { i18n } = useTranslation()
   const [userInput, setUserInput] = useState('')
   const [currentCommandIndex, setCurrentCommandIndex] = useState<number | null>(null)
+  const [persistedCommandIndex, setPersistedCommandIndex] = useState<number | null>(null)
   const [isInterpreting, setIsInterpreting] = useState(false)
   const [isExecuting, setIsExecuting] = useState(false)
   const [executionProgress, setExecutionProgress] = useState(0)
@@ -57,6 +58,7 @@ export function useChat() {
     currentConversation,
     createConversation,
     addMessageToConversation,
+    updateMessageInConversation,
     loadConversations,
   } = useStore()
 
@@ -161,7 +163,23 @@ export function useChat() {
         })
 
         // Save AI response to persistent storage
-        await addMessageToConversation({ role: 'assistant', content: aiContent })
+        // Track the index in the persisted conversation for command responses
+        const persistedIndex = currentConversation ? currentConversation.messages.length : 0
+        // Include command info for command-type responses
+        const messageToSave: ConversationMessage = {
+          role: 'assistant',
+          content: aiContent,
+        }
+        if (response.type === 'command') {
+          messageToSave.command = response.command
+        }
+        await addMessageToConversation(messageToSave)
+
+        // Store the persisted message index for command responses
+        // This will be used later to update the message with command output and interpretation
+        if (response.type === 'command') {
+          setPersistedCommandIndex(persistedIndex)
+        }
       } catch (err) {
         let errorMessage: string
         if (err instanceof Error) {
@@ -209,6 +227,7 @@ export function useChat() {
       setError,
       addToast,
       i18n.t,
+      setPersistedCommandIndex,
     ]
   )
 
@@ -280,10 +299,18 @@ export function useChat() {
               i18n.language
             )
 
-            // Update conversation with interpretation
+            // Update local conversation state with interpretation
             setConversation(prev =>
               prev.map((msg, idx) => (idx === messageIndex ? { ...msg, interpretation } : msg))
             )
+
+            // Persist output and interpretation to storage
+            if (persistedCommandIndex !== null) {
+              await updateMessageInConversation(persistedCommandIndex, {
+                output,
+                interpretation,
+              })
+            }
           } catch (error) {
             logger.error('Error interpreting output:', error)
             const errorMessage = `${i18n.t('errors.outputInterpretationFailed')} ${error instanceof Error ? `(${error.message})` : ''}`
@@ -305,7 +332,16 @@ export function useChat() {
         setExecutionProgress(0)
       }
     },
-    [terminalPid, setAiCommand, setError, i18n.language, addToast, i18n.t]
+    [
+      terminalPid,
+      setAiCommand,
+      setError,
+      i18n.language,
+      addToast,
+      i18n.t,
+      persistedCommandIndex,
+      updateMessageInConversation,
+    ]
   )
 
   /**

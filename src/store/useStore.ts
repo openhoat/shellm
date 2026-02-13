@@ -31,6 +31,10 @@ interface AppState {
   loadConversation: (id: string) => Promise<void>
   createConversation: (firstMessage: string) => Promise<void>
   addMessageToConversation: (message: ConversationMessage) => Promise<void>
+  updateMessageInConversation: (
+    messageIndex: number,
+    updates: Partial<ConversationMessage>
+  ) => Promise<void>
   deleteConversation: (id: string) => Promise<void>
   clearAllConversations: () => Promise<void>
 
@@ -108,6 +112,24 @@ export const useStore = create<AppState>((set, _get) => ({
     const updatedConversation = await window.electronAPI.conversationAddMessage(
       currentConversationId,
       message
+    )
+    if (updatedConversation) {
+      set(state => ({
+        currentConversation: updatedConversation,
+        conversations: state.conversations.map(conv =>
+          conv.id === updatedConversation.id ? updatedConversation : conv
+        ),
+      }))
+    }
+  },
+  updateMessageInConversation: async (messageIndex, updates) => {
+    const { currentConversationId } = _get()
+    if (!currentConversationId) return
+
+    const updatedConversation = await window.electronAPI.conversationUpdateMessage(
+      currentConversationId,
+      messageIndex,
+      updates
     )
     if (updatedConversation) {
       set(state => ({
