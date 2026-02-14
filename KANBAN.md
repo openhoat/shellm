@@ -24,7 +24,8 @@
 
 ### 🟡 P2 - Medium Priority
 
-
+- [ ] **[14/02/2026 13:59:42] 🟡 P2 📝 [DOCS]** Refresh README.md: remove unnecessary content and add value-added badges (coverage, testing, pipeline)
+- [ ] **[14/02/2026 13:59:42] 🟡 P2 📝 [DOCS]** Remove `docs/` directory (cleanup obsolete documentation)
 
 ### 🟢 P3 - Low Priority
 

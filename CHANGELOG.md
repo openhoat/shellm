@@ -9,6 +9,10 @@ To view the complete history, use: `git log`
 ### 2026
 
 
+#### 14/02
+
+- **[14:14:09] 📝 [DOCS]** Add documentation cleanup ideas to backlog (README refresh with badges, docs/ removal)
+
 #### 13/02
 
 - **[18:48:00] 🐛 [FIX]** Improve command output interpretation by stripping ANSI codes before processing and enhancing memory regex to capture units and available column
