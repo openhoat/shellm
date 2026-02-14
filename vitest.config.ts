@@ -8,7 +8,7 @@ export default defineConfig({
     environment: 'happy-dom',
     setupFiles: ['./src/test/setup.ts'],
     css: true,
-    exclude: ['node_modules', 'dist', 'dist-electron', 'tests/e2e', 'release'],
+    exclude: ['node_modules', 'dist', 'dist-electron', 'tests/e2e', 'release', '.wireit'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json', 'lcov'],
