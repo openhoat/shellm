@@ -566,3 +566,81 @@ export async function getThemeOptions(page: Page): Promise<string[]> {
   const options = await select.locator('option').allTextContents()
   return options.map(o => o.trim())
 }
+
+/**
+ * Set a React controlled input value properly
+ * This triggers the proper React onChange events for controlled inputs
+ */
+export async function setReactInputValue(
+  page: Page,
+  selector: string,
+  value: string
+): Promise<void> {
+  await page.evaluate(
+    ({ sel, val }) => {
+      const input = document.querySelector(sel) as HTMLInputElement
+      if (!input) return
+
+      // Use native setter to bypass React's value tracking
+      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
+        'value'
+      )?.set
+      if (nativeInputValueSetter) {
+        nativeInputValueSetter.call(input, val)
+      } else {
+        input.value = val
+      }
+
+      // Dispatch events to trigger React handlers
+      input.dispatchEvent(new Event('input', { bubbles: true }))
+      input.dispatchEvent(new Event('change', { bubbles: true }))
+    },
+    { sel: selector, val: value }
+  )
+}
+
+/**
+ * Wait for a specific number of chat messages
+ */
+export async function waitForMessageCount(
+  page: Page,
+  count: number,
+  timeout = 30000
+): Promise<void> {
+  await page.waitForFunction(
+    expectedCount => {
+      const messages = document.querySelectorAll('.chat-message')
+      return messages.length >= expectedCount
+    },
+    count,
+    { timeout }
+  )
+}
+
+/**
+ * Mock electronAPI for error simulation
+ * This replaces the API before the app uses it
+ */
+export async function mockElectronAPIForError(
+  page: Page,
+  methodName: string,
+  error: Error
+): Promise<void> {
+  await page.evaluate(
+    ({ method, errMsg }) => {
+      // Store the original API
+      const original = window.electronAPI
+      if (!original) return
+
+      // Create a new object with the mocked method
+      window.electronAPI = {
+        ...original,
+        [method]: async () => {
+          throw new Error(errMsg)
+        },
+      }
+    },
+    { method: methodName, errMsg: error.message }
+  )
+}
