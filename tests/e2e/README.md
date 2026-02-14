@@ -59,9 +59,37 @@ npx playwright test --headed
 tests/e2e/
 ├── electron-app.ts    # Helper functions for Electron app testing
 ├── fixtures.ts        # Playwright test fixtures
+├── helpers.ts         # Reusable test utility functions
+├── mocks.ts           # Mock implementations for window.electronAPI
 ├── smoke.test.ts      # Basic smoke tests
+├── chat.test.ts       # Chat functionality tests
+├── terminal.test.ts   # Terminal integration tests
+├── config.test.ts     # Configuration panel tests
+├── workflows.test.ts  # Complete user workflow tests
 └── README.md          # This file
 ```
+
+## Test Categories
+
+### Smoke Tests (`smoke.test.ts`)
+
+Basic tests to verify the application launches and displays core components.
+
+### Chat Functionality Tests (`chat.test.ts`)
+
+Tests for chat input, message display, AI command generation, keyboard shortcuts, and error handling.
+
+### Terminal Integration Tests (`terminal.test.ts`)
+
+Tests for terminal initialization, interaction, and command execution.
+
+### Configuration Tests (`config.test.ts`)
+
+Tests for config panel visibility, configuration fields, persistence, and connection testing.
+
+### User Workflow Tests (`workflows.test.ts`)
+
+Complete user journey tests covering multiple features working together.
 
 ## Writing Tests
 

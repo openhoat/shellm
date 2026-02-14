@@ -1,0 +1,285 @@
+import type {
+  AICommand,
+  AppConfig,
+  CommandInterpretation,
+  Conversation,
+  ConversationMessage,
+} from '@shared/types'
+
+/**
+ * Default mock configuration for tests
+ */
+export const defaultMockConfig: AppConfig = {
+  ollama: {
+    url: 'http://localhost:11434',
+    model: 'llama2',
+    temperature: 0.7,
+    maxTokens: 1000,
+  },
+  theme: 'dark',
+  fontSize: 14,
+  shell: 'auto',
+}
+
+/**
+ * Default mock AI command response
+ */
+export const defaultMockAICommand: AICommand = {
+  type: 'command',
+  intent: 'list_files',
+  command: 'ls -la',
+  explanation: 'Liste tous les fichiers avec détails',
+  confidence: 0.95,
+}
+
+/**
+ * Default mock text response
+ */
+export const defaultMockTextResponse: AICommand = {
+  type: 'text',
+  content: 'This is a helpful response from the AI.',
+}
+
+/**
+ * Default mock command interpretation
+ */
+export const defaultMockInterpretation: CommandInterpretation = {
+  summary: 'Command executed successfully',
+  key_findings: ['All files listed correctly'],
+  warnings: [],
+  errors: [],
+  recommendations: ['Consider using ls -lh for human-readable sizes'],
+  successful: true,
+}
+
+/**
+ * Mock conversation for testing
+ */
+export const mockConversation: Conversation = {
+  id: 'test-conversation-id',
+  title: 'Test Conversation',
+  createdAt: Date.now(),
+  updatedAt: Date.now(),
+  messages: [
+    { role: 'user', content: 'List all files' },
+    {
+      role: 'assistant',
+      content: 'ls -la\n\nListe tous les fichiers avec détails',
+      command: 'ls -la',
+    },
+  ],
+}
+
+/**
+ * Mock environment sources (no env overrides by default)
+ */
+export const defaultMockEnvSources = {
+  url: false,
+  apiKey: false,
+  model: false,
+  temperature: false,
+  maxTokens: false,
+  shell: false,
+}
+
+/**
+ * Create a mock electronAPI object for E2E tests
+ * This can be injected into the renderer process via Playwright
+ */
+export function createMockElectronAPI(
+  options: {
+    config?: AppConfig
+    aiCommand?: AICommand
+    interpretation?: CommandInterpretation
+    models?: string[]
+    conversations?: Conversation[]
+    connectionSuccess?: boolean
+    terminalPid?: number
+    terminalOutput?: string
+    envSources?: typeof defaultMockEnvSources
+  } = {}
+) {
+  const {
+    config = defaultMockConfig,
+    aiCommand = defaultMockAICommand,
+    interpretation = defaultMockInterpretation,
+    models = ['llama2', 'mistral', 'codellama'],
+    conversations = [],
+    connectionSuccess = true,
+    terminalPid = 12345,
+    terminalOutput = 'total 16\ndrwxr-xr-x  2 user user 4096 Jan  1 12:00 .',
+    envSources = defaultMockEnvSources,
+  } = options
+
+  // Store for conversations
+  let storedConversations = [...conversations]
+  let currentConversationId: string | null = conversations[0]?.id || null
+
+  return {
+    // Config
+    getConfig: async () => config,
+    getConfigEnvSources: async () => envSources,
+    setConfig: async (_newConfig: AppConfig) => {
+      // Mock setting config
+    },
+    resetConfig: async () => defaultMockConfig,
+
+    // Terminal
+    terminalCreate: async () => terminalPid,
+    terminalWrite: async (_pid: number, _data: string) => {
+      // Mock writing to terminal
+    },
+    terminalResize: async (_pid: number, _cols: number, _rows: number) => {
+      // Mock terminal resize
+    },
+    terminalDestroy: async (_pid: number) => {
+      // Mock terminal destroy
+    },
+    terminalStartCapture: async (_pid: number) => true,
+    terminalGetCapture: async (_pid: number) => terminalOutput,
+
+    // Terminal events
+    onTerminalData: (_callback: (data: { pid: number; data: string }) => void) => {
+      // Mock terminal data listener
+    },
+    onTerminalExit: (_callback: (data: { pid: number; code: number }) => void) => {
+      // Mock terminal exit listener
+    },
+
+    // LLM
+    llmInit: async (_config: {
+      url: string
+      apiKey?: string
+      model: string
+      temperature?: number
+      maxTokens?: number
+    }) => {
+      // Mock LLM initialization
+    },
+    llmGenerateCommand: async (
+      _prompt: string,
+      _conversationHistory?: ConversationMessage[],
+      _language?: string
+    ): Promise<AICommand> => {
+      return aiCommand
+    },
+    llmExplainCommand: async (_command: string): Promise<string> => {
+      return 'This command lists all files in the current directory.'
+    },
+    llmInterpretOutput: async (
+      _output: string,
+      _language?: string
+    ): Promise<CommandInterpretation> => {
+      return interpretation
+    },
+    llmTestConnection: async (): Promise<boolean> => {
+      return connectionSuccess
+    },
+    llmListModels: async (): Promise<string[]> => {
+      return models
+    },
+
+    // Conversations
+    conversationGetAll: async (): Promise<Conversation[]> => {
+      return storedConversations
+    },
+    conversationGet: async (id: string): Promise<Conversation | null> => {
+      return storedConversations.find(c => c.id === id) || null
+    },
+    conversationCreate: async (firstMessage: string): Promise<Conversation> => {
+      const newConversation: Conversation = {
+        id: `conv-${Date.now()}`,
+        title: firstMessage.slice(0, 50),
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        messages: [{ role: 'user', content: firstMessage }],
+      }
+      storedConversations.unshift(newConversation)
+      currentConversationId = newConversation.id
+      return newConversation
+    },
+    conversationAddMessage: async (
+      conversationId: string,
+      message: ConversationMessage
+    ): Promise<Conversation | null> => {
+      const conversation = storedConversations.find(c => c.id === conversationId)
+      if (!conversation) return null
+      conversation.messages.push(message)
+      conversation.updatedAt = Date.now()
+      return conversation
+    },
+    conversationUpdateMessage: async (
+      conversationId: string,
+      messageIndex: number,
+      updates: Partial<ConversationMessage>
+    ): Promise<Conversation | null> => {
+      const conversation = storedConversations.find(c => c.id === conversationId)
+      if (!conversation || !conversation.messages[messageIndex]) return null
+      conversation.messages[messageIndex] = {
+        ...conversation.messages[messageIndex],
+        ...updates,
+      }
+      conversation.updatedAt = Date.now()
+      return conversation
+    },
+    conversationUpdate: async (
+      id: string,
+      updates: Partial<Conversation>
+    ): Promise<Conversation | null> => {
+      const conversation = storedConversations.find(c => c.id === id)
+      if (!conversation) return null
+      Object.assign(conversation, updates)
+      conversation.updatedAt = Date.now()
+      return conversation
+    },
+    conversationDelete: async (id: string): Promise<void> => {
+      storedConversations = storedConversations.filter(c => c.id !== id)
+      if (currentConversationId === id) {
+        currentConversationId = storedConversations[0]?.id || null
+      }
+    },
+    conversationClearAll: async (): Promise<void> => {
+      storedConversations = []
+      currentConversationId = null
+    },
+    conversationExport: async (
+      id: string
+    ): Promise<{ success: boolean; filePath?: string; error?: string; cancelled?: boolean }> => {
+      const conversation = storedConversations.find(c => c.id === id)
+      if (!conversation) {
+        return { success: false, error: 'Conversation not found' }
+      }
+      return { success: true, filePath: `/tmp/conversation-${id}.json` }
+    },
+    conversationExportAll: async (): Promise<{
+      success: boolean
+      filePath?: string
+      error?: string
+      cancelled?: boolean
+    }> => {
+      return { success: true, filePath: '/tmp/all-conversations.json' }
+    },
+  }
+}
+
+/**
+ * Script to inject mock electronAPI into the page
+ * Use with page.addInitScript() in Playwright
+ */
+export function getMockInjectionScript(
+  options: Parameters<typeof createMockElectronAPI>[0] = {}
+): string {
+  return `
+    // Create mock electronAPI
+    const mockAPI = ${createMockElectronAPI.toString()}(${JSON.stringify(options)});
+
+    // Inject into window
+    Object.defineProperty(window, 'electronAPI', {
+      value: mockAPI,
+      writable: true,
+      configurable: true
+    });
+
+    console.log('Mock electronAPI injected');
+  `
+}

@@ -1,0 +1,550 @@
+import type { Page } from '@playwright/test'
+
+/**
+ * Wait for the app to be ready (main container visible)
+ */
+export async function waitForAppReady(page: Page, timeout = 10000): Promise<void> {
+  await page.waitForSelector('.app', { state: 'visible', timeout })
+}
+
+/**
+ * Wait for the chat panel to be ready
+ */
+export async function waitForChatReady(page: Page, timeout = 10000): Promise<void> {
+  await page.waitForSelector('.chat-panel', { state: 'visible', timeout })
+  // Wait for the input to be enabled (not loading)
+  await page.waitForSelector('.chat-input input:not([disabled])', { state: 'visible', timeout })
+}
+
+/**
+ * Wait for the terminal PTY to be created (terminalPid set in store)
+ */
+export async function waitForTerminalReady(page: Page, timeout = 15000): Promise<void> {
+  // Wait for terminal container to be visible
+  await page.waitForSelector('.terminal-container', { state: 'visible', timeout })
+  // Wait a bit for PTY initialization
+  await page.waitForTimeout(1000)
+}
+
+/**
+ * Send a chat message
+ */
+export async function sendMessage(page: Page, message: string): Promise<void> {
+  const input = page.locator('.chat-input input')
+  await input.fill(message)
+  await input.press('Enter')
+}
+
+/**
+ * Type in chat input without sending
+ */
+export async function typeInChat(page: Page, text: string): Promise<void> {
+  const input = page.locator('.chat-input input')
+  await input.fill(text)
+}
+
+/**
+ * Clear chat input
+ */
+export async function clearChatInput(page: Page): Promise<void> {
+  const input = page.locator('.chat-input input')
+  await input.fill('')
+}
+
+/**
+ * Wait for AI response to appear in chat
+ */
+export async function waitForAIResponse(page: Page, timeout = 30000): Promise<void> {
+  // Wait for loading spinner to appear and then disappear
+  const loadingSpinner = page.locator('.loading-spinner')
+  const isVisible = await loadingSpinner.isVisible().catch(() => false)
+
+  if (isVisible) {
+    await loadingSpinner.waitFor({ state: 'hidden', timeout })
+  }
+
+  // Wait for AI message to appear
+  await page.waitForSelector('.chat-message.ai', { timeout })
+}
+
+/**
+ * Wait for command execution to complete
+ */
+export async function waitForCommandExecution(page: Page, timeout = 30000): Promise<void> {
+  // Wait for progress indicator to appear
+  const progressIndicator = page.locator('.progress-indicator')
+
+  // Wait for progress to appear and then disappear
+  try {
+    await progressIndicator.waitFor({ state: 'visible', timeout: 5000 })
+    await progressIndicator.waitFor({ state: 'hidden', timeout })
+  } catch {
+    // Progress might have already completed, that's fine
+  }
+
+  // Wait for interpretation to complete
+  const interpretingSpinner = page.locator('.chat-message.ai:has-text("Analyse")')
+  try {
+    await interpretingSpinner.waitFor({ state: 'hidden', timeout: 5000 })
+  } catch {
+    // Interpretation might have already completed
+  }
+}
+
+/**
+ * Get all chat messages
+ */
+export async function getChatMessages(page: Page): Promise<string[]> {
+  const messages = page.locator('.chat-message')
+  const count = await messages.count()
+  const result: string[] = []
+
+  for (let i = 0; i < count; i++) {
+    const content = await messages.nth(i).locator('.message-content').textContent()
+    if (content) {
+      result.push(content.trim())
+    }
+  }
+
+  return result
+}
+
+/**
+ * Get user messages only
+ */
+export async function getUserMessages(page: Page): Promise<string[]> {
+  const messages = page.locator('.chat-message.user')
+  const count = await messages.count()
+  const result: string[] = []
+
+  for (let i = 0; i < count; i++) {
+    const content = await messages.nth(i).locator('.message-content').textContent()
+    if (content) {
+      result.push(content.trim())
+    }
+  }
+
+  return result
+}
+
+/**
+ * Get AI messages only
+ */
+export async function getAIMessages(page: Page): Promise<string[]> {
+  const messages = page.locator('.chat-message.ai')
+  const count = await messages.count()
+  const result: string[] = []
+
+  for (let i = 0; i < count; i++) {
+    const content = await messages.nth(i).locator('.message-content').textContent()
+    if (content) {
+      result.push(content.trim())
+    }
+  }
+
+  return result
+}
+
+/**
+ * Check if welcome message is displayed
+ */
+export async function isWelcomeMessageVisible(page: Page): Promise<boolean> {
+  const welcome = page.locator('.chat-welcome')
+  return welcome.isVisible()
+}
+
+/**
+ * Check if loading spinner is visible
+ */
+export async function isLoadingVisible(page: Page): Promise<boolean> {
+  const spinner = page.locator('.loading-spinner')
+  return spinner.isVisible()
+}
+
+/**
+ * Open the configuration panel
+ */
+export async function openConfigPanel(page: Page): Promise<void> {
+  const configButton = page.locator('header button[title="Configuration"]')
+  await configButton.click()
+  await page.waitForSelector('.config-panel', { state: 'visible' })
+}
+
+/**
+ * Close the configuration panel
+ */
+export async function closeConfigPanel(page: Page): Promise<void> {
+  const closeButton = page.locator('.config-panel .close-button')
+  await closeButton.click()
+  await page.waitForSelector('.config-panel', { state: 'hidden' })
+}
+
+/**
+ * Check if config panel is visible
+ */
+export async function isConfigPanelVisible(page: Page): Promise<boolean> {
+  const panel = page.locator('.config-panel')
+  return panel.isVisible()
+}
+
+/**
+ * Set config field value
+ */
+export async function setConfigField(
+  page: Page,
+  fieldId: string,
+  value: string | number
+): Promise<void> {
+  const field = page.locator(`#${fieldId}`)
+
+  const tagName = await field.evaluate(el => el.tagName.toLowerCase())
+
+  if (tagName === 'select') {
+    await field.selectOption(value.toString())
+  } else if (tagName === 'input') {
+    const inputType = await field.getAttribute('type')
+    if (inputType === 'range') {
+      await field.fill(value.toString())
+    } else {
+      await field.fill(value.toString())
+    }
+  }
+}
+
+/**
+ * Get config field value
+ */
+export async function getConfigFieldValue(page: Page, fieldId: string): Promise<string> {
+  const field = page.locator(`#${fieldId}`)
+  return field.inputValue()
+}
+
+/**
+ * Click the test connection button in config panel
+ */
+export async function testConnection(page: Page): Promise<void> {
+  const testButton = page.locator('.config-panel .btn-test')
+  await testButton.click()
+}
+
+/**
+ * Save configuration
+ */
+export async function saveConfig(page: Page): Promise<void> {
+  const saveButton = page.locator('.config-panel .btn-save')
+  await saveButton.click()
+  await page.waitForSelector('.config-panel', { state: 'hidden' })
+}
+
+/**
+ * Reset configuration
+ */
+export async function resetConfig(page: Page): Promise<void> {
+  const resetButton = page.locator('.config-panel .btn-reset')
+  await resetButton.click()
+}
+
+/**
+ * Get command proposal text
+ */
+export async function getCommandProposal(page: Page): Promise<string | null> {
+  const commandDisplay = page.locator('.ai-command-display')
+  if (await commandDisplay.isVisible()) {
+    return commandDisplay.textContent()
+  }
+  return null
+}
+
+/**
+ * Check if Execute button is visible
+ */
+export async function isExecuteButtonVisible(page: Page): Promise<boolean> {
+  const button = page.locator('.command-actions .btn-execute')
+  return button.isVisible()
+}
+
+/**
+ * Click Execute button
+ */
+export async function clickExecuteButton(page: Page): Promise<void> {
+  const button = page.locator('.command-actions .btn-execute')
+  await button.click()
+}
+
+/**
+ * Click Modify button
+ */
+export async function clickModifyButton(page: Page): Promise<void> {
+  const button = page.locator('.command-actions .btn-modify')
+  await button.click()
+}
+
+/**
+ * Click Cancel button
+ */
+export async function clickCancelButton(page: Page): Promise<void> {
+  const button = page.locator('.command-actions .btn-cancel')
+  await button.click()
+}
+
+/**
+ * Check if command actions are visible
+ */
+export async function isCommandActionsVisible(page: Page): Promise<boolean> {
+  const actions = page.locator('.command-actions')
+  return actions.isVisible()
+}
+
+/**
+ * Wait for command actions to appear
+ */
+export async function waitForCommandActions(page: Page, timeout = 10000): Promise<void> {
+  await page.waitForSelector('.command-actions', { state: 'visible', timeout })
+}
+
+/**
+ * Wait for command actions to disappear
+ */
+export async function waitForCommandActionsHidden(page: Page, timeout = 10000): Promise<void> {
+  await page.waitForSelector('.command-actions', { state: 'hidden', timeout })
+}
+
+/**
+ * Get terminal content (text content from xterm)
+ */
+export async function getTerminalContent(page: Page): Promise<string> {
+  const terminal = page.locator('.terminal-content .xterm')
+  return terminal.textContent() || ''
+}
+
+/**
+ * Type in terminal (simulates user typing in xterm)
+ */
+export async function typeInTerminal(page: Page, text: string): Promise<void> {
+  const terminal = page.locator('.terminal-content')
+  await terminal.click()
+
+  // Type character by character with small delays
+  for (const char of text) {
+    await page.keyboard.press(char)
+    await page.waitForTimeout(50)
+  }
+}
+
+/**
+ * Press a key in terminal
+ */
+export async function pressTerminalKey(page: Page, key: string): Promise<void> {
+  const terminal = page.locator('.terminal-content')
+  await terminal.click()
+  await page.keyboard.press(key)
+}
+
+/**
+ * Open conversation list dropdown
+ */
+export async function openConversationList(page: Page): Promise<void> {
+  const button = page.locator('header button[title="Conversations"]')
+  await button.click()
+  await page.waitForSelector('.conversation-dropdown', { state: 'visible' })
+}
+
+/**
+ * Close conversation list dropdown
+ */
+export async function closeConversationList(page: Page): Promise<void> {
+  // Click outside to close
+  await page.keyboard.press('Escape')
+  await page.waitForSelector('.conversation-dropdown', { state: 'hidden' })
+}
+
+/**
+ * Get conversation list items
+ */
+export async function getConversationListItems(page: Page): Promise<string[]> {
+  const items = page.locator('.conversation-list .conversation-item .conversation-title')
+  const count = await items.count()
+  const result: string[] = []
+
+  for (let i = 0; i < count; i++) {
+    const text = await items.nth(i).textContent()
+    if (text) {
+      result.push(text.trim())
+    }
+  }
+
+  return result
+}
+
+/**
+ * Delete a conversation from the list
+ */
+export async function deleteConversation(page: Page, index: number): Promise<void> {
+  // Handle the confirm dialog
+  page.once('dialog', dialog => dialog.accept())
+
+  const deleteButton = page
+    .locator('.conversation-list .conversation-item')
+    .nth(index)
+    .locator('.conversation-delete')
+  await deleteButton.click()
+}
+
+/**
+ * Create a new conversation
+ */
+export async function createNewConversation(page: Page): Promise<void> {
+  const newButton = page.locator('header button[title="New conversation"]')
+  await newButton.click()
+}
+
+/**
+ * Wait for error message to appear
+ */
+export async function waitForError(page: Page, timeout = 10000): Promise<string | null> {
+  const error = page.locator('.chat-message.ai.error')
+  try {
+    await error.waitFor({ state: 'visible', timeout })
+    return error.textContent()
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Check if error is visible
+ */
+export async function isErrorVisible(page: Page): Promise<boolean> {
+  const error = page.locator('.chat-message.ai.error')
+  return error.isVisible()
+}
+
+/**
+ * Clear all conversations via keyboard shortcut (Ctrl+K)
+ */
+export async function clearAllConversationsByShortcut(page: Page): Promise<void> {
+  await page.keyboard.press('Control+k')
+}
+
+/**
+ * Execute command via keyboard shortcut (Ctrl+Enter)
+ */
+export async function executeCommandByShortcut(page: Page): Promise<void> {
+  await page.keyboard.press('Control+Enter')
+}
+
+/**
+ * Cancel action via keyboard shortcut (Escape)
+ */
+export async function cancelActionByShortcut(page: Page): Promise<void> {
+  await page.keyboard.press('Escape')
+}
+
+/**
+ * Get test result message from config panel
+ */
+export async function getTestResult(page: Page): Promise<string | null> {
+  const result = page.locator('.test-result')
+  if (await result.isVisible()) {
+    return result.textContent()
+  }
+  return null
+}
+
+/**
+ * Wait for test result
+ */
+export async function waitForTestResult(page: Page, timeout = 10000): Promise<string | null> {
+  const result = page.locator('.test-result')
+  try {
+    await result.waitFor({ state: 'visible', timeout })
+    return result.textContent()
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Check if model selector is loading
+ */
+export async function isModelSelectorLoading(page: Page): Promise<boolean> {
+  const selector = page.locator('.model-selector')
+  const loading = selector.locator('.loading-indicator')
+  return loading.isVisible()
+}
+
+/**
+ * Select a model from the dropdown
+ */
+export async function selectModel(page: Page, model: string): Promise<void> {
+  const selector = page.locator('.model-selector select, .model-selector input')
+  const tagName = await selector.evaluate(el => el.tagName.toLowerCase())
+
+  if (tagName === 'select') {
+    await selector.selectOption(model)
+  } else {
+    await selector.fill(model)
+  }
+}
+
+/**
+ * Check if an element is visible and enabled
+ */
+export async function isElementEnabled(page: Page, selector: string): Promise<boolean> {
+  const element = page.locator(selector)
+  const isVisible = await element.isVisible()
+  if (!isVisible) return false
+  return element.isEnabled()
+}
+
+/**
+ * Wait for an element to be enabled
+ */
+export async function waitForElementEnabled(
+  page: Page,
+  selector: string,
+  timeout = 10000
+): Promise<void> {
+  await page.waitForSelector(selector, { state: 'visible', timeout })
+  await page.waitForFunction(
+    sel => {
+      const el = document.querySelector(sel)
+      return el && !el.hasAttribute('disabled')
+    },
+    selector,
+    { timeout }
+  )
+}
+
+/**
+ * Get the value of an input field
+ */
+export async function getInputValue(page: Page, selector: string): Promise<string> {
+  return page.locator(selector).inputValue()
+}
+
+/**
+ * Check if env badge is displayed for a field
+ */
+export async function hasEnvBadge(page: Page, fieldId: string): Promise<boolean> {
+  const field = page.locator(`#${fieldId}`).locator('xpath=..').locator('.env-badge')
+  return field.isVisible()
+}
+
+/**
+ * Get available shell options
+ */
+export async function getShellOptions(page: Page): Promise<string[]> {
+  const select = page.locator('#shell-select')
+  const options = await select.locator('option').allTextContents()
+  return options.map(o => o.trim())
+}
+
+/**
+ * Get available theme options
+ */
+export async function getThemeOptions(page: Page): Promise<string[]> {
+  const select = page.locator('#theme')
+  const options = await select.locator('option').allTextContents()
+  return options.map(o => o.trim())
+}

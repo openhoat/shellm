@@ -11,6 +11,7 @@ To view the complete history, use: `git log`
 
 #### 14/02
 
+- **[14:29:43] ✅ [TEST]** Add comprehensive E2E test suite with 59 tests (mocks, helpers, chat, terminal, config, workflows)
 - **[14:14:09] 📝 [DOCS]** Add documentation cleanup ideas to backlog (README refresh with badges, docs/ removal)
 
 #### 13/02
