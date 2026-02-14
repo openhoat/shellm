@@ -273,10 +273,11 @@ test.describe('SheLLM E2E - Configuration', () => {
   })
 
   test.describe('Configuration modification', () => {
-    // Note: Text input modification tests are skipped due to React controlled input issues
-    // The inputs work correctly in the running app, but Playwright's keyboard simulation
-    // doesn't properly trigger React's onChange handlers for text/number inputs
-    // Select elements work fine since they use different event handling
+    // Note: Text/number input modification tests are skipped because React controlled inputs
+    // in Electron apps don't respond properly to Playwright's simulated events.
+    // The fields may also be readonly due to environment variables (SHELLM_OLLAMA_URL, etc.)
+    // which makes them disabled but the isDisabled() check might not catch readonly state.
+    // TODO: Investigate proper mocking of environment variables for E2E tests
     test.skip('should allow changing Ollama URL if not disabled by env', async () => {
       const { app, page } = await launchElectronApp()
 
@@ -288,11 +289,15 @@ test.describe('SheLLM E2E - Configuration', () => {
         const isDisabled = await urlField.isDisabled()
 
         if (isDisabled) {
+          console.log('Skipping: URL field is disabled by environment variable')
           return
         }
 
-        await urlField.click({ clickCount: 3 })
-        await page.keyboard.type('http://custom-ollama:11434', { delay: 10 })
+        // Focus the field and select all, then type new value
+        await urlField.focus()
+        await urlField.press('Control+a')
+        await urlField.type('http://custom-ollama:11434', { delay: 10 })
+        await urlField.press('Tab') // Blur to trigger state update
 
         const value = await urlField.inputValue()
         expect(value).toBe('http://custom-ollama:11434')
@@ -301,7 +306,7 @@ test.describe('SheLLM E2E - Configuration', () => {
       }
     })
 
-    test.skip('should allow changing temperature if not disabled by env', async () => {
+    test('should allow changing temperature if not disabled by env', async () => {
       const { app, page } = await launchElectronApp()
 
       try {
@@ -312,19 +317,25 @@ test.describe('SheLLM E2E - Configuration', () => {
         const isDisabled = await tempField.isDisabled()
 
         if (isDisabled) {
+          console.log('Skipping: temperature field is disabled by environment variable')
           return
         }
 
-        const initialValue = await tempField.inputValue()
-        await tempField.click()
-        const targetValue = 0.5
-        const currentValue = parseFloat(initialValue)
-        const steps = Math.round((targetValue - currentValue) * 10)
+        // Use React-aware input setter for range input
+        await page.evaluate(() => {
+          const input = document.querySelector('#ollama-temperature') as HTMLInputElement
+          if (!input) return
 
-        for (let i = 0; i < Math.abs(steps); i++) {
-          await page.keyboard.press(steps > 0 ? 'ArrowRight' : 'ArrowLeft')
-          await page.waitForTimeout(10)
-        }
+          const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+            window.HTMLInputElement.prototype,
+            'value'
+          )?.set
+          if (nativeInputValueSetter) {
+            nativeInputValueSetter.call(input, '0.5')
+          }
+          input.dispatchEvent(new Event('input', { bubbles: true }))
+          input.dispatchEvent(new Event('change', { bubbles: true }))
+        })
 
         const value = await tempField.inputValue()
         expect(parseFloat(value)).toBeCloseTo(0.5, 0)
@@ -344,11 +355,15 @@ test.describe('SheLLM E2E - Configuration', () => {
         const isDisabled = await maxTokensField.isDisabled()
 
         if (isDisabled) {
+          console.log('Skipping: max tokens field is disabled by environment variable')
           return
         }
 
-        await maxTokensField.click({ clickCount: 3 })
-        await page.keyboard.type('2000', { delay: 10 })
+        // Focus the field and select all, then type new value
+        await maxTokensField.focus()
+        await maxTokensField.press('Control+a')
+        await maxTokensField.type('2000', { delay: 10 })
+        await maxTokensField.press('Tab') // Blur to trigger state update
 
         const value = await maxTokensField.inputValue()
         expect(value).toBe('2000')

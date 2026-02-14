@@ -90,6 +90,9 @@ test.describe('SheLLM E2E - User Workflows', () => {
   })
 
   test.describe('Configuration change workflow', () => {
+    // Note: This test is skipped because React controlled inputs in Electron apps
+    // don't respond properly to Playwright's simulated events.
+    // TODO: Investigate proper mocking of environment variables and React state updates
     test.skip('should change settings and verify persistence', async () => {
       const { app, page } = await launchElectronApp()
 
@@ -109,23 +112,32 @@ test.describe('SheLLM E2E - User Workflows', () => {
           return
         }
 
-        // Step 3: Change settings using evaluate for range input
-        await tempField.evaluate((el, value) => {
-          const input = el as HTMLInputElement
-          input.value = value
-          input.dispatchEvent(new Event('input', { bubbles: true }))
-          input.dispatchEvent(new Event('change', { bubbles: true }))
-        }, '0.5')
+        // Step 3: Change temperature using React-aware setter for range input
+        await page.evaluate(() => {
+          const tempInput = document.querySelector('#ollama-temperature') as HTMLInputElement
+          if (tempInput) {
+            const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+              window.HTMLInputElement.prototype,
+              'value'
+            )?.set
+            if (nativeInputValueSetter) {
+              nativeInputValueSetter.call(tempInput, '0.5')
+            }
+            tempInput.dispatchEvent(new Event('input', { bubbles: true }))
+            tempInput.dispatchEvent(new Event('change', { bubbles: true }))
+          }
+        })
 
-        // Clear and type for number input
-        await maxTokensField.click()
+        // Step 4: Change max tokens using type method for number input
+        await maxTokensField.focus()
         await maxTokensField.press('Control+a')
-        await maxTokensField.type('2000', { delay: 50 })
+        await maxTokensField.type('2000', { delay: 10 })
+        await maxTokensField.press('Tab')
 
-        // Step 4: Save
+        // Step 5: Save
         await saveConfig(page)
 
-        // Step 5: Verify changes persisted
+        // Step 6: Verify changes persisted
         await openConfigPanel(page)
 
         const newTemp = await tempField.inputValue()
@@ -237,8 +249,14 @@ test.describe('SheLLM E2E - User Workflows', () => {
 
   test.describe('Error handling workflow', () => {
     // Note: These tests are skipped because mocking window.electronAPI doesn't work
-    // The app captures the API reference during initialization before the mock is set up
-    // TODO: Implement proper mocking at the IPC level or use a different approach
+    // The app captures the API reference during initialization before the mock is set up.
+    //
+    // To fix these tests, we need one of the following approaches:
+    // 1. Add a test mode to the app (window.__TEST_MODE__) that allows error injection
+    // 2. Mock at the Electron IPC handler level (main process)
+    // 3. Use dependency injection in services to allow mocking
+    //
+    // For now, error handling is tested manually and through unit tests.
     test.skip('should handle Ollama unavailable gracefully', async () => {
       const { app, page } = await launchElectronApp()
 
