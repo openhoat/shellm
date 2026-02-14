@@ -7,6 +7,7 @@ interface ModelSelectorProps {
   placeholder?: string
   disabled?: boolean
   className?: string
+  id?: string
 }
 
 export const ModelSelector = ({
@@ -18,11 +19,13 @@ export const ModelSelector = ({
   placeholder = 'ex: llama2, mistral, ...',
   disabled = false,
   className = '',
+  id = 'ollama-model',
 }: ModelSelectorProps) => {
   return (
     <div className="model-selector-container">
       <div className="model-input-wrapper">
         <input
+          id={id}
           type="text"
           value={value}
           onChange={e => onChange(e.target.value)}

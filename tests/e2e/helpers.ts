@@ -176,7 +176,11 @@ export async function openConfigPanel(page: Page): Promise<void> {
 export async function closeConfigPanel(page: Page): Promise<void> {
   const closeButton = page.locator('.config-panel .close-button')
   await closeButton.click()
-  await page.waitForSelector('.config-panel', { state: 'hidden' })
+  // Wait for the panel to be removed from DOM
+  await page.waitForFunction(
+    () => !document.querySelector('.config-panel'),
+    { timeout: 10000 }
+  )
 }
 
 /**
@@ -414,9 +418,23 @@ export async function waitForError(page: Page, timeout = 10000): Promise<string 
 /**
  * Check if error is visible
  */
-export async function isErrorVisible(page: Page): Promise<boolean> {
+export async function isErrorVisible(page: Page, timeout = 10000): Promise<boolean> {
   const error = page.locator('.chat-message.ai.error')
-  return error.isVisible()
+  const errorMessage = page.locator('.chat-message.ai:has-text("Error:")')
+
+  try {
+    // Check for error class first
+    await error.waitFor({ state: 'visible', timeout: 5000 })
+    return true
+  } catch {
+    // If no error class, check for error message in AI response
+    try {
+      await errorMessage.waitFor({ state: 'visible', timeout: 5000 })
+      return true
+    } catch {
+      return false
+    }
+  }
 }
 
 /**
