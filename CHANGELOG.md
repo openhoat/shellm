@@ -11,6 +11,9 @@ To view the complete history, use: `git log`
 
 #### 15/02
 
+- **[15:45:00] 📝 [DOCS]** Add Environment Variables subsection to README Configuration section and update .env.example with SHELLM_* variable names
+- **[11:00:00] 📝 [DOCS]** Refactor README.md: remove Architecture/Tests/Commit Conventions sections, add dedicated Build Executables section
+- **[00:00:00] 📝 [DOCS]** Refresh README.md with Node.js/Electron/Vitest badges and remove obsolete docs/ directory
 - **[15:16:00] 🎨 [STYLE]** Fix biome lint errors: remove console.log, fix unused variables, escape control chars in regex
 - **[14:30:00] ✅ [TEST]** Fix skipped E2E tests with proper mock injection via environment variables in llm-service.ts
 
