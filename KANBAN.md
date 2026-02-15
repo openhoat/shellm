@@ -24,6 +24,8 @@
 
 ### 🟡 P2 - Medium Priority
 
+- [ ] **[15/02/2026 20:21:35] 🟡 P2 ✅ [TEST]** Add missing unit tests for React components (ChatPanel, Terminal, ConfigPanel, Resizer)
+- [ ] **[15/02/2026 20:21:35] 🟡 P2 🔧 [DEVOPS]** Add E2E tests (Playwright) to CI pipeline in .github/workflows/ci.yml
 
 ### 🟢 P3 - Low Priority
 
