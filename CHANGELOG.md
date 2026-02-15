@@ -11,6 +11,8 @@ To view the complete history, use: `git log`
 
 #### 15/02
 
+- **[19:37:00] 🐛 [FIX]** Fix ConfigPanel provider switch bug by splitting circular useEffect into 3 independent effects; add ANTHROPIC_API_KEY env var fallback support
+- **[19:30:00] ✨ [FEAT]** Add multi-provider LLM support: Ollama and Claude (Anthropic) with provider selector in ConfigPanel
 - **[15:45:00] 📝 [DOCS]** Add Environment Variables subsection to README Configuration section and update .env.example with SHELLM_* variable names
 - **[11:00:00] 📝 [DOCS]** Refactor README.md: remove Architecture/Tests/Commit Conventions sections, add dedicated Build Executables section
 - **[00:00:00] 📝 [DOCS]** Refresh README.md with Node.js/Electron/Vitest badges and remove obsolete docs/ directory
