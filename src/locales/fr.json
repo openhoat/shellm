@@ -22,11 +22,24 @@
     },
     "config": {
       "title": "Configuration",
+      "llm": {
+        "title": "Configuration LLM",
+        "provider": "Fournisseur LLM",
+        "providers": {
+          "ollama": "Ollama (local/cloud)",
+          "claude": "Claude (Anthropic)"
+        }
+      },
       "ollama": {
         "title": "Configuration Ollama",
         "url": "URL du serveur Ollama",
         "model": "Modèle par défaut",
         "save": "Enregistrer"
+      },
+      "claude": {
+        "title": "Configuration Claude",
+        "apiKey": "Clé API Anthropic",
+        "model": "Modèle Claude"
       },
       "language": {
         "title": "Langue"
@@ -42,8 +55,8 @@
       "connectionSuccess": "Connexion réussie",
       "loadModels": "Erreur lors du chargement des modèles",
       "saveConfig": "Erreur lors de l'enregistrement de la configuration",
-      "aiGenerationFailed": "Impossible de générer la commande. Vérifiez votre connexion à Ollama et réessayez.",
-      "aiGenerationFailedOffline": "Impossible de se connecter au service Ollama. Vérifiez que le serveur est en cours d'exécution.",
+      "aiGenerationFailed": "Impossible de générer la commande. Vérifiez votre connexion au service LLM et réessayez.",
+      "aiGenerationFailedOffline": "Impossible de se connecter au service LLM. Vérifiez que le serveur est en cours d'exécution.",
       "terminalNotReady": "Le terminal n'est pas prêt. Attendez quelques secondes que le terminal s'initialise ou réinitialisez l'application.",
       "commandExecutionFailed": "La commande n'a pas pu être exécutée. Vérifiez que le terminal fonctionne correctement.",
       "outputInterpretationFailed": "Impossible d'analyser le résultat de la commande. Le résultat sera affiché sans analyse.",

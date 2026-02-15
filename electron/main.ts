@@ -50,6 +50,19 @@ const isAppConfig = (value: unknown): value is AppConfig => {
   return true
 }
 
+/**
+ * Normalize a stored config to ensure all required fields exist (backward compat)
+ */
+const normalizeConfig = (config: AppConfig): AppConfig => ({
+  ...DEFAULT_CONFIG,
+  ...config,
+  ollama: { ...DEFAULT_CONFIG.ollama, ...config.ollama },
+  claude: config.claude
+    ? { ...DEFAULT_CONFIG.claude, ...config.claude }
+    : DEFAULT_CONFIG.claude,
+  llmProvider: config.llmProvider ?? DEFAULT_CONFIG.llmProvider,
+})
+
 const isDev = process.env.NODE_ENV === 'development' && !app.isPackaged
 
 // Initialize store for configuration (with environment variables override)
@@ -149,9 +162,9 @@ app.whenReady().then(() => {
 
     // Get initial config and merge with environment variables
     const storedConfig = store.get('config')
-    const validConfig = isAppConfig(storedConfig) ? storedConfig : DEFAULT_CONFIG
+    const validConfig = isAppConfig(storedConfig) ? normalizeConfig(storedConfig) : DEFAULT_CONFIG
     const mergedConfig = mergeConfig(validConfig)
-    createLLMHandlers(mainWindow, mergedConfig.ollama)
+    createLLMHandlers(mainWindow, mergedConfig)
 
     createConfigHandlers(mainWindow, store)
   }

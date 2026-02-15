@@ -10,6 +10,9 @@ export interface ElectronAPI {
     temperature: boolean
     maxTokens: boolean
     shell: boolean
+    llmProvider: boolean
+    claudeApiKey: boolean
+    claudeModel: boolean
   }>
   setConfig: (config: AppConfig) => Promise<AppConfig>
   resetConfig: () => Promise<AppConfig>
@@ -27,13 +30,7 @@ export interface ElectronAPI {
   onTerminalExit: (callback: (data: { pid: number; code: number }) => void) => void
 
   // LLM
-  llmInit: (config: {
-    url: string
-    apiKey?: string
-    model: string
-    temperature?: number
-    maxTokens?: number
-  }) => Promise<void>
+  llmInit: (config: AppConfig) => Promise<void>
   llmGenerateCommand: (
     prompt: string,
     conversationHistory?: ConversationMessage[],
