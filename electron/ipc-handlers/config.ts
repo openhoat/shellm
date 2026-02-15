@@ -45,9 +45,7 @@ function normalizeConfig(config: AppConfig): AppConfig {
     ...DEFAULT_CONFIG,
     ...config,
     ollama: { ...DEFAULT_CONFIG.ollama, ...config.ollama },
-    claude: config.claude
-      ? { ...DEFAULT_CONFIG.claude, ...config.claude }
-      : DEFAULT_CONFIG.claude,
+    claude: config.claude ? { ...DEFAULT_CONFIG.claude, ...config.claude } : DEFAULT_CONFIG.claude,
     llmProvider: config.llmProvider ?? DEFAULT_CONFIG.llmProvider,
   }
 }

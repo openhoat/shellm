@@ -1,13 +1,9 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import { AIMessage, HumanMessage } from '@langchain/core/messages'
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts'
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
-import type {
-  AICommand,
-  CommandInterpretation,
-  ConversationMessage,
-} from '@shared/types'
+import type { AICommand, CommandInterpretation, ConversationMessage } from '@shared/types'
 import { z } from 'zod'
 
 // Constants
