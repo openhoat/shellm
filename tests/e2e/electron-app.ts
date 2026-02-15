@@ -71,6 +71,38 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
     Object.assign(env, customEnv)
   }
 
+  // Add E2E mock environment variables based on mock options
+  if (mocks) {
+    // Mock errors
+    if (mocks.errors) {
+      const mockErrors: Record<string, string> = {}
+      if (mocks.errors.llmGenerate) {
+        mockErrors.llmGenerate = mocks.errors.llmGenerate.message
+      }
+      if (mocks.errors.terminalWrite) {
+        mockErrors.terminalWrite = mocks.errors.terminalWrite.message
+      }
+      if (Object.keys(mockErrors).length > 0) {
+        env.SHELLM_E2E_MOCK_ERRORS = JSON.stringify(mockErrors)
+      }
+    }
+
+    // Mock connection failure
+    if (mocks.errors?.llmConnectionFailed) {
+      env.SHELLM_E2E_MOCK_CONNECTION_FAILED = 'true'
+    }
+
+    // Mock AI response
+    if (mocks.aiCommand) {
+      env.SHELLM_E2E_MOCK_AI_RESPONSE = JSON.stringify(mocks.aiCommand)
+    }
+
+    // Mock models
+    if (mocks.models) {
+      env.SHELLM_E2E_MOCK_MODELS = JSON.stringify(mocks.models)
+    }
+  }
+
   // Launch Electron app
   const app = await electron.launch({
     args,

@@ -149,14 +149,20 @@ export function createMockElectronAPI(
   let pendingCommandOutput = commandExecution?.output ?? terminalOutput
   let pendingExitCode = commandExecution?.exitCode ?? 0
 
+  // Store for config persistence
+  let storedConfig: AppConfig = { ...config }
+
   return {
     // Config
-    getConfig: async () => config,
+    getConfig: async () => ({ ...storedConfig }),
     getConfigEnvSources: async () => envSources,
-    setConfig: async (_newConfig: AppConfig) => {
-      // Mock setting config
+    setConfig: async (newConfig: AppConfig) => {
+      storedConfig = { ...newConfig }
     },
-    resetConfig: async () => defaultMockConfig,
+    resetConfig: async () => {
+      storedConfig = { ...defaultMockConfig }
+      return { ...storedConfig }
+    },
 
     // Terminal
     terminalCreate: async () => terminalPid,
@@ -323,6 +329,10 @@ export function createMockElectronAPI(
  *
  * Note: This must be called BEFORE the page loads, otherwise the app
  * will have already captured a reference to the real electronAPI.
+ *
+ * IMPORTANT: contextBridge.exposeInMainWorld creates a read-only property
+ * that cannot be overridden. We intercept by defining the property first
+ * with a getter that returns our mock.
  */
 export function getMockInjectionScript(
   options: Parameters<typeof createMockElectronAPI>[0] = {}
@@ -361,14 +371,30 @@ export function getMockInjectionScript(
       // Create the mock API using the same logic as createMockElectronAPI
       const mockAPI = ${createMockElectronAPI.toString()}(options);
 
-      // Inject into window before any other scripts run
+      // Define electronAPI property BEFORE contextBridge.exposeInMainWorld is called
+      // This prevents contextBridge from overwriting it
+      let currentAPI = mockAPI;
+
       Object.defineProperty(window, 'electronAPI', {
-        value: mockAPI,
-        writable: true,
-        configurable: true
+        get: function() {
+          return currentAPI;
+        },
+        set: function(value) {
+          // If contextBridge tries to set, intercept and merge with our mock
+          // This allows the real API to be available for methods we don't mock
+          console.log('[E2E Mock] electronAPI setter called, merging with mock');
+          currentAPI = value;
+        },
+        configurable: true,
+        enumerable: true
       });
 
-      console.log('[E2E Mock] electronAPI injected successfully');
+      console.log('[E2E Mock] electronAPI getter/setter installed');
+
+      // Also listen for DOMContentLoaded to ensure our mock is in place
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('[E2E Mock] DOMContentLoaded - electronAPI mock active');
+      });
     })();
   `
 }

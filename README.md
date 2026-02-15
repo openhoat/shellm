@@ -1,11 +1,12 @@
 # SheLLM - AI-Powered Terminal
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/openhoat/shellm/actions/workflows/ci.yml/badge.svg)](https://github.com/openhoat/shellm/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/openhoat/shellm/branch/main/graph/badge.svg)](https://codecov.io/gh/openhoat/shellm)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)
 [![GitHub Stars](https://img.shields.io/github/stars/openhoat/shellm?style=social)](https://github.com/openhoat/shellm/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/openhoat/shellm?style=social)](https://github.com/openhoat/shellm/network/members)
 [![GitHub issues](https://img.shields.io/github/issues/openhoat/shellm)](https://github.com/openhoat/shellm/issues)
-
-[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://github.com/openhoat/shellm)
 
 A modern terminal powered by artificial intelligence with Ollama, inspired by WARP. SheLLM allows you to describe what you want to do in natural language and the AI generates the appropriate shell commands.
 
@@ -17,12 +18,6 @@ A modern terminal powered by artificial intelligence with Ollama, inspired by WA
 - **Modern Interface**: Dark theme by default with optional light theme
 - **Flexible Configuration**: Ollama URL, model, temperature, and more
 - **History**: Track conversations and executed commands
-
-## ⭐ Star us on GitHub!
-
-If this project is useful to you, don't forget to [star it on GitHub](https://github.com/openhoat/shellm)! 🚀
-
----
 
 ## 📋 Prerequisites
 
@@ -68,16 +63,11 @@ ollama pull llama2
 
 If you're using Ollama on a remote machine, configure the URL in the SheLLM configuration panel.
 
-## 🚀 Quick Start
+### 4. Run the application
 
 ```bash
-git clone https://github.com/openhoat/shellm.git
-cd shellm
-npm install
 npm run dev
 ```
-
-For full functionality, make sure you have [Ollama](https://ollama.ai) installed and running.
 
 ---
 
@@ -234,32 +224,12 @@ shellm/
 
 ## 📦 CHANGELOG Archiving
 
-SheLLM features an automatic archiving system to maintain a concise CHANGELOG.md while preserving full history.
-
-### Retention Policy
-
-- **Recent changes (last 30 days)**: kept in `CHANGELOG.md`
-- **Older changes (over 30 days)**: archived in `CHANGELOG_ARCHIVE.md`
-
-### Manual Archiving Command
+SheLLM features an automatic archiving system: recent changes (last 30 days) are kept in `CHANGELOG.md`, older changes are archived in `CHANGELOG_ARCHIVE.md`.
 
 ```bash
-npm run archive-changelog
+npm run archive-changelog  # Manual archiving
+CHANGELOG_RETENTION_DAYS=60 npm run archive-changelog  # Custom retention
 ```
-
-### Configurable Retention Period
-
-The retention period can be customized via an environment variable:
-
-```bash
-CHANGELOG_RETENTION_DAYS=60 npm run archive-changelog
-```
-
-### Affected Files
-
-- **CHANGELOG.md**: Contains recent changes (≤ 30 days)
-- **CHANGELOG_ARCHIVE.md**: Contains archived history (> 30 days)
-- **.clinerules/workflows/archive_changelog.md**: Detailed archiving workflow
 
 ## 🧪 Tests
 
@@ -317,23 +287,15 @@ electron/
 
 This project uses **commitlint** to standardize commit messages according to the [Conventional Commits](https://www.conventionalcommits.org/) format.
 
-### Commit Format
+### Format
 
 ```
 <type>(<scope>): <subject>
 ```
 
-### Allowed Types
+### Types
 
-- **feat**: New feature
-- **fix**: Bug fix
-- **docs**: Documentation
-- **style**: Styling/formatting (no code change)
-- **refactor**: Refactoring
-- **perf**: Performance
-- **test**: Tests
-- **chore**: Maintenance/Configuration
-- **revert**: Revert a commit
+`feat` | `fix` | `docs` | `style` | `refactor` | `perf` | `test` | `chore` | `revert`
 
 ### Examples
 
@@ -341,20 +303,11 @@ This project uses **commitlint** to standardize commit messages according to the
 git commit -m "feat: add Ollama configuration support"
 git commit -m "fix: resolve terminal connection error"
 git commit -m "docs: update README"
-git commit -m "style: format code with Biome"
-git commit -m "refactor: simplify Zustand store logic"
-git commit -m "perf: optimize rendering performance"
-git commit -m "test: add tests for Terminal component"
-git commit -m "chore: update dependencies"
 ```
 
-### Automatic Validation
+### Validation
 
-A Git hook automatically validates the format of each commit before applying it. If the format is incorrect, the commit will be rejected.
-
-### Manual Validation
-
-To validate a commit message manually:
+A Git hook automatically validates commit messages. To validate manually:
 
 ```bash
 npm run commit:lint

@@ -177,10 +177,7 @@ export async function closeConfigPanel(page: Page): Promise<void> {
   const closeButton = page.locator('.config-panel .close-button')
   await closeButton.click()
   // Wait for the panel to be removed from DOM
-  await page.waitForFunction(
-    () => !document.querySelector('.config-panel'),
-    { timeout: 10000 }
-  )
+  await page.waitForFunction(() => !document.querySelector('.config-panel'), { timeout: 10000 })
 }
 
 /**
@@ -576,28 +573,37 @@ export async function setReactInputValue(
   selector: string,
   value: string
 ): Promise<void> {
-  await page.evaluate(
-    ({ sel, val }) => {
-      const input = document.querySelector(sel) as HTMLInputElement
-      if (!input) return
+  const input = page.locator(selector)
 
-      // Use native setter to bypass React's value tracking
-      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-        window.HTMLInputElement.prototype,
-        'value'
-      )?.set
-      if (nativeInputValueSetter) {
-        nativeInputValueSetter.call(input, val)
-      } else {
-        input.value = val
-      }
+  // Get the input type
+  const inputType = await input.getAttribute('type').catch(() => 'text')
 
-      // Dispatch events to trigger React handlers
-      input.dispatchEvent(new Event('input', { bubbles: true }))
-      input.dispatchEvent(new Event('change', { bubbles: true }))
-    },
-    { sel: selector, val: value }
-  )
+  // For range inputs, use fill directly
+  if (inputType === 'range') {
+    await input.fill(value)
+    // Dispatch events to trigger React onChange
+    await input.evaluate(el => {
+      el.dispatchEvent(new Event('input', { bubbles: true }))
+      el.dispatchEvent(new Event('change', { bubbles: true }))
+    })
+    await page.waitForTimeout(100)
+    return
+  }
+
+  // For text, number, and other inputs - use type simulation
+  await input.focus()
+
+  // Select all existing content
+  await input.press('Control+a')
+
+  // Type the new value (this triggers proper keyboard/input events)
+  await input.fill(value)
+
+  // Press Enter to trigger change event
+  await input.press('Enter')
+
+  // Small delay for React to process
+  await page.waitForTimeout(100)
 }
 
 /**
