@@ -16,9 +16,6 @@ jobs:
     name: Continuous Integration
     runs-on: ubuntu-latest
 
-    # Fail fast if any step fails
-    fail-fast: true
-
     steps:
       # Checkout the repository
       - name: Checkout code
