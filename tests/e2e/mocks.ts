@@ -147,7 +147,7 @@ export function createMockElectronAPI(
 
   // Store for command execution state (simulates terminal capturing output)
   let pendingCommandOutput = commandExecution?.output ?? terminalOutput
-  let pendingExitCode = commandExecution?.exitCode ?? 0
+  let _pendingExitCode = commandExecution?.exitCode ?? 0
 
   // Store for config persistence
   let storedConfig: AppConfig = { ...config }
@@ -177,7 +177,7 @@ export function createMockElectronAPI(
           await new Promise(resolve => setTimeout(resolve, commandExecution.delay))
         }
         pendingCommandOutput = commandExecution.output
-        pendingExitCode = commandExecution.exitCode ?? 0
+        _pendingExitCode = commandExecution.exitCode ?? 0
       }
     },
     terminalResize: async (_pid: number, _cols: number, _rows: number) => {

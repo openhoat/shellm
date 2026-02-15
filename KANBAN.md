@@ -31,5 +31,3 @@
 
 
 ## 🚧 In Progress
-
-- [x] **[15/02/2026 14:30:00] ✅ [TEST]** Fix skipped E2E tests - implement proper mocking for config, chat, and workflow tests

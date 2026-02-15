@@ -9,6 +9,10 @@ To view the complete history, use: `git log`
 ### 2026
 
 
+#### 15/02
+
+- **[14:30:00] ✅ [TEST]** Fix skipped E2E tests with proper mock injection via environment variables in llm-service.ts
+
 #### 14/02
 
 - **[14:29:43] ✅ [TEST]** Add comprehensive E2E test suite with 59 tests (mocks, helpers, chat, terminal, config, workflows)

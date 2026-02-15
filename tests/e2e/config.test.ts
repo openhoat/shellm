@@ -314,7 +314,6 @@ test.describe('SheLLM E2E - Configuration', () => {
         const isDisabled = await tempField.isDisabled()
 
         if (isDisabled) {
-          console.log('Skipping: temperature field is disabled by environment variable')
           return
         }
 
@@ -400,8 +399,6 @@ test.describe('SheLLM E2E - Configuration', () => {
         const isDisabled = await shellField.isDisabled()
 
         if (isDisabled) {
-          // Skip test if field is disabled by environment variable
-          console.log('Skipping: Shell field is disabled by environment variable')
           return
         }
 

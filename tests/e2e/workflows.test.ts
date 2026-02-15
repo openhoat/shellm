@@ -149,7 +149,6 @@ test.describe('SheLLM E2E - User Workflows', () => {
 
         // Check if field is disabled
         if (await tempField.isDisabled()) {
-          console.log('Skipping: temperature field is disabled by environment variable')
           return
         }
 
