@@ -53,6 +53,7 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
   // Add X11 and headless flags when running in headless mode (via xvfb-run)
   // This forces Electron to use X11 instead of Wayland, allowing xvfb to capture the display
   if (process.env.HEADLESS === 'true') {
+    args.push('--no-sandbox')
     args.push('--ozone-platform=x11')
     args.push('--disable-gpu')
     args.push('--disable-software-rasterizer')
