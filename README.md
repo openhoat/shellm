@@ -17,6 +17,12 @@ SheLLM allows you to describe what you want to do in natural language and the AI
 
 > 🤖 **This project was entirely built with AI** — from architecture to code, tests, and documentation, using [Claude Code](https://claude.ai/claude-code) (Anthropic).
 
+## 💡 Why SheLLM?
+
+[Warp](https://www.warp.dev) is a great AI-powered terminal, but its AI features only work with proprietary cloud providers — there is no support for [Ollama](https://ollama.ai), which means no free, local, or self-hosted option.
+
+SheLLM was born out of that frustration: a fully open alternative that works with Ollama out of the box, keeping your data local and your wallet intact.
+
 ## 🚀 Features
 
 - **Terminal Base**: Full terminal interface with xterm.js
