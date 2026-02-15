@@ -11,6 +11,12 @@ To view the complete history, use: `git log`
 
 #### 15/02
 
+- **[20:50:00] ✨ [FEAT]** Add OpenAI provider support (gpt-4o, gpt-4) with openai-provider.ts, ConfigPanel section, and locales
+- **[20:45:00] 🔧 [CHORE]** Add multi-OS matrix (ubuntu, macos, windows) to CI pipeline in .github/workflows/ci.yml
+- **[20:42:00] ✨ [FEAT]** Add global React ErrorBoundary wrapping App in src/main.tsx with fallback UI
+- **[20:40:00] ✨ [FEAT]** Improve a11y: role=dialog/aria-modal/focus trap in ConfigPanel, aria-live in ChatPanel, aria-expanded in Header
+- **[20:37:00] ✨ [FEAT]** Add 7 missing i18n error keys in en.json and externalize hardcoded strings in ConfigPanel.tsx
+- **[20:35:00] 📝 [DOCS]** Fix Warp hyperlink in README.md and add Keyboard Shortcuts section
 - **[19:37:00] 🐛 [FIX]** Fix ConfigPanel provider switch bug by splitting circular useEffect into 3 independent effects; add ANTHROPIC_API_KEY env var fallback support
 - **[19:30:00] ✨ [FEAT]** Add multi-provider LLM support: Ollama and Claude (Anthropic) with provider selector in ConfigPanel
 - **[15:45:00] 📝 [DOCS]** Add Environment Variables subsection to README Configuration section and update .env.example with SHELLM_* variable names
