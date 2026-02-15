@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { ToastContainer } from './components/Toast'
 import { ToastProvider, useToast } from './hooks/useToast'
 import './i18n'
@@ -27,8 +28,10 @@ if (!rootElement) {
 
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <ToastProvider>
-      <AppWithToasts />
-    </ToastProvider>
+    <ErrorBoundary>
+      <ToastProvider>
+        <AppWithToasts />
+      </ToastProvider>
+    </ErrorBoundary>
   </React.StrictMode>
 )
