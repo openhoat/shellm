@@ -11,7 +11,7 @@
 [![GitHub forks](https://img.shields.io/github/forks/openhoat/shellm?style=social)](https://github.com/openhoat/shellm/network/members)
 [![GitHub issues](https://img.shields.io/github/issues/openhoat/shellm)](https://github.com/openhoat/shellm/issues)
 
-A modern terminal powered by artificial intelligence, inspired by WARP. SheLLM allows you to describe what you want to do in natural language and the AI generates the appropriate shell commands.
+A modern terminal powered by artificial intelligence, inspired by [Warp](https://www.warp.dev). SheLLM allows you to describe what you want to do in natural language and the AI generates the appropriate shell commands.
 
 > 🤖 **This project was entirely built with AI** — from architecture to code, tests, and documentation, using [Claude Code](https://claude.ai/claude-code) (Anthropic).
 
@@ -19,7 +19,7 @@ A modern terminal powered by artificial intelligence, inspired by WARP. SheLLM a
 
 - **Terminal Base**: Full terminal interface with xterm.js
 - **Integrated AI**: Generate shell commands from natural language descriptions
-- **Multi-Provider LLM**: Supports [Ollama](https://ollama.ai) (local/remote) and [Claude](https://www.anthropic.com) (Anthropic API)
+- **Multi-Provider LLM**: Supports [Ollama](https://ollama.ai) (local/remote), [Claude](https://www.anthropic.com) (Anthropic API), and [OpenAI](https://openai.com) (GPT-4o, GPT-4)
 - **Modern Interface**: Dark theme by default with optional light theme
 - **Flexible Configuration**: Provider, model, temperature, and more — configurable via UI or environment variables
 - **History**: Track conversations and executed commands
@@ -69,6 +69,16 @@ export ANTHROPIC_API_KEY=sk-ant-...
 ```
 
 Then select **Claude** as the provider in the configuration panel.
+
+#### Option C — OpenAI
+
+Get an API key from [platform.openai.com](https://platform.openai.com) and set it as an environment variable:
+
+```bash
+export SHELLM_OPENAI_API_KEY=sk-...
+```
+
+Then select **OpenAI** as the provider in the configuration panel.
 
 ### 4. Run the application
 
@@ -124,6 +134,14 @@ This environment variable is recommended to avoid warnings:
    - **Edit**: Adjust the command before execution
    - **Cancel**: Ignore the proposal
 
+### Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+Enter` | Execute the current AI-generated command |
+| `Ctrl+K` | Clear the conversation history |
+| `Esc` | Cancel the current AI command or dismiss errors |
+
 ### Using the Terminal
 
 The terminal on the left works like a classic terminal. You can:
@@ -152,6 +170,13 @@ Select your provider in the configuration panel. The selection is also configura
 - **Temperature**: Controls AI creativity (0 = more precise, 1 = more creative)
 - **Max Tokens**: Maximum number of tokens in the response
 
+### OpenAI
+
+- **API Key**: Your OpenAI API key (from [platform.openai.com](https://platform.openai.com))
+- **Model**: OpenAI model to use (gpt-4o, gpt-4, gpt-3.5-turbo, etc.)
+- **Temperature**: Controls AI creativity (0 = more precise, 1 = more creative)
+- **Max Tokens**: Maximum number of tokens in the response
+
 ### Interface
 
 - **Theme**: Dark (default) or Light
@@ -172,6 +197,8 @@ Environment variables take **priority** over the UI configuration. Copy `.env.ex
 | `SHELLM_CLAUDE_API_KEY` | Anthropic API key for Claude | *(none)* |
 | `ANTHROPIC_API_KEY` | Standard Anthropic API key (fallback for `SHELLM_CLAUDE_API_KEY`) | *(none)* |
 | `SHELLM_CLAUDE_MODEL` | Claude model to use | `claude-haiku-4-5-20251001` |
+| `SHELLM_OPENAI_API_KEY` | OpenAI API key | *(none)* |
+| `SHELLM_OPENAI_MODEL` | OpenAI model to use | `gpt-4o` |
 | `SHELLM_SHELL` | Shell to use (`auto` for system default, or explicit path) | `auto` |
 | `SHELLM_DEVTOOLS` | Open DevTools on application launch (`true`/`false`) | `false` |
 | `ELECTRON_OZONE_PLATFORM_HINT` | Force X11 on Linux Wayland (`x11`) | *(unset)* |
@@ -275,7 +302,7 @@ Olivier Penhoat <openhoat@gmail.com>
 
 ## 🙏 Acknowledgments
 
-- WARP for the inspiration
+- [Warp](https://www.warp.dev) for the inspiration
 - The Ollama team for their excellent tool
 - Anthropic for the Claude API
 - [Claude Code](https://claude.ai/claude-code) — the AI assistant that built this project
