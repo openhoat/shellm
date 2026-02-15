@@ -43,13 +43,19 @@ function stripOscSequences(str: string): string {
  * This makes the output readable for LLM interpretation
  */
 function cleanTerminalOutput(str: string): string {
-  return stripOscSequences(stripAnsiCodes(str))
-    .replace(/\r/g, '')
-    .replace(/\x1B\[\?[0-9;]*[hl]/g, '') // DEC private mode (e.g., cursor visibility)
-    .replace(/\x1B\].*?(\x07|\x1B\\)/g, '') // Remaining OSC sequences
-    .replace(/\x1B\[[0-9;]*[A-Za-z]/g, '') // Other ANSI sequences
-    .replace(/[\x00-\x09\x0B-\x1F]/g, '') // Remove other control characters except newline
-    .trim()
+  return (
+    stripOscSequences(stripAnsiCodes(str))
+      .replace(/\r/g, '')
+      // biome-ignore lint/suspicious/noControlCharactersInRegex: required for ANSI escape sequence stripping
+      .replace(/\u001B\[\?[0-9;]*[hl]/g, '') // DEC private mode (e.g., cursor visibility)
+      // biome-ignore lint/suspicious/noControlCharactersInRegex: required for OSC sequence stripping
+      .replace(/\u001B\].*?(\u0007|\u001B\\)/g, '') // Remaining OSC sequences
+      // biome-ignore lint/suspicious/noControlCharactersInRegex: required for ANSI escape sequence stripping
+      .replace(/\u001B\[[0-9;]*[A-Za-z]/g, '') // Other ANSI sequences
+      // biome-ignore lint/suspicious/noControlCharactersInRegex: required for control character removal
+      .replace(/[\u0000-\u0009\u000B-\u001F]/g, '') // Remove other control characters except newline
+      .trim()
+  )
 }
 
 /**

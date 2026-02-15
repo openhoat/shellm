@@ -227,7 +227,6 @@ export function useChat() {
       setError,
       addToast,
       i18n.t,
-      setPersistedCommandIndex,
     ]
   )
 

@@ -102,8 +102,7 @@ describe('ANSI Code Stripping', () => {
 
   describe('cleanTerminalOutput', () => {
     test('should handle complex terminal output with multiple escape sequences', async () => {
-      const input =
-        '\x1B[?1l\x1B>\x1B[?2004l\r\r\n\x1B]133;C\x1B\\\r\x1B]2;free -h\x07'
+      const input = '\x1B[?1l\x1B>\x1B[?2004l\r\r\n\x1B]133;C\x1B\\\r\x1B]2;free -h\x07'
       // This is the kind of output that would come from terminal capture
       expect(input.length).toBeGreaterThan(0)
     })
@@ -112,44 +111,55 @@ describe('ANSI Code Stripping', () => {
 
 describe('Memory Output Parsing', () => {
   test('should parse free -h output format with units', async () => {
-    const freeOutput = '               total        used        free      shared  buff/cache   available\nMem:           62Gi        11Gi        28Gi       1.3Gi        24Gi        51Gi\nSwap:          19Gi          0B        19Gi'
+    const freeOutput =
+      '               total        used        free      shared  buff/cache   available\nMem:           62Gi        11Gi        28Gi       1.3Gi        24Gi        51Gi\nSwap:          19Gi          0B        19Gi'
 
     // The regex should match all 6 columns for Mem line
-    const memLine = freeOutput.match(/Mem:\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)/)
+    const memLine = freeOutput.match(
+      /Mem:\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)/
+    )
 
     expect(memLine).not.toBeNull()
-    expect(memLine?.[1]).toBe('62Gi')   // total
-    expect(memLine?.[2]).toBe('11Gi')   // used
-    expect(memLine?.[3]).toBe('28Gi')   // free
-    expect(memLine?.[4]).toBe('1.3Gi')  // shared
-    expect(memLine?.[5]).toBe('24Gi')   // buff/cache
-    expect(memLine?.[6]).toBe('51Gi')   // available
+    expect(memLine?.[1]).toBe('62Gi') // total
+    expect(memLine?.[2]).toBe('11Gi') // used
+    expect(memLine?.[3]).toBe('28Gi') // free
+    expect(memLine?.[4]).toBe('1.3Gi') // shared
+    expect(memLine?.[5]).toBe('24Gi') // buff/cache
+    expect(memLine?.[6]).toBe('51Gi') // available
   })
 
   test('should parse swap output with units', async () => {
     const freeOutput = 'Swap:          19Gi          0B        19Gi'
 
-    const swapInfo = freeOutput.match(/Swap:\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)/)
+    const swapInfo = freeOutput.match(
+      /Swap:\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)/
+    )
 
     expect(swapInfo).not.toBeNull()
-    expect(swapInfo?.[1]).toBe('19Gi')  // total
-    expect(swapInfo?.[2]).toBe('0B')    // used
-    expect(swapInfo?.[3]).toBe('19Gi')  // free
+    expect(swapInfo?.[1]).toBe('19Gi') // total
+    expect(swapInfo?.[2]).toBe('0B') // used
+    expect(swapInfo?.[3]).toBe('19Gi') // free
   })
 
   test('should handle memory output with comma as decimal separator', async () => {
-    const freeOutput = 'Mem:           62Gi        11Gi        28Gi       1,3Gi        24Gi        51Gi'
+    const freeOutput =
+      'Mem:           62Gi        11Gi        28Gi       1,3Gi        24Gi        51Gi'
 
-    const memLine = freeOutput.match(/Mem:\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)/)
+    const memLine = freeOutput.match(
+      /Mem:\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)/
+    )
 
     expect(memLine).not.toBeNull()
-    expect(memLine?.[4]).toBe('1,3Gi')  // comma as decimal separator
+    expect(memLine?.[4]).toBe('1,3Gi') // comma as decimal separator
   })
 
   test('should handle memory output with Mi units', async () => {
-    const freeOutput = 'Mem:           2048Mi       512Mi      1024Mi        64Mi       512Mi       1280Mi'
+    const freeOutput =
+      'Mem:           2048Mi       512Mi      1024Mi        64Mi       512Mi       1280Mi'
 
-    const memLine = freeOutput.match(/Mem:\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)/)
+    const memLine = freeOutput.match(
+      /Mem:\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)/
+    )
 
     expect(memLine).not.toBeNull()
     expect(memLine?.[1]).toBe('2048Mi')

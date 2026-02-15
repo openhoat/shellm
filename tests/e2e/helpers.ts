@@ -415,7 +415,7 @@ export async function waitForError(page: Page, timeout = 10000): Promise<string 
 /**
  * Check if error is visible
  */
-export async function isErrorVisible(page: Page, timeout = 10000): Promise<boolean> {
+export async function isErrorVisible(page: Page, _timeout = 10000): Promise<boolean> {
   const error = page.locator('.chat-message.ai.error')
   const errorMessage = page.locator('.chat-message.ai:has-text("Error:")')
 
