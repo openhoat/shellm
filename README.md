@@ -11,7 +11,9 @@
 [![GitHub forks](https://img.shields.io/github/forks/openhoat/shellm?style=social)](https://github.com/openhoat/shellm/network/members)
 [![GitHub issues](https://img.shields.io/github/issues/openhoat/shellm)](https://github.com/openhoat/shellm/issues)
 
-A modern terminal powered by artificial intelligence, inspired by [Warp](https://www.warp.dev). SheLLM allows you to describe what you want to do in natural language and the AI generates the appropriate shell commands.
+A modern terminal powered by artificial intelligence, inspired by [Warp](https://www.warp.dev).
+
+SheLLM allows you to describe what you want to do in natural language and the AI generates the appropriate shell commands.
 
 > 🤖 **This project was entirely built with AI** — from architecture to code, tests, and documentation, using [Claude Code](https://claude.ai/claude-code) (Anthropic).
 
