@@ -86,6 +86,18 @@ export const Header = () => {
     }
   }
 
+  const getProviderStatus = () => {
+    if (config.llmProvider === 'claude') {
+      return `Claude: ${config.claude.model}`
+    }
+    if (config.llmProvider === 'openai') {
+      return `OpenAI: ${config.openai.model}`
+    }
+    return config.ollama.url === 'http://localhost:11434'
+      ? 'Ollama: Local'
+      : `Ollama: ${config.ollama.url}`
+  }
+
   return (
     <header className="header">
       <div className="header-left">
@@ -98,11 +110,7 @@ export const Header = () => {
       <div className="header-right">
         <div className="status-indicator">
           <span className={`status-dot ${config.theme === 'dark' ? 'active' : ''}`}></span>
-          <span className="status-text">
-            {config.ollama.url === 'http://localhost:11434'
-              ? 'Ollama: Local'
-              : `Ollama: ${config.ollama.url}`}
-          </span>
+          <span className="status-text">{getProviderStatus()}</span>
         </div>
         <div className="conversation-controls">
           <button

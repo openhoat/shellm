@@ -11,6 +11,7 @@ To view the complete history, use: `git log`
 
 #### 15/02
 
+- **[20:55:00] 🐛 [FIX]** Fix status indicator in Header to display correct provider (Claude/OpenAI/Ollama) via getProviderStatus helper
 - **[20:50:00] ✨ [FEAT]** Add OpenAI provider support (gpt-4o, gpt-4) with openai-provider.ts, ConfigPanel section, and locales
 - **[20:45:00] 🔧 [CHORE]** Add multi-OS matrix (ubuntu, macos, windows) to CI pipeline in .github/workflows/ci.yml
 - **[20:42:00] ✨ [FEAT]** Add global React ErrorBoundary wrapping App in src/main.tsx with fallback UI
