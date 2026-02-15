@@ -27,7 +27,8 @@
         "provider": "LLM Provider",
         "providers": {
           "ollama": "Ollama (local/cloud)",
-          "claude": "Claude (Anthropic)"
+          "claude": "Claude (Anthropic)",
+          "openai": "OpenAI (GPT-4o, GPT-4)"
         }
       },
       "ollama": {
@@ -41,8 +42,30 @@
         "apiKey": "Anthropic API Key",
         "model": "Claude model"
       },
+      "openai": {
+        "title": "OpenAI Configuration",
+        "apiKey": "OpenAI API Key",
+        "model": "OpenAI model"
+      },
       "language": {
         "title": "Language"
+      },
+      "interface": {
+        "title": "Interface",
+        "theme": "Theme",
+        "themeDark": "Dark",
+        "themeLight": "Light",
+        "fontSize": "Font size"
+      },
+      "terminal": {
+        "title": "Terminal",
+        "shell": "Shell"
+      },
+      "common": {
+        "apiKeyOptional": "API Key (optional)",
+        "maxTokens": "Max Tokens",
+        "temperature": "Temperature",
+        "reset": "Reset"
       }
     },
     "models": {
@@ -54,7 +77,14 @@
       "connection": "Connection error",
       "connectionSuccess": "Connection successful",
       "loadModels": "Error loading models",
-      "saveConfig": "Error saving configuration"
+      "saveConfig": "Error saving configuration",
+      "aiGenerationFailed": "Unable to generate the command. Check your LLM service connection and try again.",
+      "aiGenerationFailedOffline": "Unable to connect to the LLM service. Check that the server is running.",
+      "commandExecutionFailed": "The command could not be executed. Check that the terminal is working correctly.",
+      "injectionWarning": "Warning: injection characters detected and removed for security: {{patterns}}",
+      "outputInterpretationFailed": "Unable to analyze the command output. The output will be displayed without analysis.",
+      "terminalNotReady": "The terminal is not ready. Wait a few seconds for the terminal to initialize or restart the application.",
+      "unknownError": "An unexpected error occurred. If the problem persists, please restart the application."
     },
     "test": {
       "connection": "Test connection"
