@@ -8,6 +8,7 @@ export const ENV_VAR_OLLAMA_MODEL = 'SHELLM_OLLAMA_MODEL'
 export const ENV_VAR_OLLAMA_TEMPERATURE = 'SHELLM_OLLAMA_TEMPERATURE'
 export const ENV_VAR_OLLAMA_MAX_TOKENS = 'SHELLM_OLLAMA_MAX_TOKENS'
 export const ENV_VAR_CLAUDE_API_KEY = 'SHELLM_CLAUDE_API_KEY'
+export const ENV_VAR_ANTHROPIC_API_KEY = 'ANTHROPIC_API_KEY'
 export const ENV_VAR_CLAUDE_MODEL = 'SHELLM_CLAUDE_MODEL'
 export const ENV_VAR_SHELL = 'SHELLM_SHELL'
 
@@ -77,7 +78,8 @@ export function getEnvConfig(): {
         : undefined,
     },
     claude: {
-      apiKey: process.env[ENV_VAR_CLAUDE_API_KEY] ?? undefined,
+      apiKey:
+        process.env[ENV_VAR_CLAUDE_API_KEY] ?? process.env[ENV_VAR_ANTHROPIC_API_KEY] ?? undefined,
       model: process.env[ENV_VAR_CLAUDE_MODEL] ?? undefined,
     },
     app: {
@@ -115,10 +117,7 @@ export function mergeConfig(storedConfig: AppConfig): AppConfig {
   }
 
   if (envConfig.app) {
-    if (
-      envConfig.app.llmProvider === 'ollama' ||
-      envConfig.app.llmProvider === 'claude'
-    ) {
+    if (envConfig.app.llmProvider === 'ollama' || envConfig.app.llmProvider === 'claude') {
       mergedConfig.llmProvider = envConfig.app.llmProvider
     }
     mergedConfig.shell = envConfig.app.shell ?? storedConfig.shell
@@ -149,7 +148,7 @@ export function getEnvSources(): {
     maxTokens: !!process.env[ENV_VAR_OLLAMA_MAX_TOKENS],
     shell: !!process.env[ENV_VAR_SHELL],
     llmProvider: !!process.env[ENV_VAR_LLM_PROVIDER],
-    claudeApiKey: !!process.env[ENV_VAR_CLAUDE_API_KEY],
+    claudeApiKey: !!(process.env[ENV_VAR_CLAUDE_API_KEY] || process.env[ENV_VAR_ANTHROPIC_API_KEY]),
     claudeModel: !!process.env[ENV_VAR_CLAUDE_MODEL],
   }
 }

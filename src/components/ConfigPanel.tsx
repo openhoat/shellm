@@ -65,15 +65,32 @@ export const ConfigPanel = () => {
     }
   }, [localConfig])
 
+  // Sync local form state from the store config
   useEffect(() => {
     setLocalConfig(config)
+  }, [config])
+
+  // Load env sources once on mount
+  useEffect(() => {
     loadEnvSources()
+  }, [loadEnvSources])
+
+  // Initialize model list when store config changes (uses config, not localConfig)
+  useEffect(() => {
     if (config.llmProvider === 'ollama' && config.ollama.url) {
-      loadModels()
+      setIsLoadingModels(true)
+      window.electronAPI
+        .llmInit(config)
+        .then(() => window.electronAPI.llmListModels())
+        .then(models => setAvailableModels(models))
+        .catch(() => {
+          // Silently fail, user can still type model name
+        })
+        .finally(() => setIsLoadingModels(false))
     } else if (config.llmProvider === 'claude') {
       setAvailableModels(CLAUDE_MODELS)
     }
-  }, [config, loadEnvSources, loadModels])
+  }, [config])
 
   const handleSave = async () => {
     await window.electronAPI.setConfig(localConfig)
@@ -137,9 +154,7 @@ export const ConfigPanel = () => {
             <div className="config-field">
               <label htmlFor="llm-provider">
                 {t('config.llm.provider')}
-                {envSources.llmProvider && (
-                  <span className="env-badge">Environment variable</span>
-                )}
+                {envSources.llmProvider && <span className="env-badge">Environment variable</span>}
               </label>
               <select
                 id="llm-provider"
@@ -279,9 +294,7 @@ export const ConfigPanel = () => {
               <div className="config-field">
                 <label htmlFor="ollama-max-tokens">
                   Max Tokens
-                  {envSources.maxTokens && (
-                    <span className="env-badge">Environment variable</span>
-                  )}
+                  {envSources.maxTokens && <span className="env-badge">Environment variable</span>}
                 </label>
                 <input
                   id="ollama-max-tokens"
@@ -334,7 +347,8 @@ export const ConfigPanel = () => {
                 />
                 {envSources.claudeApiKey && (
                   <div className="env-hint">
-                    Value set by environment variable <code>SHELLM_CLAUDE_API_KEY</code>
+                    Value set by environment variable <code>SHELLM_CLAUDE_API_KEY</code> or{' '}
+                    <code>ANTHROPIC_API_KEY</code>
                   </div>
                 )}
               </div>

@@ -4,6 +4,7 @@ exports.DEFAULT_CONFIG =
   exports.DEFAULT_OLLAMA_CONFIG =
   exports.ENV_VAR_SHELL =
   exports.ENV_VAR_CLAUDE_MODEL =
+  exports.ENV_VAR_ANTHROPIC_API_KEY =
   exports.ENV_VAR_CLAUDE_API_KEY =
   exports.ENV_VAR_OLLAMA_MAX_TOKENS =
   exports.ENV_VAR_OLLAMA_TEMPERATURE =
@@ -23,6 +24,7 @@ exports.ENV_VAR_OLLAMA_MODEL = 'SHELLM_OLLAMA_MODEL'
 exports.ENV_VAR_OLLAMA_TEMPERATURE = 'SHELLM_OLLAMA_TEMPERATURE'
 exports.ENV_VAR_OLLAMA_MAX_TOKENS = 'SHELLM_OLLAMA_MAX_TOKENS'
 exports.ENV_VAR_CLAUDE_API_KEY = 'SHELLM_CLAUDE_API_KEY'
+exports.ENV_VAR_ANTHROPIC_API_KEY = 'ANTHROPIC_API_KEY'
 exports.ENV_VAR_CLAUDE_MODEL = 'SHELLM_CLAUDE_MODEL'
 exports.ENV_VAR_SHELL = 'SHELLM_SHELL'
 // Default Ollama configuration
@@ -66,7 +68,10 @@ function getEnvConfig() {
         : undefined,
     },
     claude: {
-      apiKey: process.env[exports.ENV_VAR_CLAUDE_API_KEY] ?? undefined,
+      apiKey:
+        process.env[exports.ENV_VAR_CLAUDE_API_KEY] ??
+        process.env[exports.ENV_VAR_ANTHROPIC_API_KEY] ??
+        undefined,
       model: process.env[exports.ENV_VAR_CLAUDE_MODEL] ?? undefined,
     },
     app: {
@@ -119,7 +124,9 @@ function getEnvSources() {
     maxTokens: !!process.env[exports.ENV_VAR_OLLAMA_MAX_TOKENS],
     shell: !!process.env[exports.ENV_VAR_SHELL],
     llmProvider: !!process.env[exports.ENV_VAR_LLM_PROVIDER],
-    claudeApiKey: !!process.env[exports.ENV_VAR_CLAUDE_API_KEY],
+    claudeApiKey: !!(
+      process.env[exports.ENV_VAR_CLAUDE_API_KEY] || process.env[exports.ENV_VAR_ANTHROPIC_API_KEY]
+    ),
     claudeModel: !!process.env[exports.ENV_VAR_CLAUDE_MODEL],
   }
 }
