@@ -4,6 +4,9 @@
 [![CI](https://github.com/openhoat/shellm/actions/workflows/ci.yml/badge.svg)](https://github.com/openhoat/shellm/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/openhoat/shellm/branch/main/graph/badge.svg)](https://codecov.io/gh/openhoat/shellm)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)
+![Node.js](https://img.shields.io/badge/Node.js-22-339933.svg?logo=node.js&logoColor=white)
+![Electron](https://img.shields.io/badge/Electron-40-47848F.svg?logo=electron&logoColor=white)
+![Tested with Vitest](https://img.shields.io/badge/tested%20with-Vitest-6E9F18.svg?logo=vitest&logoColor=white)
 [![GitHub Stars](https://img.shields.io/github/stars/openhoat/shellm?style=social)](https://github.com/openhoat/shellm/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/openhoat/shellm?style=social)](https://github.com/openhoat/shellm/network/members)
 [![GitHub issues](https://img.shields.io/github/issues/openhoat/shellm)](https://github.com/openhoat/shellm/issues)
@@ -30,7 +33,7 @@ A modern terminal powered by artificial intelligence with Ollama, inspired by WA
 ### 1. Clone the project
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/openhoat/shellm.git
 cd shellm
 ```
 
@@ -222,15 +225,6 @@ shellm/
 - **Vitest**: Test framework
 - **Biome**: Code quality and formatting
 
-## 📦 CHANGELOG Archiving
-
-SheLLM features an automatic archiving system: recent changes (last 30 days) are kept in `CHANGELOG.md`, older changes are archived in `CHANGELOG_ARCHIVE.md`.
-
-```bash
-npm run archive-changelog  # Manual archiving
-CHANGELOG_RETENTION_DAYS=60 npm run archive-changelog  # Custom retention
-```
-
 ## 🧪 Tests
 
 SheLLM uses a test architecture with **Vitest** that separates business logic from the Electron layer, allowing approximately **80% of the code** to be tested without depending on Electron.
@@ -257,61 +251,17 @@ npm run test:watch
 npm run test:ui
 ```
 
-### Test Structure
-
-```
-src/
-├── test/
-│   ├── setup.ts              # Configuration + mocks window.electronAPI
-│   └── README.md             # Test documentation
-├── store/
-│   └── useStore.test.ts      # Zustand store tests
-└── components/
-    └── Header.test.tsx       # React component tests
-
-electron/
-├── ipc-handlers/
-│   ├── config.test.ts        # Config IPC handlers tests
-│   ├── conversation.test.ts  # Conversation IPC handlers tests
-│   ├── llm-service.test.ts   # LLM service IPC handlers tests
-│   └── terminal.test.ts      # Terminal IPC handlers tests
-```
-
 ### Adding a New Test
 
-1. Create a `.test.ts` or `.test.tsx` file in the corresponding folder
+1. Create a `.test.ts` or `.test.tsx` file next to the source file
 2. Use the `window.electronAPI` mocks defined in `src/test/setup.ts`
 3. Run tests with `npm test`
 
 ## 📝 Commit Conventions
 
-This project uses **commitlint** to standardize commit messages according to the [Conventional Commits](https://www.conventionalcommits.org/) format.
+This project follows [Conventional Commits](https://www.conventionalcommits.org/) enforced via commitlint and Git hooks.
 
-### Format
-
-```
-<type>(<scope>): <subject>
-```
-
-### Types
-
-`feat` | `fix` | `docs` | `style` | `refactor` | `perf` | `test` | `chore` | `revert`
-
-### Examples
-
-```bash
-git commit -m "feat: add Ollama configuration support"
-git commit -m "fix: resolve terminal connection error"
-git commit -m "docs: update README"
-```
-
-### Validation
-
-A Git hook automatically validates commit messages. To validate manually:
-
-```bash
-npm run commit:lint
-```
+Types: `feat` | `fix` | `docs` | `style` | `refactor` | `perf` | `test` | `chore` | `revert`
 
 ## 🔒 Security
 

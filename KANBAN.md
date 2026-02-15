@@ -24,10 +24,12 @@
 
 ### 🟡 P2 - Medium Priority
 
-- [ ] **[14/02/2026 13:59:42] 🟡 P2 📝 [DOCS]** Refresh README.md: remove unnecessary content and add value-added badges (coverage, testing, pipeline)
-- [ ] **[14/02/2026 13:59:42] 🟡 P2 📝 [DOCS]** Remove `docs/` directory (cleanup obsolete documentation)
 
 ### 🟢 P3 - Low Priority
 
 
 ## 🚧 In Progress
+
+### [15/02/2026 00:00:00] 💡 [IDEA] Documentation refresh and cleanup
+- [x] **[14/02/2026 13:59:42] 📝 [DOCS]** Refresh README.md: remove unnecessary content and add value-added badges (coverage, testing, pipeline)
+- [x] **[14/02/2026 13:59:42] 📝 [DOCS]** Remove `docs/` directory (cleanup obsolete documentation)
