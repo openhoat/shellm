@@ -1,4 +1,4 @@
-import type { AppConfig, ClaudeConfig, OllamaConfig } from './types'
+import type { AppConfig, ClaudeConfig, OllamaConfig, OpenAIConfig } from './types'
 
 // Environment variable names
 export const ENV_VAR_LLM_PROVIDER = 'SHELLM_LLM_PROVIDER'
@@ -10,6 +10,8 @@ export const ENV_VAR_OLLAMA_MAX_TOKENS = 'SHELLM_OLLAMA_MAX_TOKENS'
 export const ENV_VAR_CLAUDE_API_KEY = 'SHELLM_CLAUDE_API_KEY'
 export const ENV_VAR_ANTHROPIC_API_KEY = 'ANTHROPIC_API_KEY'
 export const ENV_VAR_CLAUDE_MODEL = 'SHELLM_CLAUDE_MODEL'
+export const ENV_VAR_OPENAI_API_KEY = 'SHELLM_OPENAI_API_KEY'
+export const ENV_VAR_OPENAI_MODEL = 'SHELLM_OPENAI_MODEL'
 export const ENV_VAR_SHELL = 'SHELLM_SHELL'
 
 // Default Ollama configuration
@@ -29,11 +31,20 @@ export const DEFAULT_CLAUDE_CONFIG: ClaudeConfig = {
   maxTokens: 1000,
 }
 
+// Default OpenAI configuration
+export const DEFAULT_OPENAI_CONFIG: OpenAIConfig = {
+  apiKey: '',
+  model: 'gpt-4o',
+  temperature: 0.7,
+  maxTokens: 1000,
+}
+
 // Default application configuration
 export const DEFAULT_CONFIG: AppConfig = {
   llmProvider: 'ollama',
   ollama: DEFAULT_OLLAMA_CONFIG,
   claude: DEFAULT_CLAUDE_CONFIG,
+  openai: DEFAULT_OPENAI_CONFIG,
   theme: 'dark',
   fontSize: 14,
   shell: 'auto',
@@ -52,6 +63,11 @@ interface EnvClaudeConfig {
   model?: string | undefined
 }
 
+interface EnvOpenAIConfig {
+  apiKey?: string | undefined
+  model?: string | undefined
+}
+
 interface EnvAppConfig {
   llmProvider: string | undefined
   shell: string | undefined
@@ -63,6 +79,7 @@ interface EnvAppConfig {
 export function getEnvConfig(): {
   ollama: EnvOllamaConfig
   claude: EnvClaudeConfig
+  openai: EnvOpenAIConfig
   app: EnvAppConfig
 } {
   return {
@@ -81,6 +98,10 @@ export function getEnvConfig(): {
       apiKey:
         process.env[ENV_VAR_CLAUDE_API_KEY] ?? process.env[ENV_VAR_ANTHROPIC_API_KEY] ?? undefined,
       model: process.env[ENV_VAR_CLAUDE_MODEL] ?? undefined,
+    },
+    openai: {
+      apiKey: process.env[ENV_VAR_OPENAI_API_KEY] ?? undefined,
+      model: process.env[ENV_VAR_OPENAI_MODEL] ?? undefined,
     },
     app: {
       llmProvider: process.env[ENV_VAR_LLM_PROVIDER] ?? undefined,
@@ -116,8 +137,20 @@ export function mergeConfig(storedConfig: AppConfig): AppConfig {
     }
   }
 
+  if (envConfig.openai) {
+    mergedConfig.openai = {
+      ...storedConfig.openai,
+      apiKey: envConfig.openai.apiKey ?? storedConfig.openai.apiKey,
+      model: envConfig.openai.model ?? storedConfig.openai.model,
+    }
+  }
+
   if (envConfig.app) {
-    if (envConfig.app.llmProvider === 'ollama' || envConfig.app.llmProvider === 'claude') {
+    if (
+      envConfig.app.llmProvider === 'ollama' ||
+      envConfig.app.llmProvider === 'claude' ||
+      envConfig.app.llmProvider === 'openai'
+    ) {
       mergedConfig.llmProvider = envConfig.app.llmProvider
     }
     mergedConfig.shell = envConfig.app.shell ?? storedConfig.shell
@@ -139,6 +172,8 @@ export function getEnvSources(): {
   llmProvider: boolean
   claudeApiKey: boolean
   claudeModel: boolean
+  openaiApiKey: boolean
+  openaiModel: boolean
 } {
   return {
     url: !!process.env[ENV_VAR_OLLAMA_URL],
@@ -150,5 +185,7 @@ export function getEnvSources(): {
     llmProvider: !!process.env[ENV_VAR_LLM_PROVIDER],
     claudeApiKey: !!(process.env[ENV_VAR_CLAUDE_API_KEY] || process.env[ENV_VAR_ANTHROPIC_API_KEY]),
     claudeModel: !!process.env[ENV_VAR_CLAUDE_MODEL],
+    openaiApiKey: !!process.env[ENV_VAR_OPENAI_API_KEY],
+    openaiModel: !!process.env[ENV_VAR_OPENAI_MODEL],
   }
 }

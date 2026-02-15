@@ -3,6 +3,7 @@ import { type BrowserWindow, ipcMain } from 'electron'
 import type { BaseLLMProvider } from './providers/base-provider'
 import { ClaudeProvider } from './providers/claude-provider'
 import { OllamaProvider } from './providers/ollama-provider'
+import { OpenAIProvider } from './providers/openai-provider'
 
 /**
  * Create the appropriate LLM provider based on configuration
@@ -10,6 +11,9 @@ import { OllamaProvider } from './providers/ollama-provider'
 function createProvider(config: AppConfig): BaseLLMProvider {
   if (config.llmProvider === 'claude') {
     return new ClaudeProvider(config.claude)
+  }
+  if (config.llmProvider === 'openai') {
+    return new OpenAIProvider(config.openai)
   }
   return new OllamaProvider(config.ollama)
 }

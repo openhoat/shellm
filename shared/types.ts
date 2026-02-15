@@ -15,14 +15,23 @@ export interface ClaudeConfig {
   maxTokens?: number
 }
 
+// Configuration OpenAI
+export interface OpenAIConfig {
+  apiKey: string
+  model: string
+  temperature?: number
+  maxTokens?: number
+}
+
 // LLM provider name
-export type LLMProviderName = 'ollama' | 'claude'
+export type LLMProviderName = 'ollama' | 'claude' | 'openai'
 
 // Configuration application
 export interface AppConfig {
   llmProvider: LLMProviderName
   ollama: OllamaConfig
   claude: ClaudeConfig
+  openai: OpenAIConfig
   theme: 'dark' | 'light'
   fontSize: number
   shell: string
