@@ -11,15 +11,17 @@
 [![GitHub forks](https://img.shields.io/github/forks/openhoat/shellm?style=social)](https://github.com/openhoat/shellm/network/members)
 [![GitHub issues](https://img.shields.io/github/issues/openhoat/shellm)](https://github.com/openhoat/shellm/issues)
 
-A modern terminal powered by artificial intelligence with Ollama, inspired by WARP. SheLLM allows you to describe what you want to do in natural language and the AI generates the appropriate shell commands.
+A modern terminal powered by artificial intelligence, inspired by WARP. SheLLM allows you to describe what you want to do in natural language and the AI generates the appropriate shell commands.
+
+> 🤖 **This project was entirely built with AI** — from architecture to code, tests, and documentation, using [Claude Code](https://claude.ai/claude-code) (Anthropic).
 
 ## 🚀 Features
 
 - **Terminal Base**: Full terminal interface with xterm.js
 - **Integrated AI**: Generate shell commands from natural language descriptions
-- **Ollama Support**: Configurable connection to Ollama instances (local or remote)
+- **Multi-Provider LLM**: Supports [Ollama](https://ollama.ai) (local/remote) and [Claude](https://www.anthropic.com) (Anthropic API)
 - **Modern Interface**: Dark theme by default with optional light theme
-- **Flexible Configuration**: Ollama URL, model, temperature, and more
+- **Flexible Configuration**: Provider, model, temperature, and more — configurable via UI or environment variables
 - **History**: Track conversations and executed commands
 
 ## 📋 Prerequisites
@@ -43,28 +45,30 @@ cd shellm
 npm install
 ```
 
-### 3. Install and configure Ollama
+### 3. Configure an LLM provider
 
-#### Installing Ollama
+SheLLM supports two providers. Choose one (or both):
+
+#### Option A — Ollama (local or remote)
 
 Visit [ollama.ai](https://ollama.ai) and follow the installation instructions for your operating system.
 
-#### Starting Ollama
-
 ```bash
 ollama serve
+ollama pull llama2   # or any model of your choice
 ```
-
-#### Download a model
-
-```bash
-ollama pull llama2
-# or any other model of your choice
-```
-
-#### Using a remote instance
 
 If you're using Ollama on a remote machine, configure the URL in the SheLLM configuration panel.
+
+#### Option B — Claude (Anthropic API)
+
+Get an API key from [console.anthropic.com](https://console.anthropic.com) and set it as an environment variable:
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+```
+
+Then select **Claude** as the provider in the configuration panel.
 
 ### 4. Run the application
 
@@ -104,10 +108,11 @@ This environment variable is recommended to avoid warnings:
 
 1. Launch the application with `npm run dev`
 2. Click the gear icon in the top right to open configuration
-3. Configure your Ollama instance URL (default: `http://localhost:11434`)
-4. Click "Test connection" to verify the connection
-5. Select the model you want to use
-6. Click "Save"
+3. Select your LLM provider: **Ollama** or **Claude**
+4. Fill in the provider settings (Ollama URL or Claude API key)
+5. Click "Test connection" to verify the connection
+6. Select the model you want to use
+7. Click "Save"
 
 ### Using the AI
 
@@ -128,11 +133,22 @@ The terminal on the left works like a classic terminal. You can:
 
 ## ⚙️ Configuration
 
+### LLM Provider
+
+Select your provider in the configuration panel. The selection is also configurable via the `SHELLM_LLM_PROVIDER` environment variable (`ollama` or `claude`).
+
 ### Ollama
 
 - **URL**: Address of your Ollama instance (local or remote)
 - **API Key**: Optional, if your Ollama instance requires authentication
 - **Model**: Ollama model to use (llama2, mistral, etc.)
+- **Temperature**: Controls AI creativity (0 = more precise, 1 = more creative)
+- **Max Tokens**: Maximum number of tokens in the response
+
+### Claude
+
+- **API Key**: Your Anthropic API key (from [console.anthropic.com](https://console.anthropic.com))
+- **Model**: Claude model to use (claude-haiku-4-5-20251001, claude-sonnet-4-5-20250929, etc.)
 - **Temperature**: Controls AI creativity (0 = more precise, 1 = more creative)
 - **Max Tokens**: Maximum number of tokens in the response
 
@@ -147,11 +163,15 @@ Environment variables take **priority** over the UI configuration. Copy `.env.ex
 
 | Variable | Description | Default |
 |----------|-------------|---------|
+| `SHELLM_LLM_PROVIDER` | LLM provider to use (`ollama` or `claude`) | `ollama` |
 | `SHELLM_OLLAMA_URL` | Ollama instance URL | `http://localhost:11434` |
 | `SHELLM_OLLAMA_API_KEY` | API key for Ollama authentication | *(none)* |
-| `SHELLM_OLLAMA_MODEL` | AI model to use | `gemini-3-flash-preview:cloud` |
-| `SHELLM_OLLAMA_TEMPERATURE` | LLM temperature (0–1) | `0.7` |
-| `SHELLM_OLLAMA_MAX_TOKENS` | Maximum tokens in LLM response | `1000` |
+| `SHELLM_OLLAMA_MODEL` | Ollama model to use | `gemini-3-flash-preview:cloud` |
+| `SHELLM_OLLAMA_TEMPERATURE` | Ollama temperature (0–1) | `0.7` |
+| `SHELLM_OLLAMA_MAX_TOKENS` | Maximum tokens for Ollama response | `1000` |
+| `SHELLM_CLAUDE_API_KEY` | Anthropic API key for Claude | *(none)* |
+| `ANTHROPIC_API_KEY` | Standard Anthropic API key (fallback for `SHELLM_CLAUDE_API_KEY`) | *(none)* |
+| `SHELLM_CLAUDE_MODEL` | Claude model to use | `claude-haiku-4-5-20251001` |
 | `SHELLM_SHELL` | Shell to use (`auto` for system default, or explicit path) | `auto` |
 | `SHELLM_DEVTOOLS` | Open DevTools on application launch (`true`/`false`) | `false` |
 | `ELECTRON_OZONE_PLATFORM_HINT` | Force X11 on Linux Wayland (`x11`) | *(unset)* |
@@ -257,4 +277,6 @@ Olivier Penhoat <openhoat@gmail.com>
 
 - WARP for the inspiration
 - The Ollama team for their excellent tool
+- Anthropic for the Claude API
+- [Claude Code](https://claude.ai/claude-code) — the AI assistant that built this project
 - The open-source community
