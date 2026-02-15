@@ -11,6 +11,9 @@ To view the complete history, use: `git log`
 
 #### 15/02
 
+- **[21:22:00] ✅ [TEST]** Add unit tests for ChatPanel, Terminal, ConfigPanel, Resizer components (45 new tests)
+- **[21:22:00] 🔧 [CHORE]** Add E2E Playwright step to CI pipeline in .github/workflows/ci.yml (Linux/xvfb)
+- **[21:22:00] 🔧 [CHORE]** Update vitest.config.ts to include path aliases (@, @shared, @electron)
 - **[20:55:00] 🐛 [FIX]** Fix status indicator in Header to display correct provider (Claude/OpenAI/Ollama) via getProviderStatus helper
 - **[20:50:00] ✨ [FEAT]** Add OpenAI provider support (gpt-4o, gpt-4) with openai-provider.ts, ConfigPanel section, and locales
 - **[20:45:00] 🔧 [CHORE]** Add multi-OS matrix (ubuntu, macos, windows) to CI pipeline in .github/workflows/ci.yml
