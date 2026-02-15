@@ -83,6 +83,30 @@ export const defaultMockEnvSources = {
 }
 
 /**
+ * Mock command execution result
+ */
+export interface MockCommandExecution {
+  /** Output from the command */
+  output: string
+  /** Exit code (0 = success) */
+  exitCode?: number
+  /** Delay before returning output (ms) */
+  delay?: number
+}
+
+/**
+ * Mock error configuration
+ */
+export interface MockErrors {
+  /** Error to throw when llmGenerateCommand is called */
+  llmGenerate?: Error
+  /** Return false for llmTestConnection */
+  llmConnectionFailed?: boolean
+  /** Error to throw when terminalWrite is called */
+  terminalWrite?: Error
+}
+
+/**
  * Create a mock electronAPI object for E2E tests
  * This can be injected into the renderer process via Playwright
  */
@@ -97,6 +121,10 @@ export function createMockElectronAPI(
     terminalPid?: number
     terminalOutput?: string
     envSources?: typeof defaultMockEnvSources
+    /** Mock errors to simulate failures */
+    errors?: MockErrors
+    /** Command execution result mock */
+    commandExecution?: MockCommandExecution
   } = {}
 ) {
   const {
@@ -109,11 +137,17 @@ export function createMockElectronAPI(
     terminalPid = 12345,
     terminalOutput = 'total 16\ndrwxr-xr-x  2 user user 4096 Jan  1 12:00 .',
     envSources = defaultMockEnvSources,
+    errors = {},
+    commandExecution,
   } = options
 
   // Store for conversations
   let storedConversations = [...conversations]
   let currentConversationId: string | null = conversations[0]?.id || null
+
+  // Store for command execution state (simulates terminal capturing output)
+  let pendingCommandOutput = commandExecution?.output ?? terminalOutput
+  let pendingExitCode = commandExecution?.exitCode ?? 0
 
   return {
     // Config
@@ -127,7 +161,18 @@ export function createMockElectronAPI(
     // Terminal
     terminalCreate: async () => terminalPid,
     terminalWrite: async (_pid: number, _data: string) => {
-      // Mock writing to terminal
+      // Simulate error if configured
+      if (errors.terminalWrite) {
+        throw errors.terminalWrite
+      }
+      // Simulate command execution with optional delay
+      if (commandExecution) {
+        if (commandExecution.delay) {
+          await new Promise(resolve => setTimeout(resolve, commandExecution.delay))
+        }
+        pendingCommandOutput = commandExecution.output
+        pendingExitCode = commandExecution.exitCode ?? 0
+      }
     },
     terminalResize: async (_pid: number, _cols: number, _rows: number) => {
       // Mock terminal resize
@@ -136,14 +181,16 @@ export function createMockElectronAPI(
       // Mock terminal destroy
     },
     terminalStartCapture: async (_pid: number) => true,
-    terminalGetCapture: async (_pid: number) => terminalOutput,
+    terminalGetCapture: async (_pid: number) => pendingCommandOutput,
 
     // Terminal events
     onTerminalData: (_callback: (data: { pid: number; data: string }) => void) => {
       // Mock terminal data listener
+      // Could be enhanced to simulate real terminal output
     },
     onTerminalExit: (_callback: (data: { pid: number; code: number }) => void) => {
       // Mock terminal exit listener
+      // Could be enhanced to simulate command completion
     },
 
     // LLM
@@ -161,6 +208,10 @@ export function createMockElectronAPI(
       _conversationHistory?: ConversationMessage[],
       _language?: string
     ): Promise<AICommand> => {
+      // Simulate error if configured
+      if (errors.llmGenerate) {
+        throw errors.llmGenerate
+      }
       return aiCommand
     },
     llmExplainCommand: async (_command: string): Promise<string> => {
@@ -173,6 +224,10 @@ export function createMockElectronAPI(
       return interpretation
     },
     llmTestConnection: async (): Promise<boolean> => {
+      // Simulate connection failure if configured
+      if (errors.llmConnectionFailed) {
+        return false
+      }
       return connectionSuccess
     },
     llmListModels: async (): Promise<string[]> => {
@@ -264,22 +319,66 @@ export function createMockElectronAPI(
 
 /**
  * Script to inject mock electronAPI into the page
- * Use with page.addInitScript() in Playwright
+ * Use with context.addInitScript() in Playwright
+ *
+ * Note: This must be called BEFORE the page loads, otherwise the app
+ * will have already captured a reference to the real electronAPI.
  */
 export function getMockInjectionScript(
   options: Parameters<typeof createMockElectronAPI>[0] = {}
 ): string {
+  // Serialize error objects for the script
+  const serializedOptions = {
+    ...options,
+    errors: options.errors
+      ? {
+          llmGenerate: options.errors.llmGenerate
+            ? { message: options.errors.llmGenerate.message }
+            : undefined,
+          llmConnectionFailed: options.errors.llmConnectionFailed,
+          terminalWrite: options.errors.terminalWrite
+            ? { message: options.errors.terminalWrite.message }
+            : undefined,
+        }
+      : undefined,
+  }
+
   return `
-    // Create mock electronAPI
-    const mockAPI = ${createMockElectronAPI.toString()}(${JSON.stringify(options)});
+    // Create mock electronAPI before the app loads
+    (function() {
+      const options = ${JSON.stringify(serializedOptions)};
 
-    // Inject into window
-    Object.defineProperty(window, 'electronAPI', {
-      value: mockAPI,
-      writable: true,
-      configurable: true
-    });
+      // Reconstruct error objects if needed
+      if (options.errors) {
+        if (options.errors.llmGenerate) {
+          options.errors.llmGenerate = new Error(options.errors.llmGenerate.message);
+        }
+        if (options.errors.terminalWrite) {
+          options.errors.terminalWrite = new Error(options.errors.terminalWrite.message);
+        }
+      }
 
-    console.log('Mock electronAPI injected');
+      // Create the mock API using the same logic as createMockElectronAPI
+      const mockAPI = ${createMockElectronAPI.toString()}(options);
+
+      // Inject into window before any other scripts run
+      Object.defineProperty(window, 'electronAPI', {
+        value: mockAPI,
+        writable: true,
+        configurable: true
+      });
+
+      console.log('[E2E Mock] electronAPI injected successfully');
+    })();
   `
+}
+
+/**
+ * Options for launching the Electron app with mocks
+ */
+export interface LaunchOptions {
+  /** Mock configuration */
+  mocks?: Parameters<typeof createMockElectronAPI>[0]
+  /** Environment variables to set for the Electron process */
+  env?: Record<string, string>
 }

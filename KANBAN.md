@@ -29,8 +29,7 @@
 
 ### 🟢 P3 - Low Priority
 
-- [ ] **[13/02/2026 12:19:10] 🟢 P3 ✅ [TEST]** Implement comprehensive E2E test suite for application with smoke tests, chat functionality, terminal integration, configuration tests, and complete user workflows
 
 ## 🚧 In Progress
 
-(No tasks currently in progress)
+- [x] **[15/02/2026 14:30:00] ✅ [TEST]** Fix skipped E2E tests - implement proper mocking for config, chat, and workflow tests

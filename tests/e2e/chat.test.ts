@@ -193,28 +193,36 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
       }
     })
 
-    // Note: This test is skipped because it has timing issues with AI responses
-    // The AI may take too long to respond, or there may be race conditions
-    // TODO: Investigate proper wait handling for multiple sequential AI responses
-    test.skip('should display multiple messages in conversation', async () => {
-      const { app, page } = await launchElectronApp()
+    test('should display multiple messages in conversation', async () => {
+      // Use mocks to ensure fast, reliable AI responses
+      const { app, page } = await launchElectronApp({
+        mocks: {
+          aiCommand: {
+            type: 'command',
+            intent: 'list_files',
+            command: 'ls -la',
+            explanation: 'List all files',
+            confidence: 0.95,
+          },
+        },
+      })
 
       try {
         await waitForAppReady(page)
 
         // Send first message
         await sendMessage(page, 'List files')
-        await waitForAIResponse(page, 60000) // Increased timeout for first response
+        await waitForAIResponse(page, 10000)
 
         // Wait for input to be re-enabled
         await page.waitForSelector('.chat-input input:not([disabled])', { timeout: 5000 })
 
         // Send second message
         await sendMessage(page, 'Show current directory')
-        await waitForAIResponse(page, 60000) // Increased timeout for second response
+        await waitForAIResponse(page, 10000)
 
         // Wait for all messages to be fully rendered
-        await page.waitForTimeout(1000)
+        await page.waitForTimeout(500)
 
         // Check we have multiple messages - at least 2 user messages and 2 AI responses
         const userMessages = await getUserMessages(page)
@@ -426,32 +434,18 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
   })
 
   test.describe('Error handling', () => {
-    // Note: These tests are skipped because mocking window.electronAPI doesn't work
-    // The app captures the API reference during initialization before the mock is set up.
-    //
-    // To fix these tests, we need one of the following approaches:
-    // 1. Add a test mode to the app (window.__TEST_MODE__) that allows error injection
-    // 2. Mock at the Electron IPC handler level (main process)
-    // 3. Use dependency injection in services to allow mocking
-    //
-    // For now, error handling is tested manually and through unit tests.
-    test.skip('should display error when AI generation fails', async () => {
-      const { app, page } = await launchElectronApp()
+    test('should display error when AI generation fails', async () => {
+      // Use mocks to inject error before app loads
+      const { app, page } = await launchElectronApp({
+        mocks: {
+          errors: {
+            llmGenerate: new Error('Connection refused'),
+          },
+        },
+      })
 
       try {
         await waitForAppReady(page)
-
-        // Override electronAPI to simulate failure
-        // Note: This mock doesn't work because the app has already captured the API reference
-        await page.evaluate(() => {
-          const originalAPI = window.electronAPI
-          window.electronAPI = {
-            ...originalAPI,
-            llmGenerateCommand: async () => {
-              throw new Error('Connection refused')
-            },
-          }
-        })
 
         // Send a message that will trigger the error
         await sendMessage(page, 'List files')
