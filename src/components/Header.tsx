@@ -129,6 +129,8 @@ export const Header = () => {
             className="icon-button"
             onClick={() => setShowConversationList(!showConversationList)}
             title="Conversations"
+            aria-expanded={showConversationList}
+            aria-haspopup="listbox"
           >
             <svg
               width="20"
