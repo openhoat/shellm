@@ -13,6 +13,7 @@ import {
   resetConfig,
   saveConfig,
   sendMessage,
+  setReactInputValue,
   waitForAIResponse,
   waitForCommandActions,
   waitForCommandExecution,
@@ -90,49 +91,35 @@ test.describe('SheLLM E2E - User Workflows', () => {
   })
 
   test.describe('Configuration change workflow', () => {
-    // Note: This test is skipped because React controlled inputs in Electron apps
-    // don't respond properly to Playwright's simulated events.
-    // TODO: Investigate proper mocking of environment variables and React state updates
-    test.skip('should change settings and verify persistence', async () => {
-      const { app, page } = await launchElectronApp()
+    test('should change settings and verify persistence', async () => {
+      // Launch with empty env vars to ensure fields are NOT disabled
+      const { app, page } = await launchElectronApp({
+        env: {
+          SHELLM_OLLAMA_TEMPERATURE: '',
+          SHELLM_OLLAMA_MAX_TOKENS: '',
+        },
+      })
 
       try {
         // Step 1: Open config
         await waitForAppReady(page)
         await openConfigPanel(page)
 
-        // Step 2: Check if fields are disabled and skip if so
+        // Step 2: Verify fields are NOT disabled
         const tempField = page.locator('#ollama-temperature')
         const maxTokensField = page.locator('#ollama-max-tokens')
         const tempDisabled = await tempField.isDisabled()
         const maxTokensDisabled = await maxTokensField.isDisabled()
 
-        if (tempDisabled || maxTokensDisabled) {
-          console.log('Skipping: fields are disabled by environment variables')
-          return
-        }
+        // With empty env vars, fields should NOT be disabled
+        expect(tempDisabled).toBe(false)
+        expect(maxTokensDisabled).toBe(false)
 
         // Step 3: Change temperature using React-aware setter for range input
-        await page.evaluate(() => {
-          const tempInput = document.querySelector('#ollama-temperature') as HTMLInputElement
-          if (tempInput) {
-            const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-              window.HTMLInputElement.prototype,
-              'value'
-            )?.set
-            if (nativeInputValueSetter) {
-              nativeInputValueSetter.call(tempInput, '0.5')
-            }
-            tempInput.dispatchEvent(new Event('input', { bubbles: true }))
-            tempInput.dispatchEvent(new Event('change', { bubbles: true }))
-          }
-        })
+        await setReactInputValue(page, '#ollama-temperature', '0.5')
 
-        // Step 4: Change max tokens using type method for number input
-        await maxTokensField.focus()
-        await maxTokensField.press('Control+a')
-        await maxTokensField.type('2000', { delay: 10 })
-        await maxTokensField.press('Tab')
+        // Step 4: Change max tokens using React-aware setter
+        await setReactInputValue(page, '#ollama-max-tokens', '2000')
 
         // Step 5: Save
         await saveConfig(page)
@@ -248,32 +235,19 @@ test.describe('SheLLM E2E - User Workflows', () => {
   })
 
   test.describe('Error handling workflow', () => {
-    // Note: These tests are skipped because mocking window.electronAPI doesn't work
-    // The app captures the API reference during initialization before the mock is set up.
-    //
-    // To fix these tests, we need one of the following approaches:
-    // 1. Add a test mode to the app (window.__TEST_MODE__) that allows error injection
-    // 2. Mock at the Electron IPC handler level (main process)
-    // 3. Use dependency injection in services to allow mocking
-    //
-    // For now, error handling is tested manually and through unit tests.
-    test.skip('should handle Ollama unavailable gracefully', async () => {
-      const { app, page } = await launchElectronApp()
+    test('should handle Ollama unavailable gracefully', async () => {
+      // Launch with mock that simulates Ollama unavailable
+      const { app, page } = await launchElectronApp({
+        mocks: {
+          errors: {
+            llmGenerate: new Error('ECONNREFUSED: Connection refused'),
+            llmConnectionFailed: true,
+          },
+        },
+      })
 
       try {
         await waitForAppReady(page)
-
-        // Override electronAPI to simulate Ollama unavailable
-        await page.evaluate(() => {
-          const originalAPI = window.electronAPI
-          window.electronAPI = {
-            ...originalAPI,
-            llmGenerateCommand: async () => {
-              throw new Error('ECONNREFUSED: Connection refused')
-            },
-            llmTestConnection: async () => false,
-          }
-        })
 
         // Try to send a message
         await sendMessage(page, 'List files')
@@ -286,40 +260,45 @@ test.describe('SheLLM E2E - User Workflows', () => {
       }
     })
 
-    test.skip('should recover from error and continue', async () => {
-      const { app, page } = await launchElectronApp()
+    test('should recover from error and continue', async () => {
+      // First launch with error mock to trigger error state
+      const { app: app1, page: page1 } = await launchElectronApp({
+        mocks: {
+          errors: {
+            llmGenerate: new Error('Network error'),
+          },
+        },
+      })
 
       try {
-        await waitForAppReady(page)
+        await waitForAppReady(page1)
 
-        // First, simulate an error
-        await page.evaluate(() => {
-          const originalAPI = window.electronAPI
-          window.electronAPI = {
-            ...originalAPI,
-            llmGenerateCommand: async () => {
-              throw new Error('Network error')
-            },
-          }
-        })
-
-        await sendMessage(page, 'This will fail')
-        const hasError = await isErrorVisible(page, 15000)
+        // Send a message that will fail
+        await sendMessage(page1, 'This will fail')
+        const hasError = await isErrorVisible(page1, 15000)
         expect(hasError).toBe(true)
+      } finally {
+        await closeElectronApp(app1)
+      }
 
-        // Now restore normal API by reloading the page
-        await page.evaluate(() => {
-          window.location.reload()
-        })
+      // Now launch a fresh app without errors to test recovery
+      const { app: app2, page: page2 } = await launchElectronApp()
 
-        await waitForAppReady(page)
+      try {
+        await waitForAppReady(page2)
 
         // Try again - should work now
-        await sendMessage(page, 'List files')
-        await waitForAIResponse(page)
+        await sendMessage(page2, 'List files')
+        await waitForAIResponse(page2, 30000)
 
         // Verify response received
-        const messages = await getChatMessages(page)
+        const messages = await getChatMessages(page2)
+        expect(messages.length).toBeGreaterThan(0)
+      } finally {
+        await closeElectronApp(app2)
+      }
+    })
+  })
         expect(messages.length).toBeGreaterThan(0)
       } finally {
         await closeElectronApp(app)

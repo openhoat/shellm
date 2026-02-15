@@ -8,6 +8,7 @@ import {
   openConfigPanel,
   resetConfig,
   saveConfig,
+  setReactInputValue,
   testConnection,
   waitForTestResult,
 } from './helpers'
@@ -273,13 +274,14 @@ test.describe('SheLLM E2E - Configuration', () => {
   })
 
   test.describe('Configuration modification', () => {
-    // Note: Text/number input modification tests are skipped because React controlled inputs
-    // in Electron apps don't respond properly to Playwright's simulated events.
-    // The fields may also be readonly due to environment variables (SHELLM_OLLAMA_URL, etc.)
-    // which makes them disabled but the isDisabled() check might not catch readonly state.
-    // TODO: Investigate proper mocking of environment variables for E2E tests
-    test.skip('should allow changing Ollama URL if not disabled by env', async () => {
-      const { app, page } = await launchElectronApp()
+    test('should allow changing Ollama URL if not disabled by env', async () => {
+      // Launch with empty env vars to ensure URL field is NOT disabled
+      const { app, page } = await launchElectronApp({
+        env: {
+          SHELLM_OLLAMA_URL: '',
+          SHELLM_OLLAMA_API_KEY: '',
+        },
+      })
 
       try {
         await waitForAppReady(page)
@@ -288,16 +290,11 @@ test.describe('SheLLM E2E - Configuration', () => {
         const urlField = page.locator('#ollama-url')
         const isDisabled = await urlField.isDisabled()
 
-        if (isDisabled) {
-          console.log('Skipping: URL field is disabled by environment variable')
-          return
-        }
+        // With empty env vars, the field should NOT be disabled
+        expect(isDisabled).toBe(false)
 
-        // Focus the field and select all, then type new value
-        await urlField.focus()
-        await urlField.press('Control+a')
-        await urlField.type('http://custom-ollama:11434', { delay: 10 })
-        await urlField.press('Tab') // Blur to trigger state update
+        // Use React-aware input setter for controlled input
+        await setReactInputValue(page, '#ollama-url', 'http://custom-ollama:11434')
 
         const value = await urlField.inputValue()
         expect(value).toBe('http://custom-ollama:11434')
@@ -344,8 +341,13 @@ test.describe('SheLLM E2E - Configuration', () => {
       }
     })
 
-    test.skip('should allow changing max tokens if not disabled by env', async () => {
-      const { app, page } = await launchElectronApp()
+    test('should allow changing max tokens if not disabled by env', async () => {
+      // Launch with empty env vars to ensure max tokens field is NOT disabled
+      const { app, page } = await launchElectronApp({
+        env: {
+          SHELLM_OLLAMA_MAX_TOKENS: '',
+        },
+      })
 
       try {
         await waitForAppReady(page)
@@ -354,16 +356,11 @@ test.describe('SheLLM E2E - Configuration', () => {
         const maxTokensField = page.locator('#ollama-max-tokens')
         const isDisabled = await maxTokensField.isDisabled()
 
-        if (isDisabled) {
-          console.log('Skipping: max tokens field is disabled by environment variable')
-          return
-        }
+        // With empty env var, the field should NOT be disabled
+        expect(isDisabled).toBe(false)
 
-        // Focus the field and select all, then type new value
-        await maxTokensField.focus()
-        await maxTokensField.press('Control+a')
-        await maxTokensField.type('2000', { delay: 10 })
-        await maxTokensField.press('Tab') // Blur to trigger state update
+        // Use React-aware input setter for controlled input
+        await setReactInputValue(page, '#ollama-max-tokens', '2000')
 
         const value = await maxTokensField.inputValue()
         expect(value).toBe('2000')

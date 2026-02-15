@@ -1,14 +1,37 @@
 import { execSync } from 'node:child_process'
 import path from 'node:path'
 import { type ElectronApplication, _electron as electron, type Page } from '@playwright/test'
+import { getMockInjectionScript, type LaunchOptions } from './mocks'
 
 /**
  * Helper to launch the Electron application for E2E testing
+ *
+ * @param options - Launch options including mocks and environment variables
+ * @returns The Electron application and the first page
+ *
+ * @example
+ * // Launch with mock configuration
+ * const { app, page } = await launchElectronApp({
+ *   mocks: {
+ *     commandExecution: { output: 'file1.txt\nfile2.txt', exitCode: 0 }
+ *   }
+ * })
+ *
+ * @example
+ * // Launch with environment variables for config testing
+ * const { app, page } = await launchElectronApp({
+ *   env: {
+ *     SHELLM_OLLAMA_URL: '',
+ *     SHELLM_OLLAMA_MODEL: '',
+ *   }
+ * })
  */
-export async function launchElectronApp(): Promise<{
+export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
   app: ElectronApplication
   page: Page
 }> {
+  const { mocks, env: customEnv } = options
+
   // Build the app first if needed
   const projectRoot = path.resolve(__dirname, '..', '..')
 
@@ -36,15 +59,30 @@ export async function launchElectronApp(): Promise<{
     args.push('--disable-dev-shm-usage')
   }
 
+  // Build environment variables
+  const env: Record<string, string> = {
+    ...process.env,
+    NODE_ENV: 'test',
+    SHELLM_DEVTOOLS: 'false',
+  }
+
+  // Add custom environment variables (for config testing)
+  if (customEnv) {
+    Object.assign(env, customEnv)
+  }
+
   // Launch Electron app
   const app = await electron.launch({
     args,
-    env: {
-      ...process.env,
-      NODE_ENV: 'test',
-      SHELLM_DEVTOOLS: 'false',
-    },
+    env,
   })
+
+  // Get the browser context and inject mock script if provided
+  const context = app.context()
+  if (mocks) {
+    const mockScript = getMockInjectionScript(mocks)
+    await context.addInitScript(mockScript)
+  }
 
   // Get the first window
   const page = await app.firstWindow()
