@@ -7,9 +7,22 @@ export interface OllamaConfig {
   maxTokens?: number
 }
 
+// Configuration Claude (Anthropic)
+export interface ClaudeConfig {
+  apiKey: string
+  model: string
+  temperature?: number
+  maxTokens?: number
+}
+
+// LLM provider name
+export type LLMProviderName = 'ollama' | 'claude'
+
 // Configuration application
 export interface AppConfig {
+  llmProvider: LLMProviderName
   ollama: OllamaConfig
+  claude: ClaudeConfig
   theme: 'dark' | 'light'
   fontSize: number
   shell: string

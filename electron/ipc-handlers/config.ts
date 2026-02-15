@@ -14,7 +14,7 @@ const isAppConfig = (value: unknown): value is AppConfig => {
 
   const config = value as Partial<AppConfig>
 
-  // Check required fields
+  // Check required ollama fields
   if (!config.ollama || typeof config.ollama !== 'object') {
     return false
   }
@@ -37,11 +37,26 @@ const isAppConfig = (value: unknown): value is AppConfig => {
   return true
 }
 
+/**
+ * Normalize a stored config to ensure all required fields exist (backward compat)
+ */
+function normalizeConfig(config: AppConfig): AppConfig {
+  return {
+    ...DEFAULT_CONFIG,
+    ...config,
+    ollama: { ...DEFAULT_CONFIG.ollama, ...config.ollama },
+    claude: config.claude
+      ? { ...DEFAULT_CONFIG.claude, ...config.claude }
+      : DEFAULT_CONFIG.claude,
+    llmProvider: config.llmProvider ?? DEFAULT_CONFIG.llmProvider,
+  }
+}
+
 export function createConfigHandlers(mainWindow: BrowserWindow, store: StoreType): void {
   // Get config (merged with environment variables)
   ipcMain.handle('config:get', async () => {
     const storedConfig = store.get('config')
-    const validConfig = isAppConfig(storedConfig) ? storedConfig : DEFAULT_CONFIG
+    const validConfig = isAppConfig(storedConfig) ? normalizeConfig(storedConfig) : DEFAULT_CONFIG
     return mergeConfig(validConfig)
   })
 

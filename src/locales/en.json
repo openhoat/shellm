@@ -22,11 +22,24 @@
     },
     "config": {
       "title": "Configuration",
+      "llm": {
+        "title": "LLM Configuration",
+        "provider": "LLM Provider",
+        "providers": {
+          "ollama": "Ollama (local/cloud)",
+          "claude": "Claude (Anthropic)"
+        }
+      },
       "ollama": {
         "title": "Ollama Configuration",
         "url": "Ollama server URL",
         "model": "Default model",
         "save": "Save"
+      },
+      "claude": {
+        "title": "Claude Configuration",
+        "apiKey": "Anthropic API Key",
+        "model": "Claude model"
       },
       "language": {
         "title": "Language"
