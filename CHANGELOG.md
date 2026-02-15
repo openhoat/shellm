@@ -11,6 +11,7 @@ To view the complete history, use: `git log`
 
 #### 15/02
 
+- **[15:16:00] 🎨 [STYLE]** Fix biome lint errors: remove console.log, fix unused variables, escape control chars in regex
 - **[14:30:00] ✅ [TEST]** Fix skipped E2E tests with proper mock injection via environment variables in llm-service.ts
 
 #### 14/02
