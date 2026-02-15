@@ -98,34 +98,6 @@ This environment variable is recommended to avoid warnings:
 - `--ozone-platform=wayland is not compatible with Vulkan`
 - Errors related to systemd
 
-### Production Build
-
-```bash
-npm run build
-```
-
-### Create Executables
-
-#### Linux
-
-```bash
-npm run dist:linux
-```
-
-#### macOS
-
-```bash
-npm run dist:mac
-```
-
-#### Windows
-
-```bash
-npm run dist:win
-```
-
-Executable files will be created in the `release/` folder.
-
 ## 📖 User Guide
 
 ### First Use
@@ -169,99 +141,60 @@ The terminal on the left works like a classic terminal. You can:
 - **Theme**: Dark (default) or Light
 - **Font Size**: Adjust text size (10-20px)
 
-## 🏗️ Architecture
+### Environment Variables
 
-### Project Structure
+Environment variables take **priority** over the UI configuration. Copy `.env.example` to `.env` to get started.
 
-```
-shellm/
-├── electron/              # Electron main process
-│   ├── main.ts           # Entry point
-│   ├── preload.ts        # Preload script
-│   ├── ipc-handlers/     # IPC handlers
-│   │   ├── terminal.ts   # Terminal management
-│   │   ├── llm-service.ts # LLM service (Ollama)
-│   │   ├── conversation.ts # Conversation management
-│   │   └── config.ts     # Configuration management
-│   ├── services/         # Electron services
-│   │   └── conversationService.ts
-│   ├── prompts/          # LLM prompt templates
-│   └── tsconfig.json     # TypeScript configuration
-├── src/                   # Renderer process (React)
-│   ├── components/       # React components
-│   │   ├── Terminal.tsx
-│   │   ├── ChatPanel.tsx
-│   │   ├── Header.tsx
-│   │   └── ConfigPanel.tsx
-│   ├── store/            # State management (Zustand)
-│   ├── types/            # TypeScript types
-│   ├── App.tsx
-│   ├── main.tsx
-│   └── App.css
-├── shared/               # Shared code
-│   └── types.ts          # Common TypeScript types
-├── dist/                 # React build (generated)
-├── dist-electron/        # Electron build (generated)
-├── release/              # Executables (generated)
-├── index.html
-├── package.json
-├── tsconfig.json
-├── vite.config.ts
-└── README.md
-```
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `SHELLM_OLLAMA_URL` | Ollama instance URL | `http://localhost:11434` |
+| `SHELLM_OLLAMA_API_KEY` | API key for Ollama authentication | *(none)* |
+| `SHELLM_OLLAMA_MODEL` | AI model to use | `gemini-3-flash-preview:cloud` |
+| `SHELLM_OLLAMA_TEMPERATURE` | LLM temperature (0–1) | `0.7` |
+| `SHELLM_OLLAMA_MAX_TOKENS` | Maximum tokens in LLM response | `1000` |
+| `SHELLM_SHELL` | Shell to use (`auto` for system default, or explicit path) | `auto` |
+| `SHELLM_DEVTOOLS` | Open DevTools on application launch (`true`/`false`) | `false` |
+| `ELECTRON_OZONE_PLATFORM_HINT` | Force X11 on Linux Wayland (`x11`) | *(unset)* |
 
-### Technologies Used
+## 📦 Build Executables
 
-- **Electron**: Desktop application framework
-- **React**: UI library
-- **TypeScript**: Static typing
-- **Vite**: Build tool and dev server
-- **xterm.js**: Terminal emulator
-- **node-pty**: PTY terminal emulation
-- **Zustand**: State management
-- **LangChain**: LLM framework for structured outputs
-- **Ollama**: Local LLM
-- **Axios**: HTTP client
-- **Vitest**: Test framework
-- **Biome**: Code quality and formatting
+SheLLM uses [electron-builder](https://www.electron.build/) to package the application into platform-specific distributables.
 
-## 🧪 Tests
+### Prerequisites
 
-SheLLM uses a test architecture with **Vitest** that separates business logic from the Electron layer, allowing approximately **80% of the code** to be tested without depending on Electron.
+Before building, make sure the following tools are installed on your system:
 
-### What is Tested
+| Platform | Required tools |
+|----------|---------------|
+| Linux    | `build-essential`, `python3`, `make` |
+| macOS    | Xcode Command Line Tools (`xcode-select --install`) |
+| Windows  | [Visual Studio Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) |
 
-✅ **State Logic (Zustand)**: State management, actions (setConfig, setAiCommand, addToHistory, etc.)
-✅ **React Components**: Rendering logic and user interactions
-✅ **Shared Types**: Data structures
-✅ **Electron IPC Layer**: Config, Conversation, LLM Service, Terminal handlers
-❌ **Electron Window**: `electron/main.ts`
-❌ **Full Integration**: E2E tests
-
-### Running Tests
+### Linux
 
 ```bash
-# Run tests
-npm test
-
-# Watch mode (auto-re-run)
-npm run test:watch
-
-# UI mode (interactive interface)
-npm run test:ui
+npm run dist:linux
 ```
 
-### Adding a New Test
+Generates `.AppImage` and `.deb` packages in the `release/` folder.
 
-1. Create a `.test.ts` or `.test.tsx` file next to the source file
-2. Use the `window.electronAPI` mocks defined in `src/test/setup.ts`
-3. Run tests with `npm test`
+### macOS
 
-## 📝 Commit Conventions
+```bash
+npm run dist:mac
+```
 
-This project follows [Conventional Commits](https://www.conventionalcommits.org/) enforced via commitlint and Git hooks.
+Generates a `.dmg` installer in the `release/` folder.
 
-Types: `feat` | `fix` | `docs` | `style` | `refactor` | `perf` | `test` | `chore` | `revert`
+### Windows
+
+```bash
+npm run dist:win
+```
+
+Generates an `.exe` installer (NSIS) in the `release/` folder.
+
+> **Note**: Cross-compilation is generally not supported. Build each target on its native platform.
 
 ## 🔒 Security
 
