@@ -11,6 +11,7 @@ To view the complete history, use: `git log`
 
 #### 15/02
 
+- **[22:00:00] 🐛 [FIX]** Add --no-sandbox flag to Electron args in headless mode to fix CI pipeline on Linux/GitHub Actions
 - **[21:22:00] ✅ [TEST]** Add unit tests for ChatPanel, Terminal, ConfigPanel, Resizer components (45 new tests)
 - **[21:22:00] 🔧 [CHORE]** Add E2E Playwright step to CI pipeline in .github/workflows/ci.yml (Linux/xvfb)
 - **[21:22:00] 🔧 [CHORE]** Update vitest.config.ts to include path aliases (@, @shared, @electron)
