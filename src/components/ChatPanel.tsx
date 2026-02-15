@@ -91,7 +91,7 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
         <h2>AI Assistant</h2>
       </div>
 
-      <div className="chat-messages">
+      <div className="chat-messages" aria-live="polite" aria-label="Chat messages" role="log">
         {chat.conversation.length === 0 && (
           <div className="chat-welcome">
             <h3>Bienvenue dans SheLLM !</h3>
