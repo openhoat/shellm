@@ -27,7 +27,8 @@
         "provider": "Fournisseur LLM",
         "providers": {
           "ollama": "Ollama (local/cloud)",
-          "claude": "Claude (Anthropic)"
+          "claude": "Claude (Anthropic)",
+          "openai": "OpenAI (GPT-4o, GPT-4)"
         }
       },
       "ollama": {
@@ -41,8 +42,30 @@
         "apiKey": "Clé API Anthropic",
         "model": "Modèle Claude"
       },
+      "openai": {
+        "title": "Configuration OpenAI",
+        "apiKey": "Clé API OpenAI",
+        "model": "Modèle OpenAI"
+      },
       "language": {
         "title": "Langue"
+      },
+      "interface": {
+        "title": "Interface",
+        "theme": "Thème",
+        "themeDark": "Sombre",
+        "themeLight": "Clair",
+        "fontSize": "Taille de police"
+      },
+      "terminal": {
+        "title": "Terminal",
+        "shell": "Shell"
+      },
+      "common": {
+        "apiKeyOptional": "Clé API (optionnelle)",
+        "maxTokens": "Tokens maximum",
+        "temperature": "Température",
+        "reset": "Réinitialiser"
       }
     },
     "models": {

@@ -1,5 +1,5 @@
 import type { AppConfig } from '@shared/types'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useStore } from '../store/useStore'
 import LanguageSelector from './LanguageSelector'
@@ -14,9 +14,12 @@ const CLAUDE_MODELS = [
   'claude-3-haiku-20240307',
 ]
 
+const OPENAI_MODELS = ['gpt-4o', 'gpt-4o-mini', 'gpt-4', 'gpt-4-turbo', 'gpt-3.5-turbo']
+
 export const ConfigPanel = () => {
   const { config, setConfig, toggleConfigPanel } = useStore()
   const { t } = useTranslation()
+  const panelRef = useRef<HTMLDivElement>(null)
   const [localConfig, setLocalConfig] = useState<AppConfig>(config)
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null)
   const [availableModels, setAvailableModels] = useState<string[]>([])
@@ -31,6 +34,8 @@ export const ConfigPanel = () => {
     llmProvider: boolean
     claudeApiKey: boolean
     claudeModel: boolean
+    openaiApiKey: boolean
+    openaiModel: boolean
   }>({
     url: false,
     apiKey: false,
@@ -41,6 +46,8 @@ export const ConfigPanel = () => {
     llmProvider: false,
     claudeApiKey: false,
     claudeModel: false,
+    openaiApiKey: false,
+    openaiModel: false,
   })
 
   const loadEnvSources = useCallback(async () => {
@@ -75,6 +82,40 @@ export const ConfigPanel = () => {
     loadEnvSources()
   }, [loadEnvSources])
 
+  // Focus trap: keep focus inside the dialog and focus it on mount
+  useEffect(() => {
+    const panel = panelRef.current
+    if (!panel) return
+
+    const focusableSelectors =
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    const focusableElements = panel.querySelectorAll<HTMLElement>(focusableSelectors)
+    const firstElement = focusableElements[0]
+    const lastElement = focusableElements[focusableElements.length - 1]
+
+    firstElement?.focus()
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          e.preventDefault()
+          lastElement?.focus()
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          e.preventDefault()
+          firstElement?.focus()
+        }
+      }
+    }
+
+    panel.addEventListener('keydown', handleKeyDown)
+    return () => {
+      panel.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
+
   // Initialize model list when store config changes (uses config, not localConfig)
   useEffect(() => {
     if (config.llmProvider === 'ollama' && config.ollama.url) {
@@ -89,6 +130,8 @@ export const ConfigPanel = () => {
         .finally(() => setIsLoadingModels(false))
     } else if (config.llmProvider === 'claude') {
       setAvailableModels(CLAUDE_MODELS)
+    } else if (config.llmProvider === 'openai') {
+      setAvailableModels(OPENAI_MODELS)
     }
   }, [config])
 
@@ -127,10 +170,16 @@ export const ConfigPanel = () => {
   }
 
   return (
-    <div className="config-overlay">
-      <div className="config-panel">
+    <div className="config-overlay" role="presentation">
+      <div
+        className="config-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="config-panel-title"
+        ref={panelRef}
+      >
         <div className="config-header">
-          <h2>{t('config.title')}</h2>
+          <h2 id="config-panel-title">{t('config.title')}</h2>
           <button type="button" className="close-button" onClick={toggleConfigPanel}>
             <svg
               width="20"
@@ -161,11 +210,13 @@ export const ConfigPanel = () => {
                 value={localConfig.llmProvider}
                 onChange={e => {
                   const value = e.target.value
-                  if (value === 'ollama' || value === 'claude') {
+                  if (value === 'ollama' || value === 'claude' || value === 'openai') {
                     const updatedConfig = { ...localConfig, llmProvider: value }
                     setLocalConfig(updatedConfig)
                     if (value === 'claude') {
                       setAvailableModels(CLAUDE_MODELS)
+                    } else if (value === 'openai') {
+                      setAvailableModels(OPENAI_MODELS)
                     }
                   }
                 }}
@@ -174,6 +225,7 @@ export const ConfigPanel = () => {
               >
                 <option value="ollama">{t('config.llm.providers.ollama')}</option>
                 <option value="claude">{t('config.llm.providers.claude')}</option>
+                <option value="openai">{t('config.llm.providers.openai')}</option>
               </select>
             </div>
           </div>
@@ -210,7 +262,7 @@ export const ConfigPanel = () => {
 
               <div className="config-field">
                 <label htmlFor="ollama-api-key">
-                  API Key (optional)
+                  {t('config.common.apiKeyOptional')}
                   {envSources.apiKey && <span className="env-badge">Environment variable</span>}
                 </label>
                 <input
@@ -263,7 +315,7 @@ export const ConfigPanel = () => {
 
               <div className="config-field">
                 <label htmlFor="ollama-temperature">
-                  Temperature: {localConfig.ollama.temperature}
+                  {t('config.common.temperature')}: {localConfig.ollama.temperature}
                   {envSources.temperature && (
                     <span className="env-badge">Environment variable</span>
                   )}
@@ -293,7 +345,7 @@ export const ConfigPanel = () => {
 
               <div className="config-field">
                 <label htmlFor="ollama-max-tokens">
-                  Max Tokens
+                  {t('config.common.maxTokens')}
                   {envSources.maxTokens && <span className="env-badge">Environment variable</span>}
                 </label>
                 <input
@@ -384,7 +436,7 @@ export const ConfigPanel = () => {
 
               <div className="config-field">
                 <label htmlFor="claude-temperature">
-                  Temperature: {localConfig.claude.temperature}
+                  {t('config.common.temperature')}: {localConfig.claude.temperature}
                 </label>
                 <input
                   id="claude-temperature"
@@ -403,7 +455,7 @@ export const ConfigPanel = () => {
               </div>
 
               <div className="config-field">
-                <label htmlFor="claude-max-tokens">Max Tokens</label>
+                <label htmlFor="claude-max-tokens">{t('config.common.maxTokens')}</label>
                 <input
                   id="claude-max-tokens"
                   type="number"
@@ -414,6 +466,106 @@ export const ConfigPanel = () => {
                     setLocalConfig({
                       ...localConfig,
                       claude: { ...localConfig.claude, maxTokens: parseInt(e.target.value, 10) },
+                    })
+                  }
+                />
+              </div>
+            </div>
+          )}
+
+          {localConfig.llmProvider === 'openai' && (
+            <div className="config-section">
+              <h3>{t('config.openai.title')}</h3>
+
+              <div className="config-field">
+                <label htmlFor="openai-api-key">
+                  {t('config.openai.apiKey')}
+                  {envSources.openaiApiKey && (
+                    <span className="env-badge">Environment variable</span>
+                  )}
+                </label>
+                <input
+                  id="openai-api-key"
+                  type="password"
+                  value={localConfig.openai.apiKey || ''}
+                  onChange={e =>
+                    setLocalConfig({
+                      ...localConfig,
+                      openai: { ...localConfig.openai, apiKey: e.target.value },
+                    })
+                  }
+                  placeholder="sk-..."
+                  disabled={envSources.openaiApiKey}
+                  className={envSources.openaiApiKey ? 'env-readonly' : ''}
+                />
+                {envSources.openaiApiKey && (
+                  <div className="env-hint">
+                    Value set by environment variable <code>SHELLM_OPENAI_API_KEY</code>
+                  </div>
+                )}
+              </div>
+
+              <div className="config-field">
+                <label htmlFor="openai-model">
+                  {t('config.openai.model')}
+                  {envSources.openaiModel && (
+                    <span className="env-badge">Environment variable</span>
+                  )}
+                </label>
+                <ModelSelector
+                  value={localConfig.openai.model}
+                  onChange={model =>
+                    setLocalConfig({
+                      ...localConfig,
+                      openai: { ...localConfig.openai, model },
+                    })
+                  }
+                  availableModels={OPENAI_MODELS}
+                  isLoading={false}
+                  onRefresh={() => Promise.resolve()}
+                  placeholder="gpt-4o"
+                  disabled={envSources.openaiModel}
+                  className={envSources.openaiModel ? 'env-readonly' : ''}
+                />
+                {envSources.openaiModel && (
+                  <div className="env-hint">
+                    Value set by environment variable <code>SHELLM_OPENAI_MODEL</code>
+                  </div>
+                )}
+              </div>
+
+              <div className="config-field">
+                <label htmlFor="openai-temperature">
+                  {t('config.common.temperature')}: {localConfig.openai.temperature}
+                </label>
+                <input
+                  id="openai-temperature"
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={localConfig.openai.temperature || 0.7}
+                  onChange={e =>
+                    setLocalConfig({
+                      ...localConfig,
+                      openai: { ...localConfig.openai, temperature: parseFloat(e.target.value) },
+                    })
+                  }
+                />
+              </div>
+
+              <div className="config-field">
+                <label htmlFor="openai-max-tokens">{t('config.common.maxTokens')}</label>
+                <input
+                  id="openai-max-tokens"
+                  type="number"
+                  min="100"
+                  max="4000"
+                  value={localConfig.openai.maxTokens || 1000}
+                  onChange={e =>
+                    setLocalConfig({
+                      ...localConfig,
+                      openai: { ...localConfig.openai, maxTokens: parseInt(e.target.value, 10) },
                     })
                   }
                 />
@@ -436,10 +588,10 @@ export const ConfigPanel = () => {
           </div>
 
           <div className="config-section">
-            <h3>Interface</h3>
+            <h3>{t('config.interface.title')}</h3>
 
             <div className="config-field">
-              <label htmlFor="theme">Theme</label>
+              <label htmlFor="theme">{t('config.interface.theme')}</label>
               <select
                 id="theme"
                 value={localConfig.theme}
@@ -453,18 +605,20 @@ export const ConfigPanel = () => {
                   }
                 }}
               >
-                <option value="dark">Dark</option>
-                <option value="light">Light</option>
+                <option value="dark">{t('config.interface.themeDark')}</option>
+                <option value="light">{t('config.interface.themeLight')}</option>
               </select>
             </div>
 
             <div className="config-field">
-              <label htmlFor="language-selector">Language</label>
+              <label htmlFor="language-selector">{t('config.language.title')}</label>
               <LanguageSelector />
             </div>
 
             <div className="config-field">
-              <label htmlFor="font-size">Font size: {localConfig.fontSize}px</label>
+              <label htmlFor="font-size">
+                {t('config.interface.fontSize')}: {localConfig.fontSize}px
+              </label>
               <input
                 id="font-size"
                 type="range"
@@ -483,11 +637,11 @@ export const ConfigPanel = () => {
           </div>
 
           <div className="config-section">
-            <h3>Terminal</h3>
+            <h3>{t('config.terminal.title')}</h3>
 
             <div className="config-field">
               <label htmlFor="shell-select">
-                Shell
+                {t('config.terminal.shell')}
                 {envSources.shell && <span className="env-badge">Environment variable</span>}
               </label>
               <select
@@ -521,7 +675,7 @@ export const ConfigPanel = () => {
 
         <div className="config-footer">
           <button type="button" className="btn btn-reset" onClick={handleReset}>
-            Reset
+            {t('config.common.reset')}
           </button>
           <button type="button" className="btn btn-save" onClick={handleSave}>
             {t('config.ollama.save')}
