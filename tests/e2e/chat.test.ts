@@ -217,6 +217,9 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
         // Wait for input to be re-enabled
         await page.waitForSelector('.chat-input input:not([disabled])', { timeout: 5000 })
 
+        // Wait for state to settle before sending second message
+        await page.waitForTimeout(500)
+
         // Send second message
         await sendMessage(page, 'Show current directory')
         await waitForAIResponse(page, 10000)

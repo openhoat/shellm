@@ -47,9 +47,17 @@ jobs:
       - name: Run linting
         run: npm run qa
 
-      # Run tests
-      - name: Run tests
-        run: npm run test
+      # Run tests with coverage
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      # Upload coverage to Codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
+          fail_ci_if_error: false
 
       # Run build
       - name: Build project

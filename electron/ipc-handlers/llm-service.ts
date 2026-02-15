@@ -302,7 +302,9 @@ class LLMService {
       }
 
       // Fallback: intelligent interpretation based on output analysis
-      const hasErrors = /error|fail|permission denied|cannot|no such file|not found/i.test(cleanedOutput)
+      const hasErrors = /error|fail|permission denied|cannot|no such file|not found/i.test(
+        cleanedOutput
+      )
       const isSuccessful = !hasErrors && cleanedOutput.trim().length > 0
 
       const keyFindings: string[] = []
@@ -314,7 +316,9 @@ class LLMService {
         // Memory analysis (free command)
         // The output format is: Mem: total used free shared buff/cache available
         // We need to capture units (Gi, Mi, etc.) in addition to numbers
-        const memLine = cleanedOutput.match(/Mem:\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)/)
+        const memLine = cleanedOutput.match(
+          /Mem:\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)/
+        )
         if (memLine) {
           keyFindings.push(`Total memory: ${memLine[1]}`)
           keyFindings.push(`Used: ${memLine[2]}`)
@@ -322,7 +326,9 @@ class LLMService {
           keyFindings.push(`Available: ${memLine[6]}`)
         } else {
           // Fallback to simpler regex for older free output format
-          const memSimple = cleanedOutput.match(/Mem:\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)/)
+          const memSimple = cleanedOutput.match(
+            /Mem:\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)/
+          )
           if (memSimple) {
             keyFindings.push(`Total memory: ${memSimple[1]}`)
             keyFindings.push(`Used: ${memSimple[2]}`)
@@ -331,7 +337,9 @@ class LLMService {
         }
 
         // Swap analysis
-        const swapInfo = cleanedOutput.match(/Swap:\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)/)
+        const swapInfo = cleanedOutput.match(
+          /Swap:\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)\s+([\d,.]+[A-Za-z]*)/
+        )
         if (swapInfo) {
           keyFindings.push(`Swap total: ${swapInfo[1]}`)
           keyFindings.push(`Swap used: ${swapInfo[2]}`)
@@ -417,7 +425,9 @@ class LLMService {
       // Error in interpretOutput
       // Fallback: simple interpretation based on cleaned output
       const cleanedFallbackOutput = cleanTerminalOutput(output)
-      const hasErrors = /error|fail|permission denied|cannot|no such file/i.test(cleanedFallbackOutput)
+      const hasErrors = /error|fail|permission denied|cannot|no such file/i.test(
+        cleanedFallbackOutput
+      )
       const isSuccessful = !hasErrors && cleanedFallbackOutput.trim().length > 0
 
       return {
@@ -496,6 +506,36 @@ class LLMService {
 export function createLLMHandlers(_mainWindow: BrowserWindow, initialConfig?: OllamaConfig): void {
   let service: LLMService | null = null
 
+  // Check for E2E test mock mode (parse safely)
+  let mockErrors: Record<string, string> | null = null
+  try {
+    if (process.env.SHELLM_E2E_MOCK_ERRORS) {
+      mockErrors = JSON.parse(process.env.SHELLM_E2E_MOCK_ERRORS)
+    }
+  } catch {
+    // Invalid JSON, ignore
+  }
+
+  const mockConnectionFailed = process.env.SHELLM_E2E_MOCK_CONNECTION_FAILED === 'true'
+
+  let mockModels: string[] | null = null
+  try {
+    if (process.env.SHELLM_E2E_MOCK_MODELS) {
+      mockModels = JSON.parse(process.env.SHELLM_E2E_MOCK_MODELS)
+    }
+  } catch {
+    // Invalid JSON, ignore
+  }
+
+  let mockAIResponse: AICommand | null = null
+  try {
+    if (process.env.SHELLM_E2E_MOCK_AI_RESPONSE) {
+      mockAIResponse = JSON.parse(process.env.SHELLM_E2E_MOCK_AI_RESPONSE)
+    }
+  } catch {
+    // Invalid JSON, ignore
+  }
+
   if (initialConfig) {
     service = new LLMService(initialConfig)
   }
@@ -514,6 +554,16 @@ export function createLLMHandlers(_mainWindow: BrowserWindow, initialConfig?: Ol
       conversationHistory?: ConversationMessage[],
       language?: string
     ) => {
+      // E2E mock: simulate errors
+      if (mockErrors?.llmGenerate) {
+        throw new Error(mockErrors.llmGenerate)
+      }
+
+      // E2E mock: return predefined response
+      if (mockAIResponse) {
+        return mockAIResponse
+      }
+
       if (!service) {
         throw new Error('LLM service not initialized')
       }
@@ -539,6 +589,11 @@ export function createLLMHandlers(_mainWindow: BrowserWindow, initialConfig?: Ol
 
   // Test connection to LLM provider
   ipcMain.handle('llm:test-connection', async () => {
+    // E2E mock: simulate connection failure
+    if (mockConnectionFailed) {
+      return false
+    }
+
     if (!service) {
       throw new Error('LLM service not initialized')
     }
@@ -547,6 +602,11 @@ export function createLLMHandlers(_mainWindow: BrowserWindow, initialConfig?: Ol
 
   // List available models
   ipcMain.handle('llm:list-models', async () => {
+    // E2E mock: return predefined models
+    if (mockModels) {
+      return mockModels
+    }
+
     if (!service) {
       throw new Error('LLM service not initialized')
     }

@@ -299,12 +299,6 @@ test.describe('SheLLM E2E - User Workflows', () => {
       }
     })
   })
-        expect(messages.length).toBeGreaterThan(0)
-      } finally {
-        await closeElectronApp(app)
-      }
-    })
-  })
 
   test.describe('Complete user session workflow', () => {
     test('should complete a full user session from launch to interaction', async () => {
