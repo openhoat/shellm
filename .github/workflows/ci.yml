@@ -64,3 +64,13 @@ jobs:
       # Run build
       - name: Build project
         run: npm run build
+
+      # Install Playwright system dependencies for Electron E2E tests (Linux only)
+      - name: Install Playwright system dependencies
+        if: runner.os == 'Linux'
+        run: npx playwright install-deps
+
+      # Run E2E tests in headless mode using xvfb virtual display (Linux only)
+      - name: Run E2E tests
+        if: runner.os == 'Linux'
+        run: npm run test:e2e:headless
