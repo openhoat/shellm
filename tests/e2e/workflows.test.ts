@@ -24,7 +24,7 @@ import {
 test.describe('SheLLM E2E - User Workflows', () => {
   test.describe('Basic AI command workflow', () => {
     test('should complete basic command workflow: request → propose → execute → results', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         // Step 1: Launch app
@@ -61,7 +61,7 @@ test.describe('SheLLM E2E - User Workflows', () => {
     })
 
     test('should handle multiple command requests in sequence', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -301,7 +301,7 @@ test.describe('SheLLM E2E - User Workflows', () => {
 
   test.describe('Complete user session workflow', () => {
     test('should complete a full user session from launch to interaction', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         // 1. App launches successfully
@@ -394,7 +394,7 @@ test.describe('SheLLM E2E - User Workflows', () => {
 
   test.describe('Keyboard navigation workflow', () => {
     test('should support keyboard-only navigation', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
