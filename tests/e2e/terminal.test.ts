@@ -16,7 +16,7 @@ import {
 test.describe('SheLLM E2E - Terminal Integration', () => {
   test.describe('Terminal initialization', () => {
     test('should create terminal PTY on app start', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -35,7 +35,7 @@ test.describe('SheLLM E2E - Terminal Integration', () => {
     })
 
     test('should display terminal with correct theme', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -59,7 +59,7 @@ test.describe('SheLLM E2E - Terminal Integration', () => {
     })
 
     test('should have terminal content area', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -80,7 +80,7 @@ test.describe('SheLLM E2E - Terminal Integration', () => {
 
   test.describe('Terminal interaction', () => {
     test('should accept user input in terminal', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -110,7 +110,7 @@ test.describe('SheLLM E2E - Terminal Integration', () => {
     })
 
     test('should display terminal output', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -138,7 +138,7 @@ test.describe('SheLLM E2E - Terminal Integration', () => {
     })
 
     test('should have terminal container visible and responsive', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -309,7 +309,7 @@ test.describe('SheLLM E2E - Terminal Integration', () => {
 
   test.describe('Terminal display', () => {
     test('should show terminal wrapper correctly', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -323,7 +323,7 @@ test.describe('SheLLM E2E - Terminal Integration', () => {
     })
 
     test('should have proper terminal layout', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)

@@ -23,7 +23,7 @@ import {
 test.describe('SheLLM E2E - Chat Functionality', () => {
   test.describe('Chat input field', () => {
     test('should display chat input field', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -37,7 +37,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
     })
 
     test('should be able to type in the input field', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -52,7 +52,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
     })
 
     test('should disable input while loading', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -75,7 +75,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
     })
 
     test('should clear input after sending message', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -95,7 +95,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
 
   test.describe('Message display', () => {
     test('should display welcome message when conversation is empty', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -108,7 +108,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
     })
 
     test('should display user messages in conversation', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -128,7 +128,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
     })
 
     test('should display AI responses in conversation', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -147,7 +147,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
     })
 
     test('should display loading spinner while AI is generating', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -173,7 +173,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
     })
 
     test('should hide welcome message after first message', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -379,7 +379,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
     })
 
     test('should clear conversation with Ctrl+K', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)

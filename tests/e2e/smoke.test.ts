@@ -3,7 +3,7 @@ import { closeElectronApp, launchElectronApp, waitForAppReady } from './electron
 
 test.describe('SheLLM E2E - Smoke Tests', () => {
   test('should launch the application successfully', async () => {
-    const { app, page } = await launchElectronApp()
+    const { app, page } = await launchElectronApp({ mocks: {} })
 
     try {
       // Verify the app window exists
@@ -22,7 +22,7 @@ test.describe('SheLLM E2E - Smoke Tests', () => {
   })
 
   test('should display the header component', async () => {
-    const { app, page } = await launchElectronApp()
+    const { app, page } = await launchElectronApp({ mocks: {} })
 
     try {
       await waitForAppReady(page)
@@ -36,7 +36,7 @@ test.describe('SheLLM E2E - Smoke Tests', () => {
   })
 
   test('should display the terminal component', async () => {
-    const { app, page } = await launchElectronApp()
+    const { app, page } = await launchElectronApp({ mocks: {} })
 
     try {
       await waitForAppReady(page)
@@ -50,7 +50,7 @@ test.describe('SheLLM E2E - Smoke Tests', () => {
   })
 
   test('should display the chat panel component', async () => {
-    const { app, page } = await launchElectronApp()
+    const { app, page } = await launchElectronApp({ mocks: {} })
 
     try {
       await waitForAppReady(page)
@@ -64,7 +64,7 @@ test.describe('SheLLM E2E - Smoke Tests', () => {
   })
 
   test('should have correct window dimensions', async () => {
-    const { app, page } = await launchElectronApp()
+    const { app, page } = await launchElectronApp({ mocks: {} })
 
     try {
       await waitForAppReady(page)
@@ -83,7 +83,7 @@ test.describe('SheLLM E2E - Smoke Tests', () => {
   })
 
   test('should hide config panel by default', async () => {
-    const { app, page } = await launchElectronApp()
+    const { app, page } = await launchElectronApp({ mocks: {} })
 
     try {
       await waitForAppReady(page)
