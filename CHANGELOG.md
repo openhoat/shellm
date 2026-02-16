@@ -11,6 +11,7 @@ To view the complete history, use: `git log`
 
 #### 16/02
 
+- **[21:00:00] 🚀 [PERF]** Optimize E2E tests: reduce cleanup delay (500ms→200ms), waitForTerminalReady (1000ms→500ms), simplify resetAppState, remove hardcoded delays
 - **[18:10:00] ✨ [FEAT]** Enable multi-line chat input with Shift+Enter for new lines, Enter to submit - replace input with textarea in ChatPanel
 - **[18:05:00] 🔧 [CHORE]** Add Playwright browser cache to CI workflow for faster E2E test execution
 - **[18:00:00] 🚀 [PERF]** Optimize E2E tests: reduce cleanup delay from 1000ms to 500ms, reduce test timeout from 60s to 45s
