@@ -39,21 +39,15 @@ jobs:
 
       - name: Build Linux executables
         if: runner.os == 'Linux'
-        run: npm run dist:linux
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run dist:linux -- --publish never
 
       - name: Build macOS executables
         if: runner.os == 'macOS'
-        run: npm run dist:mac
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run dist:mac -- --publish never
 
       - name: Build Windows executables
         if: runner.os == 'Windows'
-        run: npm run dist:win
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run dist:win -- --publish never
 
       - name: Upload Linux artifacts
         if: runner.os == 'Linux'
