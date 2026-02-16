@@ -222,8 +222,7 @@
       "dependencies": [
         "qa",
         "build",
-        "test",
-        "test:e2e:headless"
+        "test"
       ]
     },
     "dev:vite": {
