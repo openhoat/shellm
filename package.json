@@ -256,6 +256,11 @@
   "build": {
     "appId": "com.openhoat.shellm",
     "productName": "SheLLM",
+    "publish": {
+      "provider": "github",
+      "owner": "openhoat",
+      "repo": "shellm"
+    },
     "directories": {
       "output": "release"
     },
