@@ -174,7 +174,10 @@ test.describe('SheLLM E2E - User Workflows', () => {
 
   test.describe('Conversation management workflow', () => {
     test('should create and manage conversations', async () => {
-      const { app, page } = await launchElectronApp({ mocks: {} })
+      // Use text-type mock to avoid command actions blocking the UI between messages
+      const { app, page } = await launchElectronApp({
+        mocks: { aiCommand: { type: 'text', content: 'I can help you with many things.' } },
+      })
 
       try {
         await waitForAppReady(page)
@@ -183,9 +186,18 @@ test.describe('SheLLM E2E - User Workflows', () => {
         await sendMessage(page, 'Hello, how are you?')
         await waitForAIResponse(page)
 
+        // Wait for input to be re-enabled before second message
+        await page.waitForSelector('.chat-input input:not([disabled])', { timeout: 5000 })
+        await page.waitForTimeout(300)
+
         // Step 2: Send multiple messages
         await sendMessage(page, 'What can you help me with?')
-        await waitForAIResponse(page)
+
+        // Wait explicitly for 2 AI messages
+        await page.waitForFunction(
+          () => document.querySelectorAll('.chat-message.ai').length >= 2,
+          { timeout: 10000 }
+        )
 
         // Verify conversation has messages
         const messages = await getChatMessages(page)
