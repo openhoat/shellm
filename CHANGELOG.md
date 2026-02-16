@@ -9,6 +9,11 @@ To view the complete history, use: `git log`
 ### 2026
 
 
+#### 17/02
+
+- **[00:45:00] 🔧 [CHORE]** Fix skills directory structure - convert flat .md files to directories with SKILL.md inside for proper Claude Code skill invocation
+
+
 #### 16/02
 
 - **[23:58:00] 🔧 [CHORE]** Remove e2e tests from validate script and add optimization task to backlog
