@@ -289,7 +289,9 @@ export function useChat() {
         // Get captured output from backend
         const output = await window.electronAPI.terminalGetCapture(terminalPid)
 
-        if (output.length > 0 && messageIndex !== undefined) {
+        // Always call interpretation, even with empty output
+        // Many successful commands (mkdir, touch, cp) produce no output
+        if (messageIndex !== undefined) {
           try {
             setIsInterpreting(true)
             setExecutionProgress(95)
@@ -319,7 +321,7 @@ export function useChat() {
             setIsInterpreting(false)
           }
         } else {
-          logger.warn('No output to interpret or message index undefined')
+          logger.warn('Message index undefined, skipping interpretation')
         }
       } catch (error) {
         logger.error('Error executing command:', error)

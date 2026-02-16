@@ -35,6 +35,12 @@ Example 3 (permission error):
 Example 4 (no real output, only shell prompts):
 {{"summary":"No command output found - only shell prompts and control sequences","key_findings":[],"warnings":[],"errors":["No actual command output detected"],"recommendations":["Execute a command to generate output"],"successful":false}}
 
+Example 5 (silent command - mkdir, touch, cp, mv, etc. - successful with no output):
+{{"summary":"Command executed successfully with no output - typical for mkdir, touch, cp, mv, and similar commands","key_findings":["No error messages detected","Command appears to have completed"],"warnings":[],"errors":[],"recommendations":["Verify the result if needed (e.g., ls to list files)"],"successful":true}}
+
+Example 6 (silent command - chmod, chown, etc. - successful):
+{{"summary":"Permission operation completed successfully","key_findings":["No error output","Command executed without errors"],"warnings":[],"errors":[],"recommendations":[],"successful":true}}
+
 Command output to analyze (may contain ANSI codes and shell prompts - IGNORE THEM):
 {{command_output}}
 
