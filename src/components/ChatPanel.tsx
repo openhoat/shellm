@@ -10,7 +10,7 @@ const logger = new Logger('ChatPanel')
 
 export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
   // Ref for the chat input element
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
 
   // Use the custom chat hook for chat logic
   const chat = useChat()
@@ -73,6 +73,15 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
       window.removeEventListener('keydown', handleKeyDown)
     }
   }, [chat.aiCommand, chat.error, setAiCommand, clearAllConversations, chat, handleExecuteCommand])
+
+  const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Enter alone = submit (unless Shift is pressed)
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSubmit(e as unknown as FormEvent)
+    }
+    // Shift+Enter = new line (default textarea behavior)
+  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -190,15 +199,16 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
       )}
 
       <form onSubmit={handleSubmit} className="chat-input">
-        <input
-          type="text"
+        <textarea
           value={chat.userInput}
           onChange={chat.handleInputChange}
+          onKeyDown={handleTextareaKeyDown}
           placeholder="Décrivez ce que vous voulez faire..."
           disabled={chat.isLoading}
           // biome-ignore lint/a11y/noAutofocus: Intentional auto-focus for chat input UX
           autoFocus
           ref={inputRef}
+          rows={1}
         />
         <button
           type="submit"

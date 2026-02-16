@@ -13,7 +13,7 @@ export async function waitForAppReady(page: Page, timeout = 10000): Promise<void
 export async function waitForChatReady(page: Page, timeout = 10000): Promise<void> {
   await page.waitForSelector('.chat-panel', { state: 'visible', timeout })
   // Wait for the input to be enabled (not loading)
-  await page.waitForSelector('.chat-input input:not([disabled])', { state: 'visible', timeout })
+  await page.waitForSelector('.chat-input textarea:not([disabled])', { state: 'visible', timeout })
 }
 
 /**
@@ -30,7 +30,7 @@ export async function waitForTerminalReady(page: Page, timeout = 15000): Promise
  * Send a chat message
  */
 export async function sendMessage(page: Page, message: string): Promise<void> {
-  const input = page.locator('.chat-input input')
+  const input = page.locator('.chat-input textarea')
   await input.fill(message)
   await input.press('Enter')
 }
@@ -39,7 +39,7 @@ export async function sendMessage(page: Page, message: string): Promise<void> {
  * Type in chat input without sending
  */
 export async function typeInChat(page: Page, text: string): Promise<void> {
-  const input = page.locator('.chat-input input')
+  const input = page.locator('.chat-input textarea')
   await input.fill(text)
 }
 
@@ -47,7 +47,7 @@ export async function typeInChat(page: Page, text: string): Promise<void> {
  * Clear chat input
  */
 export async function clearChatInput(page: Page): Promise<void> {
-  const input = page.locator('.chat-input input')
+  const input = page.locator('.chat-input textarea')
   await input.fill('')
 }
 
