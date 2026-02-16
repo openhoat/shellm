@@ -1,3 +1,9 @@
+---
+name: read-kanban
+description: Read and parse KANBAN.md to extract tasks, ideas, and their status.
+disable-model-invocation: false
+---
+
 # Skill: Read KANBAN
 
 ## Description

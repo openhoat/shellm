@@ -1,3 +1,9 @@
+---
+name: analyze-test-report
+description: Analyze Vitest test results and coverage. Use after npm run test to understand failures.
+disable-model-invocation: false
+---
+
 # Skill: Analyze Test Report
 
 ## Description

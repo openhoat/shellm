@@ -1,3 +1,9 @@
+---
+name: generate-coverage-report
+description: Generate detailed code coverage report with Vitest. Use to analyze test coverage.
+disable-model-invocation: false
+---
+
 # Skill: Generate Coverage Report
 
 ## Description

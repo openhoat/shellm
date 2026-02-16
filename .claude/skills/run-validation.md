@@ -1,3 +1,9 @@
+---
+name: run-validation
+description: Run project validation (Biome QA, TypeScript build, unit tests). Use after code changes.
+disable-model-invocation: false
+---
+
 # Skill: Run Validation
 
 ## Description

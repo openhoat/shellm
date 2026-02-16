@@ -1,3 +1,9 @@
+---
+name: run-build
+description: Build the project (Vite frontend and Electron backend). Use to verify compilation.
+disable-model-invocation: false
+---
+
 # Skill: Run Build
 
 ## Description

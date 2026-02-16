@@ -1,3 +1,9 @@
+---
+name: update-kanban
+description: Update KANBAN.md by modifying task statuses, adding tasks, or removing completed tasks.
+disable-model-invocation: false
+---
+
 # Skill: Update KANBAN
 
 ## Description
