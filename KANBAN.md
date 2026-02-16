@@ -18,15 +18,10 @@
 
 ## 📝 Backlog
 
-### 🔴 P1 - High Priority
-
-
-### 🟡 P2 - Medium Priority
-
 - [ ] **[16/02/2026 11:45:00] 🟡 P2 ⚙️ [CONFIG]** Construire les exécutables de l'appli et mettre des liens dans le README pour que les utilisateurs puissent directement télécharger l'appli correspondant à leur plateforme
-- [ ] **[16/02/2026 10:35:01] 🟡 P2 🎨 [UX]** Mieux interpréter une commande qui ne retourne rien (afficher un message de succès)
-
-### 🟢 P3 - Low Priority
-
 
 ## 🚧 In Progress
+
+### [16/02/2026 22:48:00] 🟡 P2 🎨 [UX] Mieux interpréter une commande qui ne retourne rien (afficher un message de succès)
+
+- [x] **[16/02/2026 22:48:00] ✨ [FEAT]** Always call interpretation even with empty output
