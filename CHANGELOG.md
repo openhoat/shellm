@@ -11,6 +11,7 @@ To view the complete history, use: `git log`
 
 #### 16/02
 
+- **[12:00:00] 🐛 [FIX]** Fix mock injection in E2E tests: ignore electronAPI setter to prevent real API from overwriting the mock
 - **[10:00:00] 🐛 [FIX]** Add mocks to E2E tests requiring AI responses to fix CI failures (chat, terminal, workflows, config)
 - **[10:00:00] 🐛 [FIX]** Fix config.test.ts theme options assertion to be locale-agnostic (check option values instead of translated text)
 - **[10:00:00] 🐛 [FIX]** Fix config.test.ts shell option expected text from 'Auto (système)' to 'Auto (system)'
