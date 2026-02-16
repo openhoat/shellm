@@ -11,6 +11,10 @@ To view the complete history, use: `git log`
 
 #### 16/02
 
+- **[18:10:00] ✨ [FEAT]** Enable multi-line chat input with Shift+Enter for new lines, Enter to submit - replace input with textarea in ChatPanel
+- **[18:05:00] 🔧 [CHORE]** Add Playwright browser cache to CI workflow for faster E2E test execution
+- **[18:00:00] 🚀 [PERF]** Optimize E2E tests: reduce cleanup delay from 1000ms to 500ms, reduce test timeout from 60s to 45s
+- **[17:55:00] ✅ [TEST]** Add E2E headless tests to validate script via wireit dependency
 - **[17:00:00] ♻️ [REFACTOR]** Refactor E2E tests to share Electron instances via beforeAll/afterAll, reducing launches from 78 to ~12 to fix flaky CI tests on Ubuntu
 - **[14:30:00] 🐛 [FIX]** Increase E2E test timeout to 120s and delay between electron launches to 1s to fix flaky CI tests on Ubuntu
 - **[13:00:00] 🐛 [FIX]** Fix E2E mock: always set SHELLM_E2E_MOCK_AI_RESPONSE env var when mocks provided, defaulting to defaultMockAICommand

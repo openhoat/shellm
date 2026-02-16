@@ -44,13 +44,13 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
 
   test.describe('Chat input field', () => {
     test('should display chat input field', async () => {
-      const input = page.locator('.chat-input input')
+      const input = page.locator('.chat-input textarea')
       await expect(input).toBeVisible()
       await expect(input).toBeEnabled()
     })
 
     test('should be able to type in the input field', async () => {
-      const input = page.locator('.chat-input input')
+      const input = page.locator('.chat-input textarea')
       await input.fill('List all files')
 
       await expect(input).toHaveValue('List all files')
@@ -61,7 +61,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
       await sendMessage(page, 'List all files')
 
       // Input should be disabled while loading
-      const input = page.locator('.chat-input input')
+      const input = page.locator('.chat-input textarea')
       const _isDisabled = await input.isDisabled().catch(() => true)
 
       // Wait for response
@@ -77,7 +77,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
       // Wait for response
       await waitForAIResponse(page)
 
-      const input = page.locator('.chat-input input')
+      const input = page.locator('.chat-input textarea')
       await expect(input).toHaveValue('')
     })
   })
@@ -116,7 +116,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
       await typeInChat(page, 'Show disk usage')
 
       // Submit and immediately check for loading
-      const input = page.locator('.chat-input input')
+      const input = page.locator('.chat-input textarea')
       await input.press('Enter')
 
       // Check if loading spinner appears (might be brief)
@@ -161,7 +161,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
         await waitForAIResponse(textPage, 10000)
 
         // Wait for input to be re-enabled
-        await textPage.waitForSelector('.chat-input input:not([disabled])', { timeout: 5000 })
+        await textPage.waitForSelector('.chat-input textarea:not([disabled])', { timeout: 5000 })
 
         // Wait for state to settle before sending second message
         await textPage.waitForTimeout(500)
@@ -222,7 +222,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
       await clickModifyButton(page)
 
       // Check that command is now in input field
-      const input = page.locator('.chat-input input')
+      const input = page.locator('.chat-input textarea')
       const value = await input.inputValue()
       expect(value.length).toBeGreaterThan(0)
 

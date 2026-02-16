@@ -27,7 +27,6 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
-    "test:e2e:headless": "HEADLESS=true xvfb-run -a playwright test",
     "test:ui": "vitest --ui",
     "test:watch": "vitest",
     "validate": "wireit"
@@ -205,11 +204,25 @@
         "coverage/**/*"
       ]
     },
+    "test:e2e:headless": {
+      "command": "HEADLESS=true xvfb-run -a playwright test",
+      "files": [
+        "tests/e2e/**/*.ts",
+        "playwright.config.ts",
+        "dist-electron/**/*",
+        "dist/**/*"
+      ],
+      "output": [],
+      "dependencies": [
+        "build"
+      ]
+    },
     "validate": {
       "dependencies": [
         "qa",
         "build",
-        "test"
+        "test",
+        "test:e2e:headless"
       ]
     },
     "dev:vite": {

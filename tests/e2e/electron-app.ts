@@ -140,7 +140,7 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
 export async function closeElectronApp(app: ElectronApplication): Promise<void> {
   await app.close()
   // Brief pause to let X11/system resources be released before the next test
-  await new Promise(resolve => setTimeout(resolve, 1000))
+  await new Promise(resolve => setTimeout(resolve, 500))
 }
 
 /**

@@ -187,7 +187,7 @@ test.describe('SheLLM E2E - User Workflows', () => {
         await waitForAIResponse(textPage)
 
         // Wait for input to be re-enabled before second message
-        await textPage.waitForSelector('.chat-input input:not([disabled])', { timeout: 5000 })
+        await textPage.waitForSelector('.chat-input textarea:not([disabled])', { timeout: 5000 })
         await textPage.waitForTimeout(300)
 
         // Step 2: Send multiple messages
@@ -340,7 +340,7 @@ test.describe('SheLLM E2E - User Workflows', () => {
       await page.locator('.command-actions .btn-modify').click()
 
       // 9. User sees command in input
-      const input = page.locator('.chat-input input')
+      const input = page.locator('.chat-input textarea')
       const inputValue = await input.inputValue()
       expect(inputValue.length).toBeGreaterThan(0)
 
@@ -387,7 +387,7 @@ test.describe('SheLLM E2E - User Workflows', () => {
       await waitForTerminalReady(page)
 
       // Focus is on chat input by default
-      const input = page.locator('.chat-input input')
+      const input = page.locator('.chat-input textarea')
       await expect(input).toBeFocused()
 
       // Type a message
