@@ -1,3 +1,9 @@
+---
+name: run-tests
+description: Execute unit tests with Vitest and generate coverage report. Use to verify code changes.
+disable-model-invocation: false
+---
+
 # Skill: Run Tests
 
 ## Description

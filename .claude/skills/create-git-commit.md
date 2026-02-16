@@ -1,3 +1,9 @@
+---
+name: create-git-commit
+description: Create git commit following Conventional Commits format. Use after completing tasks.
+disable-model-invocation: false
+---
+
 # Skill: Create Git Commit
 
 ## Description

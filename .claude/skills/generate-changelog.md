@@ -1,3 +1,9 @@
+---
+name: generate-changelog
+description: Regenerate CHANGELOG.md from Git commit history. Use after committing changes.
+disable-model-invocation: false
+---
+
 # Skill: Generate Changelog
 
 ## Description

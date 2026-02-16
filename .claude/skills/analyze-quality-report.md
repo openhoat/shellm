@@ -1,3 +1,9 @@
+---
+name: analyze-quality-report
+description: Analyze Biome linting and formatting report. Use after npm run qa to understand issues.
+disable-model-invocation: false
+---
+
 # Skill: Analyze Quality Report
 
 ## Description
