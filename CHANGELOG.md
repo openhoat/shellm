@@ -11,6 +11,8 @@ To view the complete history, use: `git log`
 
 #### 16/02
 
+- **[17:00:00] ♻️ [REFACTOR]** Refactor E2E tests to share Electron instances via beforeAll/afterAll, reducing launches from 78 to ~12 to fix flaky CI tests on Ubuntu
+- **[14:30:00] 🐛 [FIX]** Increase E2E test timeout to 120s and delay between electron launches to 1s to fix flaky CI tests on Ubuntu
 - **[13:00:00] 🐛 [FIX]** Fix E2E mock: always set SHELLM_E2E_MOCK_AI_RESPONSE env var when mocks provided, defaulting to defaultMockAICommand
 - **[12:00:00] 🐛 [FIX]** Fix mock injection in E2E tests: ignore electronAPI setter to prevent real API from overwriting the mock
 - **[10:00:00] 🐛 [FIX]** Add mocks to E2E tests requiring AI responses to fix CI failures (chat, terminal, workflows, config)
