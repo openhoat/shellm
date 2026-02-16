@@ -135,9 +135,12 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
 
 /**
  * Helper to close the Electron application
+ * Includes a small delay after close to let OS/X11 resources be released
  */
 export async function closeElectronApp(app: ElectronApplication): Promise<void> {
   await app.close()
+  // Brief pause to let X11/system resources be released before the next test
+  await new Promise(resolve => setTimeout(resolve, 200))
 }
 
 /**
