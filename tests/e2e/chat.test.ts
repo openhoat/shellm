@@ -14,6 +14,7 @@ import {
   isErrorVisible,
   isLoadingVisible,
   isWelcomeMessageVisible,
+  resetAppState,
   sendMessage,
   typeInChat,
   waitForAIResponse,
@@ -37,9 +38,8 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
   })
 
   test.beforeEach(async () => {
-    // Reset conversation state between tests
-    await clearAllConversationsByShortcut(page)
-    await page.waitForTimeout(300)
+    // Reset app state between tests
+    await resetAppState(page)
   })
 
   test.describe('Chat input field', () => {

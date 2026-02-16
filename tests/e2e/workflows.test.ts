@@ -2,7 +2,6 @@ import type { ElectronApplication, Page } from '@playwright/test'
 import { expect, test } from '@playwright/test'
 import { closeElectronApp, launchElectronApp, waitForAppReady } from './electron-app'
 import {
-  clearAllConversationsByShortcut,
   clickExecuteButton,
   closeConfigPanel,
   createNewConversation,
@@ -12,6 +11,7 @@ import {
   isWelcomeMessageVisible,
   openConfigPanel,
   openConversationList,
+  resetAppState,
   resetConfig,
   saveConfig,
   sendMessage,
@@ -39,14 +39,8 @@ test.describe('SheLLM E2E - User Workflows', () => {
   })
 
   test.beforeEach(async () => {
-    // Reset conversation and UI state between tests
-    await clearAllConversationsByShortcut(page)
-    await page.waitForTimeout(300)
-    try {
-      await closeConfigPanel(page)
-    } catch {
-      // Panel might already be closed
-    }
+    // Reset app state completely between tests
+    await resetAppState(page)
   })
 
   test.describe('Basic AI command workflow', () => {
