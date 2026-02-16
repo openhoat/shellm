@@ -109,20 +109,28 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
     env,
   })
 
-  // Get the browser context and inject mock script if provided
-  const context = app.context()
-  if (mocks) {
-    const mockScript = getMockInjectionScript(mocks)
-    await context.addInitScript(mockScript)
+  try {
+    // Get the browser context and inject mock script if provided
+    const context = app.context()
+    if (mocks) {
+      const mockScript = getMockInjectionScript(mocks)
+      await context.addInitScript(mockScript)
+    }
+
+    // Get the first window (with timeout to prevent indefinite hang in CI)
+    const page = await app.firstWindow({ timeout: 15000 })
+
+    // Wait for the page to load (with timeout)
+    await page.waitForLoadState('domcontentloaded', { timeout: 15000 })
+
+    return { app, page }
+  } catch (err) {
+    // Ensure the app is closed if launch setup fails, so the process doesn't linger
+    await app.close().catch(_closeErr => {
+      // Ignore close errors during failed launch cleanup
+    })
+    throw err
   }
-
-  // Get the first window
-  const page = await app.firstWindow()
-
-  // Wait for the page to load
-  await page.waitForLoadState('domcontentloaded')
-
-  return { app, page }
 }
 
 /**
