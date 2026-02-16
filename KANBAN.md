@@ -26,8 +26,6 @@
 
 - [ ] **[16/02/2026 23:56:00] 🟡 P2 ✅ [TEST]** Optimize e2e tests execution time - currently too long for regular validation
 - [ ] **[16/02/2026 20:31:00] 🟡 P2 🌍 [I18N]** Create GitHub Pages documentation site for users and restructure README for contributors
-- [ ] **[16/02/2026 10:35:01] 🟡 P2 🎨 [UX]** Mieux interpréter une commande qui ne retourne rien (afficher un message de succès)
-
 ### 🟢 P3 - Low Priority
 
 
