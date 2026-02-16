@@ -163,9 +163,6 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
         // Wait for input to be re-enabled
         await textPage.waitForSelector('.chat-input textarea:not([disabled])', { timeout: 5000 })
 
-        // Wait for state to settle before sending second message
-        await textPage.waitForTimeout(500)
-
         // Send second message
         await sendMessage(textPage, 'Show current directory')
 
@@ -174,9 +171,6 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
           () => document.querySelectorAll('.chat-message.ai').length >= 2,
           { timeout: 10000 }
         )
-
-        // Wait for all messages to be fully rendered
-        await textPage.waitForTimeout(500)
 
         // Check we have multiple messages - at least 2 user messages and 2 AI responses
         const userMessages = await getUserMessages(textPage)
@@ -291,17 +285,13 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
       // Press Ctrl+K to clear
       await clearAllConversationsByShortcut(page)
 
-      // Wait a bit for the action to process
-      await page.waitForTimeout(500)
-
-      // Check welcome message is back (conversation cleared)
-      const _welcomeVisible = await isWelcomeMessageVisible(page)
-      // Note: This might not show immediately depending on how clearing works
+      // Brief wait for the clear action to process
+      await page.waitForTimeout(200)
     })
 
     test('should execute command with Ctrl+Enter when command is proposed', async () => {
-      // Wait for terminal to be ready
-      await page.waitForTimeout(2000)
+      // Wait for terminal to be ready using proper helper
+      await page.waitForSelector('.terminal-container', { state: 'visible', timeout: 10000 })
 
       await sendMessage(page, 'List files')
       await waitForAIResponse(page)
