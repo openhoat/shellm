@@ -194,15 +194,12 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
     })
 
     test('should display multiple messages in conversation', async () => {
-      // Use mocks to ensure fast, reliable AI responses
+      // Use text-type mock to avoid command actions blocking the UI between messages
       const { app, page } = await launchElectronApp({
         mocks: {
           aiCommand: {
-            type: 'command',
-            intent: 'list_files',
-            command: 'ls -la',
-            explanation: 'List all files',
-            confidence: 0.95,
+            type: 'text',
+            content: 'Here is the information you requested.',
           },
         },
       })
@@ -222,7 +219,12 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
 
         // Send second message
         await sendMessage(page, 'Show current directory')
-        await waitForAIResponse(page, 10000)
+
+        // Wait explicitly for 2 AI messages (not just any single AI message)
+        await page.waitForFunction(
+          () => document.querySelectorAll('.chat-message.ai').length >= 2,
+          { timeout: 10000 }
+        )
 
         // Wait for all messages to be fully rendered
         await page.waitForTimeout(500)
