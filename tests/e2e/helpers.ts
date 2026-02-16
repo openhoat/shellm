@@ -650,3 +650,50 @@ export async function mockElectronAPIForError(
     { method: methodName, errMsg: error.message }
   )
 }
+
+/**
+ * Reset app state between tests
+ * This ensures a clean slate by:
+ * 1. Canceling any pending command actions (Escape)
+ * 2. Closing config panel if open
+ * 3. Clearing all conversations (Ctrl+K)
+ * 4. Waiting for welcome message to appear
+ */
+export async function resetAppState(page: Page): Promise<void> {
+  // Cancel any pending command actions
+  try {
+    const commandActions = page.locator('.command-actions')
+    if (await commandActions.isVisible({ timeout: 500 }).catch(() => false)) {
+      await page.keyboard.press('Escape')
+      await page.waitForTimeout(200)
+    }
+  } catch {
+    // Ignore errors
+  }
+
+  // Close config panel if open
+  try {
+    const configPanel = page.locator('.config-panel')
+    if (await configPanel.isVisible({ timeout: 500 }).catch(() => false)) {
+      await page.keyboard.press('Escape')
+      await page.waitForTimeout(200)
+    }
+  } catch {
+    // Ignore errors
+  }
+
+  // Clear all conversations
+  try {
+    await page.keyboard.press('Control+k')
+    await page.waitForTimeout(500)
+  } catch {
+    // Ignore errors
+  }
+
+  // Wait for welcome message to appear (indicates clean state)
+  try {
+    await page.waitForSelector('.welcome-message', { state: 'visible', timeout: 3000 })
+  } catch {
+    // Welcome message might not appear if conversations were already empty
+  }
+}
