@@ -208,7 +208,7 @@ test.describe('SheLLM E2E - Configuration', () => {
     })
 
     test('should display language selector', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
