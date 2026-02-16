@@ -379,11 +379,10 @@ export function getMockInjectionScript(
         get: function() {
           return currentAPI;
         },
-        set: function(value) {
-          // If contextBridge tries to set, intercept and merge with our mock
-          // This allows the real API to be available for methods we don't mock
-          console.log('[E2E Mock] electronAPI setter called, merging with mock');
-          currentAPI = value;
+        set: function(_value) {
+          // contextBridge.exposeInMainWorld tries to set electronAPI with the real API
+          // We intentionally ignore it to keep our mock in place
+          console.log('[E2E Mock] electronAPI setter intercepted, keeping mock');
         },
         configurable: true,
         enumerable: true
