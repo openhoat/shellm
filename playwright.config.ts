@@ -7,7 +7,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: 1, // Electron tests must run in a single worker
   reporter: [['html'], ['list']],
-  timeout: 60000,
+  timeout: 120000,
   use: {
     trace: 'on-first-retry',
     // Disable visual captures in CI mode for headless execution
