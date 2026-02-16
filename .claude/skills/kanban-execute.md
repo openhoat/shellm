@@ -1,7 +1,7 @@
 ---
 name: kanban-execute
 description: Select and execute ideas from the kanban backlog interactively. Use to work on backlog items.
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Skill: Execute Kanban Ideas
