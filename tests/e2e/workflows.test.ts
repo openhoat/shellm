@@ -70,7 +70,7 @@ test.describe('SheLLM E2E - User Workflows', () => {
 
         // Step 5: View results - command should have executed
         // Terminal should show output
-        await page.waitForTimeout(1000)
+        await page.waitForTimeout(500)
       }
     })
 
@@ -188,7 +188,6 @@ test.describe('SheLLM E2E - User Workflows', () => {
 
         // Wait for input to be re-enabled before second message
         await textPage.waitForSelector('.chat-input textarea:not([disabled])', { timeout: 5000 })
-        await textPage.waitForTimeout(300)
 
         // Step 2: Send multiple messages
         await sendMessage(textPage, 'What can you help me with?')
@@ -370,7 +369,7 @@ test.describe('SheLLM E2E - User Workflows', () => {
       await terminalContent.click()
       await page.keyboard.type('echo "Direct terminal input"')
       await page.keyboard.press('Enter')
-      await page.waitForTimeout(1000)
+      await page.waitForTimeout(500)
 
       // User also interacts with chat
       await sendMessage(page, 'What was the last command output?')

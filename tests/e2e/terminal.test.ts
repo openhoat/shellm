@@ -83,12 +83,12 @@ test.describe('SheLLM E2E - Terminal Integration', () => {
       // Type a simple command
       await typeInTerminal(page, 'echo "test"')
 
-      // The typed text should appear in terminal
-      await page.waitForTimeout(500)
+      // Brief wait for typed text to appear
+      await page.waitForTimeout(200)
 
       // Press Enter to execute
       await pressTerminalKey(page, 'Enter')
-      await page.waitForTimeout(1000)
+      await page.waitForTimeout(500)
 
       // Terminal should show some output
       const content = await getTerminalContent(page)
@@ -103,13 +103,13 @@ test.describe('SheLLM E2E - Terminal Integration', () => {
       const terminalContent = page.locator('.terminal-content')
       await terminalContent.click()
 
-      // Wait for shell prompt
-      await page.waitForTimeout(1000)
+      // Wait for shell prompt - reduced delay
+      await page.waitForTimeout(500)
 
       // Type a command that produces output
       await typeInTerminal(page, 'pwd')
       await pressTerminalKey(page, 'Enter')
-      await page.waitForTimeout(1000)
+      await page.waitForTimeout(500)
 
       // Terminal should show output (current directory path)
       const content = await getTerminalContent(page)
@@ -213,8 +213,8 @@ test.describe('SheLLM E2E - Terminal Integration', () => {
         // Wait for execution and interpretation
         await waitForCommandExecution(page)
 
-        // Look for interpretation in chat messages
-        await page.waitForTimeout(2000)
+        // Brief wait for interpretation to appear (reduced from 2000ms)
+        await page.waitForTimeout(1000)
 
         // Check for interpretation content (it should be in an AI message)
         const interpretation = page.locator(

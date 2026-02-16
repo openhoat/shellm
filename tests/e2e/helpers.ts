@@ -22,8 +22,8 @@ export async function waitForChatReady(page: Page, timeout = 10000): Promise<voi
 export async function waitForTerminalReady(page: Page, timeout = 15000): Promise<void> {
   // Wait for terminal container to be visible
   await page.waitForSelector('.terminal-container', { state: 'visible', timeout })
-  // Wait a bit for PTY initialization
-  await page.waitForTimeout(1000)
+  // Wait for PTY initialization - reduced from 1000ms to 500ms
+  await page.waitForTimeout(500)
 }
 
 /**
@@ -657,43 +657,26 @@ export async function mockElectronAPIForError(
  * 1. Canceling any pending command actions (Escape)
  * 2. Closing config panel if open
  * 3. Clearing all conversations (Ctrl+K)
- * 4. Waiting for welcome message to appear
+ * 4. Brief wait for state to settle
  */
 export async function resetAppState(page: Page): Promise<void> {
   // Cancel any pending command actions
-  try {
-    const commandActions = page.locator('.command-actions')
-    if (await commandActions.isVisible({ timeout: 500 }).catch(() => false)) {
-      await page.keyboard.press('Escape')
-      await page.waitForTimeout(200)
-    }
-  } catch {
-    // Ignore errors
+  const commandActions = page.locator('.command-actions')
+  if (await commandActions.isVisible({ timeout: 200 }).catch(() => false)) {
+    await page.keyboard.press('Escape')
+    await page.waitForTimeout(100)
   }
 
   // Close config panel if open
-  try {
-    const configPanel = page.locator('.config-panel')
-    if (await configPanel.isVisible({ timeout: 500 }).catch(() => false)) {
-      await page.keyboard.press('Escape')
-      await page.waitForTimeout(200)
-    }
-  } catch {
-    // Ignore errors
+  const configPanel = page.locator('.config-panel')
+  if (await configPanel.isVisible({ timeout: 200 }).catch(() => false)) {
+    await page.keyboard.press('Escape')
+    await page.waitForTimeout(100)
   }
 
   // Clear all conversations
-  try {
-    await page.keyboard.press('Control+k')
-    await page.waitForTimeout(500)
-  } catch {
-    // Ignore errors
-  }
+  await page.keyboard.press('Control+k')
 
-  // Wait for welcome message to appear (indicates clean state)
-  try {
-    await page.waitForSelector('.welcome-message', { state: 'visible', timeout: 3000 })
-  } catch {
-    // Welcome message might not appear if conversations were already empty
-  }
+  // Brief wait for the clear action to process
+  await page.waitForTimeout(200)
 }
