@@ -1,7 +1,7 @@
 import { execSync } from 'node:child_process'
 import path from 'node:path'
 import { type ElectronApplication, _electron as electron, type Page } from '@playwright/test'
-import { getMockInjectionScript, type LaunchOptions } from './mocks'
+import { defaultMockAICommand, getMockInjectionScript, type LaunchOptions } from './mocks'
 
 /**
  * Helper to launch the Electron application for E2E testing
@@ -93,10 +93,9 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
       env.SHELLM_E2E_MOCK_CONNECTION_FAILED = 'true'
     }
 
-    // Mock AI response
-    if (mocks.aiCommand) {
-      env.SHELLM_E2E_MOCK_AI_RESPONSE = JSON.stringify(mocks.aiCommand)
-    }
+    // Mock AI response - always set when mocks are provided, defaulting to defaultMockAICommand
+    // The IPC error handler (SHELLM_E2E_MOCK_ERRORS) takes priority over this value
+    env.SHELLM_E2E_MOCK_AI_RESPONSE = JSON.stringify(mocks.aiCommand ?? defaultMockAICommand)
 
     // Mock models
     if (mocks.models) {

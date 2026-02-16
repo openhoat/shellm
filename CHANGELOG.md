@@ -11,6 +11,7 @@ To view the complete history, use: `git log`
 
 #### 16/02
 
+- **[13:00:00] 🐛 [FIX]** Fix E2E mock: always set SHELLM_E2E_MOCK_AI_RESPONSE env var when mocks provided, defaulting to defaultMockAICommand
 - **[12:00:00] 🐛 [FIX]** Fix mock injection in E2E tests: ignore electronAPI setter to prevent real API from overwriting the mock
 - **[10:00:00] 🐛 [FIX]** Add mocks to E2E tests requiring AI responses to fix CI failures (chat, terminal, workflows, config)
 - **[10:00:00] 🐛 [FIX]** Fix config.test.ts theme options assertion to be locale-agnostic (check option values instead of translated text)
