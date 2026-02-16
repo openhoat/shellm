@@ -1,3 +1,4 @@
+import type { ElectronApplication, Page } from '@playwright/test'
 import { expect, test } from '@playwright/test'
 import { closeElectronApp, launchElectronApp, waitForAppReady } from './electron-app'
 import {
@@ -20,182 +21,130 @@ import {
   waitForCommandActionsHidden,
 } from './helpers'
 
+let app: ElectronApplication
+let page: Page
+
 test.describe('SheLLM E2E - Chat Functionality', () => {
+  test.beforeAll(async () => {
+    const result = await launchElectronApp({ mocks: {} })
+    app = result.app
+    page = result.page
+    await waitForAppReady(page)
+  })
+
+  test.afterAll(async () => {
+    await closeElectronApp(app)
+  })
+
+  test.beforeEach(async () => {
+    // Reset conversation state between tests
+    await clearAllConversationsByShortcut(page)
+    await page.waitForTimeout(300)
+  })
+
   test.describe('Chat input field', () => {
     test('should display chat input field', async () => {
-      const { app, page } = await launchElectronApp({ mocks: {} })
-
-      try {
-        await waitForAppReady(page)
-
-        const input = page.locator('.chat-input input')
-        await expect(input).toBeVisible()
-        await expect(input).toBeEnabled()
-      } finally {
-        await closeElectronApp(app)
-      }
+      const input = page.locator('.chat-input input')
+      await expect(input).toBeVisible()
+      await expect(input).toBeEnabled()
     })
 
     test('should be able to type in the input field', async () => {
-      const { app, page } = await launchElectronApp({ mocks: {} })
+      const input = page.locator('.chat-input input')
+      await input.fill('List all files')
 
-      try {
-        await waitForAppReady(page)
-
-        const input = page.locator('.chat-input input')
-        await input.fill('List all files')
-
-        await expect(input).toHaveValue('List all files')
-      } finally {
-        await closeElectronApp(app)
-      }
+      await expect(input).toHaveValue('List all files')
     })
 
     test('should disable input while loading', async () => {
-      const { app, page } = await launchElectronApp({ mocks: {} })
+      // Type a message and submit
+      await sendMessage(page, 'List all files')
 
-      try {
-        await waitForAppReady(page)
+      // Input should be disabled while loading
+      const input = page.locator('.chat-input input')
+      const _isDisabled = await input.isDisabled().catch(() => true)
 
-        // Type a message and submit
-        await sendMessage(page, 'List all files')
+      // Wait for response
+      await waitForAIResponse(page)
 
-        // Input should be disabled while loading
-        const input = page.locator('.chat-input input')
-        const _isDisabled = await input.isDisabled().catch(() => true)
-
-        // Wait for response
-        await waitForAIResponse(page)
-
-        // Input should be enabled again after response
-        await expect(input).toBeEnabled()
-      } finally {
-        await closeElectronApp(app)
-      }
+      // Input should be enabled again after response
+      await expect(input).toBeEnabled()
     })
 
     test('should clear input after sending message', async () => {
-      const { app, page } = await launchElectronApp({ mocks: {} })
+      await sendMessage(page, 'List all files')
 
-      try {
-        await waitForAppReady(page)
+      // Wait for response
+      await waitForAIResponse(page)
 
-        await sendMessage(page, 'List all files')
-
-        // Wait for response
-        await waitForAIResponse(page)
-
-        const input = page.locator('.chat-input input')
-        await expect(input).toHaveValue('')
-      } finally {
-        await closeElectronApp(app)
-      }
+      const input = page.locator('.chat-input input')
+      await expect(input).toHaveValue('')
     })
   })
 
   test.describe('Message display', () => {
     test('should display welcome message when conversation is empty', async () => {
-      const { app, page } = await launchElectronApp({ mocks: {} })
-
-      try {
-        await waitForAppReady(page)
-
-        const isWelcomeVisible = await isWelcomeMessageVisible(page)
-        expect(isWelcomeVisible).toBe(true)
-      } finally {
-        await closeElectronApp(app)
-      }
+      const isWelcomeVisible = await isWelcomeMessageVisible(page)
+      expect(isWelcomeVisible).toBe(true)
     })
 
     test('should display user messages in conversation', async () => {
-      const { app, page } = await launchElectronApp({ mocks: {} })
+      await sendMessage(page, 'List all files in current directory')
 
-      try {
-        await waitForAppReady(page)
+      // Wait for AI response
+      await waitForAIResponse(page)
 
-        await sendMessage(page, 'List all files in current directory')
-
-        // Wait for AI response
-        await waitForAIResponse(page)
-
-        // Check user message is displayed
-        const userMessages = await getUserMessages(page)
-        expect(userMessages.length).toBeGreaterThan(0)
-        expect(userMessages[0]).toContain('List all files')
-      } finally {
-        await closeElectronApp(app)
-      }
+      // Check user message is displayed
+      const userMessages = await getUserMessages(page)
+      expect(userMessages.length).toBeGreaterThan(0)
+      expect(userMessages[0]).toContain('List all files')
     })
 
     test('should display AI responses in conversation', async () => {
-      const { app, page } = await launchElectronApp({ mocks: {} })
+      await sendMessage(page, 'List all files')
 
-      try {
-        await waitForAppReady(page)
+      // Wait for AI response
+      await waitForAIResponse(page)
 
-        await sendMessage(page, 'List all files')
-
-        // Wait for AI response
-        await waitForAIResponse(page)
-
-        // Check AI message is displayed
-        const aiMessages = await getAIMessages(page)
-        expect(aiMessages.length).toBeGreaterThan(0)
-      } finally {
-        await closeElectronApp(app)
-      }
+      // Check AI message is displayed
+      const aiMessages = await getAIMessages(page)
+      expect(aiMessages.length).toBeGreaterThan(0)
     })
 
     test('should display loading spinner while AI is generating', async () => {
-      const { app, page } = await launchElectronApp({ mocks: {} })
+      // Type message
+      await typeInChat(page, 'Show disk usage')
 
-      try {
-        await waitForAppReady(page)
+      // Submit and immediately check for loading
+      const input = page.locator('.chat-input input')
+      await input.press('Enter')
 
-        // Type message
-        await typeInChat(page, 'Show disk usage')
+      // Check if loading spinner appears (might be brief)
+      const _loadingVisible = await isLoadingVisible(page)
 
-        // Submit and immediately check for loading
-        const input = page.locator('.chat-input input')
-        await input.press('Enter')
+      // Either loading was visible or response already came back
+      // Both are acceptable outcomes
 
-        // Check if loading spinner appears (might be brief)
-        const _loadingVisible = await isLoadingVisible(page)
-
-        // Either loading was visible or response already came back
-        // Both are acceptable outcomes
-
-        // Wait for response to complete
-        await waitForAIResponse(page)
-      } finally {
-        await closeElectronApp(app)
-      }
+      // Wait for response to complete
+      await waitForAIResponse(page)
     })
 
     test('should hide welcome message after first message', async () => {
-      const { app, page } = await launchElectronApp({ mocks: {} })
+      // Initially welcome message should be visible
+      const welcomeBefore = await isWelcomeMessageVisible(page)
+      expect(welcomeBefore).toBe(true)
 
-      try {
-        await waitForAppReady(page)
+      await sendMessage(page, 'List all files')
+      await waitForAIResponse(page)
 
-        // Initially welcome message should be visible
-        const welcomeBefore = await isWelcomeMessageVisible(page)
-        expect(welcomeBefore).toBe(true)
-
-        await sendMessage(page, 'List all files')
-        await waitForAIResponse(page)
-
-        // After message, welcome should be hidden
-        const welcomeAfter = await isWelcomeMessageVisible(page)
-        expect(welcomeAfter).toBe(false)
-      } finally {
-        await closeElectronApp(app)
-      }
+      // After message, welcome should be hidden
+      const welcomeAfter = await isWelcomeMessageVisible(page)
+      expect(welcomeAfter).toBe(false)
     })
 
     test('should display multiple messages in conversation', async () => {
       // Use text-type mock to avoid command actions blocking the UI between messages
-      const { app, page } = await launchElectronApp({
+      const { app: textApp, page: textPage } = await launchElectronApp({
         mocks: {
           aiCommand: {
             type: 'text',
@@ -205,235 +154,171 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
       })
 
       try {
-        await waitForAppReady(page)
+        await waitForAppReady(textPage)
 
         // Send first message
-        await sendMessage(page, 'List files')
-        await waitForAIResponse(page, 10000)
+        await sendMessage(textPage, 'List files')
+        await waitForAIResponse(textPage, 10000)
 
         // Wait for input to be re-enabled
-        await page.waitForSelector('.chat-input input:not([disabled])', { timeout: 5000 })
+        await textPage.waitForSelector('.chat-input input:not([disabled])', { timeout: 5000 })
 
         // Wait for state to settle before sending second message
-        await page.waitForTimeout(500)
+        await textPage.waitForTimeout(500)
 
         // Send second message
-        await sendMessage(page, 'Show current directory')
+        await sendMessage(textPage, 'Show current directory')
 
         // Wait explicitly for 2 AI messages (not just any single AI message)
-        await page.waitForFunction(
+        await textPage.waitForFunction(
           () => document.querySelectorAll('.chat-message.ai').length >= 2,
           { timeout: 10000 }
         )
 
         // Wait for all messages to be fully rendered
-        await page.waitForTimeout(500)
+        await textPage.waitForTimeout(500)
 
         // Check we have multiple messages - at least 2 user messages and 2 AI responses
-        const userMessages = await getUserMessages(page)
-        const aiMessages = await getAIMessages(page)
+        const userMessages = await getUserMessages(textPage)
+        const aiMessages = await getAIMessages(textPage)
 
         expect(userMessages.length).toBeGreaterThanOrEqual(2)
         expect(aiMessages.length).toBeGreaterThanOrEqual(2)
       } finally {
-        await closeElectronApp(app)
+        await closeElectronApp(textApp)
       }
     })
   })
 
   test.describe('AI command generation', () => {
     test('should show command proposal after sending message', async () => {
-      const { app, page } = await launchElectronApp({ mocks: {} })
+      await sendMessage(page, 'List all files')
+      await waitForAIResponse(page)
 
-      try {
-        await waitForAppReady(page)
-
-        await sendMessage(page, 'List all files')
-        await waitForAIResponse(page)
-
-        // Check for command actions
-        const commandActionsVisible = await isCommandActionsVisible(page)
-        expect(commandActionsVisible).toBe(true)
-      } finally {
-        await closeElectronApp(app)
-      }
+      // Check for command actions
+      const commandActionsVisible = await isCommandActionsVisible(page)
+      expect(commandActionsVisible).toBe(true)
     })
 
     test('should display Execute, Modify, Cancel buttons for commands', async () => {
-      const { app, page } = await launchElectronApp({ mocks: {} })
+      await sendMessage(page, 'List files')
+      await waitForAIResponse(page)
 
-      try {
-        await waitForAppReady(page)
+      // Check for command action buttons
+      const executeButton = page.locator('.command-actions .btn-execute')
+      const modifyButton = page.locator('.command-actions .btn-modify')
+      const cancelButton = page.locator('.command-actions .btn-cancel')
 
-        await sendMessage(page, 'List files')
-        await waitForAIResponse(page)
-
-        // Check for command action buttons
-        const executeButton = page.locator('.command-actions .btn-execute')
-        const modifyButton = page.locator('.command-actions .btn-modify')
-        const cancelButton = page.locator('.command-actions .btn-cancel')
-
-        await expect(executeButton).toBeVisible()
-        await expect(modifyButton).toBeVisible()
-        await expect(cancelButton).toBeVisible()
-      } finally {
-        await closeElectronApp(app)
-      }
+      await expect(executeButton).toBeVisible()
+      await expect(modifyButton).toBeVisible()
+      await expect(cancelButton).toBeVisible()
     })
 
     test('should allow modifying command', async () => {
-      const { app, page } = await launchElectronApp({ mocks: {} })
+      await sendMessage(page, 'List files')
+      await waitForAIResponse(page)
 
-      try {
-        await waitForAppReady(page)
+      // Click Modify button
+      await clickModifyButton(page)
 
-        await sendMessage(page, 'List files')
-        await waitForAIResponse(page)
+      // Check that command is now in input field
+      const input = page.locator('.chat-input input')
+      const value = await input.inputValue()
+      expect(value.length).toBeGreaterThan(0)
 
-        // Click Modify button
-        await clickModifyButton(page)
-
-        // Check that command is now in input field
-        const input = page.locator('.chat-input input')
-        const value = await input.inputValue()
-        expect(value.length).toBeGreaterThan(0)
-
-        // Command actions should be hidden after modify
-        await waitForCommandActionsHidden(page)
-      } finally {
-        await closeElectronApp(app)
-      }
+      // Command actions should be hidden after modify
+      await waitForCommandActionsHidden(page)
     })
 
     test('should allow canceling command', async () => {
-      const { app, page } = await launchElectronApp({ mocks: {} })
+      await sendMessage(page, 'List files')
+      await waitForAIResponse(page)
 
-      try {
-        await waitForAppReady(page)
+      // Verify command actions are visible
+      const beforeCancel = await isCommandActionsVisible(page)
+      expect(beforeCancel).toBe(true)
 
-        await sendMessage(page, 'List files')
-        await waitForAIResponse(page)
+      // Click Cancel button
+      await clickCancelButton(page)
 
-        // Verify command actions are visible
-        const beforeCancel = await isCommandActionsVisible(page)
-        expect(beforeCancel).toBe(true)
+      // Command actions should be hidden
+      await waitForCommandActionsHidden(page)
 
-        // Click Cancel button
-        await clickCancelButton(page)
-
-        // Command actions should be hidden
-        await waitForCommandActionsHidden(page)
-
-        const afterCancel = await isCommandActionsVisible(page)
-        expect(afterCancel).toBe(false)
-      } finally {
-        await closeElectronApp(app)
-      }
+      const afterCancel = await isCommandActionsVisible(page)
+      expect(afterCancel).toBe(false)
     })
 
     test('should show terminal not ready state when terminal is not initialized', async () => {
-      const { app, page } = await launchElectronApp({ mocks: {} })
+      await sendMessage(page, 'List files')
+      await waitForAIResponse(page)
 
-      try {
-        await waitForAppReady(page)
+      // Execute button might be disabled if terminal isn't ready
+      const executeButton = page.locator('.command-actions .btn-execute')
 
-        await sendMessage(page, 'List files')
-        await waitForAIResponse(page)
+      // Check if button shows "Préparation..." or "Exécuter"
+      const buttonText = await executeButton.textContent()
 
-        // Execute button might be disabled if terminal isn't ready
-        const executeButton = page.locator('.command-actions .btn-execute')
-
-        // Check if button shows "Préparation..." or "Exécuter"
-        const buttonText = await executeButton.textContent()
-
-        // Either "Préparation..." (waiting for terminal) or "Exécuter" (ready)
-        expect(['Préparation...', 'Exécuter']).toContain(buttonText)
-      } finally {
-        await closeElectronApp(app)
-      }
+      // Either "Préparation..." (waiting for terminal) or "Exécuter" (ready)
+      expect(['Préparation...', 'Exécuter']).toContain(buttonText)
     })
   })
 
   test.describe('Keyboard shortcuts', () => {
     test('should cancel command with Escape', async () => {
-      const { app, page } = await launchElectronApp({ mocks: {} })
+      await sendMessage(page, 'List files')
+      await waitForAIResponse(page)
 
-      try {
-        await waitForAppReady(page)
+      // Verify command actions are visible
+      const beforeCancel = await isCommandActionsVisible(page)
+      expect(beforeCancel).toBe(true)
 
-        await sendMessage(page, 'List files')
-        await waitForAIResponse(page)
+      // Press Escape
+      await cancelActionByShortcut(page)
 
-        // Verify command actions are visible
-        const beforeCancel = await isCommandActionsVisible(page)
-        expect(beforeCancel).toBe(true)
-
-        // Press Escape
-        await cancelActionByShortcut(page)
-
-        // Command actions should be hidden
-        await waitForCommandActionsHidden(page)
-      } finally {
-        await closeElectronApp(app)
-      }
+      // Command actions should be hidden
+      await waitForCommandActionsHidden(page)
     })
 
     test('should clear conversation with Ctrl+K', async () => {
-      const { app, page } = await launchElectronApp({ mocks: {} })
+      // Send a message
+      await sendMessage(page, 'List files')
+      await waitForAIResponse(page)
 
-      try {
-        await waitForAppReady(page)
+      // Verify message exists
+      const messagesBefore = await getChatMessages(page)
+      expect(messagesBefore.length).toBeGreaterThan(0)
 
-        // Send a message
-        await sendMessage(page, 'List files')
-        await waitForAIResponse(page)
+      // Press Ctrl+K to clear
+      await clearAllConversationsByShortcut(page)
 
-        // Verify message exists
-        const messagesBefore = await getChatMessages(page)
-        expect(messagesBefore.length).toBeGreaterThan(0)
+      // Wait a bit for the action to process
+      await page.waitForTimeout(500)
 
-        // Press Ctrl+K to clear
-        await clearAllConversationsByShortcut(page)
-
-        // Wait a bit for the action to process
-        await page.waitForTimeout(500)
-
-        // Check welcome message is back (conversation cleared)
-        const _welcomeVisible = await isWelcomeMessageVisible(page)
-        // Note: This might not show immediately depending on how clearing works
-      } finally {
-        await closeElectronApp(app)
-      }
+      // Check welcome message is back (conversation cleared)
+      const _welcomeVisible = await isWelcomeMessageVisible(page)
+      // Note: This might not show immediately depending on how clearing works
     })
 
     test('should execute command with Ctrl+Enter when command is proposed', async () => {
-      const { app, page } = await launchElectronApp({ mocks: {} })
+      // Wait for terminal to be ready
+      await page.waitForTimeout(2000)
 
-      try {
-        await waitForAppReady(page)
+      await sendMessage(page, 'List files')
+      await waitForAIResponse(page)
 
-        // Wait for terminal to be ready
-        await page.waitForTimeout(2000)
+      // Wait for command actions
+      await waitForCommandActions(page)
 
-        await sendMessage(page, 'List files')
-        await waitForAIResponse(page)
+      // Check if execute button is enabled
+      const executeButton = page.locator('.command-actions .btn-execute')
+      const isEnabled = await executeButton.isEnabled()
 
-        // Wait for command actions
-        await waitForCommandActions(page)
+      if (isEnabled) {
+        // Press Ctrl+Enter to execute
+        await executeCommandByShortcut(page)
 
-        // Check if execute button is enabled
-        const executeButton = page.locator('.command-actions .btn-execute')
-        const isEnabled = await executeButton.isEnabled()
-
-        if (isEnabled) {
-          // Press Ctrl+Enter to execute
-          await executeCommandByShortcut(page)
-
-          // Command actions should disappear after execution
-          await waitForCommandActionsHidden(page, 5000)
-        }
-      } finally {
-        await closeElectronApp(app)
+        // Command actions should disappear after execution
+        await waitForCommandActionsHidden(page, 5000)
       }
     })
   })
@@ -441,7 +326,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
   test.describe('Error handling', () => {
     test('should display error when AI generation fails', async () => {
       // Use mocks to inject error before app loads
-      const { app, page } = await launchElectronApp({
+      const { app: errorApp, page: errorPage } = await launchElectronApp({
         mocks: {
           errors: {
             llmGenerate: new Error('Connection refused'),
@@ -450,13 +335,13 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
       })
 
       try {
-        await waitForAppReady(page)
+        await waitForAppReady(errorPage)
 
         // Send a message that will trigger the error
-        await sendMessage(page, 'List files')
+        await sendMessage(errorPage, 'List files')
 
         // Wait for loading to complete
-        const loadingSpinner = page.locator('.loading-spinner')
+        const loadingSpinner = errorPage.locator('.loading-spinner')
         try {
           await loadingSpinner.waitFor({ state: 'hidden', timeout: 20000 })
         } catch {
@@ -464,12 +349,12 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
         }
 
         // Wait for error to appear with increased timeout
-        const errorVisible = await isErrorVisible(page, 15000)
+        const errorVisible = await isErrorVisible(errorPage, 15000)
 
         // Error should be displayed
         expect(errorVisible).toBe(true)
       } finally {
-        await closeElectronApp(app)
+        await closeElectronApp(errorApp)
       }
     })
   })
