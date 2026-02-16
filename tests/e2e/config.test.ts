@@ -15,7 +15,7 @@ import {
 test.describe('SheLLM E2E - Configuration', () => {
   test.describe('Config panel visibility', () => {
     test('should be hidden by default', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -32,7 +32,7 @@ test.describe('SheLLM E2E - Configuration', () => {
     })
 
     test('should be visible after clicking config button', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -49,7 +49,7 @@ test.describe('SheLLM E2E - Configuration', () => {
     })
 
     test('should close when clicking close button', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -73,7 +73,7 @@ test.describe('SheLLM E2E - Configuration', () => {
     })
 
     test('should toggle visibility with config button', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -99,7 +99,7 @@ test.describe('SheLLM E2E - Configuration', () => {
 
   test.describe('Configuration fields', () => {
     test('should display Ollama URL field', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -118,7 +118,7 @@ test.describe('SheLLM E2E - Configuration', () => {
     })
 
     test('should display model selector', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -133,7 +133,7 @@ test.describe('SheLLM E2E - Configuration', () => {
     })
 
     test('should display temperature slider', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -158,7 +158,7 @@ test.describe('SheLLM E2E - Configuration', () => {
     })
 
     test('should display max tokens field', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -182,7 +182,7 @@ test.describe('SheLLM E2E - Configuration', () => {
     })
 
     test('should display theme selector', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -225,7 +225,7 @@ test.describe('SheLLM E2E - Configuration', () => {
     })
 
     test('should display shell selector', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -249,7 +249,7 @@ test.describe('SheLLM E2E - Configuration', () => {
     })
 
     test('should display font size slider', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -300,7 +300,7 @@ test.describe('SheLLM E2E - Configuration', () => {
     })
 
     test('should allow changing temperature if not disabled by env', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -365,7 +365,7 @@ test.describe('SheLLM E2E - Configuration', () => {
     })
 
     test('should allow changing theme', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -384,7 +384,7 @@ test.describe('SheLLM E2E - Configuration', () => {
     })
 
     test('should allow changing shell if not disabled by env', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -412,7 +412,7 @@ test.describe('SheLLM E2E - Configuration', () => {
 
   test.describe('Configuration persistence', () => {
     test('should save configuration', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -434,7 +434,7 @@ test.describe('SheLLM E2E - Configuration', () => {
     })
 
     test('should reset configuration to defaults', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -459,7 +459,7 @@ test.describe('SheLLM E2E - Configuration', () => {
 
   test.describe('Connection testing', () => {
     test('should have test connection button', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -475,7 +475,7 @@ test.describe('SheLLM E2E - Configuration', () => {
     })
 
     test('should display connection result', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -497,7 +497,7 @@ test.describe('SheLLM E2E - Configuration', () => {
 
   test.describe('Config panel UI', () => {
     test('should display config title', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -512,7 +512,7 @@ test.describe('SheLLM E2E - Configuration', () => {
     })
 
     test('should display config sections', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -528,7 +528,7 @@ test.describe('SheLLM E2E - Configuration', () => {
     })
 
     test('should have Save and Reset buttons', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)

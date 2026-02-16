@@ -138,7 +138,7 @@ test.describe('SheLLM E2E - User Workflows', () => {
     })
 
     test('should reset configuration to defaults', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -174,7 +174,7 @@ test.describe('SheLLM E2E - User Workflows', () => {
 
   test.describe('Conversation management workflow', () => {
     test('should create and manage conversations', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -202,7 +202,7 @@ test.describe('SheLLM E2E - User Workflows', () => {
     })
 
     test('should handle new conversation creation', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -281,7 +281,7 @@ test.describe('SheLLM E2E - User Workflows', () => {
       }
 
       // Now launch a fresh app without errors to test recovery
-      const { app: app2, page: page2 } = await launchElectronApp()
+      const { app: app2, page: page2 } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page2)
@@ -358,7 +358,7 @@ test.describe('SheLLM E2E - User Workflows', () => {
     })
 
     test('should handle terminal interaction alongside chat', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
