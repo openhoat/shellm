@@ -3,7 +3,6 @@ import { closeElectronApp, launchElectronApp, waitForAppReady } from './electron
 import {
   closeConfigPanel,
   getShellOptions,
-  getThemeOptions,
   isConfigPanelVisible,
   openConfigPanel,
   resetConfig,
@@ -197,10 +196,12 @@ test.describe('SheLLM E2E - Configuration', () => {
         const tagName = await themeField.evaluate(el => el.tagName.toLowerCase())
         expect(tagName).toBe('select')
 
-        // Check available options
-        const options = await getThemeOptions(page)
-        expect(options).toContain('Sombre')
-        expect(options).toContain('Clair')
+        // Check available options by value (language-agnostic)
+        const optionValues = await themeField.evaluate(el =>
+          Array.from(el.querySelectorAll('option')).map(o => (o as HTMLOptionElement).value)
+        )
+        expect(optionValues).toContain('dark')
+        expect(optionValues).toContain('light')
       } finally {
         await closeElectronApp(app)
       }
@@ -241,7 +242,7 @@ test.describe('SheLLM E2E - Configuration', () => {
         // Check available options
         const options = await getShellOptions(page)
         expect(options.length).toBeGreaterThan(0)
-        expect(options).toContain('Auto (système)')
+        expect(options).toContain('Auto (system)')
       } finally {
         await closeElectronApp(app)
       }
@@ -275,13 +276,8 @@ test.describe('SheLLM E2E - Configuration', () => {
 
   test.describe('Configuration modification', () => {
     test('should allow changing Ollama URL if not disabled by env', async () => {
-      // Launch with empty env vars to ensure URL field is NOT disabled
-      const { app, page } = await launchElectronApp({
-        env: {
-          SHELLM_OLLAMA_URL: '',
-          SHELLM_OLLAMA_API_KEY: '',
-        },
-      })
+      // Use mocks to ensure URL field is not disabled by env sources (all false by default)
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)

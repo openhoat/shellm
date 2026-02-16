@@ -166,7 +166,7 @@ test.describe('SheLLM E2E - Terminal Integration', () => {
 
   test.describe('Command execution', () => {
     test('should execute command from AI proposal', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -201,7 +201,7 @@ test.describe('SheLLM E2E - Terminal Integration', () => {
     })
 
     test('should capture command output', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -235,7 +235,7 @@ test.describe('SheLLM E2E - Terminal Integration', () => {
     })
 
     test('should interpret command output with AI', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -277,7 +277,7 @@ test.describe('SheLLM E2E - Terminal Integration', () => {
     })
 
     test('should disable execute button when terminal is not ready', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)

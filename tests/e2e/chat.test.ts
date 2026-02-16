@@ -241,7 +241,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
 
   test.describe('AI command generation', () => {
     test('should show command proposal after sending message', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -258,7 +258,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
     })
 
     test('should display Execute, Modify, Cancel buttons for commands', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -280,7 +280,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
     })
 
     test('should allow modifying command', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -304,7 +304,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
     })
 
     test('should allow canceling command', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -330,7 +330,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
     })
 
     test('should show terminal not ready state when terminal is not initialized', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -354,7 +354,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
 
   test.describe('Keyboard shortcuts', () => {
     test('should cancel command with Escape', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
@@ -405,7 +405,7 @@ test.describe('SheLLM E2E - Chat Functionality', () => {
     })
 
     test('should execute command with Ctrl+Enter when command is proposed', async () => {
-      const { app, page } = await launchElectronApp()
+      const { app, page } = await launchElectronApp({ mocks: {} })
 
       try {
         await waitForAppReady(page)
