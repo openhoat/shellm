@@ -30,13 +30,16 @@ vi.mock('electron', () => ({
 import { createConversationHandlers } from './conversation'
 
 describe('Conversation IPC Handlers', () => {
+  // Window getter that returns the mock window
+  const getWindow = () => mainWindow
+
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   describe('Handler Registration', () => {
     test('should register all conversation IPC handlers', () => {
-      createConversationHandlers(mainWindow as any)
+      createConversationHandlers(getWindow as any)
 
       // Get all handler registrations
       const handlerNames = ipcMain.handle.mock.calls.map((call: unknown[]) => call[0])
@@ -56,7 +59,7 @@ describe('Conversation IPC Handlers', () => {
 
   describe('conversation:get-all', () => {
     test('should have get-all handler registered', () => {
-      createConversationHandlers(mainWindow as any)
+      createConversationHandlers(getWindow as any)
 
       const getAllHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'conversation:get-all'
@@ -68,7 +71,7 @@ describe('Conversation IPC Handlers', () => {
 
   describe('conversation:get', () => {
     test('should have get handler registered', () => {
-      createConversationHandlers(mainWindow as any)
+      createConversationHandlers(getWindow as any)
 
       const getHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'conversation:get'
@@ -80,7 +83,7 @@ describe('Conversation IPC Handlers', () => {
 
   describe('conversation:create', () => {
     test('should have create handler registered', () => {
-      createConversationHandlers(mainWindow as any)
+      createConversationHandlers(getWindow as any)
 
       const createHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'conversation:create'
@@ -92,7 +95,7 @@ describe('Conversation IPC Handlers', () => {
 
   describe('conversation:add-message', () => {
     test('should have add-message handler registered', () => {
-      createConversationHandlers(mainWindow as any)
+      createConversationHandlers(getWindow as any)
 
       const addMessageHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'conversation:add-message'
@@ -104,7 +107,7 @@ describe('Conversation IPC Handlers', () => {
 
   describe('conversation:update', () => {
     test('should have update handler registered', () => {
-      createConversationHandlers(mainWindow as any)
+      createConversationHandlers(getWindow as any)
 
       const updateHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'conversation:update'
@@ -116,7 +119,7 @@ describe('Conversation IPC Handlers', () => {
 
   describe('conversation:delete', () => {
     test('should have delete handler registered', () => {
-      createConversationHandlers(mainWindow as any)
+      createConversationHandlers(getWindow as any)
 
       const deleteHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'conversation:delete'
@@ -128,7 +131,7 @@ describe('Conversation IPC Handlers', () => {
 
   describe('conversation:clear-all', () => {
     test('should have clear-all handler registered', () => {
-      createConversationHandlers(mainWindow as any)
+      createConversationHandlers(getWindow as any)
 
       const clearAllHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'conversation:clear-all'
@@ -140,7 +143,7 @@ describe('Conversation IPC Handlers', () => {
 
   describe('conversation:export', () => {
     test('should have export handler registered', () => {
-      createConversationHandlers(mainWindow as any)
+      createConversationHandlers(getWindow as any)
 
       const exportHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'conversation:export'
@@ -152,7 +155,7 @@ describe('Conversation IPC Handlers', () => {
 
   describe('conversation:export-all', () => {
     test('should have export-all handler registered', () => {
-      createConversationHandlers(mainWindow as any)
+      createConversationHandlers(getWindow as any)
 
       const exportAllHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'conversation:export-all'

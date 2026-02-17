@@ -8,6 +8,8 @@ interface TerminalInstance {
   isCapturing: boolean
 }
 
+type WindowGetter = () => BrowserWindow | null
+
 const terminals = new Map<number, TerminalInstance>()
 
 /**
@@ -48,7 +50,7 @@ function getShellArgs(shell: string): string[] {
   return ['-l']
 }
 
-export function createTerminalHandlers(mainWindow: BrowserWindow): void {
+export function createTerminalHandlers(getWindow: WindowGetter): void {
   // Create a new terminal
   ipcMain.handle('terminal:create', async () => {
     // Load config to get the shell preference
@@ -106,18 +108,24 @@ export function createTerminalHandlers(mainWindow: BrowserWindow): void {
         terminal.outputBuffer.push(data)
       }
 
-      mainWindow?.webContents.send('terminal:data', {
-        pid: ptyProcess.pid,
-        data: data,
-      })
+      const window = getWindow()
+      if (window) {
+        window.webContents.send('terminal:data', {
+          pid: ptyProcess.pid,
+          data: data,
+        })
+      }
     })
 
     // Handle terminal exit
     ptyProcess.onExit(({ exitCode }) => {
-      mainWindow?.webContents.send('terminal:exit', {
-        pid: ptyProcess.pid,
-        code: exitCode,
-      })
+      const window = getWindow()
+      if (window) {
+        window.webContents.send('terminal:exit', {
+          pid: ptyProcess.pid,
+          code: exitCode,
+        })
+      }
       terminals.delete(ptyProcess.pid)
     })
 

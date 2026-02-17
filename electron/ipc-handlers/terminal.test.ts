@@ -46,9 +46,12 @@ describe('Terminal IPC Handlers', () => {
     ipcMain.handle.mockClear()
   })
 
+  // Window getter that returns the mock window
+  const getWindow = () => mockMainWindow
+
   describe('Handler Registration', () => {
     test('should register all terminal IPC handlers', () => {
-      createTerminalHandlers(mockMainWindow as any)
+      createTerminalHandlers(getWindow as any)
 
       // Verify all handlers are registered
       expect(ipcMain.handle).toHaveBeenCalledWith('terminal:create', expect.any(Function))
@@ -62,7 +65,7 @@ describe('Terminal IPC Handlers', () => {
 
   describe('terminal:write', () => {
     test('should have write handler registered', () => {
-      createTerminalHandlers(mockMainWindow as any)
+      createTerminalHandlers(getWindow as any)
 
       const writeHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'terminal:write'
@@ -74,7 +77,7 @@ describe('Terminal IPC Handlers', () => {
 
   describe('terminal:resize', () => {
     test('should have resize handler registered', () => {
-      createTerminalHandlers(mockMainWindow as any)
+      createTerminalHandlers(getWindow as any)
 
       const resizeHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'terminal:resize'
@@ -86,7 +89,7 @@ describe('Terminal IPC Handlers', () => {
 
   describe('terminal:startCapture', () => {
     test('should have startCapture handler registered', () => {
-      createTerminalHandlers(mockMainWindow as any)
+      createTerminalHandlers(getWindow as any)
 
       const startCaptureHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'terminal:startCapture'
@@ -98,7 +101,7 @@ describe('Terminal IPC Handlers', () => {
 
   describe('terminal:getCapture', () => {
     test('should have getCapture handler registered', () => {
-      createTerminalHandlers(mockMainWindow as any)
+      createTerminalHandlers(getWindow as any)
 
       const getCaptureHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'terminal:getCapture'
@@ -110,7 +113,7 @@ describe('Terminal IPC Handlers', () => {
 
   describe('terminal:destroy', () => {
     test('should have destroy handler registered', () => {
-      createTerminalHandlers(mockMainWindow as any)
+      createTerminalHandlers(getWindow as any)
 
       const destroyHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'terminal:destroy'

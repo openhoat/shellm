@@ -7,6 +7,8 @@ interface StoreType {
   set: (key: string, value: unknown) => void
 }
 
+type WindowGetter = () => BrowserWindow | null
+
 const isAppConfig = (value: unknown): value is AppConfig => {
   if (!value || typeof value !== 'object') {
     return false
@@ -50,7 +52,7 @@ function normalizeConfig(config: AppConfig): AppConfig {
   }
 }
 
-export function createConfigHandlers(mainWindow: BrowserWindow, store: StoreType): void {
+export function createConfigHandlers(getWindow: WindowGetter, store: StoreType): void {
   // Get config (merged with environment variables)
   ipcMain.handle('config:get', async () => {
     const storedConfig = store.get('config')
@@ -68,7 +70,10 @@ export function createConfigHandlers(mainWindow: BrowserWindow, store: StoreType
     store.set('config', config)
 
     // Notify renderer of config change
-    mainWindow.webContents.send('config:changed', config)
+    const window = getWindow()
+    if (window) {
+      window.webContents.send('config:changed', config)
+    }
 
     return config
   })
@@ -78,7 +83,10 @@ export function createConfigHandlers(mainWindow: BrowserWindow, store: StoreType
     store.set('config', DEFAULT_CONFIG)
 
     // Notify renderer of config change
-    mainWindow.webContents.send('config:changed', DEFAULT_CONFIG)
+    const window = getWindow()
+    if (window) {
+      window.webContents.send('config:changed', DEFAULT_CONFIG)
+    }
 
     return DEFAULT_CONFIG
   })

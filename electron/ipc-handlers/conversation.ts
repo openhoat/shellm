@@ -2,10 +2,12 @@ import { type BrowserWindow, dialog, ipcMain } from 'electron'
 import type { Conversation, ConversationMessage } from '../../shared/types'
 import { getConversationService } from '../services/conversationService'
 
+type WindowGetter = () => BrowserWindow | null
+
 /**
  * Create IPC handlers for conversation management
  */
-export function createConversationHandlers(_mainWindow: BrowserWindow): void {
+export function createConversationHandlers(_getWindow: WindowGetter): void {
   const conversationService = getConversationService()
 
   // Get all conversations
