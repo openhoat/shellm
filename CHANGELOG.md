@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 17/02
 
+- **[09:41:05] ✨ [FEAT]** Create /release skill and Cline workflow for automated app versioning
 - **[09:37:53] 🐛 [FIX]** Fix LLM service startup error by adding automatic initialization after config loads
 - **[09:16:44] ✨ [FEAT]** Filter commits since last release tag
 - **[09:13:19] 🐛 [FIX]** Handle invalid url gracefully with proper error handling

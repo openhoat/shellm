@@ -37,6 +37,7 @@ Skills are located in `.claude/skills/` and can be invoked with `/skill-name`.
 | `/kanban-execute` | Select and execute backlog ideas |
 | `/quality-check` | Run quality validation on project |
 | `/parallel-test` | Run tests in parallel using subagents |
+| `/release` | Automate versioning: bump, changelog, commit, tag, push |
 
 ## Workflow
 
