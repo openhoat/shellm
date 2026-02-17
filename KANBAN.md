@@ -20,11 +20,15 @@
 
 ### 🔴 P1 - High Priority
 
+- [ ] **[17/02/2026 08:52:00] 🔴 P1 🏗️ [ARCHITECTURE]** Fix invalid Ollama URL error - handle empty/invalid URL gracefully in OllamaProvider constructor, add proper error handling in createProvider and createLLMHandlers to prevent unhandled promise rejections
 
 ### 🟡 P2 - Medium Priority
 
 - [ ] **[16/02/2026 20:31:00] 🟡 P2 🌍 [I18N]** Create GitHub Pages documentation site for users and restructure README for contributors
 ### 🟢 P3 - Low Priority
+
+- [ ] **[17/02/2026 10:15:00] 🟢 P3 ⚙️ [CONFIG]** Add sourcemaps for better debugging - enable sourcemaps only in dev mode (Vite frontend and TypeScript Electron backend) to get TypeScript source references in stack traces, keep prod build without sourcemaps
+- [ ] **[17/02/2026 10:15:00] 🟢 P3 ⚙️ [CONFIG]** Enable sourcemaps for better debugging - configure sourcemaps in Vite (frontend) and TypeScript (Electron backend) only for dev mode, production builds should not include sourcemaps
 
 
 ## 🚧 In Progress
