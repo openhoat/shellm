@@ -206,7 +206,5 @@ test.describe('SheLLM E2E - User Workflows', () => {
         await closeElectronApp(textApp)
       }
     })
-
   })
-
 })
