@@ -32,8 +32,3 @@
 ## 🚧 In Progress
 
 ## ✅ Done
-
-- [x] **[17/02/2026 09:41:05] ✨ [FEAT]** Create /release skill and Cline workflow for automated versioning
-- [x] **[17/02/2026 09:37:53] 🐛 [FIX]** Fix startup error "LLM service not initialized" - add automatic LLM initialization after config loads, improve error logging
-- [x] **[17/02/2026 09:15:01] 🔧 [CHORE]** Filter CHANGELOG to show only changes since last release tag
-- [x] **[17/02/2026 09:09:54] 🐛 [FIX]** Fix invalid Ollama URL error - handle empty/invalid URL gracefully with proper error handling and unit tests
