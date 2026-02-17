@@ -9,6 +9,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "sourceMap": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
     "types": ["node"],

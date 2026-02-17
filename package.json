@@ -276,6 +276,7 @@
     "files": [
       "dist/**/*",
       "dist-electron/**/*",
+      "!dist-electron/**/*.map",
       "package.json"
     ],
     "linux": {
