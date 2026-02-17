@@ -56,10 +56,10 @@ describe('Header', () => {
     expect(screen.getByText('v1.0.0')).toBeInTheDocument()
   })
 
-  test('should render status indicator', () => {
+  test('should render status indicator with provider and model', () => {
     render(<Header />)
 
-    expect(screen.getByText(/Ollama:/i)).toBeInTheDocument()
+    expect(screen.getByText('Ollama: Local llama2')).toBeInTheDocument()
   })
 
   test('should render buttons', () => {

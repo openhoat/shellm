@@ -93,9 +93,10 @@ export const Header = () => {
     if (config.llmProvider === 'openai') {
       return `OpenAI: ${config.openai.model}`
     }
+    const model = config.ollama.model ? ` ${config.ollama.model}` : ''
     return config.ollama.url === 'http://localhost:11434'
-      ? 'Ollama: Local'
-      : `Ollama: ${config.ollama.url}`
+      ? `Ollama: Local${model}`
+      : `Ollama: ${config.ollama.url}${model}`
   }
 
   return (
