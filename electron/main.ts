@@ -56,7 +56,11 @@ const isAppConfig = (value: unknown): value is AppConfig => {
 const normalizeConfig = (config: AppConfig): AppConfig => ({
   ...DEFAULT_CONFIG,
   ...config,
-  ollama: { ...DEFAULT_CONFIG.ollama, ...config.ollama },
+  ollama: {
+    ...DEFAULT_CONFIG.ollama,
+    ...config.ollama,
+    url: config.ollama?.url || DEFAULT_CONFIG.ollama.url,
+  },
   claude: config.claude ? { ...DEFAULT_CONFIG.claude, ...config.claude } : DEFAULT_CONFIG.claude,
   llmProvider: config.llmProvider ?? DEFAULT_CONFIG.llmProvider,
 })
