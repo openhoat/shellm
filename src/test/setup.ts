@@ -17,12 +17,15 @@ const defaultAICommand: AICommand = {
 const mockOllamaGenerateCommand = vi.fn().mockResolvedValue(defaultAICommand)
 
 const defaultAppConfig: AppConfig = {
+  llmProvider: 'ollama',
   ollama: {
     url: 'http://localhost:11434',
     model: 'llama2',
     temperature: 0.7,
     maxTokens: 1000,
   },
+  claude: { apiKey: '', model: 'claude-haiku-4-5-20251001', temperature: 0.7, maxTokens: 1000 },
+  openai: { apiKey: '', model: 'gpt-4o', temperature: 0.7, maxTokens: 1000 },
   theme: 'dark',
   fontSize: 14,
   shell: 'auto',

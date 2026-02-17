@@ -62,11 +62,17 @@ export const useStore = create<AppState>((set, _get) => ({
   initConfig: async () => {
     const config = await window.electronAPI.getConfig()
     set({ config })
-    // Initialize LLM service with loaded config to prevent "LLM service not initialized" errors
-    try {
-      await window.electronAPI.llmInit(config)
-    } catch {
-      // LLM initialization may fail (e.g. invalid config), user can reconfigure later
+    // Initialize LLM service only if the active provider config looks valid
+    const canInit =
+      (config.llmProvider === 'ollama' && !!config.ollama?.url) ||
+      (config.llmProvider === 'claude' && !!config.claude?.apiKey) ||
+      (config.llmProvider === 'openai' && !!config.openai?.apiKey)
+    if (canInit) {
+      try {
+        await window.electronAPI.llmInit(config)
+      } catch {
+        // LLM initialization may fail (e.g. unreachable server), user can reconfigure later
+      }
     }
   },
 
