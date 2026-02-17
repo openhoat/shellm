@@ -90,6 +90,7 @@
       "files": [
         "src/**/*.ts",
         "src/**/*.tsx",
+        "shared/**/*.ts",
         "vite.config.ts",
         "index.html"
       ],
@@ -105,7 +106,8 @@
       "files": [
         "electron/**/*.ts",
         "electron/tsconfig.json",
-        "electron/prompts/**/*"
+        "electron/prompts/**/*",
+        "shared/**/*.ts"
       ],
       "output": [
         "dist-electron/**/*"
@@ -120,8 +122,10 @@
     "qa": {
       "command": "biome check .",
       "files": [
-        ".biomerc",
-        "biome.json"
+        "biome.json",
+        "src/**/*.{ts,tsx}",
+        "electron/**/*.ts",
+        "shared/**/*.ts"
       ],
       "output": []
     },
@@ -189,8 +193,11 @@
       "command": "vitest run",
       "files": [
         "src/**/*.test.{ts,tsx}",
+        "electron/**/*.test.ts",
         "vitest.config.ts",
-        "src/**/*.{ts,tsx}"
+        "src/**/*.{ts,tsx}",
+        "electron/**/*.ts",
+        "shared/**/*.ts"
       ],
       "output": []
     },
@@ -198,8 +205,11 @@
       "command": "vitest run --coverage",
       "files": [
         "src/**/*.test.{ts,tsx}",
+        "electron/**/*.test.ts",
         "vitest.config.ts",
-        "src/**/*.{ts,tsx}"
+        "src/**/*.{ts,tsx}",
+        "electron/**/*.ts",
+        "shared/**/*.ts"
       ],
       "output": [
         "coverage/**/*"
