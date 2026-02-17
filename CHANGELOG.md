@@ -10,6 +10,8 @@ To view the complete history, use: `git log`
 
 #### 17/02
 
+- **[01:52:40] ✅ [TEST]** Optimize e2e test suite from 72 to 35 tests
+- **[01:12:53] 📝 [DOCS]** Regenerate changelog from git history
 - **[01:11:45] 🎨 [STYLE]** Fix biome formatting in chatpanel and changelog script
 - **[01:10:56] 🐛 [FIX]** Rewrite changelog generation script to fix parsing errors
 - **[01:08:12] 🔧 [CHORE]** Clean up kanban after completing language fix task
