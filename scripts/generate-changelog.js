@@ -46,9 +46,7 @@ function execGit(command) {
  * to handle multi-line commit bodies safely.
  */
 function getAllCommits() {
-  const output = execGit(
-    'git log --pretty=format:"%H%x01%s%x01%ci%x00" --reverse'
-  )
+  const output = execGit('git log --pretty=format:"%H%x01%s%x01%ci%x00" --reverse')
 
   if (!output.trim()) return []
 

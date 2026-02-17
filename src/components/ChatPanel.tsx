@@ -185,7 +185,11 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
             className="btn btn-execute"
             disabled={!chat.terminalPid}
             onClick={handleExecuteCommand}
-            title={!chat.terminalPid ? t('chat.actions.terminalNotReady') : t('chat.actions.executeCommand')}
+            title={
+              !chat.terminalPid
+                ? t('chat.actions.terminalNotReady')
+                : t('chat.actions.executeCommand')
+            }
           >
             {!chat.terminalPid ? t('chat.actions.preparing') : t('chat.actions.execute')}
           </button>
