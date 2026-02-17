@@ -6,6 +6,7 @@ export default defineConfig({
   base: '/shellm/',
   head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/shellm/logo.svg' }]],
   themeConfig: {
+    logo: '/logo.svg',
     nav: [
       { text: 'Guide', link: '/guide/getting-started' },
       { text: 'Configuration', link: '/guide/configuration' },
