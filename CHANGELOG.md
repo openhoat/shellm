@@ -10,12 +10,9 @@ To view the complete history, use: `git log`
 
 #### 17/02
 
-- **[10:38:27] ✨ [FEAT]** Create VitePress documentation site with getting started, usage, configuration, build, troubleshooting and contributing pages
-- **[10:38:27] ✨ [FEAT]** Create GitHub Actions workflow to deploy docs to GitHub Pages
-- **[10:38:27] ✨ [FEAT]** Create SheLLM logo (SVG, green terminal style)
-- **[10:38:27] ♻️ [REFACTOR]** Slim down README.md to concise overview with links to documentation site
-- **[10:30:58] ✨ [FEAT]** Add quick install section with platform-specific download links to README
-- **[10:30:58] ♻️ [REFACTOR]** Restructure README installation section separating user install from dev setup
+- **[10:38:54] ✨ [FEAT]** Create vitepress documentation site with github pages deployment
+- **[10:31:10] 📝 [DOCS]** Add quick install section with platform download links
+- **[10:27:01] 🔧 [CHORE]** Clean completed tasks and regenerate changelog
 - **[10:25:29] ✨ [FEAT]** Enable sourcemaps for dev mode debugging
 - **[10:20:18] 📝 [DOCS]** Add devtools documentation section
 - **[10:07:45] 🐛 [FIX]** Display model name in ollama provider status
