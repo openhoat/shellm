@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 import { type FormEvent, useCallback, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useChat } from '@/hooks/useChat'
 import { useStore } from '@/store/useStore'
 import Logger from '@/utils/logger'
@@ -9,6 +10,8 @@ import './ChatPanel.css'
 const logger = new Logger('ChatPanel')
 
 export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
+  const { t } = useTranslation()
+
   // Ref for the chat input element
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
@@ -103,16 +106,13 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
       <div className="chat-messages" aria-live="polite" aria-label="Chat messages" role="log">
         {chat.conversation.length === 0 && (
           <div className="chat-welcome">
-            <h3>Bienvenue dans SheLLM !</h3>
-            <p>
-              Décrivez ce que vous voulez faire en langage naturel et l'IA vous proposera la
-              commande appropriée.
-            </p>
-            <p className="chat-examples">Exemples :</p>
+            <h3>{t('chat.welcome.title')}</h3>
+            <p>{t('chat.welcome.description')}</p>
+            <p className="chat-examples">{t('chat.welcome.examples')}</p>
             <ul>
-              <li>"Liste tous les fichiers de plus de 10MB"</li>
-              <li>"Trouve tous les fichiers Python dans le dossier courant"</li>
-              <li>"Affiche l'utilisation du disque"</li>
+              <li>{t('chat.welcome.example1')}</li>
+              <li>{t('chat.welcome.example2')}</li>
+              <li>{t('chat.welcome.example3')}</li>
             </ul>
           </div>
         )}
@@ -141,7 +141,7 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
                 <span></span>
                 <span></span>
               </div>
-              <p>Analyse des résultats en cours...</p>
+              <p>{t('chat.progress.interpreting')}</p>
             </div>
           </div>
         )}
@@ -157,14 +157,14 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
                   ></div>
                 </div>
                 <p className="progress-text">
-                  {chat.executionProgress < 30 && 'Initialisation...'}
+                  {chat.executionProgress < 30 && t('chat.progress.initializing')}
                   {chat.executionProgress >= 30 &&
                     chat.executionProgress < 70 &&
-                    'Exécution de la commande...'}
+                    t('chat.progress.executing')}
                   {chat.executionProgress >= 70 &&
                     chat.executionProgress < 90 &&
-                    'Récupération des résultats...'}
-                  {chat.executionProgress >= 90 && 'Finalisation...'}
+                    t('chat.progress.retrieving')}
+                  {chat.executionProgress >= 90 && t('chat.progress.finalizing')}
                 </p>
               </div>
             </div>
@@ -185,15 +185,15 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
             className="btn btn-execute"
             disabled={!chat.terminalPid}
             onClick={handleExecuteCommand}
-            title={!chat.terminalPid ? "Le terminal n'est pas encore prêt" : 'Exécuter la commande'}
+            title={!chat.terminalPid ? t('chat.actions.terminalNotReady') : t('chat.actions.executeCommand')}
           >
-            {!chat.terminalPid ? 'Préparation...' : 'Exécuter'}
+            {!chat.terminalPid ? t('chat.actions.preparing') : t('chat.actions.execute')}
           </button>
           <button type="button" className="btn btn-modify" onClick={chat.modifyCommand}>
-            Modifier
+            {t('chat.actions.modify')}
           </button>
           <button type="button" className="btn btn-cancel" onClick={() => setAiCommand(null)}>
-            Annuler
+            {t('chat.actions.cancel')}
           </button>
         </div>
       )}
@@ -203,7 +203,7 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
           value={chat.userInput}
           onChange={chat.handleInputChange}
           onKeyDown={handleTextareaKeyDown}
-          placeholder="Décrivez ce que vous voulez faire..."
+          placeholder={t('chat.placeholder')}
           disabled={chat.isLoading}
           // biome-ignore lint/a11y/noAutofocus: Intentional auto-focus for chat input UX
           autoFocus
@@ -222,7 +222,7 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
             stroke="currentColor"
             strokeWidth="2"
           >
-            <title>Envoyer</title>
+            <title>{t('chat.send')}</title>
             <line x1="22" y1="2" x2="11" y2="13"></line>
             <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
           </svg>

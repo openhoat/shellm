@@ -11,6 +11,7 @@ To view the complete history, use: `git log`
 
 #### 17/02
 
+- **[01:07:26] 🐛 [FIX]** Fix language change not applying in ChatPanel - replace all hardcoded French text with i18n translation keys, add missing translation keys for welcome, progress, and action buttons, set English as default language
 - **[00:45:00] 🔧 [CHORE]** Fix skills directory structure - convert flat .md files to directories with SKILL.md inside for proper Claude Code skill invocation
 
 
