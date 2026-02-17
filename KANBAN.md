@@ -29,8 +29,3 @@
 
 
 ## 🚧 In Progress
-
-### [17/02/2026 01:04:06] 🔴 P1 🐛 [FIX] Fix language change not applying after Save - welcome content stays in original language and shows error traces
-- [x] **[17/02/2026 01:04:06] ✨ [FEAT]** Add missing i18n keys for ChatPanel (welcome, progress, buttons) in en.json and fr.json
-- [x] **[17/02/2026 01:04:06] 🐛 [FIX]** Replace all hardcoded French text in ChatPanel.tsx with useTranslation() calls
-- [x] **[17/02/2026 01:04:06] 🔧 [CHORE]** Run validation to verify changes
