@@ -1,6 +1,6 @@
 {
   "name": "termaid",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Modern AI-powered terminal with Ollama integration",
   "main": "dist-electron/electron/main.js",
   "homepage": "https://github.com/openhoat/termaid",

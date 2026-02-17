@@ -10,5 +10,6 @@ To view the complete history, use: `git log`
 
 #### 17/02
 
+- **[13:53:47] 📝 [DOCS]** Regenerate changelog after project rename
 - **[13:50:37] ♻️ [REFACTOR]** Rename project from shellm to termaid
 - **[10:52:09] 📝 [DOCS]** Update version references to v1.1.0
