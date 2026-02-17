@@ -46,10 +46,7 @@ tsconfig.tsbuildinfo
 Thumbs.db
 
 # IDE
-.vscode/
 .idea/
-*.swp
-*.swo
 *~
 
 # Test coverage
@@ -62,11 +59,6 @@ playwright-report/
 blob-report/
 playwright/.cache/
 
-# Playwright
-test-results/
-playwright-report/
-playwright/.cache/
-
 # VitePress
 docs/.vitepress/dist/
 docs/.vitepress/cache/
@@ -76,10 +68,6 @@ docs/.vitepress/cache/
 .temp/
 .tmp/
 
-# Wireit
-.wireit/
-
 # Claude AI
 .claude/settings.local.json
-demo-output/
 demo-output/
