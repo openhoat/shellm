@@ -10,6 +10,8 @@ To view the complete history, use: `git log`
 
 #### 17/02
 
+- **[10:30:58] ✨ [FEAT]** Add quick install section with platform-specific download links to README
+- **[10:30:58] ♻️ [REFACTOR]** Restructure README installation section separating user install from dev setup
 - **[10:25:29] ✨ [FEAT]** Enable sourcemaps for dev mode debugging
 - **[10:20:18] 📝 [DOCS]** Add devtools documentation section
 - **[10:07:45] 🐛 [FIX]** Display model name in ollama provider status

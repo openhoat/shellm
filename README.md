@@ -32,13 +32,26 @@ SheLLM was born out of that frustration: a fully open alternative that works wit
 - **Flexible Configuration**: Provider, model, temperature, and more — configurable via UI or environment variables
 - **History**: Track conversations and executed commands
 
-## 📋 Prerequisites
+## 📥 Quick Install
+
+Download the latest release for your platform:
+
+| Platform | Format | Download |
+|----------|--------|----------|
+| **Linux** | AppImage | [SheLLM-1.0.0.AppImage](https://github.com/openhoat/shellm/releases/latest/download/SheLLM-1.0.0.AppImage) |
+| **Linux** | Debian/Ubuntu | [shellm_1.0.0_amd64.deb](https://github.com/openhoat/shellm/releases/latest/download/shellm_1.0.0_amd64.deb) |
+| **macOS** | DMG (ARM) | [SheLLM-1.0.0-arm64.dmg](https://github.com/openhoat/shellm/releases/latest/download/SheLLM-1.0.0-arm64.dmg) |
+| **Windows** | Installer | [SheLLM.Setup.1.0.0.exe](https://github.com/openhoat/shellm/releases/latest/download/SheLLM.Setup.1.0.0.exe) |
+
+> See all versions on the [Releases page](https://github.com/openhoat/shellm/releases).
+
+## 🔧 Development Setup
+
+### 📋 Prerequisites
 
 - Node.js 18+ and npm
 - Ollama installed and running (for local use)
 - Python 3 and make (for node-pty compilation on Linux)
-
-## 🔧 Installation
 
 ### 1. Clone the project
 
