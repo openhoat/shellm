@@ -11,8 +11,8 @@ export default defineConfig({
       { text: 'Guide', link: '/guide/getting-started' },
       { text: 'Configuration', link: '/guide/configuration' },
       {
-        text: 'v1.0.0',
-        link: 'https://github.com/openhoat/shellm/releases/tag/v1.0.0',
+        text: 'v1.1.0',
+        link: 'https://github.com/openhoat/shellm/releases/tag/v1.1.0',
       },
     ],
     sidebar: [

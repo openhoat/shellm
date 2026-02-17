@@ -40,10 +40,10 @@ Download the latest release for your platform:
 
 | Platform | Format | Download |
 |----------|--------|----------|
-| **Linux** | AppImage | [SheLLM-1.0.0.AppImage](https://github.com/openhoat/shellm/releases/latest/download/SheLLM-1.0.0.AppImage) |
-| **Linux** | Debian/Ubuntu | [shellm_1.0.0_amd64.deb](https://github.com/openhoat/shellm/releases/latest/download/shellm_1.0.0_amd64.deb) |
-| **macOS** | DMG (ARM) | [SheLLM-1.0.0-arm64.dmg](https://github.com/openhoat/shellm/releases/latest/download/SheLLM-1.0.0-arm64.dmg) |
-| **Windows** | Installer | [SheLLM.Setup.1.0.0.exe](https://github.com/openhoat/shellm/releases/latest/download/SheLLM.Setup.1.0.0.exe) |
+| **Linux** | AppImage | [SheLLM-1.1.0.AppImage](https://github.com/openhoat/shellm/releases/latest/download/SheLLM-1.1.0.AppImage) |
+| **Linux** | Debian/Ubuntu | [shellm_1.1.0_amd64.deb](https://github.com/openhoat/shellm/releases/latest/download/shellm_1.1.0_amd64.deb) |
+| **macOS** | DMG (ARM) | [SheLLM-1.1.0-arm64.dmg](https://github.com/openhoat/shellm/releases/latest/download/SheLLM-1.1.0-arm64.dmg) |
+| **Windows** | Installer | [SheLLM.Setup.1.1.0.exe](https://github.com/openhoat/shellm/releases/latest/download/SheLLM.Setup.1.1.0.exe) |
 
 > See all versions on the [Releases page](https://github.com/openhoat/shellm/releases).
 
