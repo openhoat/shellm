@@ -10,6 +10,10 @@ To view the complete history, use: `git log`
 
 #### 17/02
 
+- **[10:38:27] ✨ [FEAT]** Create VitePress documentation site with getting started, usage, configuration, build, troubleshooting and contributing pages
+- **[10:38:27] ✨ [FEAT]** Create GitHub Actions workflow to deploy docs to GitHub Pages
+- **[10:38:27] ✨ [FEAT]** Create SheLLM logo (SVG, green terminal style)
+- **[10:38:27] ♻️ [REFACTOR]** Slim down README.md to concise overview with links to documentation site
 - **[10:30:58] ✨ [FEAT]** Add quick install section with platform-specific download links to README
 - **[10:30:58] ♻️ [REFACTOR]** Restructure README installation section separating user install from dev setup
 - **[10:25:29] ✨ [FEAT]** Enable sourcemaps for dev mode debugging

@@ -67,6 +67,10 @@ test-results/
 playwright-report/
 playwright/.cache/
 
+# VitePress
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+
 # Misc
 .cache/
 .temp/

@@ -26,15 +26,4 @@
 
 ## 🚧 In Progress
 
-### [17/02/2026 10:29:44] 🟡 P2 🎨 [UX] Update README.md with platform-specific installation instructions (Windows, Linux, macOS) and links to releases
-
-- [x] **[17/02/2026 10:29:44] ✨ [FEAT]** Add a "Quick Install" section with download links to GitHub releases for each platform
-- [x] **[17/02/2026 10:29:44] ♻️ [REFACTOR]** Restructure Installation section to separate "User Installation" from "Developer Setup"
-
-### [17/02/2026 10:29:44] 🟡 P2 🌍 [I18N] Create GitHub Pages documentation site for users and restructure README for contributors
-
-- [ ] **[17/02/2026 10:29:44] ✨ [FEAT]** Create documentation site structure with VitePress in docs/
-- [ ] **[17/02/2026 10:29:44] ✨ [FEAT]** Create GitHub Actions workflow to deploy docs to GitHub Pages
-- [ ] **[17/02/2026 10:29:44] ♻️ [REFACTOR]** Slim down README.md to a concise project overview with links to documentation site
-
 ## ✅ Done
