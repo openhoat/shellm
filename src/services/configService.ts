@@ -108,11 +108,11 @@ export const configService = {
    */
   formatEnvVarName(field: string): string {
     const envVarMap: { [key: string]: string } = {
-      url: 'SHELLM_OLLAMA_URL',
-      apiKey: 'SHELLM_OLLAMA_API_KEY',
-      model: 'SHELLM_OLLAMA_MODEL',
-      temperature: 'SHELLM_OLLAMA_TEMPERATURE',
-      maxTokens: 'SHELLM_OLLAMA_MAX_TOKENS',
+      url: 'TERMAID_OLLAMA_URL',
+      apiKey: 'TERMAID_OLLAMA_API_KEY',
+      model: 'TERMAID_OLLAMA_MODEL',
+      temperature: 'TERMAID_OLLAMA_TEMPERATURE',
+      maxTokens: 'TERMAID_OLLAMA_MAX_TOKENS',
     }
     return envVarMap[field] || ''
   },

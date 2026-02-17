@@ -32,19 +32,19 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
   // Check for E2E test mock mode (parse safely)
   let mockErrors: Record<string, string> | null = null
   try {
-    if (process.env.SHELLM_E2E_MOCK_ERRORS) {
-      mockErrors = JSON.parse(process.env.SHELLM_E2E_MOCK_ERRORS)
+    if (process.env.TERMAID_E2E_MOCK_ERRORS) {
+      mockErrors = JSON.parse(process.env.TERMAID_E2E_MOCK_ERRORS)
     }
   } catch {
     // Invalid JSON, ignore
   }
 
-  const mockConnectionFailed = process.env.SHELLM_E2E_MOCK_CONNECTION_FAILED === 'true'
+  const mockConnectionFailed = process.env.TERMAID_E2E_MOCK_CONNECTION_FAILED === 'true'
 
   let mockModels: string[] | null = null
   try {
-    if (process.env.SHELLM_E2E_MOCK_MODELS) {
-      mockModels = JSON.parse(process.env.SHELLM_E2E_MOCK_MODELS)
+    if (process.env.TERMAID_E2E_MOCK_MODELS) {
+      mockModels = JSON.parse(process.env.TERMAID_E2E_MOCK_MODELS)
     }
   } catch {
     // Invalid JSON, ignore
@@ -52,8 +52,8 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
 
   let mockAIResponse: AICommand | null = null
   try {
-    if (process.env.SHELLM_E2E_MOCK_AI_RESPONSE) {
-      mockAIResponse = JSON.parse(process.env.SHELLM_E2E_MOCK_AI_RESPONSE)
+    if (process.env.TERMAID_E2E_MOCK_AI_RESPONSE) {
+      mockAIResponse = JSON.parse(process.env.TERMAID_E2E_MOCK_AI_RESPONSE)
     }
   } catch {
     // Invalid JSON, ignore

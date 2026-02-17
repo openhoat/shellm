@@ -21,8 +21,8 @@ import { defaultMockAICommand, getMockInjectionScript, type LaunchOptions } from
  * // Launch with environment variables for config testing
  * const { app, page } = await launchElectronApp({
  *   env: {
- *     SHELLM_OLLAMA_URL: '',
- *     SHELLM_OLLAMA_MODEL: '',
+ *     TERMAID_OLLAMA_URL: '',
+ *     TERMAID_OLLAMA_MODEL: '',
  *   }
  * })
  */
@@ -64,7 +64,7 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
   const env: Record<string, string> = {
     ...process.env,
     NODE_ENV: 'test',
-    SHELLM_DEVTOOLS: 'false',
+    TERMAID_DEVTOOLS: 'false',
   }
 
   // Add custom environment variables (for config testing)
@@ -84,22 +84,22 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
         mockErrors.terminalWrite = mocks.errors.terminalWrite.message
       }
       if (Object.keys(mockErrors).length > 0) {
-        env.SHELLM_E2E_MOCK_ERRORS = JSON.stringify(mockErrors)
+        env.TERMAID_E2E_MOCK_ERRORS = JSON.stringify(mockErrors)
       }
     }
 
     // Mock connection failure
     if (mocks.errors?.llmConnectionFailed) {
-      env.SHELLM_E2E_MOCK_CONNECTION_FAILED = 'true'
+      env.TERMAID_E2E_MOCK_CONNECTION_FAILED = 'true'
     }
 
     // Mock AI response - always set when mocks are provided, defaulting to defaultMockAICommand
-    // The IPC error handler (SHELLM_E2E_MOCK_ERRORS) takes priority over this value
-    env.SHELLM_E2E_MOCK_AI_RESPONSE = JSON.stringify(mocks.aiCommand ?? defaultMockAICommand)
+    // The IPC error handler (TERMAID_E2E_MOCK_ERRORS) takes priority over this value
+    env.TERMAID_E2E_MOCK_AI_RESPONSE = JSON.stringify(mocks.aiCommand ?? defaultMockAICommand)
 
     // Mock models
     if (mocks.models) {
-      env.SHELLM_E2E_MOCK_MODELS = JSON.stringify(mocks.models)
+      env.TERMAID_E2E_MOCK_MODELS = JSON.stringify(mocks.models)
     }
   }
 

@@ -104,7 +104,7 @@ export const Header = () => {
       <div className="header-left">
         <h1 className="app-title">
           <span className="app-title-icon">⚡</span>
-          SheLLM
+          Termaid
         </h1>
         <span className="app-version">v1.0.0</span>
       </div>

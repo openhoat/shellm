@@ -5,10 +5,10 @@
 You can open Chrome DevTools to inspect and debug the application:
 
 - **Keyboard shortcut**: Press `Ctrl+Shift+I` (Linux/Windows) or `Cmd+Option+I` (macOS) to toggle DevTools at any time
-- **Auto-open on launch**: Set the `SHELLM_DEVTOOLS=true` environment variable to automatically open DevTools when the app starts (development mode only)
+- **Auto-open on launch**: Set the `TERMAID_DEVTOOLS=true` environment variable to automatically open DevTools when the app starts (development mode only)
 
 ```bash
-SHELLM_DEVTOOLS=true npm run dev
+TERMAID_DEVTOOLS=true npm run dev
 ```
 
 ## Ollama Connection Error

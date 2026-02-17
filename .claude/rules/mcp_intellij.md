@@ -2,7 +2,7 @@
 
 ## Objective
 
-Use the MCP IntelliJ integration to leverage JetBrains IDE capabilities for code analysis, refactoring, and navigation when working on the SheLLM project.
+Use the MCP IntelliJ integration to leverage JetBrains IDE capabilities for code analysis, refactoring, and navigation.
 
 ## When to Use MCP IntelliJ
 
@@ -108,11 +108,11 @@ Get detailed error information for a specific file including line numbers and er
 
 **Example**: Get errors for `src/services/commandExecutionService.ts` to resolve TypeScript issues.
 
-## Best Practices for SheLLM Project
+## Best Practices
 
 ### 1. TypeScript/React Focus
 
-When analyzing SheLLM code, prioritize:
+When analyzing code, prioritize:
 - React components (`src/components/`)
 - Type definitions (`@shared/types`)
 - Zustand store (`src/store/`)

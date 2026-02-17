@@ -208,11 +208,11 @@ describe('configService', () => {
 
   describe('formatEnvVarName', () => {
     test('should format env var names correctly', () => {
-      expect(configService.formatEnvVarName('url')).toBe('SHELLM_OLLAMA_URL')
-      expect(configService.formatEnvVarName('apiKey')).toBe('SHELLM_OLLAMA_API_KEY')
-      expect(configService.formatEnvVarName('model')).toBe('SHELLM_OLLAMA_MODEL')
-      expect(configService.formatEnvVarName('temperature')).toBe('SHELLM_OLLAMA_TEMPERATURE')
-      expect(configService.formatEnvVarName('maxTokens')).toBe('SHELLM_OLLAMA_MAX_TOKENS')
+      expect(configService.formatEnvVarName('url')).toBe('TERMAID_OLLAMA_URL')
+      expect(configService.formatEnvVarName('apiKey')).toBe('TERMAID_OLLAMA_API_KEY')
+      expect(configService.formatEnvVarName('model')).toBe('TERMAID_OLLAMA_MODEL')
+      expect(configService.formatEnvVarName('temperature')).toBe('TERMAID_OLLAMA_TEMPERATURE')
+      expect(configService.formatEnvVarName('maxTokens')).toBe('TERMAID_OLLAMA_MAX_TOKENS')
     })
 
     test('should return empty string for unknown field', () => {

@@ -6,37 +6,37 @@ Download the latest release for your platform:
 
 | Platform | Format | Download |
 |----------|--------|----------|
-| **Linux** | AppImage | [SheLLM-1.1.0.AppImage](https://github.com/openhoat/shellm/releases/latest/download/SheLLM-1.1.0.AppImage) |
-| **Linux** | Debian/Ubuntu | [shellm_1.1.0_amd64.deb](https://github.com/openhoat/shellm/releases/latest/download/shellm_1.1.0_amd64.deb) |
-| **macOS** | DMG (ARM) | [SheLLM-1.1.0-arm64.dmg](https://github.com/openhoat/shellm/releases/latest/download/SheLLM-1.1.0-arm64.dmg) |
-| **Windows** | Installer | [SheLLM.Setup.1.1.0.exe](https://github.com/openhoat/shellm/releases/latest/download/SheLLM.Setup.1.1.0.exe) |
+| **Linux** | AppImage | [Termaid-1.1.0.AppImage](https://github.com/openhoat/termaid/releases/latest/download/Termaid-1.1.0.AppImage) |
+| **Linux** | Debian/Ubuntu | [termaid_1.1.0_amd64.deb](https://github.com/openhoat/termaid/releases/latest/download/termaid_1.1.0_amd64.deb) |
+| **macOS** | DMG (ARM) | [Termaid-1.1.0-arm64.dmg](https://github.com/openhoat/termaid/releases/latest/download/Termaid-1.1.0-arm64.dmg) |
+| **Windows** | Installer | [Termaid.Setup.1.1.0.exe](https://github.com/openhoat/termaid/releases/latest/download/Termaid.Setup.1.1.0.exe) |
 
-> See all versions on the [Releases page](https://github.com/openhoat/shellm/releases).
+> See all versions on the [Releases page](https://github.com/openhoat/termaid/releases).
 
 ### Linux (AppImage)
 
 ```bash
-chmod +x SheLLM-1.1.0.AppImage
-./SheLLM-1.1.0.AppImage
+chmod +x Termaid-1.1.0.AppImage
+./Termaid-1.1.0.AppImage
 ```
 
 ### Linux (Debian/Ubuntu)
 
 ```bash
-sudo dpkg -i shellm_1.1.0_amd64.deb
+sudo dpkg -i termaid_1.1.0_amd64.deb
 ```
 
 ### macOS
 
-Open the `.dmg` file and drag SheLLM to your Applications folder.
+Open the `.dmg` file and drag Termaid to your Applications folder.
 
 ### Windows
 
-Run the `SheLLM.Setup.1.1.0.exe` installer and follow the steps.
+Run the `Termaid.Setup.1.1.0.exe` installer and follow the steps.
 
 ## Development Setup
 
-If you want to run SheLLM from source:
+If you want to run Termaid from source:
 
 ### Prerequisites
 
@@ -47,14 +47,14 @@ If you want to run SheLLM from source:
 ### Clone and install
 
 ```bash
-git clone https://github.com/openhoat/shellm.git
-cd shellm
+git clone https://github.com/openhoat/termaid.git
+cd termaid
 npm install
 ```
 
 ### Configure an LLM provider
 
-SheLLM supports multiple providers. Choose one (or more):
+Termaid supports multiple providers. Choose one (or more):
 
 #### Option A — Ollama (local or remote)
 
@@ -65,7 +65,7 @@ ollama serve
 ollama pull llama2   # or any model of your choice
 ```
 
-If you're using Ollama on a remote machine, configure the URL in the SheLLM configuration panel.
+If you're using Ollama on a remote machine, configure the URL in the Termaid configuration panel.
 
 #### Option B — Claude (Anthropic API)
 
@@ -82,7 +82,7 @@ Then select **Claude** as the provider in the configuration panel.
 Get an API key from [platform.openai.com](https://platform.openai.com) and set it as an environment variable:
 
 ```bash
-export SHELLM_OPENAI_API_KEY=sk-...
+export TERMAID_OPENAI_API_KEY=sk-...
 ```
 
 Then select **OpenAI** as the provider in the configuration panel.

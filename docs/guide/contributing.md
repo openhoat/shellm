@@ -15,8 +15,8 @@ Contributions are welcome! Here's how to get started.
 ### Setup
 
 ```bash
-git clone https://github.com/openhoat/shellm.git
-cd shellm
+git clone https://github.com/openhoat/termaid.git
+cd termaid
 npm install
 ```
 
