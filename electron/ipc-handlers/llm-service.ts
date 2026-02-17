@@ -62,8 +62,12 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
   if (initialConfig) {
     try {
       service = createProvider(initialConfig)
-    } catch {
-      // Invalid config at startup - service remains null, user will need to reconfigure
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Startup error logging for debugging
+      console.warn(
+        'Failed to initialize LLM provider at startup:',
+        error instanceof Error ? error.message : String(error)
+      )
     }
   }
 

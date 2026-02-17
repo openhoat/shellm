@@ -30,6 +30,7 @@ const defaultAppConfig: AppConfig = {
 
 const mockGetConfig = vi.fn().mockResolvedValue(defaultAppConfig)
 const mockSetConfig = vi.fn()
+const mockLlmInit = vi.fn().mockResolvedValue(undefined)
 
 Object.defineProperty(global, 'window', {
   value: {
@@ -40,6 +41,7 @@ Object.defineProperty(global, 'window', {
       ollamaGenerateCommand: mockOllamaGenerateCommand,
       getConfig: mockGetConfig,
       setConfig: mockSetConfig,
+      llmInit: mockLlmInit,
     },
   },
   writable: true,
@@ -52,4 +54,5 @@ export {
   mockOllamaGenerateCommand,
   mockGetConfig,
   mockSetConfig,
+  mockLlmInit,
 }
