@@ -260,6 +260,17 @@ Generates an `.exe` installer (NSIS) in the `release/` folder.
 
 ## 🐛 Troubleshooting
 
+### Developer Tools (DevTools)
+
+You can open Chrome DevTools to inspect and debug the application:
+
+- **Keyboard shortcut**: Press `Ctrl+Shift+I` (Linux/Windows) or `Cmd+Option+I` (macOS) to toggle DevTools at any time
+- **Auto-open on launch**: Set the `SHELLM_DEVTOOLS=true` environment variable to automatically open DevTools when the app starts (development mode only)
+
+```bash
+SHELLM_DEVTOOLS=true npm run dev
+```
+
 ### Ollama Connection Error
 
 1. Check that Ollama is running: `ollama serve`

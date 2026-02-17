@@ -26,9 +26,12 @@
 
 ### 🟢 P3 - Low Priority
 
-- [ ] **[17/02/2026 08:59:00] 🟢 P3 ⚙️ [CONFIG]** Add DevTools documentation in README.md - document how to open DevTools in the Electron app (keyboard shortcut Ctrl+Shift+I / Cmd+Option+I, and SHELLM_DEVTOOLS=true environment variable)
 - [ ] **[17/02/2026 10:15:00] 🟢 P3 ⚙️ [CONFIG]** Enable sourcemaps for better debugging - configure sourcemaps in Vite (frontend) and TypeScript (Electron backend) only for dev mode, production builds should not include sourcemaps
 
 ## 🚧 In Progress
+
+### [17/02/2026 10:19:00] 🟢 P3 ⚙️ [CONFIG] Add DevTools documentation in README.md
+
+- [x] **[17/02/2026 10:19:00] 📝 [DOCS]** Add a "Developer Tools" section in README.md documenting keyboard shortcut and SHELLM_DEVTOOLS env var
 
 ## ✅ Done
