@@ -81,3 +81,5 @@ docs/.vitepress/cache/
 
 # Claude AI
 .claude/settings.local.json
+demo-output/
+demo-output/
