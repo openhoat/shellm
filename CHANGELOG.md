@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 17/02
 
+- **[09:16:44] ✨ [FEAT]** Filter commits since last release tag
 - **[09:13:19] 🐛 [FIX]** Handle invalid url gracefully with proper error handling
 - **[08:57:37] 🐛 [FIX]** Correct files configuration for proper cache invalidation
 - **[08:42:20] 🐛 [FIX]** Race condition in ipc handler registration on app startup
