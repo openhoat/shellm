@@ -10,6 +10,9 @@ To view the complete history, use: `git log`
 
 #### 17/02
 
+- **[10:44:15] ✨ [FEAT]** Add logo to homepage hero section
+- **[10:43:08] 🐛 [FIX]** Display logo in vitepress navbar
+- **[10:39:01] 🔧 [CHORE]** Clean completed tasks and regenerate changelog
 - **[10:38:54] ✨ [FEAT]** Create vitepress documentation site with github pages deployment
 - **[10:31:10] 📝 [DOCS]** Add quick install section with platform download links
 - **[10:27:01] 🔧 [CHORE]** Clean completed tasks and regenerate changelog
