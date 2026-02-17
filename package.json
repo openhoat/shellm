@@ -11,6 +11,9 @@
     "changelog": "node scripts/generate-changelog.js",
     "clean": "rimraf -g -v dist dist-electron release **/tsconfig.tsbuildinfo",
     "commit:lint": "commitlint --edit",
+    "docs:build": "vitepress build docs",
+    "docs:dev": "vitepress dev docs",
+    "docs:preview": "vitepress preview docs",
     "dev": "wireit",
     "dev:electron": "wireit",
     "dev:vite": "wireit",
@@ -81,6 +84,7 @@
     "tsc-alias": "1.8.16",
     "typescript": "5.9.3",
     "vite": "7.3.1",
+    "vitepress": "1.6.4",
     "vitest": "4.0.18",
     "wireit": "^0.14.5"
   },
