@@ -4,6 +4,7 @@ import { useStore } from './useStore'
 
 describe('useStore', () => {
   beforeEach(() => {
+    vi.clearAllMocks()
     // Reset store before each test
     useStore.setState({
       config: {
@@ -82,6 +83,23 @@ describe('useStore', () => {
 
       await expect(useStore.getState().initConfig()).resolves.not.toThrow()
       expect(window.electronAPI.getConfig).toHaveBeenCalled()
+    })
+
+    test('should skip llmInit when provider config is incomplete', async () => {
+      vi.mocked(window.electronAPI.getConfig).mockResolvedValueOnce({
+        llmProvider: 'ollama',
+        ollama: { url: '', model: 'llama2', temperature: 0.7, maxTokens: 1000 },
+        claude: { apiKey: '', model: '', temperature: 0.7, maxTokens: 1000 },
+        openai: { apiKey: '', model: '', temperature: 0.7, maxTokens: 1000 },
+        theme: 'dark',
+        fontSize: 14,
+        shell: 'auto',
+      })
+
+      await useStore.getState().initConfig()
+
+      expect(window.electronAPI.getConfig).toHaveBeenCalled()
+      expect(window.electronAPI.llmInit).not.toHaveBeenCalled()
     })
   })
 
