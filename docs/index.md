@@ -4,6 +4,9 @@ hero:
   name: SheLLM
   text: AI-Powered Terminal
   tagline: Generate shell commands from natural language — powered by Ollama, Claude, and OpenAI
+  image:
+    src: /logo.svg
+    alt: SheLLM Logo
   actions:
     - theme: brand
       text: Get Started
