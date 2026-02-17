@@ -30,10 +30,4 @@
 
 ## 🚧 In Progress
 
-### [17/02/2026 10:23:14] 🟢 P3 ⚙️ [CONFIG] Enable sourcemaps for better debugging
-
-- [x] **[17/02/2026 10:23:14] ⚙️ [CONFIG]** Enable sourcemaps in Vite config for dev mode only
-- [x] **[17/02/2026 10:23:14] ⚙️ [CONFIG]** Enable sourcemaps in Electron TypeScript config for dev mode
-- [x] **[17/02/2026 10:23:14] ✅ [TEST]** Verify sourcemaps work correctly in dev and are absent in prod
-
 ## ✅ Done

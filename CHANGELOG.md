@@ -10,8 +10,11 @@ To view the complete history, use: `git log`
 
 #### 17/02
 
-- **[10:25:14] ⚙️ [CONFIG]** Enable sourcemaps for dev mode in Vite and Electron, exclude from production builds
-- **[10:20:06] 📝 [DOCS]** Add DevTools documentation section in README.md
+- **[10:25:29] ✨ [FEAT]** Enable sourcemaps for dev mode debugging
+- **[10:20:18] 📝 [DOCS]** Add devtools documentation section
+- **[10:07:45] 🐛 [FIX]** Display model name in ollama provider status
+- **[09:53:42] 🔧 [CHORE]** Clear done section after commits
+- **[09:51:41] 📝 [DOCS]** Regenerate changelog from git history
 - **[09:49:59] 🐛 [FIX]** Fallback to default ollama url when stored value is empty
 - **[09:49:16] 🐛 [FIX]** Validate provider config in main process before init
 - **[09:46:57] 🐛 [FIX]** Skip llm init when provider config is incomplete
