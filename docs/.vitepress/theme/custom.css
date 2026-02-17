@@ -1,0 +1,213 @@
+/**
+ * Custom VitePress theme styles
+ * Colors adapted from Termaid logo (neon green on dark background)
+ */
+
+/* ============================================
+   Color Palette from Logo
+   ============================================ */
+:root {
+  /* Primary colors from logo */
+  --termaid-neon: #39ff14;
+  --termaid-neon-soft: #00e676;
+  --termaid-dark-bg: #1a1a2e;
+  --termaid-darker-bg: #0d0d1a;
+
+  /* Light theme - using neon accents */
+  --vp-c-brand-1: var(--termaid-neon-soft);
+  --vp-c-brand-2: var(--termaid-neon);
+  --vp-c-brand-3: #2ed810;
+  --vp-c-brand-soft: rgba(57, 255, 20, 0.14);
+
+  /* Button */
+  --vp-button-brand-border: var(--termaid-neon-soft);
+  --vp-button-brand-text: #ffffff;
+  --vp-button-brand-bg: var(--termaid-neon-soft);
+  --vp-button-brand-hover-border: var(--termaid-neon);
+  --vp-button-brand-hover-text: #ffffff;
+  --vp-button-brand-hover-bg: var(--termaid-neon);
+  --vp-button-brand-active-border: #2ed810;
+  --vp-button-brand-active-text: #ffffff;
+  --vp-button-brand-active-bg: #2ed810;
+
+  /* Custom block */
+  --vp-custom-block-tip-border: var(--termaid-neon-soft);
+  --vp-custom-block-tip-text: var(--termaid-neon-soft);
+  --vp-custom-block-tip-bg: rgba(57, 255, 20, 0.05);
+  --vp-custom-block-tip-code-bg: rgba(57, 255, 20, 0.1);
+}
+
+/* ============================================
+   Dark Theme - Enhanced with logo colors
+   ============================================ */
+.dark {
+  /* Brand colors */
+  --vp-c-brand-1: var(--termaid-neon);
+  --vp-c-brand-2: var(--termaid-neon-soft);
+  --vp-c-brand-3: #4dff2a;
+  --vp-c-brand-soft: rgba(57, 255, 20, 0.12);
+
+  /* Background - matching logo dark theme */
+  --vp-c-bg: #0f0f1a;
+  --vp-c-bg-alt: var(--termaid-dark-bg);
+  --vp-c-bg-elv: #141428;
+  --vp-c-bg-soft: #161630;
+
+  /* Sidebar */
+  --vp-sidebar-bg-color: var(--termaid-darker-bg);
+
+  /* Button */
+  --vp-button-brand-border: var(--termaid-neon);
+  --vp-button-brand-text: var(--termaid-darker-bg);
+  --vp-button-brand-bg: var(--termaid-neon);
+  --vp-button-brand-hover-border: #4dff2a;
+  --vp-button-brand-hover-text: var(--termaid-darker-bg);
+  --vp-button-brand-hover-bg: #4dff2a;
+  --vp-button-brand-active-border: var(--termaid-neon-soft);
+  --vp-button-brand-active-text: var(--termaid-darker-bg);
+  --vp-button-brand-active-bg: var(--termaid-neon-soft);
+
+  /* Custom block */
+  --vp-custom-block-tip-border: var(--termaid-neon);
+  --vp-custom-block-tip-text: var(--termaid-neon);
+  --vp-custom-block-tip-bg: rgba(57, 255, 20, 0.08);
+  --vp-custom-block-tip-code-bg: rgba(57, 255, 20, 0.12);
+}
+
+/* ============================================
+   Component Styling
+   ============================================ */
+
+/* Links */
+.vp-doc a {
+  color: var(--vp-c-brand-1);
+  text-decoration: none;
+  transition: color 0.25s;
+}
+
+.vp-doc a:hover {
+  color: var(--vp-c-brand-2);
+}
+
+/* Home hero */
+.VPHero .name {
+  background: linear-gradient(135deg, var(--termaid-neon) 0%, var(--termaid-neon-soft) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.VPHero .tagline {
+  color: var(--vp-c-text-2);
+}
+
+/* Feature icons - subtle accent */
+.VPFeature .icon {
+  color: var(--termaid-neon);
+}
+
+.dark .VPFeature .icon {
+  filter: drop-shadow(0 0 3px rgba(57, 255, 20, 0.25));
+}
+
+/* Nav bar */
+.VPNavBar {
+  background: var(--vp-c-bg);
+}
+
+.dark .VPNavBar {
+  border-bottom-color: rgba(57, 255, 20, 0.1);
+}
+
+/* Sidebar active link */
+.VPSidebarItem.is-active > .item > .link > .text {
+  color: var(--termaid-neon);
+}
+
+.dark .VPSidebarItem.is-active > .item > .link > .text {
+  text-shadow: 0 0 3px rgba(57, 255, 20, 0.15);
+}
+
+/* Code blocks */
+.dark [class*="language-"] code {
+  text-shadow: none;
+}
+
+/* Inline code */
+.vp-doc :not(pre) > code {
+  color: var(--termaid-neon-soft);
+  background: rgba(57, 255, 20, 0.1);
+  border-color: rgba(57, 255, 20, 0.2);
+}
+
+.dark .vp-doc :not(pre) > code {
+  color: var(--termaid-neon);
+}
+
+/* Tip custom block */
+.custom-block.tip {
+  border-color: var(--vp-custom-block-tip-border);
+}
+
+.custom-block.tip .custom-block-title {
+  color: var(--vp-custom-block-tip-text);
+}
+
+/* Search */
+.DocSearch-Button {
+  background: var(--vp-c-bg-soft);
+}
+
+.dark .DocSearch-Button {
+  border-color: rgba(57, 255, 20, 0.15);
+}
+
+/* Footer */
+.VPFooter {
+  background: var(--vp-c-bg);
+  border-top-color: rgba(57, 255, 20, 0.1);
+}
+
+/* Badge/version in nav */
+.VPNavBarMenuGroup .text {
+  color: var(--termaid-neon-soft);
+}
+
+.dark .VPNavBarMenuGroup .text {
+  color: var(--termaid-neon);
+}
+
+/* ============================================
+   Subtle Glow Effects (Dark mode only)
+   ============================================ */
+
+/* Glow on hover for brand elements */
+.dark .VPButton.brand:hover {
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+}
+
+/* Logo subtle glow */
+.dark .VPImage {
+  filter: drop-shadow(0 0 5px rgba(57, 255, 20, 0.15));
+}
+
+/* ============================================
+   Scrollbar Styling
+   ============================================ */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: var(--termaid-darker-bg);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--termaid-dark-bg);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(57, 255, 20, 0.3);
+}
