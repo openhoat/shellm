@@ -60,14 +60,20 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
   }
 
   if (initialConfig) {
-    try {
-      service = createProvider(initialConfig)
-    } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Startup error logging for debugging
-      console.warn(
-        'Failed to initialize LLM provider at startup:',
-        error instanceof Error ? error.message : String(error)
-      )
+    const canInit =
+      (initialConfig.llmProvider === 'ollama' && !!initialConfig.ollama?.url) ||
+      (initialConfig.llmProvider === 'claude' && !!initialConfig.claude?.apiKey) ||
+      (initialConfig.llmProvider === 'openai' && !!initialConfig.openai?.apiKey)
+    if (canInit) {
+      try {
+        service = createProvider(initialConfig)
+      } catch (error) {
+        // biome-ignore lint/suspicious/noConsole: Startup error logging for debugging
+        console.warn(
+          'Failed to initialize LLM provider at startup:',
+          error instanceof Error ? error.message : String(error)
+        )
+      }
     }
   }
 
