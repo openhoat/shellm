@@ -11,10 +11,33 @@
     },
     "chat": {
       "title": "AI Chat",
-      "placeholder": "Ask a question or enter a command...",
+      "placeholder": "Describe what you want to do...",
       "send": "Send",
       "clear": "Clear",
-      "empty": "No messages"
+      "empty": "No messages",
+      "welcome": {
+        "title": "Welcome to SheLLM!",
+        "description": "Describe what you want to do in natural language and the AI will suggest the appropriate command.",
+        "examples": "Examples:",
+        "example1": "\"List all files larger than 10MB\"",
+        "example2": "\"Find all Python files in the current directory\"",
+        "example3": "\"Show disk usage\""
+      },
+      "progress": {
+        "initializing": "Initializing...",
+        "executing": "Executing command...",
+        "retrieving": "Retrieving results...",
+        "finalizing": "Finalizing...",
+        "interpreting": "Analyzing results..."
+      },
+      "actions": {
+        "execute": "Execute",
+        "preparing": "Preparing...",
+        "terminalNotReady": "The terminal is not ready yet",
+        "executeCommand": "Execute the command",
+        "modify": "Modify",
+        "cancel": "Cancel"
+      }
     },
     "terminal": {
       "title": "Terminal",

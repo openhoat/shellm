@@ -5,6 +5,12 @@ import { beforeEach, describe, expect, test, vi } from 'vitest'
 import type { useChat as UseChatType } from '@/hooks/useChat'
 
 // Mock modules before imports
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+    i18n: { language: 'fr', changeLanguage: vi.fn() },
+  }),
+}))
 vi.mock('@/hooks/useChat')
 vi.mock('@/store/useStore')
 vi.mock('@/utils/logger', () => {
@@ -79,27 +85,27 @@ describe('ChatPanel', () => {
   test('should show welcome message when conversation is empty', () => {
     render(<ChatPanel />)
 
-    expect(screen.getByText(/Bienvenue dans SheLLM/)).toBeInTheDocument()
+    expect(screen.getByText('chat.welcome.title')).toBeInTheDocument()
   })
 
   test('should render the input field with placeholder', () => {
     render(<ChatPanel />)
 
-    const input = screen.getByPlaceholderText(/Décrivez ce que vous voulez faire/)
+    const input = screen.getByPlaceholderText('chat.placeholder')
     expect(input).toBeInTheDocument()
   })
 
   test('should render the send button', () => {
     render(<ChatPanel />)
 
-    const button = screen.getByRole('button', { name: /Envoyer/ })
+    const button = screen.getByRole('button', { name: /chat\.send/ })
     expect(button).toBeInTheDocument()
   })
 
   test('should disable send button when input is empty', () => {
     render(<ChatPanel />)
 
-    const button = screen.getByRole('button', { name: /Envoyer/ })
+    const button = screen.getByRole('button', { name: /chat\.send/ })
     expect(button).toBeDisabled()
   })
 
@@ -111,7 +117,7 @@ describe('ChatPanel', () => {
     })
     render(<ChatPanel />)
 
-    const button = screen.getByRole('button', { name: /Envoyer/ })
+    const button = screen.getByRole('button', { name: /chat\.send/ })
     expect(button).toBeDisabled()
   })
 
@@ -122,7 +128,7 @@ describe('ChatPanel', () => {
     })
     render(<ChatPanel />)
 
-    const input = screen.getByPlaceholderText(/Décrivez ce que vous voulez faire/)
+    const input = screen.getByPlaceholderText('chat.placeholder')
     expect(input).toBeDisabled()
   })
 
@@ -147,7 +153,7 @@ describe('ChatPanel', () => {
     })
     render(<ChatPanel />)
 
-    expect(screen.queryByText(/Bienvenue dans SheLLM/)).not.toBeInTheDocument()
+    expect(screen.queryByText('chat.welcome.title')).not.toBeInTheDocument()
   })
 
   test('should show loading spinner when isLoading', () => {
@@ -186,9 +192,9 @@ describe('ChatPanel', () => {
     })
     render(<ChatPanel />)
 
-    expect(screen.getByRole('button', { name: /Exécuter/ })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Modifier/ })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Annuler/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /chat\.actions\.execute/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /chat\.actions\.modify/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /chat\.actions\.cancel/ })).toBeInTheDocument()
   })
 
   test('should disable execute button when terminal is not ready', () => {
@@ -206,7 +212,7 @@ describe('ChatPanel', () => {
     })
     render(<ChatPanel />)
 
-    const executeButton = screen.getByRole('button', { name: /Préparation/ })
+    const executeButton = screen.getByRole('button', { name: /chat\.actions\.preparing/ })
     expect(executeButton).toBeDisabled()
   })
 
@@ -226,7 +232,7 @@ describe('ChatPanel', () => {
     })
     render(<ChatPanel />)
 
-    await user.click(screen.getByRole('button', { name: /Annuler/ }))
+    await user.click(screen.getByRole('button', { name: /chat\.actions\.cancel/ }))
 
     expect(mockSetAiCommand).toHaveBeenCalledWith(null)
   })

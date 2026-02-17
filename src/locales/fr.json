@@ -11,10 +11,33 @@
     },
     "chat": {
       "title": "Chat IA",
-      "placeholder": "Posez une question ou entrez une commande...",
+      "placeholder": "Décrivez ce que vous voulez faire...",
       "send": "Envoyer",
       "clear": "Effacer",
-      "empty": "Aucun message"
+      "empty": "Aucun message",
+      "welcome": {
+        "title": "Bienvenue dans SheLLM !",
+        "description": "Décrivez ce que vous voulez faire en langage naturel et l'IA vous proposera la commande appropriée.",
+        "examples": "Exemples :",
+        "example1": "\"Liste tous les fichiers de plus de 10MB\"",
+        "example2": "\"Trouve tous les fichiers Python dans le dossier courant\"",
+        "example3": "\"Affiche l'utilisation du disque\""
+      },
+      "progress": {
+        "initializing": "Initialisation...",
+        "executing": "Exécution de la commande...",
+        "retrieving": "Récupération des résultats...",
+        "finalizing": "Finalisation...",
+        "interpreting": "Analyse des résultats en cours..."
+      },
+      "actions": {
+        "execute": "Exécuter",
+        "preparing": "Préparation...",
+        "terminalNotReady": "Le terminal n'est pas encore prêt",
+        "executeCommand": "Exécuter la commande",
+        "modify": "Modifier",
+        "cancel": "Annuler"
+      }
     },
     "terminal": {
       "title": "Terminal",
