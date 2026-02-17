@@ -46,6 +46,48 @@ describe('LLM Service IPC Handlers', () => {
     })
   })
 
+  describe('Error handling on initialization', () => {
+    test('should not throw when initial config has invalid Ollama URL', () => {
+      const invalidConfig = {
+        llmProvider: 'ollama' as const,
+        ollama: { url: '', model: 'llama2' },
+        claude: { apiKey: '', model: '' },
+        openai: { apiKey: '', model: '' },
+        theme: 'dark' as const,
+        fontSize: 14,
+        shell: '/bin/bash',
+      }
+
+      // Should not throw - error is caught internally
+      expect(() => createLLMHandlers(getWindow as any, invalidConfig)).not.toThrow()
+    })
+
+    test('should handle llm:init with invalid config gracefully', async () => {
+      createLLMHandlers(getWindow as any)
+
+      const initHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'llm:init'
+      )?.[1]
+
+      expect(typeof initHandler).toBe('function')
+
+      const invalidConfig = {
+        llmProvider: 'ollama' as const,
+        ollama: { url: '', model: 'llama2' },
+        claude: { apiKey: '', model: '' },
+        openai: { apiKey: '', model: '' },
+        theme: 'dark' as const,
+        fontSize: 14,
+        shell: '/bin/bash',
+      }
+
+      // Should throw a user-friendly error
+      await expect(initHandler({}, invalidConfig)).rejects.toThrow(
+        /Failed to initialize LLM provider/
+      )
+    })
+  })
+
   describe('llm:generate-command', () => {
     test('should have generate-command handler registered', () => {
       createLLMHandlers(getWindow as any)

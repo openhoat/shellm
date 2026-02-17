@@ -4,20 +4,23 @@ import type { OllamaConfig } from '@shared/types'
 import { BaseLLMProvider } from './base-provider'
 
 /**
- * Validate Ollama URL format
+ * Validate Ollama URL format and return an error message if invalid
  */
-function validateOllamaUrl(url: string): boolean {
+function validateOllamaUrl(url: string): string | undefined {
+  if (!url || !url.trim()) {
+    return 'Ollama URL is empty. Please configure a valid URL (e.g. http://localhost:11434).'
+  }
   try {
     const parsedUrl = new URL(url)
     if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
-      return false
+      return `Invalid Ollama URL protocol: "${parsedUrl.protocol}". Only HTTP and HTTPS are supported.`
     }
     if (!parsedUrl.hostname) {
-      return false
+      return 'Invalid Ollama URL: missing hostname.'
     }
-    return true
+    return undefined
   } catch {
-    return false
+    return `Invalid Ollama URL: "${url}". URL must be a valid HTTP/HTTPS URL (e.g. http://localhost:11434).`
   }
 }
 
@@ -30,8 +33,9 @@ export class OllamaProvider extends BaseLLMProvider {
   constructor(config: OllamaConfig) {
     super(config.temperature, config.maxTokens)
 
-    if (!validateOllamaUrl(config.url)) {
-      throw new Error(`Invalid Ollama URL: ${config.url}. URL must be a valid HTTP/HTTPS URL.`)
+    const urlError = validateOllamaUrl(config.url)
+    if (urlError) {
+      throw new Error(urlError)
     }
 
     this.#baseUrl = config.url
