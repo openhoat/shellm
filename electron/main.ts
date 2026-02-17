@@ -81,6 +81,11 @@ const store = isStoreType(rawStore)
 
 let mainWindow: BrowserWindow | null = null
 
+/**
+ * Get the main window (for IPC handlers that need to send events)
+ */
+const getMainWindow = (): BrowserWindow | null => mainWindow
+
 const createWindow = (): void => {
   const windowWidth = 1200
   const windowHeight = 800
@@ -153,19 +158,21 @@ const createWindow = (): void => {
 
 // App lifecycle
 app.whenReady().then(() => {
+  // Register IPC handlers BEFORE creating the window to avoid race conditions
+  // The handlers use getMainWindow() to get the window when needed
+  createTerminalHandlers(getMainWindow)
+  createConversationHandlers(getMainWindow)
+
+  // Get initial config and merge with environment variables
+  const storedConfig = store.get('config')
+  const validConfig = isAppConfig(storedConfig) ? normalizeConfig(storedConfig) : DEFAULT_CONFIG
+  const mergedConfig = mergeConfig(validConfig)
+  createLLMHandlers(getMainWindow, mergedConfig)
+
+  createConfigHandlers(getMainWindow, store)
+
+  // Now create the window - handlers are already registered
   createWindow()
-  if (mainWindow) {
-    createTerminalHandlers(mainWindow)
-    createConversationHandlers(mainWindow)
-
-    // Get initial config and merge with environment variables
-    const storedConfig = store.get('config')
-    const validConfig = isAppConfig(storedConfig) ? normalizeConfig(storedConfig) : DEFAULT_CONFIG
-    const mergedConfig = mergeConfig(validConfig)
-    createLLMHandlers(mainWindow, mergedConfig)
-
-    createConfigHandlers(mainWindow, store)
-  }
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

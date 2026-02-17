@@ -26,13 +26,16 @@ vi.mock('electron', () => ({
 import { createLLMHandlers } from './llm-service'
 
 describe('LLM Service IPC Handlers', () => {
+  // Window getter that returns the mock window
+  const getWindow = () => mainWindow
+
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   describe('Handler Registration', () => {
     test('should register all LLM service IPC handlers', () => {
-      createLLMHandlers(mainWindow as any)
+      createLLMHandlers(getWindow as any)
 
       // Get all handler registrations
       const handlerNames = ipcMain.handle.mock.calls.map((call: unknown[]) => call[0])
@@ -45,7 +48,7 @@ describe('LLM Service IPC Handlers', () => {
 
   describe('llm:generate-command', () => {
     test('should have generate-command handler registered', () => {
-      createLLMHandlers(mainWindow as any)
+      createLLMHandlers(getWindow as any)
 
       const generateHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'llm:generate-command'
@@ -57,7 +60,7 @@ describe('LLM Service IPC Handlers', () => {
 
   describe('llm:interpret-output', () => {
     test('should have interpret-output handler registered', () => {
-      createLLMHandlers(mainWindow as any)
+      createLLMHandlers(getWindow as any)
 
       const interpretHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'llm:interpret-output'

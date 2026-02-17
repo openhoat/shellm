@@ -18,6 +18,9 @@ const { ipcMain, mainWindow } = vi.hoisted(() => ({
   },
 }))
 
+// Window getter that returns the mock window
+const getWindow = () => mainWindow
+
 vi.mock('electron', () => ({
   BrowserWindow: vi.fn(),
   ipcMain,
@@ -40,7 +43,7 @@ describe('Config IPC Handlers', () => {
         set: vi.fn(),
       }
 
-      createConfigHandlers(mainWindow as any, mockStore as any)
+      createConfigHandlers(getWindow as any, mockStore as any)
 
       expect(ipcMain.handle).toHaveBeenCalledWith('config:get', expect.any(Function))
       expect(ipcMain.handle).toHaveBeenCalledWith('config:get-env-sources', expect.any(Function))
@@ -66,7 +69,7 @@ describe('Config IPC Handlers', () => {
         set: vi.fn(),
       }
 
-      createConfigHandlers(mainWindow as any, mockStore as any)
+      createConfigHandlers(getWindow as any, mockStore as any)
 
       const getHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'config:get'
@@ -85,7 +88,7 @@ describe('Config IPC Handlers', () => {
         set: vi.fn(),
       }
 
-      createConfigHandlers(mainWindow as any, mockStore as any)
+      createConfigHandlers(getWindow as any, mockStore as any)
 
       const getHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'config:get'
@@ -117,7 +120,7 @@ describe('Config IPC Handlers', () => {
         shell: 'zsh',
       }
 
-      createConfigHandlers(mainWindow as any, mockStore as any)
+      createConfigHandlers(getWindow as any, mockStore as any)
 
       const setHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'config:set'
@@ -140,7 +143,7 @@ describe('Config IPC Handlers', () => {
         set: vi.fn(),
       }
 
-      createConfigHandlers(mainWindow as any, mockStore as any)
+      createConfigHandlers(getWindow as any, mockStore as any)
 
       const resetHandler = ipcMain.handle.mock.calls.find(
         (call: unknown[]) => call[0] === 'config:reset'

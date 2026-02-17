@@ -5,6 +5,8 @@ import { ClaudeProvider } from './providers/claude-provider'
 import { OllamaProvider } from './providers/ollama-provider'
 import { OpenAIProvider } from './providers/openai-provider'
 
+type WindowGetter = () => BrowserWindow | null
+
 /**
  * Create the appropriate LLM provider based on configuration
  */
@@ -21,10 +23,10 @@ function createProvider(config: AppConfig): BaseLLMProvider {
 /**
  * Create LLM service handlers for IPC
  *
- * @param mainWindow - Electron main window (unused, kept for API compatibility)
+ * @param _getWindow - Function to get the main window (unused, kept for API compatibility)
  * @param initialConfig - Initial application configuration
  */
-export function createLLMHandlers(_mainWindow: BrowserWindow, initialConfig?: AppConfig): void {
+export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppConfig): void {
   let service: BaseLLMProvider | null = null
 
   // Check for E2E test mock mode (parse safely)
