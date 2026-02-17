@@ -18,6 +18,10 @@
 
 ## 📝 Backlog
 
+### 🔴 P1 - High Priority
+
+- [ ] **[17/02/2026 14:00:00] 🔴 P1 🐛 [BUG]** Fix startup error "LLM service not initialized" in llm:generate-command handler - the LLM service is not properly initialized before IPC handlers are called, causing Error at dist-electron/electron/ipc-handlers/llm-service.js:86:19
+
 ### 🟡 P2 - Medium Priority
 
 - [ ] **[17/02/2026 09:23:20] 🟡 P2 🔧 [DEVOPS]** Create a /release skill (.claude/skills/) and Cline workflow (.clinerules/workflows/release.md) to automate app versioning - ask bump type (patch/minor/major), bump version in package.json, regenerate CHANGELOG, create git commit and tag, optionally push to trigger CI release pipeline
