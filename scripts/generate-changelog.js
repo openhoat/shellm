@@ -1,276 +1,204 @@
 #!/usr/bin/env node
 
 /**
- * Script de génération du CHANGELOG.md depuis l'historique Git
+ * Script to generate CHANGELOG.md from Git commit history.
  *
- * Ce script analyse l'historique Git pour générer un CHANGELOG.md orienté utilisateur.
- * Il détecte automatiquement les versions via les tags Git et filtre les commits
- * pertinents (FEAT, FIX, et REFACTOR majeurs).
+ * Analyzes Git history and generates a CHANGELOG.md following the project's
+ * task_format.md conventions with emoji tags and time-based grouping.
+ *
+ * Format: **[HH:MM:SS] Emoji [TAG]** Description
+ * Grouped by year (### YYYY) and day (#### DD/MM)
  */
 
 const { execSync } = require('node:child_process')
 const fs = require('node:fs')
 const path = require('node:path')
 
-// Configuration
 const CHANGELOG_PATH = path.join(process.cwd(), 'CHANGELOG.md')
-const COMMIT_TYPES = ['FEAT', 'FIX', 'REFACTOR']
-const REFACTOR_KEYWORDS = ['breaking', 'major', 'important', 'refactor: major']
+
+// Mapping from conventional commit type to CHANGELOG emoji and tag
+const TYPE_MAP = {
+  feat: { emoji: '✨', tag: 'FEAT' },
+  fix: { emoji: '🐛', tag: 'FIX' },
+  refactor: { emoji: '♻️', tag: 'REFACTOR' },
+  perf: { emoji: '⚡', tag: 'PERF' },
+  docs: { emoji: '📝', tag: 'DOCS' },
+  style: { emoji: '🎨', tag: 'STYLE' },
+  test: { emoji: '✅', tag: 'TEST' },
+  chore: { emoji: '🔧', tag: 'CHORE' },
+  revert: { emoji: '⏪', tag: 'REVERT' },
+}
 
 /**
- * Exécute une commande Git et retourne le résultat
+ * Execute a Git command and return the result
  */
 function execGit(command) {
   try {
     return execSync(command, { encoding: 'utf-8', cwd: process.cwd() })
   } catch (_error) {
-    // biome-ignore lint/suspicious/noConsole: Script CLI - logging warnings
-    console.warn(`Warning: Git command failed: ${command}`)
     return ''
   }
 }
 
 /**
- * Récupère tous les tags Git
+ * Retrieve all commits from Git history.
+ * Uses NUL (%x00) as record separator and SOH (%x01) as field separator
+ * to handle multi-line commit bodies safely.
  */
-function getTags() {
-  const tags = execGit('git tag --sort=-version:refname')
-    .split('\n')
-    .filter(tag => tag.trim() !== '')
-  return tags
+function getAllCommits() {
+  const output = execGit(
+    'git log --pretty=format:"%H%x01%s%x01%ci%x00" --reverse'
+  )
+
+  if (!output.trim()) return []
+
+  return output
+    .split('\0')
+    .filter(entry => entry.trim() !== '')
+    .map(entry => {
+      const parts = entry.split('\x01')
+      const hash = (parts[0] || '').trim()
+      const subject = (parts[1] || '').trim()
+      const dateStr = (parts[2] || '').trim()
+      if (!hash || !subject || !dateStr) return null
+      return { hash, subject, date: new Date(dateStr) }
+    })
+    .filter(Boolean)
 }
 
 /**
- * Parse un message de commit au format Conventional Commits
+ * Parse a conventional commit subject line.
+ * Supports: type: description, type(scope): description
  */
-function parseCommitMessage(message) {
-  const lines = message.trim().split('\n')
-  const firstLine = lines[0]
+function parseConventionalCommit(subject) {
+  const match = subject.match(/^(\w+)(?:\([^)]*\))?:\s*(.+)/)
+  if (!match) return null
 
-  // Format: [TYPE]: description ou type(scope): description
-  const match =
-    firstLine.match(/^\[?([A-Z]+)\]?:(.+)/) || firstLine.match(/^(\w+)(?:\([^)]+\))?:(.+)/)
-
-  if (!match) {
-    return null
-  }
-
-  const type = match[1].toUpperCase()
+  const type = match[1].toLowerCase()
   const description = match[2].trim()
+  const typeInfo = TYPE_MAP[type]
 
-  // Vérifier si c'est un REFACTOR majeur
-  const body = lines.slice(1).join('\n').toLowerCase()
-  const isMajorRefactor =
-    type === 'REFACTOR' &&
-    REFACTOR_KEYWORDS.some(
-      keyword => body.includes(keyword) || description.toLowerCase().includes(keyword)
-    )
+  if (!typeInfo) return null
+
+  // Capitalize first letter of description
+  const capitalizedDesc = description.charAt(0).toUpperCase() + description.slice(1)
 
   return {
-    type,
-    description,
-    body: lines.slice(1).join('\n'),
-    isMajorRefactor,
-    rawMessage: message,
+    emoji: typeInfo.emoji,
+    tag: typeInfo.tag,
+    description: capitalizedDesc,
   }
 }
 
 /**
- * Récupère les commits entre deux références
+ * Format a Date to HH:MM:SS
  */
-function getCommitsBetween(from, to = 'HEAD') {
-  const commits = execGit(`git log ${from}..${to} --pretty=format:"%H|%s|%ci|%b" --reverse`)
-    .split('\n')
-    .filter(line => line.trim() !== '')
-
-  return commits.map(line => {
-    const [hash, subject, date, body] = line.split('|')
-    return {
-      hash,
-      subject,
-      date: new Date(date),
-      body,
-    }
-  })
+function formatTime(date) {
+  const h = String(date.getHours()).padStart(2, '0')
+  const m = String(date.getMinutes()).padStart(2, '0')
+  const s = String(date.getSeconds()).padStart(2, '0')
+  return `${h}:${m}:${s}`
 }
 
 /**
- * Récupère les commits non taggés (depuis le dernier tag jusqu'à HEAD)
+ * Format a Date to DD/MM
  */
-function getUntaggedCommits() {
-  const tags = getTags()
-  const fromTag = tags.length > 0 ? tags[0] : null
-
-  if (!fromTag) {
-    return getCommitsBetween('')
-  }
-
-  return getCommitsBetween(fromTag)
+function formatDay(date) {
+  const d = String(date.getDate()).padStart(2, '0')
+  const mo = String(date.getMonth() + 1).padStart(2, '0')
+  return `${d}/${mo}`
 }
 
 /**
- * Récupère les commits pour un tag spécifique
- */
-function getCommitsForTag(tag, previousTag = null) {
-  const range = previousTag ? `${previousTag}..${tag}` : `${tag}^..${tag}`
-  return getCommitsBetween(range, tag)
-}
-
-/**
- * Filtre les commits pertinents (FEAT, FIX, REFACTOR majeurs)
- */
-function filterRelevantCommits(commits) {
-  return commits.filter(commit => {
-    const parsed = parseCommitMessage(commit.subject)
-    if (!parsed) return false
-
-    if (parsed.type === 'REFACTOR' && !parsed.isMajorRefactor) {
-      return false
-    }
-
-    return COMMIT_TYPES.includes(parsed.type)
-  })
-}
-
-/**
- * Regroupe les commits par type
- */
-function groupCommitsByType(commits) {
-  const grouped = {
-    FEAT: [],
-    FIX: [],
-    REFACTOR: [],
-  }
-
-  for (const commit of commits) {
-    const parsed = parseCommitMessage(commit.subject)
-    if (parsed && grouped[parsed.type]) {
-      grouped[parsed.type].push({
-        ...commit,
-        parsed,
-      })
-    }
-  }
-
-  return grouped
-}
-
-/**
- * Génère le contenu du CHANGELOG pour un groupe de commits
- */
-function generateChangelogSection(version, date, commits) {
-  const grouped = groupCommitsByType(commits)
-  const sections = []
-
-  // Nouveautés
-  if (grouped.FEAT.length > 0) {
-    sections.push('### Nouveautés')
-    for (const commit of grouped.FEAT) {
-      sections.push(`- ${commit.parsed.description}`)
-    }
-    sections.push('')
-  }
-
-  // Corrections
-  if (grouped.FIX.length > 0) {
-    sections.push('### Corrections')
-    for (const commit of grouped.FIX) {
-      sections.push(`- ${commit.parsed.description}`)
-    }
-    sections.push('')
-  }
-
-  // Refactorisation majeure
-  if (grouped.REFACTOR.length > 0) {
-    sections.push('### Refactorisation')
-    for (const commit of grouped.REFACTOR) {
-      sections.push(`- ${commit.parsed.description}`)
-    }
-    sections.push('')
-  }
-
-  if (sections.length === 0) {
-    return null
-  }
-
-  const versionHeader = version ? `## ${version} (${date})` : `## ${date}`
-  return `${versionHeader}\n\n${sections.join('\n')}\n`
-}
-
-/**
- * Formate une date en format français
- */
-function formatDate(date) {
-  return date.toLocaleDateString('fr-FR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  })
-}
-
-/**
- * Génère le CHANGELOG complet
+ * Generate the complete CHANGELOG content from Git history.
+ * Groups commits by year and day in reverse chronological order.
  */
 function generateChangelog() {
-  const tags = getTags()
-  const untaggedCommits = getUntaggedCommits()
-  const untaggedRelevant = filterRelevantCommits(untaggedCommits)
+  const commits = getAllCommits()
 
-  const sections = []
+  // Group commits by year then day
+  const grouped = {}
 
-  // Header
-  sections.push('# Changelog\n')
-  sections.push("Ce fichier est généré automatiquement depuis l'historique Git.\n")
-  sections.push("Pour visualiser l'historique complet, utilisez : `git log`\n")
+  for (const commit of commits) {
+    const parsed = parseConventionalCommit(commit.subject)
+    if (!parsed) continue
 
-  // Version actuelle (non taggée)
-  if (untaggedRelevant.length > 0) {
-    const currentDate = formatDate(new Date())
-    const section = generateChangelogSection(null, currentDate, untaggedRelevant)
-    if (section) {
-      sections.push(section)
+    const year = commit.date.getFullYear()
+    const day = formatDay(commit.date)
+    const time = formatTime(commit.date)
+
+    if (!grouped[year]) grouped[year] = {}
+    if (!grouped[year][day]) grouped[year][day] = []
+
+    grouped[year][day].push({
+      time,
+      emoji: parsed.emoji,
+      tag: parsed.tag,
+      description: parsed.description,
+    })
+  }
+
+  // Build output in reverse chronological order
+  const lines = []
+  lines.push('# History')
+  lines.push('')
+  lines.push('This file is automatically generated from Git commit history.')
+  lines.push('')
+  lines.push('To view the complete history, use: `git log`')
+  lines.push('')
+  lines.push('## Modification History')
+
+  const years = Object.keys(grouped).sort((a, b) => Number(b) - Number(a))
+
+  for (const year of years) {
+    lines.push('')
+    lines.push(`### ${year}`)
+
+    // Sort days reverse chronologically (compare month first, then day)
+    const days = Object.keys(grouped[year]).sort((a, b) => {
+      const [dA, mA] = a.split('/').map(Number)
+      const [dB, mB] = b.split('/').map(Number)
+      if (mA !== mB) return mB - mA
+      return dB - dA
+    })
+
+    for (const day of days) {
+      lines.push('')
+      lines.push(`#### ${day}`)
+      lines.push('')
+
+      // Sort entries within a day reverse chronologically (latest first)
+      const entries = grouped[year][day].sort((a, b) => b.time.localeCompare(a.time))
+
+      for (const entry of entries) {
+        lines.push(`- **[${entry.time}] ${entry.emoji} [${entry.tag}]** ${entry.description}`)
+      }
     }
   }
 
-  // Versions taggées
-  tags.forEach((tag, index) => {
-    const previousTag = index < tags.length - 1 ? tags[index + 1] : null
-    const commits = getCommitsForTag(tag, previousTag)
-    const relevant = filterRelevantCommits(commits)
-
-    if (relevant.length > 0) {
-      const tagDate = execGit(`git log -1 --format=%ci ${tag}`)
-      const date = formatDate(new Date(tagDate))
-      const section = generateChangelogSection(tag, date, relevant)
-      if (section) {
-        sections.push(section)
-      }
-    }
-  })
-
-  return sections.join('\n')
+  lines.push('')
+  return lines.join('\n')
 }
 
 /**
- * Point d'entrée principal
+ * Main entry point
  */
 function main() {
   // biome-ignore lint/suspicious/noConsole: Script CLI - logging progress
-  console.log("Génération du CHANGELOG.md depuis l'historique Git...")
+  console.log('Generating CHANGELOG.md from Git history...')
 
   try {
     const changelog = generateChangelog()
     fs.writeFileSync(CHANGELOG_PATH, changelog, 'utf-8')
     // biome-ignore lint/suspicious/noConsole: Script CLI - logging success
-    console.log('✓ CHANGELOG.md généré avec succès')
+    console.log('CHANGELOG.md generated successfully')
   } catch (error) {
     // biome-ignore lint/suspicious/noConsole: Script CLI - logging errors
-    console.error('Erreur lors de la génération du CHANGELOG:', error.message)
+    console.error('Error generating CHANGELOG:', error.message)
     process.exit(1)
   }
 }
 
-// Exécuter le script
 if (require.main === module) {
   main()
 }
