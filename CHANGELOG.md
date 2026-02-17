@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 17/02
 
+- **[10:25:14] ⚙️ [CONFIG]** Enable sourcemaps for dev mode in Vite and Electron, exclude from production builds
 - **[10:20:06] 📝 [DOCS]** Add DevTools documentation section in README.md
 - **[09:49:59] 🐛 [FIX]** Fallback to default ollama url when stored value is empty
 - **[09:49:16] 🐛 [FIX]** Validate provider config in main process before init
