@@ -10,8 +10,11 @@ To view the complete history, use: `git log`
 
 #### 17/02
 
-- **[09:41:05] ✨ [FEAT]** Create /release skill and Cline workflow for automated app versioning
-- **[09:37:53] 🐛 [FIX]** Fix LLM service startup error by adding automatic initialization after config loads
+- **[09:41:42] ✨ [FEAT]** Create /release skill and cline workflow
+- **[09:38:25] 🐛 [FIX]** Initialize llm service automatically after config loads
+- **[09:32:20] 🔧 [CHORE]** Add llm service startup error to backlog as p1 bug
+- **[09:28:15] 📝 [DOCS]** Regenerate changelog from git history
+- **[09:27:40] 🔧 [CHORE]** Add changelog tag filtering idea to backlog
 - **[09:16:44] ✨ [FEAT]** Filter commits since last release tag
 - **[09:13:19] 🐛 [FIX]** Handle invalid url gracefully with proper error handling
 - **[08:57:37] 🐛 [FIX]** Correct files configuration for proper cache invalidation
