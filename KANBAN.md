@@ -22,7 +22,6 @@
 
 ### 🟡 P2 - Medium Priority
 
-- [ ] **[17/02/2026 09:23:20] 🟡 P2 🔧 [DEVOPS]** Create a /release skill (.claude/skills/) and Cline workflow (.clinerules/workflows/release.md) to automate app versioning - ask bump type (patch/minor/major), bump version in package.json, regenerate CHANGELOG, create git commit and tag, optionally push to trigger CI release pipeline
 - [ ] **[16/02/2026 20:31:00] 🟡 P2 🌍 [I18N]** Create GitHub Pages documentation site for users and restructure README for contributors
 
 ### 🟢 P3 - Low Priority
@@ -35,6 +34,8 @@
 ## 🚧 In Progress
 
 ## ✅ Done
+
+- [x] **[17/02/2026 09:41:05] ✨ [FEAT]** Create /release skill and Cline workflow for automated versioning
 
 - [x] **[17/02/2026 09:37:53] 🐛 [FIX]** Fix startup error "LLM service not initialized" - add automatic LLM initialization after config loads, improve error logging
 
