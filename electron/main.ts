@@ -121,8 +121,8 @@ const createWindow = (): void => {
   // Load the app
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173')
-    // Only open DevTools if SHELLM_DEVTOOLS environment variable is set to 'true'
-    if (process.env.SHELLM_DEVTOOLS === 'true') {
+    // Only open DevTools if TERMAID_DEVTOOLS environment variable is set to 'true'
+    if (process.env.TERMAID_DEVTOOLS === 'true') {
       mainWindow.webContents.openDevTools()
     }
   } else {

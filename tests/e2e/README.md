@@ -1,6 +1,6 @@
 # E2E Tests
 
-This directory contains end-to-end tests for the SheLLM Electron application using Playwright.
+This directory contains end-to-end tests for the Termaid Electron application using Playwright.
 
 ## Prerequisites
 

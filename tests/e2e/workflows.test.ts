@@ -21,7 +21,7 @@ import {
 let app: ElectronApplication
 let page: Page
 
-test.describe('SheLLM E2E - User Workflows', () => {
+test.describe('Termaid E2E - User Workflows', () => {
   test.beforeAll(async () => {
     const result = await launchElectronApp({ mocks: {} })
     app = result.app
@@ -97,8 +97,8 @@ test.describe('SheLLM E2E - User Workflows', () => {
       // Launch with empty env vars to ensure fields are NOT disabled
       const { app: envApp, page: envPage } = await launchElectronApp({
         env: {
-          SHELLM_OLLAMA_TEMPERATURE: '',
-          SHELLM_OLLAMA_MAX_TOKENS: '',
+          TERMAID_OLLAMA_TEMPERATURE: '',
+          TERMAID_OLLAMA_MAX_TOKENS: '',
         },
       })
 

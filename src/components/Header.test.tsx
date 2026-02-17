@@ -52,7 +52,7 @@ describe('Header', () => {
   test('should render app title and version', () => {
     render(<Header />)
 
-    expect(screen.getByText('SheLLM')).toBeInTheDocument()
+    expect(screen.getByText('Termaid')).toBeInTheDocument()
     expect(screen.getByText('v1.0.0')).toBeInTheDocument()
   })
 

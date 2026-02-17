@@ -19,7 +19,7 @@ import {
 let app: ElectronApplication
 let page: Page
 
-test.describe('SheLLM E2E - Chat Functionality', () => {
+test.describe('Termaid E2E - Chat Functionality', () => {
   test.beforeAll(async () => {
     const result = await launchElectronApp({ mocks: {} })
     app = result.app

@@ -1,6 +1,6 @@
 # Build Executables
 
-SheLLM uses [electron-builder](https://www.electron.build/) to package the application into platform-specific distributables.
+Termaid uses [electron-builder](https://www.electron.build/) to package the application into platform-specific distributables.
 
 ## Prerequisites
 

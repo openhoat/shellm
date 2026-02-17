@@ -255,7 +255,7 @@ export const ConfigPanel = () => {
                 />
                 {envSources.url && (
                   <div className="env-hint">
-                    Value set by environment variable <code>SHELLM_OLLAMA_URL</code>
+                    Value set by environment variable <code>TERMAID_OLLAMA_URL</code>
                   </div>
                 )}
               </div>
@@ -281,7 +281,7 @@ export const ConfigPanel = () => {
                 />
                 {envSources.apiKey && (
                   <div className="env-hint">
-                    Value set by environment variable <code>SHELLM_OLLAMA_API_KEY</code>
+                    Value set by environment variable <code>TERMAID_OLLAMA_API_KEY</code>
                   </div>
                 )}
               </div>
@@ -308,7 +308,7 @@ export const ConfigPanel = () => {
                 />
                 {envSources.model && (
                   <div className="env-hint">
-                    Value set by environment variable <code>SHELLM_OLLAMA_MODEL</code>
+                    Value set by environment variable <code>TERMAID_OLLAMA_MODEL</code>
                   </div>
                 )}
               </div>
@@ -338,7 +338,7 @@ export const ConfigPanel = () => {
                 />
                 {envSources.temperature && (
                   <div className="env-hint">
-                    Value set by environment variable <code>SHELLM_OLLAMA_TEMPERATURE</code>
+                    Value set by environment variable <code>TERMAID_OLLAMA_TEMPERATURE</code>
                   </div>
                 )}
               </div>
@@ -365,7 +365,7 @@ export const ConfigPanel = () => {
                 />
                 {envSources.maxTokens && (
                   <div className="env-hint">
-                    Value set by environment variable <code>SHELLM_OLLAMA_MAX_TOKENS</code>
+                    Value set by environment variable <code>TERMAID_OLLAMA_MAX_TOKENS</code>
                   </div>
                 )}
               </div>
@@ -399,7 +399,7 @@ export const ConfigPanel = () => {
                 />
                 {envSources.claudeApiKey && (
                   <div className="env-hint">
-                    Value set by environment variable <code>SHELLM_CLAUDE_API_KEY</code> or{' '}
+                    Value set by environment variable <code>TERMAID_CLAUDE_API_KEY</code> or{' '}
                     <code>ANTHROPIC_API_KEY</code>
                   </div>
                 )}
@@ -429,7 +429,7 @@ export const ConfigPanel = () => {
                 />
                 {envSources.claudeModel && (
                   <div className="env-hint">
-                    Value set by environment variable <code>SHELLM_CLAUDE_MODEL</code>
+                    Value set by environment variable <code>TERMAID_CLAUDE_MODEL</code>
                   </div>
                 )}
               </div>
@@ -500,7 +500,7 @@ export const ConfigPanel = () => {
                 />
                 {envSources.openaiApiKey && (
                   <div className="env-hint">
-                    Value set by environment variable <code>SHELLM_OPENAI_API_KEY</code>
+                    Value set by environment variable <code>TERMAID_OPENAI_API_KEY</code>
                   </div>
                 )}
               </div>
@@ -529,7 +529,7 @@ export const ConfigPanel = () => {
                 />
                 {envSources.openaiModel && (
                   <div className="env-hint">
-                    Value set by environment variable <code>SHELLM_OPENAI_MODEL</code>
+                    Value set by environment variable <code>TERMAID_OPENAI_MODEL</code>
                   </div>
                 )}
               </div>
@@ -666,7 +666,7 @@ export const ConfigPanel = () => {
               </select>
               {envSources.shell && (
                 <div className="env-hint">
-                  Value set by environment variable <code>SHELLM_SHELL</code>
+                  Value set by environment variable <code>TERMAID_SHELL</code>
                 </div>
               )}
             </div>

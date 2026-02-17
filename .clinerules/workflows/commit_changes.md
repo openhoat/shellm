@@ -116,10 +116,10 @@ Une fois tous les commits créés :
    - Créer le fichier KANBAN.md avec les sections Backlog, In Progress
    - Mettre à jour .clinerules/task_format.md avec les règles pour KANBAN.md
    - ..."
-4. Entrée 2 : "[15:53:10] 🎨 [STYLE]** Renommer l'application de "ShellM" à "SheLLM""
+4. Entrée 2 : "[15:53:10] 🎨 [STYLE]** Renommer l'application de "SheLLM" à "Termaid""
    - Fichiers identifiés : README.md, package.json, index.html, src/components/Header.tsx, etc.
    - git add README.md package.json index.html src/components/Header.tsx ...
-   - git commit -m "[STYLE]: Renommer l'application de "ShellM" à "SheLLM""
+   - git commit -m "[STYLE]: Renommer l'application de "SheLLM" à "Termaid""
 5. Entrée 3 : "[15:42:30] ✅ [TEST]** Standardiser les tests..."
    - Fichiers identifiés : src/services/commandExecutionService.ts, src/services/commandExecutionService.test.ts, etc.
    - git add src/services/commandExecutionService.ts src/services/commandExecutionService.test.ts ...

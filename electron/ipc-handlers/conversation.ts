@@ -105,7 +105,7 @@ export function createConversationHandlers(_getWindow: WindowGetter): void {
     try {
       const exportData = conversationService.exportAllConversations()
       const date = new Date().toISOString().split('T')[0]
-      const defaultName = `shellm_conversations_${date}.json`
+      const defaultName = `termaid_conversations_${date}.json`
 
       const { filePath } = await dialog.showSaveDialog({
         title: 'Export All Conversations',

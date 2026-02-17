@@ -2,7 +2,7 @@
 
 ## LLM Provider
 
-Select your provider in the configuration panel. The selection is also configurable via the `SHELLM_LLM_PROVIDER` environment variable (`ollama`, `claude`, or `openai`).
+Select your provider in the configuration panel. The selection is also configurable via the `TERMAID_LLM_PROVIDER` environment variable (`ollama`, `claude`, or `openai`).
 
 ### Ollama
 
@@ -37,17 +37,17 @@ Environment variables take **priority** over the UI configuration. Copy `.env.ex
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `SHELLM_LLM_PROVIDER` | LLM provider to use (`ollama`, `claude`, or `openai`) | `ollama` |
-| `SHELLM_OLLAMA_URL` | Ollama instance URL | `http://localhost:11434` |
-| `SHELLM_OLLAMA_API_KEY` | API key for Ollama authentication | *(none)* |
-| `SHELLM_OLLAMA_MODEL` | Ollama model to use | `gemini-3-flash-preview:cloud` |
-| `SHELLM_OLLAMA_TEMPERATURE` | Ollama temperature (0–1) | `0.7` |
-| `SHELLM_OLLAMA_MAX_TOKENS` | Maximum tokens for Ollama response | `1000` |
-| `SHELLM_CLAUDE_API_KEY` | Anthropic API key for Claude | *(none)* |
-| `ANTHROPIC_API_KEY` | Standard Anthropic API key (fallback for `SHELLM_CLAUDE_API_KEY`) | *(none)* |
-| `SHELLM_CLAUDE_MODEL` | Claude model to use | `claude-haiku-4-5-20251001` |
-| `SHELLM_OPENAI_API_KEY` | OpenAI API key | *(none)* |
-| `SHELLM_OPENAI_MODEL` | OpenAI model to use | `gpt-4o` |
-| `SHELLM_SHELL` | Shell to use (`auto` for system default, or explicit path) | `auto` |
-| `SHELLM_DEVTOOLS` | Open DevTools on launch (`true`/`false`) | `false` |
+| `TERMAID_LLM_PROVIDER` | LLM provider to use (`ollama`, `claude`, or `openai`) | `ollama` |
+| `TERMAID_OLLAMA_URL` | Ollama instance URL | `http://localhost:11434` |
+| `TERMAID_OLLAMA_API_KEY` | API key for Ollama authentication | *(none)* |
+| `TERMAID_OLLAMA_MODEL` | Ollama model to use | `gemini-3-flash-preview:cloud` |
+| `TERMAID_OLLAMA_TEMPERATURE` | Ollama temperature (0–1) | `0.7` |
+| `TERMAID_OLLAMA_MAX_TOKENS` | Maximum tokens for Ollama response | `1000` |
+| `TERMAID_CLAUDE_API_KEY` | Anthropic API key for Claude | *(none)* |
+| `ANTHROPIC_API_KEY` | Standard Anthropic API key (fallback for `TERMAID_CLAUDE_API_KEY`) | *(none)* |
+| `TERMAID_CLAUDE_MODEL` | Claude model to use | `claude-haiku-4-5-20251001` |
+| `TERMAID_OPENAI_API_KEY` | OpenAI API key | *(none)* |
+| `TERMAID_OPENAI_MODEL` | OpenAI model to use | `gpt-4o` |
+| `TERMAID_SHELL` | Shell to use (`auto` for system default, or explicit path) | `auto` |
+| `TERMAID_DEVTOOLS` | Open DevTools on launch (`true`/`false`) | `false` |
 | `ELECTRON_OZONE_PLATFORM_HINT` | Force X11 on Linux Wayland (`x11`) | *(unset)* |

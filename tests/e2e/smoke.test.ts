@@ -5,7 +5,7 @@ import { closeElectronApp, launchElectronApp, waitForAppReady } from './electron
 let app: ElectronApplication
 let page: Page
 
-test.describe('SheLLM E2E - Smoke Tests', () => {
+test.describe('Termaid E2E - Smoke Tests', () => {
   test.beforeAll(async () => {
     const result = await launchElectronApp({ mocks: {} })
     app = result.app

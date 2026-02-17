@@ -17,7 +17,7 @@ import {
 let app: ElectronApplication
 let page: Page
 
-test.describe('SheLLM E2E - Terminal Integration', () => {
+test.describe('Termaid E2E - Terminal Integration', () => {
   test.beforeAll(async () => {
     const result = await launchElectronApp({ mocks: {} })
     app = result.app

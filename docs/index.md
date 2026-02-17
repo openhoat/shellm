@@ -1,22 +1,22 @@
 ---
 layout: home
 hero:
-  name: SheLLM
+  name: Termaid
   text: AI-Powered Terminal
   tagline: Generate shell commands from natural language — powered by Ollama, Claude, and OpenAI
   image:
     src: /logo.svg
-    alt: SheLLM Logo
+    alt: Termaid Logo
   actions:
     - theme: brand
       text: Get Started
       link: /guide/getting-started
     - theme: alt
       text: Download
-      link: https://github.com/openhoat/shellm/releases/latest
+      link: https://github.com/openhoat/termaid/releases/latest
     - theme: alt
       text: GitHub
-      link: https://github.com/openhoat/shellm
+      link: https://github.com/openhoat/termaid
 features:
   - title: Local AI with Ollama
     details: Use free, local AI models with Ollama — your data stays on your machine.
@@ -28,10 +28,10 @@ features:
     details: MIT licensed, fully transparent, and built entirely with AI using Claude Code.
 ---
 
-## Why SheLLM?
+## Why Termaid?
 
 [Warp](https://www.warp.dev) is a great AI-powered terminal, but its AI features only work with proprietary cloud providers — there is no support for [Ollama](https://ollama.ai), which means no free, local, or self-hosted option.
 
-SheLLM was born out of that frustration: a fully open alternative that works with Ollama out of the box, keeping your data local and your wallet intact.
+Termaid was born out of that frustration: a fully open alternative that works with Ollama out of the box, keeping your data local and your wallet intact.
 
 > This project was entirely built with AI — from architecture to code, tests, and documentation, using [Claude Code](https://claude.ai/claude-code) (Anthropic).

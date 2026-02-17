@@ -1,7 +1,7 @@
 {
   "translation": {
     "app": {
-      "title": "SheLLM",
+      "title": "Termaid",
       "subtitle": "Terminal intelligent avec IA"
     },
     "header": {
@@ -16,7 +16,7 @@
       "clear": "Effacer",
       "empty": "Aucun message",
       "welcome": {
-        "title": "Bienvenue dans SheLLM !",
+        "title": "Bienvenue dans Termaid !",
         "description": "Décrivez ce que vous voulez faire en langage naturel et l'IA vous proposera la commande appropriée.",
         "examples": "Exemples :",
         "example1": "\"Liste tous les fichiers de plus de 10MB\"",

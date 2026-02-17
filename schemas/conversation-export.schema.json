@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/openhoat/shellm/schemas/conversation-export.schema.json",
-  "title": "ShellM Conversation Export",
-  "description": "Schema for exporting ShellM conversations to JSON format",
+  "$id": "https://github.com/openhoat/termaid/schemas/conversation-export.schema.json",
+  "title": "Termaid Conversation Export",
+  "description": "Schema for exporting Termaid conversations to JSON format",
   "type": "object",
   "required": ["exportDate", "version", "conversations"],
   "properties": {

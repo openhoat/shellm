@@ -1,10 +1,10 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  title: 'SheLLM',
+  title: 'Termaid',
   description: 'AI-Powered Terminal — Generate shell commands from natural language',
-  base: '/shellm/',
-  head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/shellm/logo.svg' }]],
+  base: '/termaid/',
+  head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/termaid/logo.svg' }]],
   themeConfig: {
     logo: '/logo.svg',
     nav: [
@@ -12,14 +12,14 @@ export default defineConfig({
       { text: 'Configuration', link: '/guide/configuration' },
       {
         text: 'v1.1.0',
-        link: 'https://github.com/openhoat/shellm/releases/tag/v1.1.0',
+        link: 'https://github.com/openhoat/termaid/releases/tag/v1.1.0',
       },
     ],
     sidebar: [
       {
         text: 'Introduction',
         items: [
-          { text: 'What is SheLLM?', link: '/' },
+          { text: 'What is Termaid?', link: '/' },
           { text: 'Getting Started', link: '/guide/getting-started' },
         ],
       },
@@ -39,13 +39,13 @@ export default defineConfig({
         ],
       },
     ],
-    socialLinks: [{ icon: 'github', link: 'https://github.com/openhoat/shellm' }],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/openhoat/termaid' }],
     footer: {
       message: 'Released under the MIT License.',
       copyright: 'Copyright © 2026 Olivier Penhoat',
     },
     editLink: {
-      pattern: 'https://github.com/openhoat/shellm/edit/main/docs/:path',
+      pattern: 'https://github.com/openhoat/termaid/edit/main/docs/:path',
       text: 'Edit this page on GitHub',
     },
   },

@@ -1,7 +1,7 @@
 {
   "translation": {
     "app": {
-      "title": "SheLLM",
+      "title": "Termaid",
       "subtitle": "Smart AI Terminal"
     },
     "header": {
@@ -16,7 +16,7 @@
       "clear": "Clear",
       "empty": "No messages",
       "welcome": {
-        "title": "Welcome to SheLLM!",
+        "title": "Welcome to Termaid!",
         "description": "Describe what you want to do in natural language and the AI will suggest the appropriate command.",
         "examples": "Examples:",
         "example1": "\"List all files larger than 10MB\"",

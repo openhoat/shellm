@@ -192,7 +192,7 @@ class ConversationService {
     }
 
     const exportData = {
-      $schema: 'https://github.com/openhoat/shellm/schemas/conversation-export.schema.json',
+      $schema: 'https://github.com/openhoat/termaid/schemas/conversation-export.schema.json',
       exportDate: new Date().toISOString(),
       version: '1.0.0',
       conversations: [conversation],
@@ -208,7 +208,7 @@ class ConversationService {
     const conversations = this.getAllConversations()
 
     const exportData = {
-      $schema: 'https://github.com/openhoat/shellm/schemas/conversation-export.schema.json',
+      $schema: 'https://github.com/openhoat/termaid/schemas/conversation-export.schema.json',
       exportDate: new Date().toISOString(),
       version: '1.0.0',
       conversations,
