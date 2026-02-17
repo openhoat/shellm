@@ -60,12 +60,23 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
   }
 
   if (initialConfig) {
-    service = createProvider(initialConfig)
+    try {
+      service = createProvider(initialConfig)
+    } catch {
+      // Invalid config at startup - service remains null, user will need to reconfigure
+    }
   }
 
   // Initialize the LLM service with configuration
   ipcMain.handle('llm:init', async (_event, config: AppConfig) => {
-    service = createProvider(config)
+    try {
+      service = createProvider(config)
+    } catch (error) {
+      service = null
+      throw new Error(
+        `Failed to initialize LLM provider: ${error instanceof Error ? error.message : String(error)}`
+      )
+    }
   })
 
   // Generate command from natural language
