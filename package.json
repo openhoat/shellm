@@ -33,7 +33,8 @@
     "test:e2e:headless": "wireit",
     "test:ui": "vitest --ui",
     "test:watch": "vitest",
-    "validate": "wireit"
+    "validate": "wireit",
+    "demo": "npx tsx tests/e2e/demo.ts"
   },
   "keywords": [],
   "author": "Olivier Penhoat <openhoat@gmail.com> (http://headwood.net/)",
