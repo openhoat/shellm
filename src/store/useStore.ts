@@ -62,6 +62,12 @@ export const useStore = create<AppState>((set, _get) => ({
   initConfig: async () => {
     const config = await window.electronAPI.getConfig()
     set({ config })
+    // Initialize LLM service with loaded config to prevent "LLM service not initialized" errors
+    try {
+      await window.electronAPI.llmInit(config)
+    } catch {
+      // LLM initialization may fail (e.g. invalid config), user can reconfigure later
+    }
   },
 
   // Terminal

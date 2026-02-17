@@ -1,5 +1,5 @@
 import type { AICommand, AppConfig } from '@shared/types'
-import { beforeEach, describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { useStore } from './useStore'
 
 describe('useStore', () => {
@@ -61,8 +61,26 @@ describe('useStore', () => {
 
     test('should initialize config from electronAPI', async () => {
       await useStore.getState().initConfig()
-      const _state = useStore.getState()
 
+      expect(window.electronAPI.getConfig).toHaveBeenCalled()
+    })
+
+    test('should call llmInit after loading config', async () => {
+      await useStore.getState().initConfig()
+
+      expect(window.electronAPI.llmInit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          ollama: expect.objectContaining({ url: 'http://localhost:11434' }),
+        })
+      )
+    })
+
+    test('should not throw when llmInit fails during initConfig', async () => {
+      vi.mocked(window.electronAPI.llmInit).mockRejectedValueOnce(
+        new Error('Provider initialization failed')
+      )
+
+      await expect(useStore.getState().initConfig()).resolves.not.toThrow()
       expect(window.electronAPI.getConfig).toHaveBeenCalled()
     })
   })
