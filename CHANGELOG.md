@@ -10,6 +10,11 @@ To view the complete history, use: `git log`
 
 #### 17/02
 
+- **[09:49:59] 🐛 [FIX]** Fallback to default ollama url when stored value is empty
+- **[09:49:16] 🐛 [FIX]** Validate provider config in main process before init
+- **[09:46:57] 🐛 [FIX]** Skip llm init when provider config is incomplete
+- **[09:44:15] 🔧 [CHORE]** Clean kanban and improve release workflow version handling
+- **[09:41:50] 📝 [DOCS]** Regenerate changelog from git history
 - **[09:41:42] ✨ [FEAT]** Create /release skill and cline workflow
 - **[09:38:25] 🐛 [FIX]** Initialize llm service automatically after config loads
 - **[09:32:20] 🔧 [CHORE]** Add llm service startup error to backlog as p1 bug
