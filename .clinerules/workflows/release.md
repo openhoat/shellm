@@ -46,14 +46,24 @@ npm version <bump_type> --no-git-tag-version
 
 This updates `package.json` and `package-lock.json`.
 
-### 5. Regenerate CHANGELOG
+### 5. Verify bumped version
+
+Read back the version from `package.json` to confirm the bump was applied correctly:
+```bash
+node -e "console.log(require('./package.json').version)"
+```
+
+Store this value as `NEW_VERSION` and use it for all subsequent steps (commit message, tag name).
+If the version does not match the expected bump, abort and investigate.
+
+### 6. Regenerate CHANGELOG
 
 Run the changelog generation script:
 ```bash
 npm run changelog
 ```
 
-### 6. Run validation
+### 7. Run validation
 
 Run the project validation to ensure everything is clean:
 ```bash
@@ -62,27 +72,27 @@ npm run validate
 
 If validation fails, fix the issues before proceeding.
 
-### 7. Create git commit
+### 8. Create git commit
 
-Stage all modified files and create the release commit:
+Stage all modified files and create the release commit using `NEW_VERSION` from step 5:
 ```bash
 git add package.json package-lock.json CHANGELOG.md
-git commit -m "chore(release): bump version to vX.Y.Z"
+git commit -m "chore(release): bump version to v${NEW_VERSION}"
 ```
 
-### 8. Create git tag
+### 9. Create git tag
 
-Create an annotated git tag:
+Create an annotated git tag using `NEW_VERSION` from step 5:
 ```bash
-git tag -a vX.Y.Z -m "Release vX.Y.Z"
+git tag -a v${NEW_VERSION} -m "Release v${NEW_VERSION}"
 ```
 
-### 9. Ask about pushing
+### 10. Ask about pushing
 
 Ask the user if they want to push the commit and tag to trigger the CI release pipeline:
 
 ```
-Release vX.Y.Z created locally.
+Release v${NEW_VERSION} created locally.
 
 Push to remote to trigger CI release pipeline?
 - Yes, push commit and tag
@@ -94,14 +104,14 @@ If yes:
 git push && git push --tags
 ```
 
-### 10. Summary
+### 11. Summary
 
 Display a release summary:
 ```
 Release Summary:
-- Version: X.Y.Z -> X'.Y'.Z'
+- Version: ${OLD_VERSION} -> ${NEW_VERSION}
 - Commit: <hash>
-- Tag: vX'.Y'.Z'
+- Tag: v${NEW_VERSION}
 - Pushed: yes/no
 
 Next steps:

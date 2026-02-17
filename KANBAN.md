@@ -27,17 +27,13 @@
 ### 🟢 P3 - Low Priority
 
 - [ ] **[17/02/2026 08:59:00] 🟢 P3 ⚙️ [CONFIG]** Add DevTools documentation in README.md - document how to open DevTools in the Electron app (keyboard shortcut Ctrl+Shift+I / Cmd+Option+I, and SHELLM_DEVTOOLS=true environment variable)
-- [ ] **[17/02/2026 10:15:00] 🟢 P3 ⚙️ [CONFIG]** Add sourcemaps for better debugging - enable sourcemaps only in dev mode (Vite frontend and TypeScript Electron backend) to get TypeScript source references in stack traces, keep prod build without sourcemaps
 - [ ] **[17/02/2026 10:15:00] 🟢 P3 ⚙️ [CONFIG]** Enable sourcemaps for better debugging - configure sourcemaps in Vite (frontend) and TypeScript (Electron backend) only for dev mode, production builds should not include sourcemaps
-
 
 ## 🚧 In Progress
 
 ## ✅ Done
 
 - [x] **[17/02/2026 09:41:05] ✨ [FEAT]** Create /release skill and Cline workflow for automated versioning
-
 - [x] **[17/02/2026 09:37:53] 🐛 [FIX]** Fix startup error "LLM service not initialized" - add automatic LLM initialization after config loads, improve error logging
-
 - [x] **[17/02/2026 09:15:01] 🔧 [CHORE]** Filter CHANGELOG to show only changes since last release tag
 - [x] **[17/02/2026 09:09:54] 🐛 [FIX]** Fix invalid Ollama URL error - handle empty/invalid URL gracefully with proper error handling and unit tests
