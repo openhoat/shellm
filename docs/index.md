@@ -25,7 +25,7 @@ features:
   - title: Full Terminal
     details: A real terminal powered by xterm.js — run any shell command alongside AI assistance.
   - title: Open Source
-    details: MIT licensed, fully transparent, and built entirely with AI using Claude Code.
+    details: MIT licensed, fully transparent, and built with AI using Claude Code, Cline, and GLM.
 ---
 
 ## Why Termaid?
@@ -34,4 +34,4 @@ features:
 
 Termaid was born out of that frustration: a fully open alternative that works with Ollama out of the box, keeping your data local and your wallet intact.
 
-> This project was entirely built with AI — from architecture to code, tests, and documentation, using [Claude Code](https://claude.ai/claude-code) (Anthropic).
+> This project was entirely built with AI — from architecture to code, tests, and documentation, using [Claude Code](https://claude.ai/claude-code) (Anthropic), [Cline](https://github.com/cline/cline), and [GLM](https://github.com/THUDM/GLM).
