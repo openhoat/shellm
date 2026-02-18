@@ -12,6 +12,8 @@ const logger = new Logger('useChat')
 // Constants
 const COMMAND_OUTPUT_WAIT_TIME_MS = 3000 // 3 seconds wait for command output
 const DEBOUNCE_MS = 300 // Debounce delay for user input
+const INPUT_HISTORY_KEY = 'termaid-chat-input-history'
+const MAX_HISTORY_SIZE = 50
 
 /**
  * Simple debounce hook
@@ -46,6 +48,18 @@ export function useChat() {
   const [executionProgress, setExecutionProgress] = useState(0)
   const [conversation, setConversation] = useState<ChatMessageData[]>([])
   const [messageCounter, setMessageCounter] = useState(0)
+
+  // Input history for up/down arrow navigation
+  const [inputHistory, setInputHistory] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem(INPUT_HISTORY_KEY)
+      return saved ? JSON.parse(saved) : []
+    } catch {
+      return []
+    }
+  })
+  const [historyIndex, setHistoryIndex] = useState(-1) // -1 means not navigating history
+  const [savedInput, setSavedInput] = useState('') // Save current input when navigating history
 
   const {
     aiCommand,
@@ -84,12 +98,83 @@ export function useChat() {
   }, [debouncedUserInput, aiCommand, setAiCommand])
 
   /**
-   * Handle user input changes
+   * Persist input history to localStorage
    */
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value
-    setUserInput(newValue)
+  useEffect(() => {
+    try {
+      localStorage.setItem(INPUT_HISTORY_KEY, JSON.stringify(inputHistory))
+    } catch {
+      // Ignore localStorage errors
+    }
+  }, [inputHistory])
+
+  /**
+   * Save input history to localStorage
+   */
+  const saveHistoryToStorage = useCallback((history: string[]) => {
+    try {
+      localStorage.setItem(INPUT_HISTORY_KEY, JSON.stringify(history))
+    } catch {
+      // Ignore storage errors
+    }
   }, [])
+
+  /**
+   * Add input to history (called when user submits)
+   */
+  const addToHistory = useCallback(
+    (input: string) => {
+      if (!input.trim()) return
+
+      setInputHistory(prev => {
+        // Don't add duplicates of the most recent entry
+        if (prev[0] === input.trim()) return prev
+
+        // Add to beginning, limit size
+        const newHistory = [input.trim(), ...prev].slice(0, MAX_HISTORY_SIZE)
+        saveHistoryToStorage(newHistory)
+        return newHistory
+      })
+      // Reset history navigation
+      setHistoryIndex(-1)
+    },
+    [saveHistoryToStorage]
+  )
+
+  /**
+   * Navigate through input history
+   * direction: 'up' = older (previous), 'down' = newer (next)
+   */
+  const navigateHistory = useCallback(
+    (direction: 'up' | 'down') => {
+      if (inputHistory.length === 0) return
+
+      if (direction === 'up') {
+        // Going up means older entries (higher index in array)
+        if (historyIndex < inputHistory.length - 1) {
+          // Save current input before navigating
+          if (historyIndex === -1) {
+            setSavedInput(userInput)
+          }
+          const newIndex = historyIndex + 1
+          setHistoryIndex(newIndex)
+          setUserInput(inputHistory[newIndex] ?? '')
+        }
+      } else {
+        // Going down means newer entries (lower index in array)
+        if (historyIndex > 0) {
+          const newIndex = historyIndex - 1
+          setHistoryIndex(newIndex)
+          setUserInput(inputHistory[newIndex] ?? '')
+        } else if (historyIndex === 0) {
+          // Return to the saved input
+          setHistoryIndex(-1)
+          setUserInput(savedInput)
+        }
+      }
+    },
+    [inputHistory, historyIndex, userInput, savedInput]
+  )
 
   /**
    * Generate AI command from user prompt
@@ -99,6 +184,9 @@ export function useChat() {
       if (!prompt.trim() || isLoading) return
 
       setError(null)
+
+      // Add to input history
+      addToHistory(prompt)
 
       // Add user message to local conversation state with unique ID
       setConversation(prev => [
@@ -227,6 +315,7 @@ export function useChat() {
       setError,
       addToast,
       i18n.t,
+      addToHistory,
     ]
   )
 
@@ -388,5 +477,7 @@ export function useChat() {
     generateAICommand,
     executeCommand,
     modifyCommand,
+    addToHistory,
+    navigateHistory,
   }
 }
