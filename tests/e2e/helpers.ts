@@ -682,54 +682,34 @@ export async function resetAppState(page: Page): Promise<void> {
 }
 
 /**
- * Start video recording using Electron's desktopCapturer
- * This captures the app window directly, independent of screen position
+ * Start video recording using getDisplayMedia API
+ * This captures the current tab/window for demo video generation
  * Returns a promise that resolves when recording starts
  */
 export async function startVideoRecording(page: Page): Promise<void> {
   await page.evaluate(async () => {
-    // Access desktopCapturer through the exposed electron API
-    // @ts-expect-error - electronAPI is exposed via preload
-    const capturer = window.electronAPI.desktopCapturer
+    // Check supported MIME type
+    const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+      ? 'video/webm;codecs=vp9'
+      : MediaRecorder.isTypeSupported('video/webm')
+        ? 'video/webm'
+        : 'video/mp4'
 
-    if (!capturer) {
-      throw new Error('desktopCapturer not available - ensure DEMO_VIDEO mode is enabled')
-    }
-
-    // Get video sources
-    const sources = await capturer.getSources({ types: ['window', 'screen'] })
-
-    // Find the Termaid window (usually the first window source)
-    const termaidSource = sources.find(
-      // @ts-expect-error - source has name property
-      (s: { id: string; name: string }) =>
-        s.name.includes('Termaid') || s.name.includes('termaid') || s.name === 'Electron'
-    )
-    const source = termaidSource || sources[0]
-
-    if (!source) {
-      throw new Error('No video source found for recording')
-    }
-
-    // Get the media stream
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: false,
+    // Get display media stream - prefer current tab
+    const stream = await navigator.mediaDevices.getDisplayMedia({
       video: {
-        // @ts-expect-error - mandatory for desktop capture
-        mandatory: {
-          chromeMediaSource: 'desktop',
-          chromeMediaSourceId: source.id,
-          minWidth: 1600,
-          maxWidth: 1600,
-          minHeight: 900,
-          maxHeight: 900,
-        },
+        width: { ideal: 1600 },
+        height: { ideal: 900 },
+        frameRate: { ideal: 30 },
       },
-    })
+      audio: false,
+      // @ts-expect-error - preferCurrentTab is a newer API
+      preferCurrentTab: true,
+    } as MediaStreamConstraints)
 
-    // Create MediaRecorder
+    // Create MediaRecorder with supported mime type
     const mediaRecorder = new MediaRecorder(stream, {
-      mimeType: 'video/webm;codecs=vp9',
+      mimeType,
       videoBitsPerSecond: 2500000,
     })
 
@@ -738,6 +718,13 @@ export async function startVideoRecording(page: Page): Promise<void> {
     mediaRecorder.ondataavailable = (event: BlobEvent) => {
       if (event.data.size > 0) {
         chunks.push(event.data)
+      }
+    }
+
+    // Handle stream end (user stops sharing)
+    stream.getVideoTracks()[0].onended = () => {
+      if (mediaRecorder.state === 'recording') {
+        mediaRecorder.stop()
       }
     }
 
@@ -762,11 +749,12 @@ export async function stopVideoRecording(page: Page): Promise<string> {
       throw new Error('No active video recording')
     }
 
-    return new Promise<string>(resolve => {
+    return new Promise<string>((resolve, reject) => {
       const { mediaRecorder, chunks, stream } = recording
 
+      // Set up handlers BEFORE calling stop()
       mediaRecorder.onstop = () => {
-        // Stop all tracks
+        // Stop all tracks to release the stream
         for (const track of stream.getTracks()) {
           track.stop()
         }
@@ -780,9 +768,16 @@ export async function stopVideoRecording(page: Page): Promise<string> {
           const base64Data = base64.split(',')[1]
           resolve(base64Data)
         }
+        reader.onerror = () => reject(new Error('Failed to read blob'))
         reader.readAsDataURL(blob)
       }
 
+      mediaRecorder.onerror = event => {
+        const errorEvent = event as ErrorEvent & { error?: Error }
+        reject(new Error(`MediaRecorder error: ${errorEvent.error?.message || 'unknown error'}`))
+      }
+
+      // Stop the recorder
       mediaRecorder.stop()
     })
   })

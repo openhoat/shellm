@@ -7,6 +7,7 @@ import { createConfigHandlers } from './ipc-handlers/config'
 import { createConversationHandlers } from './ipc-handlers/conversation'
 import { createLLMHandlers } from './ipc-handlers/llm-service'
 import { createTerminalHandlers } from './ipc-handlers/terminal'
+import { createVideoHandlers } from './ipc-handlers/video'
 
 interface StoreType {
   get: (key: string) => unknown
@@ -186,6 +187,7 @@ app.whenReady().then(() => {
   createLLMHandlers(getMainWindow, mergedConfig)
 
   createConfigHandlers(getMainWindow, store)
+  createVideoHandlers(getMainWindow)
 
   // Now create the window - handlers are already registered
   createWindow()

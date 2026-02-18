@@ -456,6 +456,22 @@ export function useChat() {
     }
   }, [aiCommand, setError, setAiCommand, addToast, i18n.t])
 
+  /**
+   * Handle input change in the chat textarea
+   * Updates user input state and resets history navigation
+   */
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setUserInput(e.target.value)
+      // Reset history navigation when user types
+      if (historyIndex !== -1) {
+        setHistoryIndex(-1)
+        setSavedInput('')
+      }
+    },
+    [historyIndex]
+  )
+
   return {
     // State
     userInput,
