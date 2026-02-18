@@ -2,6 +2,13 @@ import { render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { Header } from './Header'
 
+// Mock __APP_VERSION__ global
+declare global {
+  // eslint-disable-next-line no-var
+  var __APP_VERSION__: string
+}
+globalThis.__APP_VERSION__ = '1.2.2'
+
 // Mock window.electronAPI
 const mockConversationExport = vi.fn()
 const mockConversationExportAll = vi.fn()
@@ -53,7 +60,7 @@ describe('Header', () => {
     render(<Header />)
 
     expect(screen.getByText('Termaid')).toBeInTheDocument()
-    expect(screen.getByText('v1.0.0')).toBeInTheDocument()
+    expect(screen.getByText('v1.2.2')).toBeInTheDocument()
   })
 
   test('should render status indicator with provider and model', () => {
