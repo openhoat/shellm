@@ -6,7 +6,7 @@ disable-model-invocation: false
 
 # Skill: Release
 
-Base directory for this skill: /home/openhoat/work/shellm/.claude/skills/release
+Base directory for this skill: {PROJECT_ROOT}/.claude/skills/release
 
 ## Description
 
