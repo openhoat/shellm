@@ -50,10 +50,31 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
     // Invalid JSON, ignore
   }
 
-  let mockAIResponse: AICommand | null = null
+  let mockAIResponses: AICommand[] | null = null
+  let mockAIResponseIndex = 0
   try {
     if (process.env.TERMAID_E2E_MOCK_AI_RESPONSE) {
-      mockAIResponse = JSON.parse(process.env.TERMAID_E2E_MOCK_AI_RESPONSE)
+      const parsed = JSON.parse(process.env.TERMAID_E2E_MOCK_AI_RESPONSE)
+      mockAIResponses = Array.isArray(parsed) ? parsed : [parsed]
+    }
+  } catch {
+    // Invalid JSON, ignore
+  }
+
+  // E2E mock for interpretations
+  let mockInterpretations: Array<{
+    summary: string
+    key_findings: string[]
+    warnings: string[]
+    errors: string[]
+    recommendations: string[]
+    successful: boolean
+  }> | null = null
+  let mockInterpretationIndex = 0
+  try {
+    if (process.env.TERMAID_E2E_MOCK_INTERPRETATION) {
+      const parsed = JSON.parse(process.env.TERMAID_E2E_MOCK_INTERPRETATION)
+      mockInterpretations = Array.isArray(parsed) ? parsed : [parsed]
     }
   } catch {
     // Invalid JSON, ignore
@@ -103,9 +124,12 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
         throw new Error(mockErrors.llmGenerate)
       }
 
-      // E2E mock: return predefined response
-      if (mockAIResponse) {
-        return mockAIResponse
+      // E2E mock: return predefined response (cycles through array)
+      if (mockAIResponses) {
+        const response =
+          mockAIResponses[mockAIResponseIndex] ?? mockAIResponses[mockAIResponses.length - 1]
+        mockAIResponseIndex++
+        return response
       }
 
       if (!service) {
@@ -125,6 +149,13 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
 
   // Interpret terminal output
   ipcMain.handle('llm:interpret-output', async (_event, output: string, language?: string) => {
+    // E2E mock: return predefined interpretation (cycles through array)
+    if (mockInterpretations && mockInterpretations.length > 0) {
+      const idx = mockInterpretationIndex % mockInterpretations.length
+      mockInterpretationIndex++
+      return mockInterpretations[idx]
+    }
+
     if (!service) {
       throw new Error('LLM service not initialized')
     }

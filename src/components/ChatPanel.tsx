@@ -51,12 +51,13 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
 
   // Auto-scroll to bottom when new messages arrive (only if user is at bottom)
   // We use conversation.length as a trigger to detect new messages
-  // biome-ignore lint/correctness/useExhaustiveDependencies: conversation.length triggers scroll on new messages
+  // Also scroll when interpretation completes (isInterpreting changes to false)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: conversation.length and isInterpreting trigger scroll
   useEffect(() => {
     if (isAtBottom) {
       scrollToBottom('instant')
     }
-  }, [chat.conversation.length, isAtBottom, scrollToBottom])
+  }, [chat.conversation.length, chat.isInterpreting, isAtBottom, scrollToBottom])
 
   // Handle scroll events to track user position
   useEffect(() => {

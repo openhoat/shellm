@@ -17,6 +17,12 @@ Termaid allows you to describe what you want to do in natural language and the A
 
 > 🤖 **This project was entirely built with AI** — from architecture to code, tests, and documentation, using [Claude Code](https://claude.ai/claude-code) (Anthropic).
 
+## 🎬 Demo
+
+![Termaid Demo](docs/public/demo.gif)
+
+*Generate shell commands from natural language and get AI-powered interpretations of command output.*
+
 📖 **[Full Documentation](https://openhoat.github.io/termaid/)**
 
 ## 💡 Why Termaid?

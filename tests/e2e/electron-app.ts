@@ -30,7 +30,7 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
   app: ElectronApplication
   page: Page
 }> {
-  const { mocks, env: customEnv } = options
+  const { mocks, env: customEnv, locale } = options
 
   // Build the app first if needed
   const projectRoot = path.resolve(__dirname, '..', '..')
@@ -68,6 +68,16 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
     TERMAID_DEVTOOLS: 'false',
   }
 
+  // Use a clean, generic terminal for demo video recording
+  if (process.env.DEMO_VIDEO === '1') {
+    env.HOME = '/tmp'
+    env.SHELL = '/bin/bash'
+    env.PS1 = '$ '
+    env.DIRENV_LOG_FORMAT = ''
+    env.BASH_ENV = '/dev/null'
+    env.ENV = '/dev/null'
+  }
+
   // Add custom environment variables (for config testing)
   if (customEnv) {
     Object.assign(env, customEnv)
@@ -98,6 +108,11 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
     // The IPC error handler (TERMAID_E2E_MOCK_ERRORS) takes priority over this value
     env.TERMAID_E2E_MOCK_AI_RESPONSE = JSON.stringify(mocks.aiCommand ?? defaultMockAICommand)
 
+    // Mock interpretation - for llm:interpret-output IPC handler
+    if (mocks.interpretation) {
+      env.TERMAID_E2E_MOCK_INTERPRETATION = JSON.stringify(mocks.interpretation)
+    }
+
     // Mock models
     if (mocks.models) {
       env.TERMAID_E2E_MOCK_MODELS = JSON.stringify(mocks.models)
@@ -105,14 +120,17 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
   }
 
   // Launch Electron app
-  const app = await electron.launch({
-    args,
-    env,
-  })
+  const app = await electron.launch({ args, env })
 
   try {
-    // Get the browser context and inject mock script if provided
+    // Get the browser context and inject scripts before page loads
     const context = app.context()
+
+    // Force locale via localStorage before the app's i18n initializes
+    if (locale) {
+      await context.addInitScript(`localStorage.setItem('i18nextLng', '${locale}')`)
+    }
+
     if (mocks) {
       const mockScript = getMockInjectionScript(mocks)
       await context.addInitScript(mockScript)

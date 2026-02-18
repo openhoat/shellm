@@ -30,6 +30,17 @@
         "finalizing": "Finalisation...",
         "interpreting": "Analyse des résultats en cours..."
       },
+      "command": {
+        "proposed": "Commande proposée :",
+        "confidence": "Confiance :"
+      },
+      "interpretation": {
+        "result": "Résultat :",
+        "keyFindings": "Points clés :",
+        "warnings": "Avertissements :",
+        "errors": "Erreurs :",
+        "recommendations": "Recommandations :"
+      },
       "actions": {
         "execute": "Exécuter",
         "preparing": "Préparation...",

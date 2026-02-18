@@ -113,8 +113,8 @@ export interface MockErrors {
 export function createMockElectronAPI(
   options: {
     config?: AppConfig
-    aiCommand?: AICommand
-    interpretation?: CommandInterpretation
+    aiCommand?: AICommand | AICommand[]
+    interpretation?: CommandInterpretation | CommandInterpretation[]
     models?: string[]
     conversations?: Conversation[]
     connectionSuccess?: boolean
@@ -123,8 +123,8 @@ export function createMockElectronAPI(
     envSources?: typeof defaultMockEnvSources
     /** Mock errors to simulate failures */
     errors?: MockErrors
-    /** Command execution result mock */
-    commandExecution?: MockCommandExecution
+    /** Command execution result mock (single or array for multiple calls) */
+    commandExecution?: MockCommandExecution | MockCommandExecution[]
   } = {}
 ) {
   const {
@@ -141,13 +141,24 @@ export function createMockElectronAPI(
     commandExecution,
   } = options
 
+  // Support arrays for sequential mock responses
+  const aiCommands = Array.isArray(aiCommand) ? aiCommand : [aiCommand]
+  const interpretations = Array.isArray(interpretation) ? interpretation : [interpretation]
+  const commandExecutions = commandExecution
+    ? Array.isArray(commandExecution)
+      ? commandExecution
+      : [commandExecution]
+    : undefined
+  let callIndex = 0
+
   // Store for conversations
   let storedConversations = [...conversations]
   let currentConversationId: string | null = conversations[0]?.id || null
 
   // Store for command execution state (simulates terminal capturing output)
-  let pendingCommandOutput = commandExecution?.output ?? terminalOutput
-  let _pendingExitCode = commandExecution?.exitCode ?? 0
+  const firstExec = commandExecutions?.[0]
+  let pendingCommandOutput = firstExec?.output ?? terminalOutput
+  let _pendingExitCode = firstExec?.exitCode ?? 0
 
   // Store for config persistence
   let storedConfig: AppConfig = { ...config }
@@ -172,12 +183,15 @@ export function createMockElectronAPI(
         throw errors.terminalWrite
       }
       // Simulate command execution with optional delay
-      if (commandExecution) {
-        if (commandExecution.delay) {
-          await new Promise(resolve => setTimeout(resolve, commandExecution.delay))
+      if (commandExecutions) {
+        const exec =
+          commandExecutions[Math.max(0, callIndex - 1)] ??
+          commandExecutions[commandExecutions.length - 1]
+        if (exec.delay) {
+          await new Promise(resolve => setTimeout(resolve, exec.delay))
         }
-        pendingCommandOutput = commandExecution.output
-        _pendingExitCode = commandExecution.exitCode ?? 0
+        pendingCommandOutput = exec.output
+        _pendingExitCode = exec.exitCode ?? 0
       }
     },
     terminalResize: async (_pid: number, _cols: number, _rows: number) => {
@@ -218,7 +232,9 @@ export function createMockElectronAPI(
       if (errors.llmGenerate) {
         throw errors.llmGenerate
       }
-      return aiCommand
+      const result = aiCommands[callIndex] ?? aiCommands[aiCommands.length - 1]
+      callIndex++
+      return result
     },
     llmExplainCommand: async (_command: string): Promise<string> => {
       return 'This command lists all files in the current directory.'
@@ -227,7 +243,9 @@ export function createMockElectronAPI(
       _output: string,
       _language?: string
     ): Promise<CommandInterpretation> => {
-      return interpretation
+      // callIndex is already incremented after llmGenerateCommand, so use callIndex-1
+      const idx = Math.max(0, callIndex - 1)
+      return interpretations[idx] ?? interpretations[interpretations.length - 1]
     },
     llmTestConnection: async (): Promise<boolean> => {
       // Simulate connection failure if configured
@@ -406,4 +424,6 @@ export interface LaunchOptions {
   mocks?: Parameters<typeof createMockElectronAPI>[0]
   /** Environment variables to set for the Electron process */
   env?: Record<string, string>
+  /** Force a specific locale (e.g. 'en') via localStorage before the app loads */
+  locale?: string
 }

@@ -1,14 +1,15 @@
 #!/bin/bash
-# Script to generate a demo video for Termaid
-# Uses ffmpeg screen recording while the app runs visibly
+# Script to generate a demo GIF for Termaid
+# Runs the demo E2E test which captures screenshot frames,
+# then assembles them into an optimized animated GIF.
 
 set -e
 
-echo "🎬 Generating Termaid demo video..."
+echo "🎬 Generating Termaid demo GIF..."
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUTPUT_DIR="$PROJECT_ROOT/demo-output"
-VIDEO_RAW="$OUTPUT_DIR/demo-raw.mp4"
+FRAME_DIR="$PROJECT_ROOT/test-results/demo-frames"
 
 # Clean previous output
 rm -rf "$OUTPUT_DIR"
@@ -16,61 +17,48 @@ mkdir -p "$OUTPUT_DIR"
 
 # Check if ffmpeg is available
 if ! command -v ffmpeg &> /dev/null; then
-  echo "❌ ffmpeg is required to record the demo video"
+  echo "❌ ffmpeg is required to convert frames to GIF"
   echo "Install it with: sudo dnf install ffmpeg  # or apt install ffmpeg"
   exit 1
 fi
 
-# Find the display to use
-DISPLAY_NUM="${DISPLAY:-:0}"
-echo "📺 Using display: $DISPLAY_NUM"
-
-# Start screen recording in background
-# Record at 1600x900 to match the test viewport
-echo "🎥 Starting screen recording..."
-ffmpeg -y -f x11grab -video_size 1600x900 -i "$DISPLAY_NUM" -c:v libx264 -preset ultrafast -crf 28 -pix_fmt yuv420p "$VIDEO_RAW" 2>/dev/null &
-FFMPEG_PID=$!
-
-# Wait for ffmpeg to initialize
-sleep 2
-
-# Run the demo test with DEMO_VIDEO=1 to show the window (not minimized)
-echo "🧪 Running demo test..."
+# Run the demo test (captures screenshot frames at 10 fps)
+echo "🧪 Running demo test (frame capture)..."
 cd "$PROJECT_ROOT"
-DEMO_VIDEO=1 npx playwright test tests/e2e/demo.test.ts --reporter=list
+DEMO_VIDEO=1 npx playwright test tests/e2e/demo.test.ts --reporter=list --timeout=120000 || true
 
-# Wait a moment before stopping recording
-sleep 1
-
-# Stop recording
-echo "🛑 Stopping recording..."
-kill -INT $FFMPEG_PID 2>/dev/null || true
-wait $FFMPEG_PID 2>/dev/null || true
-
-# Check if video was created
-if [ -f "$VIDEO_RAW" ]; then
-  # Get video duration
-  DURATION=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$VIDEO_RAW" 2>/dev/null || echo "0")
-  echo "📹 Raw video duration: ${DURATION}s"
-
-  # Re-encode for better quality and smaller file size
-  FINAL_VIDEO="$OUTPUT_DIR/demo.mp4"
-  echo "🔄 Optimizing video..."
-  ffmpeg -y -i "$VIDEO_RAW" -c:v libx264 -preset slow -crf 22 -pix_fmt yuv420p -movflags +faststart "$FINAL_VIDEO" 2>/dev/null
-
-  # Copy to docs
-  cp "$FINAL_VIDEO" "$PROJECT_ROOT/docs/public/demo.mp4"
-
-  # Get final file size
-  FILE_SIZE=$(du -h "$FINAL_VIDEO" | cut -f1)
-  echo "✅ Demo video generated: $FINAL_VIDEO ($FILE_SIZE)"
-  echo "✅ Demo video copied to: docs/public/demo.mp4"
-else
-  echo "❌ Failed to generate demo video"
+# Verify frames exist
+FRAME_COUNT=$(find "$FRAME_DIR" -name "frame-*.png" 2>/dev/null | wc -l)
+if [ "$FRAME_COUNT" -eq 0 ]; then
+  echo "❌ No frames captured in $FRAME_DIR"
   exit 1
 fi
+echo "📸 Captured $FRAME_COUNT frames"
 
-# Clean up test-results
+# Assemble frames into optimized GIF (10 fps, palette-optimized)
+echo "🔄 Assembling GIF from frames..."
+ffmpeg -y -framerate 10 -i "$FRAME_DIR/frame-%05d.png" \
+  -vf "fps=10,scale=800:-1:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=128[p];[s1][p]paletteuse=dither=bayer" \
+  -loop 0 \
+  "$OUTPUT_DIR/demo.gif" 2>/dev/null
+
+# Also generate an optimized MP4 as fallback
+echo "🔄 Generating optimized MP4..."
+ffmpeg -y -framerate 10 -i "$FRAME_DIR/frame-%05d.png" \
+  -c:v libx264 -preset slow -crf 22 -pix_fmt yuv420p -movflags +faststart \
+  "$OUTPUT_DIR/demo.mp4" 2>/dev/null
+
+# Copy GIF to docs
+cp "$OUTPUT_DIR/demo.gif" "$PROJECT_ROOT/docs/public/demo.gif"
+
+# Report sizes
+GIF_SIZE=$(du -h "$OUTPUT_DIR/demo.gif" | cut -f1)
+MP4_SIZE=$(du -h "$OUTPUT_DIR/demo.mp4" | cut -f1)
+echo "✅ Demo GIF: demo-output/demo.gif ($GIF_SIZE, $FRAME_COUNT frames)"
+echo "✅ Demo MP4: demo-output/demo.mp4 ($MP4_SIZE)"
+echo "✅ Copied to: docs/public/demo.gif"
+
+# Clean up test artifacts
 rm -rf "$PROJECT_ROOT/test-results"
 
 echo "🎉 Done!"
