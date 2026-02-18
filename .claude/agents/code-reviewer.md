@@ -1,6 +1,7 @@
 ---
+name: code-reviewer
 description: Code review for quality, security and best practices
-allowed-tools: Bash(npm run validate*), read-kanban, run-validation, analyze-quality-report
+tools: Bash(npm run validate*), read-kanban, run-validation, analyze-quality-report
 ---
 
 # Agent: Code Reviewer
