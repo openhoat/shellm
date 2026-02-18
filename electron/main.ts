@@ -1,5 +1,5 @@
 import * as path from 'node:path'
-import { app, BrowserWindow, screen } from 'electron'
+import { app, BrowserWindow, nativeImage, screen } from 'electron'
 import Store from 'electron-store'
 import { DEFAULT_CONFIG, mergeConfig } from '../shared/config'
 import type { AppConfig } from '../shared/types'
@@ -113,6 +113,11 @@ const createWindow = (): void => {
     y = Math.round((screenHeight - windowHeight) / 2 + primaryDisplay.bounds.y)
   }
 
+  // Set the application icon
+  const iconPath = isDev
+    ? path.join(__dirname, '../../build/icons/icon.png')
+    : path.join(process.resourcesPath, 'icon.png')
+
   mainWindow = new BrowserWindow({
     width: windowWidth,
     height: windowHeight,
@@ -121,6 +126,7 @@ const createWindow = (): void => {
     x,
     y,
     autoHideMenuBar: true,
+    icon: nativeImage.createFromPath(iconPath),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       devTools: true,
