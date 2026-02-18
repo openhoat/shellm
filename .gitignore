@@ -35,6 +35,7 @@ dist-electron
 
 # Build
 build/
+!build/icons/
 out/
 tsconfig.tsbuildinfo
 
