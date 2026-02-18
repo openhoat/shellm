@@ -1,5 +1,6 @@
 import type { CommandInterpretation as CommandInterpretationType } from '@shared/types'
 import { memo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 /**
  * Props for CommandInterpretation component
@@ -20,13 +21,14 @@ interface CommandInterpretationProps {
  */
 export const CommandInterpretation = memo(
   function CommandInterpretation({ interpretation }: CommandInterpretationProps) {
+    const { t } = useTranslation()
     return (
       <div className="command-interpretation">
-        <div className="interpretation-label">Résultat :</div>
+        <div className="interpretation-label">{t('chat.interpretation.result')}</div>
         <div className="interpretation-summary">{interpretation.summary}</div>
         {interpretation.key_findings.length > 0 && (
           <div className="interpretation-section">
-            <strong>Points clés :</strong>
+            <strong>{t('chat.interpretation.keyFindings')}</strong>
             <ul>
               {interpretation.key_findings.map((finding, index) => (
                 <li key={`${index}-${finding}`}>{finding}</li>
@@ -36,7 +38,7 @@ export const CommandInterpretation = memo(
         )}
         {interpretation.warnings.length > 0 && (
           <div className="interpretation-section warnings">
-            <strong>⚠️ Avertissements :</strong>
+            <strong>⚠️ {t('chat.interpretation.warnings')}</strong>
             <ul>
               {interpretation.warnings.map((warning, index) => (
                 <li key={`${index}-warning-${warning}`}>{warning}</li>
@@ -46,7 +48,7 @@ export const CommandInterpretation = memo(
         )}
         {interpretation.errors.length > 0 && (
           <div className="interpretation-section errors">
-            <strong>❌ Erreurs :</strong>
+            <strong>❌ {t('chat.interpretation.errors')}</strong>
             <ul>
               {interpretation.errors.map((error, index) => (
                 <li key={`${index}-error-${error}`}>{error}</li>
@@ -56,7 +58,7 @@ export const CommandInterpretation = memo(
         )}
         {interpretation.recommendations.length > 0 && (
           <div className="interpretation-section">
-            <strong>💡 Recommandations :</strong>
+            <strong>💡 {t('chat.interpretation.recommendations')}</strong>
             <ul>
               {interpretation.recommendations.map((rec, index) => (
                 <li key={`${index}-rec-${rec}`}>{rec}</li>

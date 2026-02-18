@@ -36,9 +36,6 @@ Termaid was born out of that frustration: a fully open alternative that works wi
 
 ## Demo
 
-<video controls width="100%" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-  <source src="/demo.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<img src="/demo.gif" alt="Termaid Demo" width="100%" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
 
 > This project was entirely built with AI — from architecture to code, tests, and documentation, using [Claude Code](https://claude.ai/claude-code) (Anthropic), [Cline](https://github.com/cline/cline), and [GLM](https://github.com/THUDM/GLM).

@@ -1,5 +1,5 @@
 import type { AICommand, ConversationMessage } from '@shared/types'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ChatMessageData } from '@/components/chat'
 import { useToast } from '@/hooks/useToast'
@@ -89,10 +89,17 @@ export function useChat() {
   }, [loadConversations])
 
   /**
-   * Auto-hide AI command when user starts typing
+   * Auto-hide AI command when user starts typing new content.
+   * Only reacts to debouncedUserInput changes (not aiCommand changes)
+   * to avoid clearing a freshly-set command before the debounce settles.
    */
+  const prevDebouncedInputRef = useRef<string>('')
+
   useEffect(() => {
-    if (aiCommand?.type === 'command' && debouncedUserInput.length > 0) {
+    const changed = debouncedUserInput !== prevDebouncedInputRef.current
+    prevDebouncedInputRef.current = debouncedUserInput
+
+    if (changed && aiCommand?.type === 'command' && debouncedUserInput.length > 0) {
       setAiCommand(null)
     }
   }, [debouncedUserInput, aiCommand, setAiCommand])

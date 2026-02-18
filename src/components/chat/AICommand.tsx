@@ -1,5 +1,6 @@
 import type { AICommandShell } from '@shared/types'
 import { memo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 /**
  * Props for AICommand component
@@ -20,12 +21,15 @@ interface AICommandProps {
  */
 export const AICommand = memo(
   function AICommand({ command }: AICommandProps) {
+    const { t } = useTranslation()
     return (
       <div className="ai-command">
-        <div className="command-label">Commande proposée :</div>
+        <div className="command-label">{t('chat.command.proposed')}</div>
         <code className="command-code">{command.command}</code>
         <div className="command-meta">
-          <span>Confiance : {(command.confidence * 100).toFixed(0)}%</span>
+          <span>
+            {t('chat.command.confidence')} {(command.confidence * 100).toFixed(0)}%
+          </span>
         </div>
       </div>
     )

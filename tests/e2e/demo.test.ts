@@ -1,3 +1,5 @@
+import { mkdirSync } from 'node:fs'
+import path from 'node:path'
 import type { ElectronApplication, Page } from '@playwright/test'
 import { test } from '@playwright/test'
 import { closeElectronApp, launchElectronApp, waitForAppReady } from './electron-app'
@@ -5,7 +7,6 @@ import {
   clickExecuteButton,
   isCommandActionsVisible,
   resetAppState,
-  sendMessage,
   waitForAIResponse,
   waitForTerminalReady,
 } from './helpers'
@@ -13,36 +14,114 @@ import {
 let app: ElectronApplication
 let page: Page
 
+const FRAME_DIR = path.resolve('test-results', 'demo-frames')
+const FRAME_INTERVAL_MS = 100 // 10 fps
+
+let frameCounter = 0
+let captureTimer: ReturnType<typeof setInterval> | null = null
+
+/** Start capturing screenshots at a fixed interval. */
+function startFrameCapture(target: Page) {
+  frameCounter = 0
+  mkdirSync(FRAME_DIR, { recursive: true })
+  captureTimer = setInterval(() => {
+    const idx = String(frameCounter++).padStart(5, '0')
+    target.screenshot({ path: path.join(FRAME_DIR, `frame-${idx}.png`) }).catch(() => {
+      // Ignore screenshot errors during capture (page may be navigating)
+    })
+  }, FRAME_INTERVAL_MS)
+}
+
+/** Stop capturing and flush one last frame. */
+async function stopFrameCapture(target: Page) {
+  if (captureTimer) {
+    clearInterval(captureTimer)
+    captureTimer = null
+  }
+  const idx = String(frameCounter++).padStart(5, '0')
+  await target.screenshot({ path: path.join(FRAME_DIR, `frame-${idx}.png`) }).catch(() => {
+    // Ignore screenshot errors during capture (page may be navigating)
+  })
+}
+
 /**
- * Demo test for generating a showcase video
- * This test simulates a typical user interaction with Termaid
+ * Type text character by character with realistic human-like timing.
+ * ~65 WPM with random jitter and word-boundary pauses.
+ */
+async function humanType(target: Page, locator: ReturnType<Page['locator']>, text: string) {
+  for (const char of text) {
+    await locator.press(char)
+    const jitter = Math.floor(Math.random() * 80) - 40
+    const wordPause = char === ' ' ? 60 : 0
+    await target.waitForTimeout(90 + jitter + wordPause)
+  }
+}
+
+/**
+ * Demo test — generates screenshot frames that the shell script
+ * assembles into an animated GIF.
  */
 test.describe('Termaid Demo', () => {
   test.beforeAll(async () => {
-    // Launch with custom mock for demo video
     const result = await launchElectronApp({
+      locale: 'en',
       mocks: {
-        // Custom AI response for demo - use df -h for disk space
-        aiCommand: {
-          type: 'command',
-          intent: 'show_disk_space',
-          command: 'df -h',
-          explanation: 'Display available disk space on all filesystems',
-          confidence: 0.95,
-        },
-        // Mock command execution output
-        commandExecution: {
-          output:
-            'Filesystem      Size  Used Avail Use% Mounted on\n/dev/nvme0n1p3  477G  156G  297G  35% /\ntmpfs           7.8G   38M  7.7G   1% /dev/shm',
-          exitCode: 0,
-        },
+        aiCommand: [
+          {
+            type: 'command',
+            intent: 'show_disk_space',
+            command: 'df -h',
+            explanation: 'Display available disk space on all filesystems',
+            confidence: 0.95,
+          },
+          {
+            type: 'command',
+            intent: 'show_system_info',
+            command: 'uname -a && uptime',
+            explanation: 'Show system kernel info and uptime',
+            confidence: 0.93,
+          },
+        ],
+        interpretation: [
+          {
+            summary: 'Command executed successfully',
+            key_findings: [
+              'Root filesystem at 35% capacity (297G available)',
+              'Shared memory usage is minimal (38M)',
+            ],
+            warnings: [],
+            errors: [],
+            recommendations: ['Disk space is healthy, no action needed'],
+            successful: true,
+          },
+          {
+            summary: 'System information retrieved successfully',
+            key_findings: ['Running Linux kernel 6.18.9', 'System uptime: 3 days, 7 hours'],
+            warnings: [],
+            errors: [],
+            recommendations: ['System is running smoothly, no issues detected'],
+            successful: true,
+          },
+        ],
+        commandExecution: [
+          {
+            output:
+              'Filesystem      Size  Used Avail Use% Mounted on\n/dev/nvme0n1p3  477G  156G  297G  35% /\ntmpfs           7.8G   38M  7.7G   1% /dev/shm',
+            exitCode: 0,
+          },
+          {
+            output:
+              'Linux hostname 6.18.9-200.fc43.x86_64 #1 SMP x86_64 GNU/Linux\n 16:30:42 up 3 days,  7:14,  2 users,  load average: 0.52, 0.38, 0.41',
+            exitCode: 0,
+          },
+        ],
       },
     })
     app = result.app
     page = result.page
+
     await waitForAppReady(page)
-    // Use a wider window for better visibility
-    await page.setViewportSize({ width: 1600, height: 900 })
+    await page.setViewportSize({ width: 1280, height: 720 })
   })
 
   test.afterAll(async () => {
@@ -50,43 +129,84 @@ test.describe('Termaid Demo', () => {
   })
 
   test.beforeEach(async () => {
-    // Reset app state between tests
     await resetAppState(page)
   })
 
-  test('should demonstrate Termaid features', async () => {
-    // Wait for terminal to be ready
+  test('should demonstrate Termaid features', { timeout: 90000 }, async () => {
     await waitForTerminalReady(page)
 
-    // Let the UI fully render before starting
-    await page.waitForTimeout(500)
+    // Begin frame capture
+    startFrameCapture(page)
 
-    // Focus on the chat input for visual effect
+    // Show the app at rest
+    await page.waitForTimeout(1500)
+
+    // Focus the chat input
     const chatInput = page.locator('.chat-input textarea')
     await chatInput.focus()
-    await page.waitForTimeout(300)
+    await page.waitForTimeout(600)
 
-    // Send a message
-    await sendMessage(page, 'Show disk space')
+    // Type like a real user
+    await humanType(page, chatInput, 'Show disk space')
+    await page.waitForTimeout(350)
 
-    // Wait for AI to process and respond
+    // Submit
+    await chatInput.press('Enter')
+
+    // Wait for AI response
     await waitForAIResponse(page, 30000)
 
-    // Verify command actions are visible
+    // Verify command actions appeared
     const commandActionsVisible = await isCommandActionsVisible(page)
     if (!commandActionsVisible) {
-      // If not visible, take a screenshot for debugging
+      await stopFrameCapture(page)
       await page.screenshot({ path: 'test-results/demo-debug.png' })
       throw new Error('Command actions not visible after AI response')
     }
 
-    // Let user see the command proposal
-    await page.waitForTimeout(1500)
+    // Let the viewer read the command proposal
+    await page.waitForTimeout(3000)
 
-    // Click Execute button
+    // Execute
     await clickExecuteButton(page)
 
-    // Wait for command execution animation
-    await page.waitForTimeout(2000)
+    // Wait for the interpretation result to appear
+    await page.waitForSelector('.command-interpretation', { state: 'visible', timeout: 15000 })
+
+    // Let the viewer read the interpretation result
+    await page.waitForTimeout(4000)
+
+    // --- Second command ---
+
+    // Focus the chat input again
+    const chatInput2 = page.locator('.chat-input textarea')
+    await chatInput2.focus()
+    await page.waitForTimeout(400)
+
+    // Type second query
+    await humanType(page, chatInput2, 'Show system info')
+    await page.waitForTimeout(350)
+
+    // Submit
+    await chatInput2.press('Enter')
+
+    // Wait for AI response
+    await waitForAIResponse(page, 30000)
+
+    // Let the viewer read the command proposal
+    await page.waitForTimeout(3000)
+
+    // Execute second command
+    await clickExecuteButton(page)
+
+    // Wait for the second interpretation
+    const interpretations = page.locator('.command-interpretation')
+    await interpretations.nth(1).waitFor({ state: 'visible', timeout: 15000 })
+
+    // Let the viewer read the final result
+    await page.waitForTimeout(5000)
+
+    // Stop frame capture
+    await stopFrameCapture(page)
   })
 })
