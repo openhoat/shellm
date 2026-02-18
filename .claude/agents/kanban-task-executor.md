@@ -1,3 +1,8 @@
+---
+description: Executes KANBAN tasks and manages git commits
+allowed-tools: Bash(npm run validate*), Bash(npm run qa:fix*), read-kanban, update-kanban, run-validation, create-git-commit, generate-changelog
+---
+
 # Agent: KANBAN Task Executor
 
 ## Role
