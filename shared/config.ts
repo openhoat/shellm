@@ -48,6 +48,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   theme: 'dark',
   fontSize: 14,
   shell: 'auto',
+  chatLanguage: 'auto', // Auto-detect from UI language
 }
 
 interface EnvOllamaConfig {

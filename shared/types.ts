@@ -35,6 +35,7 @@ export interface AppConfig {
   theme: 'dark' | 'light'
   fontSize: number
   shell: string
+  chatLanguage: string // Language for AI responses (e.g., 'en', 'fr', 'auto')
 }
 
 // Messages IPC

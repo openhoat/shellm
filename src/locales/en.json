@@ -73,6 +73,12 @@
       "language": {
         "title": "Language"
       },
+      "chatLanguage": {
+        "title": "AI Response Language",
+        "auto": "Auto (same as UI)",
+        "en": "English",
+        "fr": "French"
+      },
       "interface": {
         "title": "Interface",
         "theme": "Theme",
