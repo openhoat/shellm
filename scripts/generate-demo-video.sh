@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script to generate a demo video for Termaid
-# This uses ffmpeg screen recording while the test runs
+# Uses ffmpeg screen recording while the app runs visibly
 
 set -e
 
@@ -26,18 +26,18 @@ DISPLAY_NUM="${DISPLAY:-:0}"
 echo "📺 Using display: $DISPLAY_NUM"
 
 # Start screen recording in background
-# Record at 1400x800 to match the test viewport
+# Record at 1600x900 to match the test viewport
 echo "🎥 Starting screen recording..."
-ffmpeg -y -f x11grab -video_size 1400x800 -i "$DISPLAY_NUM" -c:v libx264 -preset ultrafast -crf 28 -pix_fmt yuv420p "$VIDEO_RAW" &
+ffmpeg -y -f x11grab -video_size 1600x900 -i "$DISPLAY_NUM" -c:v libx264 -preset ultrafast -crf 28 -pix_fmt yuv420p "$VIDEO_RAW" 2>/dev/null &
 FFMPEG_PID=$!
 
 # Wait for ffmpeg to initialize
 sleep 2
 
-# Run the demo test (without video recording in Playwright)
+# Run the demo test with DEMO_VIDEO=1 to show the window (not minimized)
 echo "🧪 Running demo test..."
 cd "$PROJECT_ROOT"
-npx playwright test tests/e2e/demo.test.ts --reporter=list
+DEMO_VIDEO=1 npx playwright test tests/e2e/demo.test.ts --reporter=list
 
 # Wait a moment before stopping recording
 sleep 1
@@ -56,7 +56,7 @@ if [ -f "$VIDEO_RAW" ]; then
   # Re-encode for better quality and smaller file size
   FINAL_VIDEO="$OUTPUT_DIR/demo.mp4"
   echo "🔄 Optimizing video..."
-  ffmpeg -y -i "$VIDEO_RAW" -c:v libx264 -preset slow -crf 22 -pix_fmt yuv420p -movflags +faststart "$FINAL_VIDEO"
+  ffmpeg -y -i "$VIDEO_RAW" -c:v libx264 -preset slow -crf 22 -pix_fmt yuv420p -movflags +faststart "$FINAL_VIDEO" 2>/dev/null
 
   # Copy to docs
   cp "$FINAL_VIDEO" "$PROJECT_ROOT/docs/public/demo.mp4"

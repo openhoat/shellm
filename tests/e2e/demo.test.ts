@@ -19,13 +19,30 @@ let page: Page
  */
 test.describe('Termaid Demo', () => {
   test.beforeAll(async () => {
-    // Launch with default mocks - simpler and more reliable
-    const result = await launchElectronApp({ mocks: {} })
+    // Launch with custom mock for demo video
+    const result = await launchElectronApp({
+      mocks: {
+        // Custom AI response for demo - use df -h for disk space
+        aiCommand: {
+          type: 'command',
+          intent: 'show_disk_space',
+          command: 'df -h',
+          explanation: 'Display available disk space on all filesystems',
+          confidence: 0.95,
+        },
+        // Mock command execution output
+        commandExecution: {
+          output:
+            'Filesystem      Size  Used Avail Use% Mounted on\n/dev/nvme0n1p3  477G  156G  297G  35% /\ntmpfs           7.8G   38M  7.7G   1% /dev/shm',
+          exitCode: 0,
+        },
+      },
+    })
     app = result.app
     page = result.page
     await waitForAppReady(page)
-    // Use a wider window to avoid scrollbars
-    await page.setViewportSize({ width: 1400, height: 800 })
+    // Use a wider window for better visibility
+    await page.setViewportSize({ width: 1600, height: 900 })
   })
 
   test.afterAll(async () => {
@@ -50,7 +67,7 @@ test.describe('Termaid Demo', () => {
     await page.waitForTimeout(300)
 
     // Send a message
-    await sendMessage(page, 'Show me the current directory')
+    await sendMessage(page, 'Show disk space')
 
     // Wait for AI to process and respond
     await waitForAIResponse(page, 30000)

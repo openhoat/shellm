@@ -44,11 +44,7 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
   }
 
   // Build args for Electron
-  const args = [
-    path.join(projectRoot, 'dist-electron', 'electron', 'main.js'),
-    // Start minimized to reduce visual distraction during tests
-    '--start-minimized',
-  ]
+  const args = [path.join(projectRoot, 'dist-electron', 'electron', 'main.js')]
 
   // Add X11 and headless flags when running in headless mode (via xvfb-run)
   // This forces Electron to use X11 instead of Wayland, allowing xvfb to capture the display
@@ -58,6 +54,11 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
     args.push('--disable-gpu')
     args.push('--disable-software-rasterizer')
     args.push('--disable-dev-shm-usage')
+  }
+
+  // Start minimized unless in demo mode (for video recording)
+  if (process.env.DEMO_VIDEO !== '1') {
+    args.push('--start-minimized')
   }
 
   // Build environment variables
