@@ -94,11 +94,23 @@ const createWindow = (): void => {
   const windowWidth = 1200
   const windowHeight = 800
 
-  // Get the primary display to calculate center position
-  const primaryDisplay = screen.getPrimaryDisplay()
-  const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize
-  const x = Math.round((screenWidth - windowWidth) / 2 + primaryDisplay.bounds.x)
-  const y = Math.round((screenHeight - windowHeight) / 2 + primaryDisplay.bounds.y)
+  // Check if we're in demo mode (for video recording)
+  const isDemoMode = process.env.DEMO_VIDEO === '1'
+
+  // Position window at (0, 0) for demo mode (for screen recording)
+  // Otherwise center it on the primary display
+  let x: number
+  let y: number
+  if (isDemoMode) {
+    x = 0
+    y = 0
+  } else {
+    // Get the primary display to calculate center position
+    const primaryDisplay = screen.getPrimaryDisplay()
+    const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize
+    x = Math.round((screenWidth - windowWidth) / 2 + primaryDisplay.bounds.x)
+    y = Math.round((screenHeight - windowHeight) / 2 + primaryDisplay.bounds.y)
+  }
 
   mainWindow = new BrowserWindow({
     width: windowWidth,
