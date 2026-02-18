@@ -10,13 +10,9 @@ To view the complete history, use: `git log`
 
 #### 18/02
 
-- **[16:56:30] 🐛 [FIX]** Fix chat auto-scroll when interpretation is added to existing message
-- **[16:47:45] 🐛 [FIX]** Add interpretation mock support via TERMAID_E2E_MOCK_INTERPRETATION env var for E2E tests
-- **[16:29:27] ✨ [FEAT]** Add i18n support for AI command and interpretation components, add second demo command
-- **[16:29:27] ✨ [FEAT]** Add locale option to E2E LaunchOptions and array mock support for sequential responses
-- **[15:55:47] ♻️ [REFACTOR]** Replace x11grab with screenshot frame capture and GIF assembly for demo generation
-- **[15:55:47] 🐛 [FIX]** Fix aiCommand auto-hide race condition in useChat debounce effect
-- **[15:22:56] 🐛 [FIX]** Fix custom agent YAML frontmatter fields and remove obsolete agents.json
+- **[17:36:42] ✨ [FEAT]** Optimize claude code team with new agents and skills
+- **[17:05:11] ✨ [FEAT]** Add demo gif to readme and convert demo video
+- **[15:26:46] 🐛 [FIX]** Update agent frontmatter fields and regenerate changelog
 - **[15:16:43] ✨ [FEAT]** Add agent frontmatter config and refactor video capture
 - **[15:15:36] 🔧 [CHORE]** Configure custom claude code agents with yaml frontmatter
 - **[14:07:54] 🐛 [FIX]** Update application title and skill paths
