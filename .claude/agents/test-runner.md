@@ -1,6 +1,7 @@
 ---
+name: test-runner
 description: Executes unit tests with Vitest and generates coverage reports
-allowed-tools: Bash(npm run test*), run-tests, analyze-test-report, generate-coverage-report
+tools: Bash(npm run test*), run-tests, analyze-test-report, generate-coverage-report
 ---
 
 # Agent: Test Runner

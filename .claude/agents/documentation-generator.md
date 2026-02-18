@@ -1,6 +1,7 @@
 ---
+name: documentation-generator
 description: Generates and maintains project documentation
-allowed-tools: Bash(npm run validate*), read-kanban, run-validation
+tools: Bash(npm run validate*), read-kanban, run-validation
 ---
 
 # Agent: Documentation Generator

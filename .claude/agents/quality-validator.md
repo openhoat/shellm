@@ -1,6 +1,7 @@
 ---
+name: quality-validator
 description: Validates code quality with Biome, TypeScript and tests
-allowed-tools: Bash(npm run validate*), Bash(npm run qa:fix*), run-validation, run-build, analyze-quality-report
+tools: Bash(npm run validate*), Bash(npm run qa:fix*), run-validation, run-build, analyze-quality-report
 ---
 
 # Agent: Quality Validator
