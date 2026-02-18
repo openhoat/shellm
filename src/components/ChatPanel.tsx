@@ -130,6 +130,28 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
   }, [chat.aiCommand, chat.error, setAiCommand, clearAllConversations, chat, handleExecuteCommand])
 
   const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Arrow Up: Navigate to previous input in history
+    if (e.key === 'ArrowUp') {
+      const textarea = e.currentTarget
+      // Only navigate history if at the start of the text or text is empty
+      if (textarea.selectionStart === 0 && textarea.selectionEnd === 0) {
+        e.preventDefault()
+        chat.navigateHistory('up')
+      }
+      return
+    }
+
+    // Arrow Down: Navigate to next input in history
+    if (e.key === 'ArrowDown') {
+      const textarea = e.currentTarget
+      // Only navigate history if at the end of the text or text is empty
+      if (textarea.selectionStart === textarea.value.length) {
+        e.preventDefault()
+        chat.navigateHistory('down')
+      }
+      return
+    }
+
     // Enter alone = submit (unless Shift is pressed)
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
