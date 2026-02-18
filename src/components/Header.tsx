@@ -103,10 +103,10 @@ export const Header = () => {
     <header className="header">
       <div className="header-left">
         <h1 className="app-title">
-          <span className="app-title-icon">⚡</span>
+          <img src="/logo.svg" alt="Termaid" className="app-title-icon" />
           Termaid
         </h1>
-        <span className="app-version">v1.0.0</span>
+        <span className="app-version">v{__APP_VERSION__}</span>
       </div>
       <div className="header-right">
         <div className="status-indicator">

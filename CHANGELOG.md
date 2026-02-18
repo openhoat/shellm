@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 18/02
 
+- **[19:15:06] 🎨 [STYLE]** Replace header emoji with SVG logo in app title
 - **[17:38:09] ✨ [FEAT]** Optimize claude code team with new agents and skills
 - **[17:05:11] ✨ [FEAT]** Add demo gif to readme and convert demo video
 - **[15:26:46] 🐛 [FIX]** Update agent frontmatter fields and regenerate changelog

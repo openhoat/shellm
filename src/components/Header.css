@@ -25,7 +25,8 @@
 }
 
 .app-title-icon {
-  font-size: 20px;
+  width: 24px;
+  height: 24px;
 }
 
 .app-version {
