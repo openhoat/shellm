@@ -12,7 +12,8 @@ export default defineConfig({
     trace: 'on-first-retry',
     // Disable visual captures in CI mode for headless execution
     screenshot: process.env.CI ? 'off' : 'only-on-failure',
-    video: process.env.CI ? 'off' : 'retain-on-failure',
+    // Enable video recording for demo generation
+    video: process.env.DEMO_VIDEO ? 'on' : process.env.CI ? 'off' : 'retain-on-failure',
   },
   expect: {
     timeout: 10000,
