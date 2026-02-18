@@ -37,7 +37,8 @@
         "executeCommand": "Exécuter la commande",
         "modify": "Modifier",
         "cancel": "Annuler"
-      }
+      },
+      "scrollToBottom": "Défiler vers le bas"
     },
     "terminal": {
       "title": "Terminal",

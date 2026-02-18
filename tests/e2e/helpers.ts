@@ -680,3 +680,112 @@ export async function resetAppState(page: Page): Promise<void> {
   // Brief wait for the clear action to process
   await page.waitForTimeout(200)
 }
+
+/**
+ * Start video recording using Electron's desktopCapturer
+ * This captures the app window directly, independent of screen position
+ * Returns a promise that resolves when recording starts
+ */
+export async function startVideoRecording(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    // Access desktopCapturer through the exposed electron API
+    // @ts-expect-error - electronAPI is exposed via preload
+    const capturer = window.electronAPI.desktopCapturer
+
+    if (!capturer) {
+      throw new Error('desktopCapturer not available - ensure DEMO_VIDEO mode is enabled')
+    }
+
+    // Get video sources
+    const sources = await capturer.getSources({ types: ['window', 'screen'] })
+
+    // Find the Termaid window (usually the first window source)
+    const termaidSource = sources.find(
+      // @ts-expect-error - source has name property
+      (s: { id: string; name: string }) =>
+        s.name.includes('Termaid') || s.name.includes('termaid') || s.name === 'Electron'
+    )
+    const source = termaidSource || sources[0]
+
+    if (!source) {
+      throw new Error('No video source found for recording')
+    }
+
+    // Get the media stream
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: {
+        // @ts-expect-error - mandatory for desktop capture
+        mandatory: {
+          chromeMediaSource: 'desktop',
+          chromeMediaSourceId: source.id,
+          minWidth: 1600,
+          maxWidth: 1600,
+          minHeight: 900,
+          maxHeight: 900,
+        },
+      },
+    })
+
+    // Create MediaRecorder
+    const mediaRecorder = new MediaRecorder(stream, {
+      mimeType: 'video/webm;codecs=vp9',
+      videoBitsPerSecond: 2500000,
+    })
+
+    const chunks: Blob[] = []
+
+    mediaRecorder.ondataavailable = (event: BlobEvent) => {
+      if (event.data.size > 0) {
+        chunks.push(event.data)
+      }
+    }
+
+    // Store in window for later access
+    // @ts-expect-error - storing state in window
+    window.__videoRecording = { mediaRecorder, chunks, stream }
+
+    // Start recording with 100ms chunks
+    mediaRecorder.start(100)
+  })
+}
+
+/**
+ * Stop video recording and return video data as base64 string
+ * The caller is responsible for saving the file
+ */
+export async function stopVideoRecording(page: Page): Promise<string> {
+  const base64Video = await page.evaluate(async () => {
+    // @ts-expect-error - accessing stored state
+    const recording = window.__videoRecording
+    if (!recording || !recording.mediaRecorder) {
+      throw new Error('No active video recording')
+    }
+
+    return new Promise<string>(resolve => {
+      const { mediaRecorder, chunks, stream } = recording
+
+      mediaRecorder.onstop = () => {
+        // Stop all tracks
+        for (const track of stream.getTracks()) {
+          track.stop()
+        }
+
+        // Create blob from chunks and convert to base64
+        const blob = new Blob(chunks, { type: 'video/webm' })
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          const base64 = reader.result as string
+          // Remove data URL prefix
+          const base64Data = base64.split(',')[1]
+          resolve(base64Data)
+        }
+        reader.readAsDataURL(blob)
+      }
+
+      mediaRecorder.stop()
+    })
+  })
+
+  return base64Video
+}
