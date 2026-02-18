@@ -2,43 +2,33 @@ import type { Page } from '@playwright/test'
 import type { VideoCaptureResult } from './video-capture-types'
 
 /**
- * Start video capture using Electron's desktopCapturer API
- * This captures the app window directly, independent of screen position
+ * Start video capture using getDisplayMedia API
+ * This captures the current tab/window for demo video generation
  */
 export async function startVideoCapture(page: Page): Promise<void> {
   await page.evaluate(async () => {
-    // @ts-expect-error - Electron's desktopCapturer is available in renderer
-    const { desktopCapturer } = window.require('electron')
+    // Check supported MIME type
+    const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+      ? 'video/webm;codecs=vp9'
+      : MediaRecorder.isTypeSupported('video/webm')
+        ? 'video/webm'
+        : 'video/mp4'
 
-    // Get the current window ID
-    const sources = await desktopCapturer.getSources({ types: ['window'] })
-
-    // Find our app window (usually the first one or match by name)
-    const appSource =
-      sources.find(
-        (source: { name: string }) =>
-          source.name.includes('Termaid') || source.name.includes('Electron')
-      ) || sources[0]
-
-    if (!appSource) {
-      throw new Error('Could not find app window for video capture')
-    }
-
-    // Get the MediaStream from the desktop capturer
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: false,
+    // Get display media stream - prefer current tab
+    const stream = await navigator.mediaDevices.getDisplayMedia({
       video: {
-        // @ts-expect-error - mandatory for desktop capture
-        mandatory: {
-          chromeMediaSource: 'desktop',
-          chromeMediaSourceId: appSource.id,
-        },
+        width: { ideal: 1600 },
+        height: { ideal: 900 },
+        frameRate: { ideal: 30 },
       },
-    })
+      audio: false,
+      // @ts-expect-error - preferCurrentTab is a newer API
+      preferCurrentTab: true,
+    } as MediaStreamConstraints)
 
-    // Create MediaRecorder
+    // Create MediaRecorder with supported mime type
     const mediaRecorder = new MediaRecorder(stream, {
-      mimeType: 'video/webm;codecs=vp9',
+      mimeType,
       videoBitsPerSecond: 2500000,
     })
 
@@ -47,6 +37,13 @@ export async function startVideoCapture(page: Page): Promise<void> {
     mediaRecorder.ondataavailable = event => {
       if (event.data.size > 0) {
         chunks.push(event.data)
+      }
+    }
+
+    // Handle stream end (user stops sharing)
+    stream.getVideoTracks()[0].onended = () => {
+      if (mediaRecorder.state === 'recording') {
+        mediaRecorder.stop()
       }
     }
 
@@ -79,8 +76,9 @@ export async function stopVideoCapture(page: Page): Promise<VideoCaptureResult> 
       throw new Error('Video capture was not started')
     }
 
-    // Stop recording
-    return new Promise<VideoCaptureResult>(resolve => {
+    // Stop recording with proper handler setup
+    return new Promise<VideoCaptureResult>((resolve, reject) => {
+      // Set handlers BEFORE calling stop()
       mediaRecorder.onstop = async () => {
         // Stop all tracks
         for (const track of stream.getTracks()) {
@@ -90,27 +88,36 @@ export async function stopVideoCapture(page: Page): Promise<VideoCaptureResult> 
         // Create blob from chunks
         const blob = new Blob(chunks, { type: 'video/webm' })
 
-        // Convert to base64 for transfer
-        const arrayBuffer = await blob.arrayBuffer()
-        const base64 = btoa(
-          new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
-        )
+        // Convert to base64 using FileReader for better memory handling
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          const base64 = reader.result as string
+          const base64Data = base64.split(',')[1] // Remove data URL prefix
 
-        // Cleanup
-        // @ts-expect-error - cleanup
-        window.__videoRecorder = undefined
-        // @ts-expect-error - cleanup
-        window.__videoStream = undefined
-        // @ts-expect-error - cleanup
-        window.__videoChunks = undefined
+          // Cleanup
+          // @ts-expect-error - cleanup
+          window.__videoRecorder = undefined
+          // @ts-expect-error - cleanup
+          window.__videoStream = undefined
+          // @ts-expect-error - cleanup
+          window.__videoChunks = undefined
 
-        resolve({
-          base64Data: base64,
-          mimeType: 'video/webm',
-          size: blob.size,
-        })
+          resolve({
+            base64Data,
+            mimeType: 'video/webm',
+            size: blob.size,
+          })
+        }
+        reader.onerror = () => reject(new Error('Failed to read blob'))
+        reader.readAsDataURL(blob)
       }
 
+      mediaRecorder.onerror = event => {
+        const errorEvent = event as ErrorEvent & { error?: Error }
+        reject(new Error(`MediaRecorder error: ${errorEvent.error?.message || 'unknown error'}`))
+      }
+
+      // Stop the recorder
       mediaRecorder.stop()
     })
   })
