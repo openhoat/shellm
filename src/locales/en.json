@@ -15,6 +15,7 @@
       "send": "Send",
       "clear": "Clear",
       "empty": "No messages",
+      "scrollToBottom": "Scroll to bottom",
       "welcome": {
         "title": "Welcome to Termaid!",
         "description": "Describe what you want to do in natural language and the AI will suggest the appropriate command.",

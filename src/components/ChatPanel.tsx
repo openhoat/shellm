@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import { type FormEvent, useCallback, useEffect, useRef } from 'react'
+import { type FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useChat } from '@/hooks/useChat'
 import { useStore } from '@/store/useStore'
@@ -14,12 +14,64 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
 
   // Ref for the chat input element
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  // Ref for the messages container for auto-scroll
+  const messagesRef = useRef<HTMLDivElement>(null)
+  // Track if user is at the bottom of the chat
+  const [isAtBottom, setIsAtBottom] = useState(true)
 
   // Use the custom chat hook for chat logic
   const chat = useChat()
 
   // Use setAiCommand from store directly for the cancel button
   const { setAiCommand, clearAllConversations } = useStore()
+
+  // Check if user is at the bottom of the chat
+  const checkIsAtBottom = useCallback(() => {
+    const container = messagesRef.current
+    if (!container) return true
+
+    const threshold = 50 // Allow 50px tolerance
+    const isBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight < threshold
+    setIsAtBottom(isBottom)
+    return isBottom
+  }, [])
+
+  // Scroll to bottom of messages
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
+    const container = messagesRef.current
+    if (container) {
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior,
+      })
+      setIsAtBottom(true)
+    }
+  }, [])
+
+  // Auto-scroll to bottom when new messages arrive (only if user is at bottom)
+  // We use conversation.length as a trigger to detect new messages
+  // biome-ignore lint/correctness/useExhaustiveDependencies: conversation.length triggers scroll on new messages
+  useEffect(() => {
+    if (isAtBottom) {
+      scrollToBottom('instant')
+    }
+  }, [chat.conversation.length, isAtBottom, scrollToBottom])
+
+  // Handle scroll events to track user position
+  useEffect(() => {
+    const container = messagesRef.current
+    if (!container) return
+
+    const handleScroll = () => {
+      checkIsAtBottom()
+    }
+
+    container.addEventListener('scroll', handleScroll)
+    return () => {
+      container.removeEventListener('scroll', handleScroll)
+    }
+  }, [checkIsAtBottom])
 
   // Auto-focus chat input field on mount and when loading completes
   useEffect(() => {
@@ -103,7 +155,13 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
         <h2>AI Assistant</h2>
       </div>
 
-      <div className="chat-messages" aria-live="polite" aria-label="Chat messages" role="log">
+      <div
+        className="chat-messages"
+        aria-live="polite"
+        aria-label="Chat messages"
+        role="log"
+        ref={messagesRef}
+      >
         {chat.conversation.length === 0 && (
           <div className="chat-welcome">
             <h3>{t('chat.welcome.title')}</h3>
@@ -120,6 +178,28 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
         {chat.conversation.map(msg => (
           <ChatMessage key={msg.id} id={msg.id} message={msg} />
         ))}
+
+        {!isAtBottom && (
+          <button
+            type="button"
+            className="scroll-to-bottom-btn"
+            onClick={() => scrollToBottom()}
+            title={t('chat.scrollToBottom')}
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <title>{t('chat.scrollToBottom')}</title>
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <polyline points="19 12 12 19 5 12"></polyline>
+            </svg>
+          </button>
+        )}
 
         {chat.isLoading && (
           <div className="chat-message ai">

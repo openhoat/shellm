@@ -1,5 +1,5 @@
 import type { AppConfig, Conversation, ConversationMessage } from '@shared/types'
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, desktopCapturer, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // Config
@@ -62,4 +62,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   conversationClearAll: () => ipcRenderer.invoke('conversation:clear-all'),
   conversationExport: (id: string) => ipcRenderer.invoke('conversation:export', id),
   conversationExportAll: () => ipcRenderer.invoke('conversation:export-all'),
+
+  // Desktop capturer for demo video recording
+  desktopCapturer: {
+    getSources: (options: { types: Array<'screen' | 'window'> }) =>
+      desktopCapturer.getSources(options),
+  },
 })
