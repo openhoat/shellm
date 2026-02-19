@@ -78,7 +78,7 @@ function isValidSemver(version) {
  */
 function bumpPackageVersion(bumpTypeOrVersion) {
   // biome-ignore lint/suspicious/noConsole: Script CLI - logging progress
-  console.log(`Bumping version in package.json and package-lock.json...`)
+  console.log('Bumping version in package.json and package-lock.json...')
 
   try {
     execSync(`npm version ${bumpTypeOrVersion} --no-git-tag-version`, {
@@ -95,9 +95,9 @@ function bumpPackageVersion(bumpTypeOrVersion) {
  */
 function updateReadmeVersion(oldVersion, newVersion) {
   // biome-ignore lint/suspicious/noConsole: Script CLI - logging progress
-  console.log(`Updating download links in README.md...`)
+  console.log('Updating download links in README.md...')
 
-  const readme = fs.readFileSync(README_PATH, 'utf-8')
+  let readme = fs.readFileSync(README_PATH, 'utf-8')
 
   // Replace version in download links
   // Pattern: Termaid-X.Y.Z.AppImage, termaid_X.Y.Z_amd64.deb, Termaid-X.Y.Z-arm64.dmg, Termaid.Setup.X.Y.Z.exe
@@ -168,9 +168,7 @@ Examples:
     bumpType = input
   } else {
     // biome-ignore lint/suspicious/noConsole: Script CLI - error
-    console.error(
-      `Error: Invalid argument "${input}". Use a version (X.Y.Z) or bump type (patch|minor|major)`
-    )
+    console.error(`Error: Invalid argument "${input}". Use a version (X.Y.Z) or bump type (patch|minor|major)`)
     process.exit(1)
   }
 
@@ -182,6 +180,7 @@ Examples:
 
   // biome-ignore lint/suspicious/noConsole: Script CLI - logging progress
   console.log(`New version: ${newVersion}`)
+  // biome-ignore lint/suspicious/noConsole: Script CLI - logging progress
   console.log('')
 
   try {
@@ -194,22 +193,30 @@ Examples:
     // Summary
     // biome-ignore lint/suspicious/noConsole: Script CLI - logging success
     console.log('')
+    // biome-ignore lint/suspicious/noConsole: Script CLI - logging success
     console.log('Version bump completed successfully!')
+    // biome-ignore lint/suspicious/noConsole: Script CLI - logging success
     console.log('')
+    // biome-ignore lint/suspicious/noConsole: Script CLI - logging success
     console.log('Summary:')
+    // biome-ignore lint/suspicious/noConsole: Script CLI - logging success
     console.log(`  - package.json: ${currentVersion} -> ${newVersion}`)
-    console.log(`  - package-lock.json: updated`)
+    // biome-ignore lint/suspicious/noConsole: Script CLI - logging success
+    console.log('  - package-lock.json: updated')
+    // biome-ignore lint/suspicious/noConsole: Script CLI - logging success
     console.log(`  - README.md: ${readmeUpdated ? 'download links updated' : 'no changes needed'}`)
+    // biome-ignore lint/suspicious/noConsole: Script CLI - logging success
     console.log('')
+    // biome-ignore lint/suspicious/noConsole: Script CLI - logging success
     console.log('Next steps:')
+    // biome-ignore lint/suspicious/noConsole: Script CLI - logging success
     console.log('  1. Run: npm run validate')
+    // biome-ignore lint/suspicious/noConsole: Script CLI - logging success
     console.log('  2. Run: npm run changelog')
-    console.log(
-      '  3. Commit: git add . && git commit -m "chore(release): bump version to v' +
-        newVersion +
-        '"'
-    )
-    console.log('  4. Tag: git tag -a v' + newVersion + ' -m "Release v' + newVersion + '"')
+    // biome-ignore lint/suspicious/noConsole: Script CLI - logging success
+    console.log(`  3. Commit: git add . && git commit -m "chore(release): bump version to v${newVersion}"`)
+    // biome-ignore lint/suspicious/noConsole: Script CLI - logging success
+    console.log(`  4. Tag: git tag -a v${newVersion} -m "Release v${newVersion}"`)
   } catch (error) {
     // biome-ignore lint/suspicious/noConsole: Script CLI - error
     console.error(`Error: ${error.message}`)
