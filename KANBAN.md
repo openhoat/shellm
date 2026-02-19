@@ -24,6 +24,10 @@
 
 ### 🟡 P2 - Medium Priority
 
+- [ ] **#config-dist [19/02/2026 10:15:00] 🟡 P2 ⚙️ [CONFIG]** Centraliser les fichiers générés dans `dist/` (coverage, demo, distribuables) et simplifier le script npm clean
+- [ ] **#config-rules [19/02/2026 10:15:00] 🟡 P2 ⚙️ [CONFIG]** Ajouter des règles de qualité TypeScript
+    - Utiliser des arrow functions plutôt que `function`
+    - S'appuyer sur IntelliJ qui détecte des erreurs TS
 - [ ] **#perf-wait [19/02/2026 08:52:00] 🟡 P2 🚀 [PERFORMANCE]** Implémenter une attente intelligente pour l'interprétation des commandes (détection du prompt au lieu de COMMAND_OUTPUT_WAIT_TIME_MS fixe)
 
 ### 🟢 P3 - Low Priority
