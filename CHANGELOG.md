@@ -10,6 +10,13 @@ To view the complete history, use: `git log`
 
 #### 19/02
 
+- **[11:54:07] 📝 [DOCS]** Fix cline task format to match kanban structure
+- **[11:45:58] 📝 [DOCS]** Translate kanban.md content to english
+- **[10:54:04] 📝 [DOCS]** Add task to translate content to english
+- **[10:43:03] 📝 [DOCS]** Add complete ideas from incoming.md
+- **[10:35:41] 📝 [DOCS]** Add new ideas from incoming.md to backlog
+- **[10:18:02] 🎨 [STYLE]** Fix biome lint issues in bump-version script
+- **[10:13:00] 📝 [DOCS]** Update kanban with completed tasks
 - **[10:10:03] 📝 [DOCS]** Add recommended ollama models and update release workflow
 - **[10:08:17] 📝 [DOCS]** Update changelog for dependency updates
 - **[10:05:16] ✨ [FEAT]** Set llama3.2:3b as default model and add bump-version script
