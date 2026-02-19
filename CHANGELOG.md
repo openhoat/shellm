@@ -8,6 +8,10 @@ To view the complete history, use: `git log`
 
 ### 2026
 
+#### 19/02
+
+- **[10:01:14] 🔧 [CHORE]** Update major dependencies to latest versions
+
 #### 18/02
 
 - **[19:29:04] ✨ [FEAT]** Use dynamic app version from package.json
