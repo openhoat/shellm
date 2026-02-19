@@ -19,13 +19,25 @@ const TestComponent = () => {
           </li>
         ))}
       </ul>
-      <button onClick={() => addToast('success', 'Success message')} data-testid="add-success" type="button">
+      <button
+        onClick={() => addToast('success', 'Success message')}
+        data-testid="add-success"
+        type="button"
+      >
         Add Success
       </button>
-      <button onClick={() => addToast('error', 'Error message')} data-testid="add-error" type="button">
+      <button
+        onClick={() => addToast('error', 'Error message')}
+        data-testid="add-error"
+        type="button"
+      >
         Add Error
       </button>
-      <button onClick={() => addToast('warning', 'Warning message', 5000)} data-testid="add-warning" type="button">
+      <button
+        onClick={() => addToast('warning', 'Warning message', 5000)}
+        data-testid="add-warning"
+        type="button"
+      >
         Add Warning
       </button>
       <button onClick={() => addToast('info', 'Info message')} data-testid="add-info" type="button">
@@ -215,7 +227,9 @@ describe('useToast', () => {
   describe('useToast hook', () => {
     test('should throw error when used outside ToastProvider', () => {
       // Prevent console.error from showing in test output
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {
+        // Suppress console.error output during test
+      })
 
       expect(() => {
         render(<TestComponent />)

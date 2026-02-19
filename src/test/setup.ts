@@ -9,7 +9,9 @@ const mockTerminalResize = vi.fn().mockResolvedValue(undefined)
 const mockTerminalDestroy = vi.fn().mockResolvedValue(undefined)
 const mockTerminalStartCapture = vi.fn().mockResolvedValue(true)
 const mockTerminalGetCapture = vi.fn().mockResolvedValue('')
-const mockTerminalWaitForPrompt = vi.fn().mockResolvedValue({ detected: true, output: '', timedOut: false })
+const mockTerminalWaitForPrompt = vi
+  .fn()
+  .mockResolvedValue({ detected: true, output: '', timedOut: false })
 const mockOnTerminalData = vi.fn()
 const mockOnTerminalExit = vi.fn()
 
@@ -82,8 +84,12 @@ const mockConversationUpdateMessage = vi.fn().mockResolvedValue(defaultConversat
 const mockConversationUpdate = vi.fn().mockResolvedValue(defaultConversation)
 const mockConversationDelete = vi.fn().mockResolvedValue(true)
 const mockConversationClearAll = vi.fn().mockResolvedValue(undefined)
-const mockConversationExport = vi.fn().mockResolvedValue({ success: true, filePath: '/test/export.json' })
-const mockConversationExportAll = vi.fn().mockResolvedValue({ success: true, filePath: '/test/exports.json' })
+const mockConversationExport = vi
+  .fn()
+  .mockResolvedValue({ success: true, filePath: '/test/export.json' })
+const mockConversationExportAll = vi
+  .fn()
+  .mockResolvedValue({ success: true, filePath: '/test/exports.json' })
 
 Object.defineProperty(global, 'window', {
   value: {
