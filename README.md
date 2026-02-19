@@ -40,6 +40,31 @@ Termaid was born out of that frustration: a fully open alternative that works wi
 - **Flexible Configuration**: Provider, model, temperature, and more — configurable via UI or environment variables
 - **History**: Track conversations and executed commands
 
+## 🤖 Recommended Ollama Models
+
+Termaid uses **llama3.2:3b** as the default Ollama model, offering a good balance between performance and resource usage.
+
+### Alternative Models
+
+Depending on your hardware and needs, you can configure alternative models:
+
+| Model | Size | RAM Required | Description |
+|-------|------|--------------|-------------|
+| **llama3.2:3b** | 3B | ~4 GB | Default - Best balance of speed and quality |
+| **llama3.1:8b** | 8B | ~8 GB | More powerful, better for complex commands |
+| **mistral:7b** | 7B | ~6 GB | Good compromise between performance and quality |
+| **qwen2.5:3b** | 3B | ~4 GB | Lightweight alternative, fast responses |
+
+### Changing the Model
+
+You can change the model in the configuration panel (⚙️ icon) or via the environment variable:
+
+```bash
+export TERMAID_OLLAMA_MODEL=llama3.1:8b
+```
+
+For more details, see the [Configuration guide](https://openhoat.github.io/termaid/guide/configuration).
+
 ## 📥 Quick Install
 
 Download the latest release for your platform:

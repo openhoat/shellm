@@ -62,8 +62,19 @@ Visit [ollama.ai](https://ollama.ai) and follow the installation instructions fo
 
 ```bash
 ollama serve
-ollama pull llama2   # or any model of your choice
+ollama pull llama3.2:3b   # recommended default model
 ```
+
+**Recommended Ollama Models:**
+
+| Model | Size | Use Case |
+|-------|------|----------|
+| `llama3.2:3b` | 3B | **Default** - Best balance of speed and quality |
+| `llama3.1:8b` | 8B | Better quality, requires more RAM |
+| `mistral:7b` | 7B | Good alternative, strong reasoning |
+| `qwen2.5:3b` | 3B | Lightweight alternative, fast responses |
+
+You can change the model in the configuration panel or via the `TERMAID_OLLAMA_MODEL` environment variable.
 
 If you're using Ollama on a remote machine, configure the URL in the Termaid configuration panel.
 
