@@ -17,8 +17,7 @@ export const ENV_VAR_SHELL = 'TERMAID_SHELL'
 // Default Ollama configuration
 export const DEFAULT_OLLAMA_CONFIG: OllamaConfig = {
   url: 'http://localhost:11434',
-  // model: 'llama3.2:3b',
-  model: 'gemini-3-flash-preview:cloud',
+  model: 'llama3.2:3b',
   temperature: 0.7,
   maxTokens: 1000,
 }

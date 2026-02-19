@@ -34,7 +34,8 @@
     "test:e2e:headless": "wireit",
     "test:ui": "vitest --ui",
     "test:watch": "vitest",
-    "validate": "wireit"
+    "validate": "wireit",
+    "bump-version": "node scripts/bump-version.js"
   },
   "keywords": [],
   "author": "Olivier Penhoat <openhoat@gmail.com> (http://headwood.net/)",
