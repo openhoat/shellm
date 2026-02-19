@@ -174,6 +174,8 @@ export async function executeCommand({
     await window.electronAPI.terminalWrite(terminalPid, `${command}\r`)
     return { success: true, blocked: false }
   } catch (error) {
+    // biome-ignore lint/suspicious/noConsole: Debug logging for command execution errors
+    console.error('[CommandExecution] Failed to execute command:', error)
     return {
       success: false,
       blocked: false,

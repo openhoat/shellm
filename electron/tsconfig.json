@@ -12,6 +12,8 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "types": ["node"],
     "baseUrl": ".",
     "paths": {

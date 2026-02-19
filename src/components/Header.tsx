@@ -60,6 +60,8 @@ export const Header = () => {
         setTimeout(() => setExportStatus(null), 3000)
       }
     } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for export errors
+      console.error('[Header] Failed to export conversation:', error)
       setExportStatus(error instanceof Error ? error.message : 'Export failed')
       setTimeout(() => setExportStatus(null), 3000)
     }
@@ -81,6 +83,8 @@ export const Header = () => {
         setTimeout(() => setExportStatus(null), 3000)
       }
     } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for export errors
+      console.error('[Header] Failed to export all conversations:', error)
       setExportStatus(error instanceof Error ? error.message : 'Export failed')
       setTimeout(() => setExportStatus(null), 3000)
     }

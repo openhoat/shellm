@@ -16,6 +16,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
   terminalDestroy: (pid: number) => ipcRenderer.invoke('terminal:destroy', pid),
   terminalStartCapture: (pid: number) => ipcRenderer.invoke('terminal:startCapture', pid),
   terminalGetCapture: (pid: number) => ipcRenderer.invoke('terminal:getCapture', pid),
+  terminalWaitForPrompt: (
+    pid: number,
+    options?: {
+      maxWaitTimeMs?: number
+      checkIntervalMs?: number
+      minWaitTimeMs?: number
+      customPatterns?: string[]
+    }
+  ) => ipcRenderer.invoke('terminal:waitForPrompt', pid, options),
 
   // Terminal events
   onTerminalData: (callback: (data: { pid: number; data: string }) => void) => {

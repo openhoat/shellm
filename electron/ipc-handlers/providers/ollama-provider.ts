@@ -19,7 +19,9 @@ function validateOllamaUrl(url: string): string | undefined {
       return 'Invalid Ollama URL: missing hostname.'
     }
     return undefined
-  } catch {
+  } catch (error) {
+    // biome-ignore lint/suspicious/noConsole: Debug logging for URL validation errors
+    console.error('[OllamaProvider] URL validation failed:', error)
     return `Invalid Ollama URL: "${url}". URL must be a valid HTTP/HTTPS URL (e.g. http://localhost:11434).`
   }
 }
@@ -55,7 +57,9 @@ export class OllamaProvider extends BaseLLMProvider {
       const chain = ChatPromptTemplate.fromMessages([['human', 'Hi']]).pipe(this.model)
       await chain.invoke({})
       return true
-    } catch (_error) {
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for connection test errors
+      console.error('[OllamaProvider] Connection test failed:', error)
       return false
     }
   }
@@ -71,7 +75,9 @@ export class OllamaProvider extends BaseLLMProvider {
       clearTimeout(timeoutId)
       const data = (await response.json()) as { models: { name: string }[] }
       return data.models.map(model => model.name)
-    } catch (_error) {
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for model listing errors
+      console.error('[OllamaProvider] Failed to list models:', error)
       return []
     }
   }
