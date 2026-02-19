@@ -18,13 +18,24 @@
 
 ## 📝 Backlog
 
-### 🔴 P1 - High Priority
-
-- [ ] **#test-cov [19/02/2026 08:52:00] 🔴 P1 ✅ [TEST]** Improve test coverage (69.71% → 80%) - priority: ConfigPanel, ChatPanel, Terminal
+(No ideas in backlog)
 
 ## 🚧 In Progress
 
-(No tasks in progress)
+### [19/02/2026 19:00:00] 💡 [IDEA] #test-cov Improve test coverage (69.71% → 80%)
+
+- [ ] **[19/02/2026 19:00:00] ✅ [TEST]** ConfigPanel: Add tests for handleSave and handleReset
+- [ ] **[19/02/2026 19:00:00] ✅ [TEST]** ConfigPanel: Add tests for testConnection (success/failure)
+- [ ] **[19/02/2026 19:00:00] ✅ [TEST]** ConfigPanel: Add tests for input changes (URL, model, temperature, maxTokens)
+- [ ] **[19/02/2026 19:00:00] ✅ [TEST]** ConfigPanel: Add tests for env badge display (envSources)
+- [ ] **[19/02/2026 19:00:00] ✅ [TEST]** ChatPanel: Add tests for keyboard shortcuts (Ctrl+Enter, Ctrl+K, Escape)
+- [ ] **[19/02/2026 19:00:00] ✅ [TEST]** ChatPanel: Add tests for handleSubmit and navigateHistory
+- [ ] **[19/02/2026 19:00:00] ✅ [TEST]** ChatPanel: Add tests for isInterpreting and isExecuting states
+- [ ] **[19/02/2026 19:00:00] ✅ [TEST]** ChatPanel: Add tests for auto-scroll and scroll-to-bottom button
+- [ ] **[19/02/2026 19:00:00] ✅ [TEST]** Terminal: Add tests for handleTerminalData and ANSI filtering
+- [ ] **[19/02/2026 19:00:00] ✅ [TEST]** Terminal: Add tests for handleTerminalExit
+- [ ] **[19/02/2026 19:00:00] ✅ [TEST]** Terminal: Add tests for resize handling
+- [ ] **[19/02/2026 19:00:00] ✅ [TEST]** Run npm run validate to verify all changes
 
 ## ✅ Done
 
