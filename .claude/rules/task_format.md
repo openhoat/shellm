@@ -22,6 +22,21 @@ Defines common format rules for all task files in the project (KANBAN.md, CHANGE
 - Regex pattern for detection: `^\[\/\/\]: # (.*)$`
 - Lines matching this pattern must be ignored during processing
 
+### Task Identifiers (Hash)
+
+Each task in the KANBAN must have a unique identifier based on a content hash:
+- **Format**: `#<category>-<subject>` (e.g., `#arch-ansi`, `#test-cov`, `#dep-update`)
+- **Category prefix**: Use a short abbreviation of the category (arch, test, dep, doc, perf, devops, ux, i18n, config, sec)
+- **Subject**: A short mnemonic describing the task (ansi, cov, update, model, wait, release, logs, hook)
+- **Uniqueness**: Each identifier must be unique within the KANBAN
+- **Placement**: Placed at the beginning of the task, before the timestamp
+
+**Examples:**
+- `#arch-ansi` - Architecture task about ANSI functions
+- `#test-cov` - Test task about coverage
+- `#dep-update` - Dependencies update task
+- `#devops-hook` - DevOps task about hooks
+
 ### Priority Levels
 
 For KANBAN Backlog and In Progress sections, each idea/task must include a priority level:
@@ -29,8 +44,8 @@ For KANBAN Backlog and In Progress sections, each idea/task must include a prior
 - **🟡 P2** = Medium Priority (important improvements)
 - **🟢 P3** = Low Priority (nice to have, enhancements)
 
-Priority must be placed after the timestamp and before the category emoji:
-`**[DD/MM/YYYY HH:mm:ss] Priority CategoryEmoji [CATEGORY]** Description`
+Priority must be placed after the identifier and timestamp, before the category emoji:
+`**#hash [DD/MM/YYYY HH:mm:ss] Priority CategoryEmoji [CATEGORY]** Description`
 
 ### Category Icons (for Backlog Ideas)
 
