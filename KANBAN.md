@@ -20,44 +20,48 @@
 
 ### 🔴 P1 - High Priority
 
-- [ ] **#test-cov [19/02/2026 08:52:00] 🔴 P1 ✅ [TEST]** Améliorer la couverture de tests (56.68% → 80%) - priorité: useToast, useStore, Header, ConfigPanel
-- [ ] **#i18n-kanban [19/02/2026 10:45:00] 🔴 P1 🌍 [I18N]** Translate KANBAN.md content to English (all task descriptions should be in English per project rules)
+- [ ] **#test-cov [19/02/2026 08:52:00] 🔴 P1 ✅ [TEST]** Improve test coverage (56.68% → 80%) - priority: useToast, useStore, Header, ConfigPanel
 
 ### 🟡 P2 - Medium Priority
 
-- [ ] **#doc-english [19/02/2026 10:45:00] 🟡 P2 📝 [DOCS]** Translate KANBAN.md content to English (all ideas and tasks must be in English per language.md rule)
-- [ ] **#config-dist [19/02/2026 10:15:00] 🟡 P2 ⚙️ [CONFIG]** Centraliser les fichiers générés dans `dist/` (coverage, demo, distribuables) et simplifier le script npm clean
-- [ ] **#config-rules [19/02/2026 10:15:00] 🟡 P2 ⚙️ [CONFIG]** Ajouter des règles de qualité TypeScript
-    - Utiliser des arrow functions plutôt que `function`
-    - Corriger les "promise returned is ignored" et "unused constants"
-    - S'appuyer sur IntelliJ qui détecte les erreurs TS
-- [ ] **#arch-services [19/02/2026 10:15:00] 🟡 P2 🏗️ [ARCHITECTURE]** Étudier la fusion de llmService et ollamaService en un seul service commun
-- [ ] **#perf-wait [19/02/2026 08:52:00] 🟡 P2 🚀 [PERFORMANCE]** Implémenter une attente intelligente pour l'interprétation des commandes (détection du prompt au lieu de COMMAND_OUTPUT_WAIT_TIME_MS fixe)
+- [ ] **#config-dist [19/02/2026 10:15:00] 🟡 P2 ⚙️ [CONFIG]** Centralize generated files in `dist/` (coverage, demo, distributables) and simplify npm clean script
+- [ ] **#config-rules [19/02/2026 10:15:00] 🟡 P2 ⚙️ [CONFIG]** Add TypeScript quality rules
+    - Use arrow functions instead of `function`
+    - Fix "promise returned is ignored" and "unused constants"
+    - Rely on IntelliJ for TS error detection
+- [ ] **#arch-services [19/02/2026 10:15:00] 🟡 P2 🏗️ [ARCHITECTURE]** Study merging llmService and ollamaService into a single common service
+- [ ] **#perf-wait [19/02/2026 08:52:00] 🟡 P2 🚀 [PERFORMANCE]** Implement smart wait for command interpretation (prompt detection instead of fixed COMMAND_OUTPUT_WAIT_TIME_MS)
 
 ### 🟢 P3 - Low Priority
 
-- [ ] **#devops-logs [19/02/2026 08:52:00] 🟢 P3 🔧 [DEVOPS]** Améliorer les logs de debugging (blocs catch silencieux)
-- [ ] **#devops-hook [19/02/2026 08:52:00] 🟢 P3 🔧 [DEVOPS]** Ajouter un hook pre-push Husky pour npm run validate
+- [ ] **#devops-logs [19/02/2026 08:52:00] 🟢 P3 🔧 [DEVOPS]** Improve debugging logs (silent catch blocks)
+- [ ] **#devops-hook [19/02/2026 08:52:00] 🟢 P3 🔧 [DEVOPS]** Add Husky pre-push hook for npm run validate
 
 ## 🚧 In Progress
 
 ## ✅ Done
 
-### [19/02/2026 10:08:00] 💡 [IDEA] #arch-ansi - Factoriser les fonctions ANSI dupliquées
+### [19/02/2026 11:10:10] 💡 [IDEA] #i18n-kanban - Translate KANBAN.md to English
+
+- [x] **[19/02/2026 11:10:10] 🌍 [I18N]** Translate all idea descriptions in Backlog to English
+- [x] **[19/02/2026 11:10:10] 🌍 [I18N]** Translate all task descriptions in Done section to English
+- [x] **[19/02/2026 11:10:10] 🌍 [I18N]** Remove duplicate idea #doc-english after merging
+
+### [19/02/2026 10:08:00] 💡 [IDEA] #arch-ansi - Refactor duplicate ANSI functions
 
 - [x] **[19/02/2026 10:08:00] ♻️ [REFACTOR]** Create shared/ansi.ts with stripAnsiCodes and stripOscSequences
 - [x] **[19/02/2026 10:08:00] ♻️ [REFACTOR]** Update Terminal.tsx to import from @shared/ansi
 - [x] **[19/02/2026 10:08:00] ♻️ [REFACTOR]** Update base-provider.ts to import from @shared/ansi
 - [x] **[19/02/2026 10:08:00] ♻️ [REFACTOR]** Remove duplicate function implementations
 
-### [19/02/2026 09:49:00] 💡 [IDEA] #dep-update - Mettre à jour les dépendances
+### [19/02/2026 09:49:00] 💡 [IDEA] #dep-update - Update dependencies
 
 - [x] **[19/02/2026 09:49:00] 📦 [DEPENDENCIES]** Update electron to 40.5.0
 - [x] **[19/02/2026 09:49:00] 📦 [DEPENDENCIES]** Update @biomejs/biome to 2.4.2
 - [x] **[19/02/2026 09:49:00] 📦 [DEPENDENCIES]** Update i18next to 25.8.11
 - [x] **[19/02/2026 09:49:00] 📦 [DEPENDENCIES]** Update @langchain/* packages
 
-### [19/02/2026 10:05:00] 💡 [IDEA] #doc-model - Définir llama3.2:3b comme modèle par défaut
+### [19/02/2026 10:05:00] 💡 [IDEA] #doc-model - Set llama3.2:3b as default model
 
 - [x] **[19/02/2026 10:05:00] 📝 [DOCS]** Set llama3.2:3b as default model in shared/config.ts
 - [x] **[19/02/2026 10:05:00] 📝 [DOCS]** Add recommended models section to README.md
