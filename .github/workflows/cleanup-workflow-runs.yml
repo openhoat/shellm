@@ -21,6 +21,7 @@ on:
 
 permissions:
   actions: write
+  contents: read
 
 jobs:
   cleanup:
@@ -29,9 +30,9 @@ jobs:
     
     steps:
       - name: Delete old workflow runs
-        uses: MajorScruffy/delete-old-workflow-runs@v0.3.1
+        uses: Mattraks/delete-workflow-runs@v2
         with:
-          keep-minimum-runs: ${{ github.event.inputs.keep_minimum || '10' }}
-          minimum-age: ${{ github.event.inputs.days_old || '30' }} days
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: ${{ github.event.inputs.days_old || '30' }}
+          keep_minimum_runs: ${{ github.event.inputs.keep_minimum || '10' }}
