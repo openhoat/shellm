@@ -2,10 +2,10 @@ import { describe, expect, test, vi } from 'vitest'
 import {
   cleanTerminalOutput,
   createPromptPattern,
+  DEFAULT_PROMPT_DETECTION_CONFIG,
   detectPrompt,
   extractPrompt,
   waitForPrompt,
-  DEFAULT_PROMPT_DETECTION_CONFIG,
 } from './promptDetection'
 
 describe('promptDetection', () => {
@@ -205,11 +205,7 @@ describe('promptDetection', () => {
     })
 
     test('should return detected when output stabilizes', async () => {
-      let callCount = 0
-      const getOutput = vi.fn(() => {
-        callCount++
-        return 'stable output'
-      })
+      const getOutput = vi.fn(() => 'stable output')
 
       const result = await waitForPrompt(getOutput, {
         minWaitTimeMs: 0,

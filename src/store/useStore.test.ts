@@ -309,9 +309,14 @@ describe('useStore', () => {
 
       const updatedConversation = {
         ...mockConversation,
-        messages: [...mockConversation.messages, { role: 'user', content: 'New message', timestamp: Date.now() }],
+        messages: [
+          ...mockConversation.messages,
+          { role: 'user', content: 'New message', timestamp: Date.now() },
+        ],
       }
-      vi.mocked(window.electronAPI.conversationAddMessage).mockResolvedValueOnce(updatedConversation)
+      vi.mocked(window.electronAPI.conversationAddMessage).mockResolvedValueOnce(
+        updatedConversation
+      )
 
       await useStore.getState().addMessageToConversation({
         role: 'user',
@@ -349,7 +354,9 @@ describe('useStore', () => {
           { ...mockConversation.messages[1], content: 'Updated response' },
         ],
       }
-      vi.mocked(window.electronAPI.conversationUpdateMessage).mockResolvedValueOnce(updatedConversation)
+      vi.mocked(window.electronAPI.conversationUpdateMessage).mockResolvedValueOnce(
+        updatedConversation
+      )
 
       await useStore.getState().updateMessageInConversation(1, { content: 'Updated response' })
       const state = useStore.getState()
