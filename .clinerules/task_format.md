@@ -100,9 +100,7 @@ Sub-tasks don't need emoji or tag: category information is carried by the parent
 
 ### KANBAN.md
 
-Contains the Kanban board with two sections: Backlog, In Progress
-
-**Important:** There is NO "Done" section. Completed tasks are deleted from In Progress after commit.
+Contains the Kanban board with three sections: Backlog, In Progress, Done
 
 #### Backlog section (## 📝 Backlog)
 
@@ -134,7 +132,7 @@ Contains the Kanban board with two sections: Backlog, In Progress
 #### In Progress section (## 🚧 In Progress)
 
 - Contains **ideas being worked on** with associated tasks OR **isolated tasks**
-- Idea sections: start with `### [DD/MM/YYYY HH:mm:ss] Priority CategoryEmoji [CATEGORY] Description`
+- Idea sections: start with `### [DD/MM/YYYY HH:mm:ss] 💡 [IDEA] Description`
 - Under each idea: tasks with standard emoji/tag format
 - Isolated tasks: lines with `- [ ] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
 - Task format: `- [ ] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
@@ -149,6 +147,12 @@ Contains the Kanban board with two sections: Backlog, In Progress
   - `🔧 [CHORE]`: Configuration/Maintenance
 - Date and time indicate the moment of task creation
 - Comments are optional and serve only to document context
+
+#### Done section (## ✅ Done)
+
+- Contains **completed tasks** (`- [x]`)
+- Format: `- [x] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
+- Uses the same emojis and tags as In Progress
 
 ### CHANGELOG.md
 
