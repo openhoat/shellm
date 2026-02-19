@@ -1,3 +1,4 @@
+import { detectPrompt } from '@shared/promptDetection'
 import type { AICommand, ConversationMessage } from '@shared/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -10,7 +11,9 @@ import Logger from '@/utils/logger'
 const logger = new Logger('useChat')
 
 // Constants
-const COMMAND_OUTPUT_WAIT_TIME_MS = 3000 // 3 seconds wait for command output
+const COMMAND_OUTPUT_MIN_WAIT_MS = 500 // Minimum wait before checking for prompt
+const COMMAND_OUTPUT_MAX_WAIT_MS = 30000 // Maximum wait time (30 seconds)
+const COMMAND_OUTPUT_POLL_INTERVAL_MS = 100 // Poll interval for prompt detection
 const DEBOUNCE_MS = 300 // Debounce delay for user input
 const INPUT_HISTORY_KEY = 'termaid-chat-input-history'
 const MAX_HISTORY_SIZE = 50
@@ -54,7 +57,8 @@ export function useChat() {
     try {
       const saved = localStorage.getItem(INPUT_HISTORY_KEY)
       return saved ? JSON.parse(saved) : []
-    } catch {
+    } catch (error) {
+      logger.warn('Failed to load input history from localStorage:', error)
       return []
     }
   })
@@ -110,8 +114,8 @@ export function useChat() {
   useEffect(() => {
     try {
       localStorage.setItem(INPUT_HISTORY_KEY, JSON.stringify(inputHistory))
-    } catch {
-      // Ignore localStorage errors
+    } catch (error) {
+      logger.warn('Failed to save input history to localStorage:', error)
     }
   }, [inputHistory])
 
@@ -121,8 +125,8 @@ export function useChat() {
   const saveHistoryToStorage = useCallback((history: string[]) => {
     try {
       localStorage.setItem(INPUT_HISTORY_KEY, JSON.stringify(history))
-    } catch {
-      // Ignore storage errors
+    } catch (error) {
+      logger.warn('Failed to save input history to localStorage:', error)
     }
   }, [])
 
@@ -375,15 +379,30 @@ export function useChat() {
 
         setExecutionProgress(70)
 
-        // Wait for command output
-        const waitTime = COMMAND_OUTPUT_WAIT_TIME_MS
-        logger.debug(`Waiting ${waitTime}ms for command output...`)
-        await new Promise(resolve => setTimeout(resolve, waitTime))
+        // Smart wait for command output using prompt detection
+        const startTime = Date.now()
+        let output = ''
+        let promptDetected = false
+
+        // Minimum wait before checking for prompt
+        await new Promise(resolve => setTimeout(resolve, COMMAND_OUTPUT_MIN_WAIT_MS))
+
+        // Poll for prompt detection
+        while (Date.now() - startTime < COMMAND_OUTPUT_MAX_WAIT_MS) {
+          output = await window.electronAPI.terminalGetCapture(terminalPid)
+          if (detectPrompt(output)) {
+            promptDetected = true
+            logger.debug('Prompt detected, command finished')
+            break
+          }
+          await new Promise(resolve => setTimeout(resolve, COMMAND_OUTPUT_POLL_INTERVAL_MS))
+        }
+
+        if (!promptDetected) {
+          logger.warn('Prompt not detected within timeout, proceeding anyway')
+        }
 
         setExecutionProgress(90)
-
-        // Get captured output from backend
-        const output = await window.electronAPI.terminalGetCapture(terminalPid)
 
         // Always call interpretation, even with empty output
         // Many successful commands (mkdir, touch, cp) produce no output
