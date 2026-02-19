@@ -37,14 +37,17 @@ Calculate the new version based on the bump type:
 
 Display the new version and ask for confirmation.
 
-### 4. Bump version in package.json
+### 4. Bump version across all files
 
-Use `npm version` to update the version without creating a git commit or tag:
+Use the bump-version script to update version in all relevant files:
 ```bash
-npm version <bump_type> --no-git-tag-version
+npm run bump-version -- <patch|minor|major>
 ```
 
-This updates `package.json` and `package-lock.json`.
+This script updates:
+- `package.json` (via npm version)
+- `package-lock.json` (via npm version)
+- `README.md` (download links)
 
 ### 5. Verify bumped version
 
@@ -76,7 +79,7 @@ If validation fails, fix the issues before proceeding.
 
 Stage all modified files and create the release commit using `NEW_VERSION` from step 5:
 ```bash
-git add package.json package-lock.json CHANGELOG.md
+git add package.json package-lock.json README.md CHANGELOG.md
 git commit -m "chore(release): bump version to v${NEW_VERSION}"
 ```
 
@@ -153,5 +156,6 @@ Next steps:
 
 This workflow works with:
 - `.github/workflows/release.yml` - CI pipeline triggered by `v*` tags
+- `scripts/bump-version.js` - Centralized version bumping across all files
 - `scripts/generate-changelog.js` - Changelog generation from git history
 - `package.json` - Version source of truth
