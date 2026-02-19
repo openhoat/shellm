@@ -220,7 +220,7 @@
         "shared/**/*.ts"
       ],
       "output": [
-        "coverage/**/*"
+        "dist/coverage/**/*"
       ]
     },
     "test:e2e:headless": {

@@ -36,8 +36,9 @@ class ConversationService {
     try {
       const data = fs.readFileSync(this.filePath, 'utf-8')
       return JSON.parse(data) as ConversationsList
-    } catch (_error) {
-      // Error reading conversations
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for conversation read errors
+      console.error('[ConversationService] Failed to read conversations file:', error)
       return { conversations: [] }
     }
   }

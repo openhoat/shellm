@@ -29,7 +29,9 @@ export class OpenAIProvider extends BaseLLMProvider {
       const chain = ChatPromptTemplate.fromMessages([['human', 'Hi']]).pipe(this.model)
       await chain.invoke({})
       return true
-    } catch (_error) {
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for connection test errors
+      console.error('[OpenAIProvider] Connection test failed:', error)
       return false
     }
   }

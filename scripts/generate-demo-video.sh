@@ -8,7 +8,7 @@ set -e
 echo "🎬 Generating Termaid demo GIF..."
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-OUTPUT_DIR="$PROJECT_ROOT/demo-output"
+OUTPUT_DIR="$PROJECT_ROOT/dist/demo"
 FRAME_DIR="$PROJECT_ROOT/test-results/demo-frames"
 
 # Clean previous output
@@ -54,8 +54,8 @@ cp "$OUTPUT_DIR/demo.gif" "$PROJECT_ROOT/docs/public/demo.gif"
 # Report sizes
 GIF_SIZE=$(du -h "$OUTPUT_DIR/demo.gif" | cut -f1)
 MP4_SIZE=$(du -h "$OUTPUT_DIR/demo.mp4" | cut -f1)
-echo "✅ Demo GIF: demo-output/demo.gif ($GIF_SIZE, $FRAME_COUNT frames)"
-echo "✅ Demo MP4: demo-output/demo.mp4 ($MP4_SIZE)"
+echo "✅ Demo GIF: dist/demo/demo.gif ($GIF_SIZE, $FRAME_COUNT frames)"
+echo "✅ Demo MP4: dist/demo/demo.mp4 ($MP4_SIZE)"
 echo "✅ Copied to: docs/public/demo.gif"
 
 # Clean up test artifacts

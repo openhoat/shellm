@@ -91,7 +91,8 @@ export function createConversationHandlers(_getWindow: WindowGetter): void {
 
       return { success: false, cancelled: true }
     } catch (error) {
-      // Error exporting conversation
+      // biome-ignore lint/suspicious/noConsole: Debug logging for export errors
+      console.error('[Conversation] Failed to export conversation:', error)
       return {
         success: false,
         cancelled: false,
@@ -124,7 +125,8 @@ export function createConversationHandlers(_getWindow: WindowGetter): void {
 
       return { success: false, cancelled: true }
     } catch (error) {
-      // Error exporting conversations
+      // biome-ignore lint/suspicious/noConsole: Debug logging for export errors
+      console.error('[Conversation] Failed to export all conversations:', error)
       return {
         success: false,
         cancelled: false,

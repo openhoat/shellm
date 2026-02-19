@@ -38,8 +38,10 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
   // Check if dist-electron exists, if not build it
   try {
     execSync('test -d dist-electron/electron', { cwd: projectRoot, stdio: 'pipe' })
-  } catch {
+  } catch (_error) {
     // Build Electron app for E2E tests
+    // biome-ignore lint/suspicious/noConsole: E2E test setup logging
+    console.log('[E2E] Building Electron app for tests...')
     execSync('npm run build:electron', { cwd: projectRoot, stdio: 'inherit' })
   }
 
@@ -145,8 +147,10 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
     return { app, page }
   } catch (err) {
     // Ensure the app is closed if launch setup fails, so the process doesn't linger
-    await app.close().catch(_closeErr => {
+    await app.close().catch(closeErr => {
       // Ignore close errors during failed launch cleanup
+      // biome-ignore lint/suspicious/noConsole: E2E test cleanup logging
+      console.warn('[E2E] Failed to close app during cleanup:', closeErr)
     })
     throw err
   }
@@ -185,7 +189,9 @@ export async function isElementVisible(page: Page, selector: string): Promise<bo
   try {
     const element = page.locator(selector)
     return element.isVisible()
-  } catch {
+  } catch (error) {
+    // biome-ignore lint/suspicious/noConsole: E2E test visibility check logging
+    console.warn('[E2E] Failed to check element visibility:', error)
     return false
   }
 }

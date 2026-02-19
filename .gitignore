@@ -51,7 +51,6 @@ Thumbs.db
 *~
 
 # Test coverage
-coverage/
 .nyc_output/
 
 # Playwright E2E tests
@@ -71,4 +70,3 @@ docs/.vitepress/cache/
 
 # Claude AI
 .claude/settings.local.json
-demo-output/

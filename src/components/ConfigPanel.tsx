@@ -54,8 +54,9 @@ export const ConfigPanel = () => {
     try {
       const sources = await window.electronAPI.getConfigEnvSources()
       setEnvSources(sources)
-    } catch (_error) {
-      // Silently fail
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for config loading errors
+      console.warn('[ConfigPanel] Failed to load env sources:', error)
     }
   }, [])
 
@@ -65,8 +66,9 @@ export const ConfigPanel = () => {
       await window.electronAPI.llmInit(localConfig)
       const models = await window.electronAPI.llmListModels()
       setAvailableModels(models)
-    } catch (_error) {
-      // Silently fail, user can still type model name
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for model loading errors
+      console.warn('[ConfigPanel] Failed to load models:', error)
     } finally {
       setIsLoadingModels(false)
     }
@@ -124,8 +126,9 @@ export const ConfigPanel = () => {
         .llmInit(config)
         .then(() => window.electronAPI.llmListModels())
         .then(models => setAvailableModels(models))
-        .catch(() => {
-          // Silently fail, user can still type model name
+        .catch(error => {
+          // biome-ignore lint/suspicious/noConsole: Debug logging for model initialization errors
+          console.warn('[ConfigPanel] Failed to initialize or load models:', error)
         })
         .finally(() => setIsLoadingModels(false))
     } else if (config.llmProvider === 'claude') {
@@ -162,6 +165,8 @@ export const ConfigPanel = () => {
         loadModels()
       }
     } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for connection test errors
+      console.error('[ConfigPanel] Connection test failed:', error)
       setTestResult({
         success: false,
         message: error instanceof Error ? error.message : t('errors.connection'),
