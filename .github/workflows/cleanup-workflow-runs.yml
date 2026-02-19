@@ -1,0 +1,37 @@
+# Cleanup Old Workflow Runs
+# This workflow deletes old workflow runs to keep the repository clean
+# It keeps a minimum number of runs per workflow and removes runs older than a specified age
+name: Cleanup Workflow Runs
+
+on:
+  # Run every Sunday at midnight UTC
+  schedule:
+    - cron: '0 0 * * 0'
+  # Allow manual trigger with configurable parameters
+  workflow_dispatch:
+    inputs:
+      keep_minimum:
+        description: 'Minimum runs to keep per workflow'
+        required: true
+        default: '10'
+      days_old:
+        description: 'Delete runs older than X days'
+        required: true
+        default: '30'
+
+permissions:
+  actions: write
+
+jobs:
+  cleanup:
+    name: Delete old workflow runs
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Delete old workflow runs
+        uses: MajorScruffy/delete-old-workflow-runs@v0.3.1
+        with:
+          keep-minimum-runs: ${{ github.event.inputs.keep_minimum || '10' }}
+          minimum-age: ${{ github.event.inputs.days_old || '30' }} days
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
