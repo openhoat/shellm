@@ -21,9 +21,11 @@
 ### 🔴 P1 - High Priority
 
 - [ ] **#test-cov [19/02/2026 08:52:00] 🔴 P1 ✅ [TEST]** Améliorer la couverture de tests (56.68% → 80%) - priorité: useToast, useStore, Header, ConfigPanel
+- [ ] **#i18n-kanban [19/02/2026 10:45:00] 🔴 P1 🌍 [I18N]** Translate KANBAN.md content to English (all task descriptions should be in English per project rules)
 
 ### 🟡 P2 - Medium Priority
 
+- [ ] **#doc-english [19/02/2026 10:45:00] 🟡 P2 📝 [DOCS]** Translate KANBAN.md content to English (all ideas and tasks must be in English per language.md rule)
 - [ ] **#config-dist [19/02/2026 10:15:00] 🟡 P2 ⚙️ [CONFIG]** Centraliser les fichiers générés dans `dist/` (coverage, demo, distribuables) et simplifier le script npm clean
 - [ ] **#config-rules [19/02/2026 10:15:00] 🟡 P2 ⚙️ [CONFIG]** Ajouter des règles de qualité TypeScript
     - Utiliser des arrow functions plutôt que `function`
