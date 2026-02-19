@@ -1,5 +1,8 @@
 import type { AICommand, AppConfig, Conversation, ConversationMessage } from '@shared/types'
 import { create } from 'zustand'
+import Logger from '@/utils/logger'
+
+const logger = new Logger('useStore')
 
 interface AppState {
   // Config
@@ -84,8 +87,8 @@ export const useStore = create<AppState>((set, _get) => ({
     if (canInit) {
       try {
         await window.electronAPI.llmInit(config)
-      } catch {
-        // LLM initialization may fail (e.g. unreachable server), user can reconfigure later
+      } catch (error) {
+        logger.warn('LLM initialization failed, user can reconfigure later:', error)
       }
     }
   },

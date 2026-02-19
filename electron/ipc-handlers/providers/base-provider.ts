@@ -111,7 +111,9 @@ export abstract class BaseLLMProvider {
         explanation: result.explanation || '',
         confidence: result.confidence || 0.5,
       }
-    } catch (_error) {
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for structured output errors
+      console.error('[BaseLLMProvider] Structured output failed, using fallback:', error)
       let fallbackResponseText: string | null = null
 
       try {
@@ -163,7 +165,9 @@ export abstract class BaseLLMProvider {
           explanation: validated.explanation || '',
           confidence: validated.confidence || 0.5,
         }
-      } catch {
+      } catch (parseError) {
+        // biome-ignore lint/suspicious/noConsole: Debug logging for command parsing errors
+        console.error('[BaseLLMProvider] Failed to parse fallback JSON response:', parseError)
         return { type: 'text', content: fallbackResponseText.trim() }
       }
     }
@@ -183,7 +187,9 @@ export abstract class BaseLLMProvider {
     try {
       const result = await chain.invoke({})
       return result.content as string
-    } catch (_error) {
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for explain command errors
+      console.error('[BaseLLMProvider] Failed to explain command:', error)
       return 'Unable to explain the command. Please try again.'
     }
   }
@@ -196,8 +202,6 @@ export abstract class BaseLLMProvider {
 
     const lines = cleanedOutput.split('\n').slice(0, MAX_OUTPUT_LINES).join('\n')
     const systemPrompt = loadPrompt('interpret-output-prompt.md')
-
-    const _escapedOutput = lines.replace(/"/g, '\\"').replace(/\n/g, '\\n')
 
     const chatPrompt = ChatPromptTemplate.fromMessages([
       ['system', systemPrompt],
@@ -237,8 +241,9 @@ export abstract class BaseLLMProvider {
             recommendations: validated.recommendations || [],
             successful: validated.successful ?? true,
           }
-        } catch (_parseError) {
-          // Error parsing interpretation JSON
+        } catch (parseError) {
+          // biome-ignore lint/suspicious/noConsole: Debug logging for interpretation parsing errors
+          console.error('[BaseLLMProvider] Failed to parse interpretation JSON:', parseError)
         }
       }
 
@@ -338,7 +343,9 @@ export abstract class BaseLLMProvider {
         recommendations: hasErrors ? ['Check command syntax and permissions'] : [],
         successful: isSuccessful,
       }
-    } catch (_error) {
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for output interpretation errors
+      console.error('[BaseLLMProvider] Failed to interpret output:', error)
       const cleanedFallbackOutput = cleanTerminalOutput(output)
       const hasErrors = /error|fail|permission denied|cannot|no such file/i.test(
         cleanedFallbackOutput

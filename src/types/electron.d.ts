@@ -1,5 +1,31 @@
 import type { AICommand, AppConfig, Conversation, ConversationMessage } from '@shared/types'
 
+/**
+ * Result of waiting for shell prompt
+ */
+export interface WaitForPromptResult {
+  /** Whether a prompt was detected */
+  detected: boolean
+  /** The captured output */
+  output: string
+  /** Whether the wait timed out */
+  timedOut: boolean
+}
+
+/**
+ * Configuration options for prompt detection
+ */
+export interface PromptDetectionOptions {
+  /** Maximum time to wait for prompt detection (ms) */
+  maxWaitTimeMs?: number
+  /** Interval between prompt checks (ms) */
+  checkIntervalMs?: number
+  /** Minimum time to wait before checking for prompt (ms) */
+  minWaitTimeMs?: number
+  /** Additional custom prompt patterns (regex strings) */
+  customPatterns?: string[]
+}
+
 export interface ElectronAPI {
   // Config
   getConfig: () => Promise<AppConfig>
@@ -24,6 +50,10 @@ export interface ElectronAPI {
   terminalDestroy: (pid: number) => Promise<void>
   terminalStartCapture: (pid: number) => Promise<boolean>
   terminalGetCapture: (pid: number) => Promise<string>
+  terminalWaitForPrompt: (
+    pid: number,
+    options?: PromptDetectionOptions
+  ) => Promise<WaitForPromptResult>
 
   // Terminal events
   onTerminalData: (callback: (data: { pid: number; data: string }) => void) => void

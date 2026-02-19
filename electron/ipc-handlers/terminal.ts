@@ -1,11 +1,17 @@
 import { type BrowserWindow, ipcMain } from 'electron'
 import * as pty from 'node-pty'
+import {
+  DEFAULT_PROMPT_DETECTION_CONFIG,
+  detectPrompt,
+  type PromptDetectionConfig,
+} from '../../shared/promptDetection'
 
 interface TerminalInstance {
   pid: number
   pty: pty.IPty
   outputBuffer: string[]
   isCapturing: boolean
+  capturedPrompt: string | null
 }
 
 type WindowGetter = () => BrowserWindow | null
@@ -97,6 +103,7 @@ export function createTerminalHandlers(getWindow: WindowGetter): void {
       pty: ptyProcess,
       outputBuffer: [],
       isCapturing: false,
+      capturedPrompt: null,
     }
 
     terminals.set(ptyProcess.pid, terminal)
@@ -170,6 +177,59 @@ export function createTerminalHandlers(getWindow: WindowGetter): void {
     }
     return ''
   })
+
+  // Wait for prompt with smart detection
+  ipcMain.handle(
+    'terminal:waitForPrompt',
+    async (_event, pid: number, config?: Partial<PromptDetectionConfig>) => {
+      const terminal = terminals.get(pid)
+      if (!terminal) {
+        return { detected: false, output: '', timedOut: true }
+      }
+
+      const finalConfig = { ...DEFAULT_PROMPT_DETECTION_CONFIG, ...config }
+      const startTime = Date.now()
+      let lastOutputLength = 0
+      let stableCount = 0
+
+      // Wait minimum time before checking
+      await new Promise(resolve => setTimeout(resolve, finalConfig.minWaitTimeMs))
+
+      while (Date.now() - startTime < finalConfig.maxWaitTimeMs) {
+        const output = terminal.outputBuffer.join('')
+
+        // Check if prompt is detected
+        if (detectPrompt(output, finalConfig.customPatterns)) {
+          terminal.isCapturing = false
+          terminal.outputBuffer = []
+          return { detected: true, output, timedOut: false }
+        }
+
+        // Check if output has stabilized (no new output for a while)
+        if (output.length === lastOutputLength) {
+          stableCount++
+          // If output has been stable for 500ms (5 checks at 100ms), consider it done
+          if (stableCount >= 5 && output.length > 0) {
+            terminal.isCapturing = false
+            terminal.outputBuffer = []
+            return { detected: true, output, timedOut: false }
+          }
+        } else {
+          stableCount = 0
+        }
+        lastOutputLength = output.length
+
+        // Wait before next check
+        await new Promise(resolve => setTimeout(resolve, finalConfig.checkIntervalMs))
+      }
+
+      // Timeout occurred, return current output
+      terminal.isCapturing = false
+      const output = terminal.outputBuffer.join('')
+      terminal.outputBuffer = []
+      return { detected: false, output, timedOut: true }
+    }
+  )
 
   // Destroy terminal
   ipcMain.handle('terminal:destroy', async (_event, pid: number) => {
