@@ -4,6 +4,7 @@ import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import { AIMessage, HumanMessage } from '@langchain/core/messages'
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts'
 import type { AICommand, CommandInterpretation, ConversationMessage } from '@shared/types'
+import { stripAnsiCodes, stripOscSequences } from '@shared/ansi'
 import { z } from 'zod'
 
 // Constants
@@ -11,24 +12,6 @@ const MAX_CONVERSATION_HISTORY = 50
 const MAX_OUTPUT_LINES = 50
 const DEFAULT_TEMPERATURE = 0.7
 const DEFAULT_MAX_TOKENS = 1000
-
-/**
- * Strip ANSI escape codes from a string
- */
-function stripAnsiCodes(str: string): string {
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: ANSI codes require control characters
-  const ansiRegex = /\x1B\[[0-9;]*[mGKH]/g
-  return str.replace(ansiRegex, '')
-}
-
-/**
- * Strip OSC (Operating System Command) sequences from a string
- */
-function stripOscSequences(str: string): string {
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: OSC codes require control characters
-  const oscRegex = /\x1B\][^\x07]*(?:\x07|\x1B\\)/g
-  return str.replace(oscRegex, '')
-}
 
 /**
  * Clean terminal output by removing ANSI codes, OSC sequences, and control characters

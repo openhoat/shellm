@@ -2,25 +2,12 @@ import { useEffect, useRef } from 'react'
 import { Terminal as XTerm } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import 'xterm/css/xterm.css'
+import { stripAnsiCodes, stripOscSequences } from '@shared/ansi'
 import { useStore } from '../store/useStore'
 import Logger from '../utils/logger'
 import './Terminal.css'
 
 const logger = new Logger('Terminal')
-
-// Function to strip ANSI escape codes from a string
-function stripAnsiCodes(str: string): string {
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: ANSI codes require control characters
-  const ansiRegex = /\x1B\[[0-9;]*[mGKH]/g
-  return str.replace(ansiRegex, '')
-}
-
-// Function to strip OSC sequences (Operating System Command)
-function stripOscSequences(str: string): string {
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: OSC codes require control characters
-  const oscRegex = /\x1B\][^\x07]*(?:\x07|\x1B\\)/g
-  return str.replace(oscRegex, '')
-}
 
 export const Terminal = () => {
   const terminalRef = useRef<HTMLDivElement>(null)
