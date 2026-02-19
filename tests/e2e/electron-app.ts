@@ -121,8 +121,15 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
     }
   }
 
-  // Launch Electron app
-  const app = await electron.launch({ args, env })
+  // Launch Electron app with error handling
+  let app: ElectronApplication | undefined
+  try {
+    app = await electron.launch({ args, env })
+  } catch (launchErr) {
+    // biome-ignore lint/suspicious/noConsole: E2E test launch error logging
+    console.error('[E2E] Failed to launch Electron app:', launchErr)
+    throw launchErr
+  }
 
   try {
     // Get the browser context and inject scripts before page loads
@@ -139,10 +146,11 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
     }
 
     // Get the first window (with timeout to prevent indefinite hang in CI)
-    const page = await app.firstWindow({ timeout: 15000 })
+    // Increased timeout from 15s to 30s for slower CI environments
+    const page = await app.firstWindow({ timeout: 30000 })
 
     // Wait for the page to load (with timeout)
-    await page.waitForLoadState('domcontentloaded', { timeout: 15000 })
+    await page.waitForLoadState('domcontentloaded', { timeout: 30000 })
 
     return { app, page }
   } catch (err) {
@@ -160,8 +168,18 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
  * Helper to close the Electron application
  * Includes a small delay after close to let OS/X11 resources be released
  */
-export async function closeElectronApp(app: ElectronApplication): Promise<void> {
-  await app.close()
+export async function closeElectronApp(app: ElectronApplication | undefined): Promise<void> {
+  if (!app) {
+    // App was never launched successfully, nothing to close
+    return
+  }
+  try {
+    await app.close()
+  } catch (err) {
+    // Ignore close errors - app may have already crashed or been closed
+    // biome-ignore lint/suspicious/noConsole: E2E test cleanup logging
+    console.warn('[E2E] Error closing app (may have already crashed):', err)
+  }
   // Brief pause to let X11/system resources be released before the next test
   // Reduced from 500ms to 200ms - sufficient in headless mode with xvfb
   await new Promise(resolve => setTimeout(resolve, 200))
