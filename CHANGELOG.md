@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 19/02
 
+- **[13:15:00] 🐛 [FIX]** Replace archived GitHub action for workflow cleanup with maintained one
 - **[12:51:00] 🔧 [CHORE]** Add GitHub workflow to cleanup old workflow runs
 - **[11:54:07] 📝 [DOCS]** Fix cline task format to match kanban structure
 - **[11:45:58] 📝 [DOCS]** Translate kanban.md content to english
