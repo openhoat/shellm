@@ -97,7 +97,7 @@ function updateReadmeVersion(oldVersion, newVersion) {
   // biome-ignore lint/suspicious/noConsole: Script CLI - logging progress
   console.log('Updating download links in README.md...')
 
-  let readme = fs.readFileSync(README_PATH, 'utf-8')
+  const readme = fs.readFileSync(README_PATH, 'utf-8')
 
   // Replace version in download links
   // Pattern: Termaid-X.Y.Z.AppImage, termaid_X.Y.Z_amd64.deb, Termaid-X.Y.Z-arm64.dmg, Termaid.Setup.X.Y.Z.exe
@@ -168,7 +168,9 @@ Examples:
     bumpType = input
   } else {
     // biome-ignore lint/suspicious/noConsole: Script CLI - error
-    console.error(`Error: Invalid argument "${input}". Use a version (X.Y.Z) or bump type (patch|minor|major)`)
+    console.error(
+      `Error: Invalid argument "${input}". Use a version (X.Y.Z) or bump type (patch|minor|major)`
+    )
     process.exit(1)
   }
 
@@ -214,7 +216,9 @@ Examples:
     // biome-ignore lint/suspicious/noConsole: Script CLI - logging success
     console.log('  2. Run: npm run changelog')
     // biome-ignore lint/suspicious/noConsole: Script CLI - logging success
-    console.log(`  3. Commit: git add . && git commit -m "chore(release): bump version to v${newVersion}"`)
+    console.log(
+      `  3. Commit: git add . && git commit -m "chore(release): bump version to v${newVersion}"`
+    )
     // biome-ignore lint/suspicious/noConsole: Script CLI - logging success
     console.log(`  4. Tag: git tag -a v${newVersion} -m "Release v${newVersion}"`)
   } catch (error) {
