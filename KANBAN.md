@@ -25,7 +25,10 @@
 
 ## 🚧 In Progress
 
-(No ideas in progress)
+### [20/02/2026 15:30:00] 🟡 P2 ✅ [TEST] Improve test coverage for `src/components/Resizer.tsx` (62% → 80% target)
+- [ ] **[20/02/2026 15:30:00] ✅ [TEST]** Test onResize callback with correct position calculation
+- [ ] **[20/02/2026 15:30:00] ✅ [TEST]** Test horizontal and vertical direction mouse move
+- [ ] **[20/02/2026 15:30:00] ✅ [TEST]** Test min/max bounds clamping
 
 ## ✅ Done
 
