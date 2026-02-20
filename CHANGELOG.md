@@ -10,8 +10,13 @@ To view the complete history, use: `git log`
 
 #### 20/02
 
-- **[14:40:00] ✅ [TEST]** Add comprehensive tests for logger utility (47 tests, 97% coverage)
-- **[14:31:18] 📝 [DOCS]** Add changelog reference to readme and documentation
+- **[15:39:11] 🐛 [FIX]** Improve electron headless mode and header confirm dialog
+- **[15:32:00] ✅ [TEST]** Improve header component test coverage
+- **[14:40:51] ✅ [TEST]** Add comprehensive tests for logger utility
+- **[14:34:47] 📝 [DOCS]** Update changelog and add improvement ideas to kanban backlog
+- **[14:33:52] 📝 [DOCS]** Add changelog reference to readme and documentation
+- **[14:30:09] 🔧 [CHORE]** Clean up kanban - remove committed tasks from done section
+- **[14:28:21] 📝 [DOCS]** Update changelog timestamp for e2e fix
 - **[14:26:39] 🐛 [FIX]** Prevent minimized window in headless mode for ci tests
 - **[13:02:55] 📝 [DOCS]** Update changelog for test improvements
 - **[13:01:43] ✅ [TEST]** Improve test coverage for configpanel, chatpanel, and terminal
