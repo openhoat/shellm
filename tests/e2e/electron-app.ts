@@ -58,8 +58,9 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
     args.push('--disable-dev-shm-usage')
   }
 
-  // Start minimized unless in demo mode (for video recording)
-  if (process.env.DEMO_VIDEO !== '1') {
+  // Start minimized only when NOT in headless mode and NOT in demo mode
+  // In headless mode (CI), minimized windows cannot be detected by Playwright's firstWindow()
+  if (process.env.HEADLESS !== 'true' && process.env.DEMO_VIDEO !== '1') {
     args.push('--start-minimized')
   }
 
