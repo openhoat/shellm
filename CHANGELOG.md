@@ -8,10 +8,22 @@ To view the complete history, use: `git log`
 
 ### 2026
 
+#### 20/02
+
+- **[13:01:43] ✅ [TEST]** Improve test coverage for configpanel, chatpanel, and terminal
+
 #### 19/02
 
-- **[13:15:00] 🐛 [FIX]** Replace archived GitHub action for workflow cleanup with maintained one
-- **[12:51:00] 🔧 [CHORE]** Add GitHub workflow to cleanup old workflow runs
+- **[16:21:17] 📝 [DOCS]** Update changelog for workflow cleanup action fix
+- **[16:17:55] 🐛 [FIX]** Replace archived workflow cleanup action with maintained one
+- **[16:03:00] 🐛 [FIX]** Increase e2e test timeout and improve error handling for ci
+- **[16:00:18] 🔧 [CHORE]** Move test-cov idea from backlog to in progress
+- **[15:47:37] 🔧 [CHORE]** Sort npm scripts alphabetically in package.json and fix linting issues
+- **[15:21:25] ✅ [TEST]** Improve test coverage from 51.86% to 68.66%
+- **[15:12:07] ✅ [TEST]** Improve test coverage from 51% to 69%
+- **[12:54:51] 🔧 [CHORE]** Add github workflow to cleanup old workflow runs
+- **[12:12:03] 🐛 [FIX]** Resolve biome lint errors in bump-version script
+- **[11:57:22] 📝 [DOCS]** Update changelog
 - **[11:54:07] 📝 [DOCS]** Fix cline task format to match kanban structure
 - **[11:45:58] 📝 [DOCS]** Translate kanban.md content to english
 - **[10:54:04] 📝 [DOCS]** Add task to translate content to english
