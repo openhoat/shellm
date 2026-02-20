@@ -99,6 +99,7 @@ npm run dev
 - [Build Executables](https://openhoat.github.io/termaid/guide/build) — Package the app for distribution
 - [Troubleshooting](https://openhoat.github.io/termaid/guide/troubleshooting) — Common issues and solutions
 - [Contributing](https://openhoat.github.io/termaid/guide/contributing) — How to contribute to the project
+- [Changelog](https://github.com/openhoat/termaid/blob/main/CHANGELOG.md) — Version history and release notes
 
 ## 🔒 Security
 

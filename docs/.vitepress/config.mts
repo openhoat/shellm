@@ -36,6 +36,10 @@ export default defineConfig({
         items: [
           { text: 'Troubleshooting', link: '/guide/troubleshooting' },
           { text: 'Contributing', link: '/guide/contributing' },
+          {
+            text: 'Changelog',
+            link: 'https://github.com/openhoat/termaid/blob/main/CHANGELOG.md',
+          },
         ],
       },
     ],
