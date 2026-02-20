@@ -38,10 +38,8 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
   // Check if dist-electron exists, if not build it
   try {
     execSync('test -d dist-electron/electron', { cwd: projectRoot, stdio: 'pipe' })
-  } catch (_error) {
+  } catch {
     // Build Electron app for E2E tests
-    // biome-ignore lint/suspicious/noConsole: E2E test setup logging
-    console.log('[E2E] Building Electron app for tests...')
     execSync('npm run build:electron', { cwd: projectRoot, stdio: 'inherit' })
   }
 
@@ -58,9 +56,8 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
     args.push('--disable-dev-shm-usage')
   }
 
-  // Start minimized only when NOT in headless mode and NOT in demo mode
-  // In headless mode (CI), minimized windows cannot be detected by Playwright's firstWindow()
-  if (process.env.HEADLESS !== 'true' && process.env.DEMO_VIDEO !== '1') {
+  // Start minimized unless in demo mode (for video recording)
+  if (process.env.DEMO_VIDEO !== '1') {
     args.push('--start-minimized')
   }
 
@@ -122,15 +119,8 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
     }
   }
 
-  // Launch Electron app with error handling
-  let app: ElectronApplication | undefined
-  try {
-    app = await electron.launch({ args, env })
-  } catch (launchErr) {
-    // biome-ignore lint/suspicious/noConsole: E2E test launch error logging
-    console.error('[E2E] Failed to launch Electron app:', launchErr)
-    throw launchErr
-  }
+  // Launch Electron app
+  const app = await electron.launch({ args, env })
 
   try {
     // Get the browser context and inject scripts before page loads
@@ -147,19 +137,16 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
     }
 
     // Get the first window (with timeout to prevent indefinite hang in CI)
-    // Increased timeout from 15s to 30s for slower CI environments
-    const page = await app.firstWindow({ timeout: 30000 })
+    const page = await app.firstWindow({ timeout: 15000 })
 
     // Wait for the page to load (with timeout)
-    await page.waitForLoadState('domcontentloaded', { timeout: 30000 })
+    await page.waitForLoadState('domcontentloaded', { timeout: 15000 })
 
     return { app, page }
   } catch (err) {
     // Ensure the app is closed if launch setup fails, so the process doesn't linger
-    await app.close().catch(closeErr => {
+    await app.close().catch(_closeErr => {
       // Ignore close errors during failed launch cleanup
-      // biome-ignore lint/suspicious/noConsole: E2E test cleanup logging
-      console.warn('[E2E] Failed to close app during cleanup:', closeErr)
     })
     throw err
   }
@@ -169,18 +156,8 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
  * Helper to close the Electron application
  * Includes a small delay after close to let OS/X11 resources be released
  */
-export async function closeElectronApp(app: ElectronApplication | undefined): Promise<void> {
-  if (!app) {
-    // App was never launched successfully, nothing to close
-    return
-  }
-  try {
-    await app.close()
-  } catch (err) {
-    // Ignore close errors - app may have already crashed or been closed
-    // biome-ignore lint/suspicious/noConsole: E2E test cleanup logging
-    console.warn('[E2E] Error closing app (may have already crashed):', err)
-  }
+export async function closeElectronApp(app: ElectronApplication): Promise<void> {
+  await app.close()
   // Brief pause to let X11/system resources be released before the next test
   // Reduced from 500ms to 200ms - sufficient in headless mode with xvfb
   await new Promise(resolve => setTimeout(resolve, 200))
@@ -208,9 +185,7 @@ export async function isElementVisible(page: Page, selector: string): Promise<bo
   try {
     const element = page.locator(selector)
     return element.isVisible()
-  } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: E2E test visibility check logging
-    console.warn('[E2E] Failed to check element visibility:', error)
+  } catch {
     return false
   }
 }

@@ -107,7 +107,7 @@
       ]
     },
     "build:electron": {
-      "command": "tsc -p electron/tsconfig.json && node -e \"const fs=require('fs');const path=require('path');const src=path.join('electron','prompts');const dest=path.join('dist-electron','electron','prompts');if(fs.existsSync(src)){fs.mkdirSync(dest,{recursive:true});fs.readdirSync(src).forEach(f=>fs.copyFileSync(path.join(src,f),path.join(dest,f)))}\"",
+      "command": "tsc -p electron/tsconfig.json && tsc-alias -p electron/tsconfig.json && find dist-electron -name '*.js' -exec sed -i 's|require(\"../electron\")|require(\"electron\")|g; s|require(\"../../electron\")|require(\"electron\")|g; s|require(\"../../../electron\")|require(\"electron\")|g; s|require(\"../../electron/ipc-handlers/config\")|require(\"./config\")|g; s|require('\\''../../electron/ipc-handlers/config'\\'')|require('\\''./config'\\'')|g' {} + && node -e \"const fs=require('fs');const path=require('path');const src=path.join('electron','prompts');const dest=path.join('dist-electron','electron','prompts');if(fs.existsSync(src)){fs.mkdirSync(dest,{recursive:true});fs.readdirSync(src).forEach(f=>fs.copyFileSync(path.join(src,f),path.join(dest,f)))}\"",
       "dependencies": [
         "build:vite"
       ],
