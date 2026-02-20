@@ -60,7 +60,7 @@ export function createTerminalHandlers(getWindow: WindowGetter): void {
   // Create a new terminal
   ipcMain.handle('terminal:create', async () => {
     // Load config to get the shell preference
-    const config = require('../../electron/ipc-handlers/config').getConfig?.() || {}
+    const config = require('./config').getConfig?.() || {}
     const shellPreference = config.shell || 'auto'
 
     // Determine which shell to use

@@ -67,13 +67,6 @@ const normalizeConfig = (config: AppConfig): AppConfig => ({
 })
 
 const isDev = process.env.NODE_ENV === 'development' && !app.isPackaged
-const isHeadless = process.env.HEADLESS === 'true'
-
-// Disable hardware acceleration in headless mode (CI/E2E tests)
-// This is required for Electron to work properly with xvfb
-if (isHeadless) {
-  app.disableHardwareAcceleration()
-}
 
 // Initialize store for configuration (with environment variables override)
 const rawStore = new Store({
@@ -102,30 +95,22 @@ const createWindow = (): void => {
   const windowWidth = 1200
   const windowHeight = 800
 
-  // Check if we're in demo mode (for video recording) or headless mode (CI)
+  // Check if we're in demo mode (for video recording)
   const isDemoMode = process.env.DEMO_VIDEO === '1'
-  const isHeadless = process.env.HEADLESS === 'true'
 
-  // Position window at (0, 0) for demo mode or headless mode
+  // Position window at (0, 0) for demo mode (for screen recording)
   // Otherwise center it on the primary display
   let x: number
   let y: number
-  if (isDemoMode || isHeadless) {
-    // In headless mode, position at (0, 0) to avoid issues with screen detection
+  if (isDemoMode) {
     x = 0
     y = 0
   } else {
-    try {
-      // Get the primary display to calculate center position
-      const primaryDisplay = screen.getPrimaryDisplay()
-      const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize
-      x = Math.round((screenWidth - windowWidth) / 2 + primaryDisplay.bounds.x)
-      y = Math.round((screenHeight - windowHeight) / 2 + primaryDisplay.bounds.y)
-    } catch {
-      // Fallback to (0, 0) if screen detection fails
-      x = 0
-      y = 0
-    }
+    // Get the primary display to calculate center position
+    const primaryDisplay = screen.getPrimaryDisplay()
+    const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize
+    x = Math.round((screenWidth - windowWidth) / 2 + primaryDisplay.bounds.x)
+    y = Math.round((screenHeight - windowHeight) / 2 + primaryDisplay.bounds.y)
   }
 
   // Set the application icon
@@ -142,9 +127,6 @@ const createWindow = (): void => {
     y,
     autoHideMenuBar: true,
     icon: nativeImage.createFromPath(iconPath),
-    // In headless mode, force window to show immediately
-    // This is critical for Playwright's firstWindow() to detect the window
-    show: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       devTools: true,
