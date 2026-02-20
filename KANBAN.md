@@ -18,7 +18,6 @@
 
 ## 📝 Backlog
 
-- [ ] **#test-header [20/02/2026 14:32:00] 🟡 P2 ✅ [TEST]** Improve test coverage for `src/components/Header.tsx` (58% → 80% target)
 - [ ] **#test-resizer [20/02/2026 14:32:00] 🟡 P2 ✅ [TEST]** Improve test coverage for `src/components/Resizer.tsx` (62% → 80% target)
 - [ ] **#test-e2e [20/02/2026 14:32:00] 🟡 P2 🏗️ [ARCHITECTURE]** Add E2E tests for main user flows
 - [ ] **#ux-tooltips [20/02/2026 14:32:00] 🟢 P3 🎨 [UX]** Add tooltips on action buttons for better usability
@@ -30,4 +29,5 @@
 
 ## ✅ Done
 
-- [x] **[20/02/2026 14:40:00] ✅ [TEST]** Improve test coverage for `src/utils/logger.ts` (46% → 97%)
+- [x] **#test-header [20/02/2026 15:26:00] ✅ [TEST]** Improve test coverage for `src/components/Header.tsx` (58% → 80%)
+- [x] **#test-logger [20/02/2026 14:38:00] ✅ [TEST]** Improve test coverage for `src/utils/logger.ts` (46% → 96.96%)

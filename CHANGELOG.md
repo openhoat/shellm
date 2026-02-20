@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 20/02
 
+- **[14:40:00] ✅ [TEST]** Add comprehensive tests for logger utility (47 tests, 97% coverage)
 - **[14:31:18] 📝 [DOCS]** Add changelog reference to readme and documentation
 - **[14:26:39] 🐛 [FIX]** Prevent minimized window in headless mode for ci tests
 - **[13:02:55] 📝 [DOCS]** Update changelog for test improvements
