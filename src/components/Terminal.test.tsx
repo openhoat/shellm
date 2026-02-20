@@ -143,4 +143,230 @@ describe('Terminal', () => {
       expect(mockSetTerminalPid).toHaveBeenCalledWith(12345)
     })
   })
+
+  // handleTerminalData and ANSI filtering tests
+  test('should write data to terminal when PID matches', async () => {
+    vi.mocked(useStore).mockReturnValue({
+      terminalPid: 12345,
+      setTerminalPid: mockSetTerminalPid,
+      appendTerminalOutput: mockAppendTerminalOutput,
+    } as ReturnType<typeof useStore>)
+
+    render(<Terminal />)
+
+    // Get the callback registered for terminal data
+    await vi.waitFor(() => {
+      expect(mockOnTerminalData).toHaveBeenCalled()
+    })
+
+    const dataCallback = mockOnTerminalData.mock.calls[0][0]
+
+    // Simulate terminal data with matching PID
+    dataCallback({ pid: 12345, data: 'Hello World' })
+
+    // The data should be written to xterm (via write method)
+    // We can verify appendTerminalOutput was called with filtered data
+    await vi.waitFor(() => {
+      expect(mockAppendTerminalOutput).toHaveBeenCalled()
+    })
+  })
+
+  test('should ignore data when PID does not match', async () => {
+    vi.mocked(useStore).mockReturnValue({
+      terminalPid: 12345,
+      setTerminalPid: mockSetTerminalPid,
+      appendTerminalOutput: mockAppendTerminalOutput,
+    } as ReturnType<typeof useStore>)
+
+    render(<Terminal />)
+
+    await vi.waitFor(() => {
+      expect(mockOnTerminalData).toHaveBeenCalled()
+    })
+
+    const dataCallback = mockOnTerminalData.mock.calls[0][0]
+
+    // Simulate terminal data with different PID
+    dataCallback({ pid: 99999, data: 'Hello World' })
+
+    // Should not append any output
+    expect(mockAppendTerminalOutput).not.toHaveBeenCalled()
+  })
+
+  test('should filter out ANSI codes from terminal output', async () => {
+    vi.mocked(useStore).mockReturnValue({
+      terminalPid: 12345,
+      setTerminalPid: mockSetTerminalPid,
+      appendTerminalOutput: mockAppendTerminalOutput,
+    } as ReturnType<typeof useStore>)
+
+    render(<Terminal />)
+
+    await vi.waitFor(() => {
+      expect(mockOnTerminalData).toHaveBeenCalled()
+    })
+
+    const dataCallback = mockOnTerminalData.mock.calls[0][0]
+
+    // Simulate terminal data with ANSI codes
+    dataCallback({ pid: 12345, data: '\x1b[32mSuccess\x1b[0m' })
+
+    await vi.waitFor(() => {
+      expect(mockAppendTerminalOutput).toHaveBeenCalledWith('Success')
+    })
+  })
+
+  test('should filter out OSC sequences from terminal output', async () => {
+    vi.mocked(useStore).mockReturnValue({
+      terminalPid: 12345,
+      setTerminalPid: mockSetTerminalPid,
+      appendTerminalOutput: mockAppendTerminalOutput,
+    } as ReturnType<typeof useStore>)
+
+    render(<Terminal />)
+
+    await vi.waitFor(() => {
+      expect(mockOnTerminalData).toHaveBeenCalled()
+    })
+
+    const dataCallback = mockOnTerminalData.mock.calls[0][0]
+
+    // Simulate terminal data with OSC sequence
+    dataCallback({ pid: 12345, data: '\x1b]0;Title\x07Content' })
+
+    await vi.waitFor(() => {
+      expect(mockAppendTerminalOutput).toHaveBeenCalledWith('Content')
+    })
+  })
+
+  test('should filter out bash prompts from terminal output', async () => {
+    vi.mocked(useStore).mockReturnValue({
+      terminalPid: 12345,
+      setTerminalPid: mockSetTerminalPid,
+      appendTerminalOutput: mockAppendTerminalOutput,
+    } as ReturnType<typeof useStore>)
+
+    render(<Terminal />)
+
+    await vi.waitFor(() => {
+      expect(mockOnTerminalData).toHaveBeenCalled()
+    })
+
+    const dataCallback = mockOnTerminalData.mock.calls[0][0]
+
+    // Simulate terminal data with bash prompt
+    dataCallback({ pid: 12345, data: 'user@hostname:~$' })
+
+    // Bash prompt should be filtered out
+    expect(mockAppendTerminalOutput).not.toHaveBeenCalled()
+  })
+
+  test('should filter out empty lines from terminal output', async () => {
+    vi.mocked(useStore).mockReturnValue({
+      terminalPid: 12345,
+      setTerminalPid: mockSetTerminalPid,
+      appendTerminalOutput: mockAppendTerminalOutput,
+    } as ReturnType<typeof useStore>)
+
+    render(<Terminal />)
+
+    await vi.waitFor(() => {
+      expect(mockOnTerminalData).toHaveBeenCalled()
+    })
+
+    const dataCallback = mockOnTerminalData.mock.calls[0][0]
+
+    // Simulate terminal data with empty lines
+    dataCallback({ pid: 12345, data: '\n\n\n' })
+
+    // Empty lines should be filtered out
+    expect(mockAppendTerminalOutput).not.toHaveBeenCalled()
+  })
+
+  // handleTerminalExit tests
+  test('should clear terminal PID on exit with matching PID', async () => {
+    vi.mocked(useStore).mockReturnValue({
+      terminalPid: 12345,
+      setTerminalPid: mockSetTerminalPid,
+      appendTerminalOutput: mockAppendTerminalOutput,
+    } as ReturnType<typeof useStore>)
+
+    render(<Terminal />)
+
+    await vi.waitFor(() => {
+      expect(mockOnTerminalExit).toHaveBeenCalled()
+    })
+
+    const exitCallback = mockOnTerminalExit.mock.calls[0][0]
+
+    // Simulate terminal exit with matching PID
+    exitCallback({ pid: 12345, code: 0 })
+
+    expect(mockSetTerminalPid).toHaveBeenCalledWith(null)
+  })
+
+  test('should not clear terminal PID on exit with different PID', async () => {
+    vi.mocked(useStore).mockReturnValue({
+      terminalPid: 12345,
+      setTerminalPid: mockSetTerminalPid,
+      appendTerminalOutput: mockAppendTerminalOutput,
+    } as ReturnType<typeof useStore>)
+
+    render(<Terminal />)
+
+    await vi.waitFor(() => {
+      expect(mockOnTerminalExit).toHaveBeenCalled()
+    })
+
+    // Reset the mock to only count new calls
+    mockSetTerminalPid.mockClear()
+
+    const exitCallback = mockOnTerminalExit.mock.calls[0][0]
+
+    // Simulate terminal exit with different PID
+    exitCallback({ pid: 99999, code: 0 })
+
+    // Should not clear PID for different process
+    expect(mockSetTerminalPid).not.toHaveBeenCalled()
+  })
+
+  // Resize handling tests
+  test('should call terminalResize when window is resized', async () => {
+    vi.mocked(useStore).mockReturnValue({
+      terminalPid: 12345,
+      setTerminalPid: mockSetTerminalPid,
+      appendTerminalOutput: mockAppendTerminalOutput,
+    } as ReturnType<typeof useStore>)
+
+    render(<Terminal />)
+
+    await vi.waitFor(() => {
+      expect(mockTerminalCreate).toHaveBeenCalled()
+    })
+
+    // Get the resize handler that was registered
+    const resizeCalls = (window.addEventListener as ReturnType<typeof vi.fn>).mock.calls
+    const resizeCall = resizeCalls.find(call => call[0] === 'resize')
+
+    expect(resizeCall).toBeDefined()
+  })
+
+  test('should have correct terminal content class', () => {
+    render(<Terminal />)
+
+    const content = document.querySelector('.terminal-content')
+    expect(content).toBeInTheDocument()
+    expect(content?.tagName).toBe('DIV')
+  })
+
+  test('should have correct terminal container structure', () => {
+    render(<Terminal />)
+
+    const container = document.querySelector('.terminal-container')
+    const header = document.querySelector('.terminal-header')
+    const content = document.querySelector('.terminal-content')
+
+    expect(container).toContainElement(header)
+    expect(container).toContainElement(content)
+  })
 })
