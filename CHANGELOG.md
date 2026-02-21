@@ -8,6 +8,10 @@ To view the complete history, use: `git log`
 
 ### 2026
 
+#### 21/02
+
+- **[08:15:00] ✅ [TEST]** Add E2E tests for conversation lifecycle, keyboard shortcuts, config persistence, and error handling
+
 #### 20/02
 
 - **[15:39:11] 🐛 [FIX]** Improve electron headless mode and header confirm dialog

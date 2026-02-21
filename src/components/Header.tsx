@@ -181,7 +181,11 @@ export const Header = () => {
             <div className="conversation-dropdown">
               <div className="conversation-dropdown-header">
                 <span>Conversations</span>
-                <button type="button" onClick={() => setShowConversationList(false)} title={t('header.closeConversations')}>
+                <button
+                  type="button"
+                  onClick={() => setShowConversationList(false)}
+                  title={t('header.closeConversations')}
+                >
                   ✕
                 </button>
               </div>

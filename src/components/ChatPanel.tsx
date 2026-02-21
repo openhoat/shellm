@@ -296,10 +296,20 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
           >
             {!chat.terminalPid ? t('chat.actions.preparing') : t('chat.actions.execute')}
           </button>
-          <button type="button" className="btn btn-modify" onClick={chat.modifyCommand} title={t('chat.actions.modifyCommand')}>
+          <button
+            type="button"
+            className="btn btn-modify"
+            onClick={chat.modifyCommand}
+            title={t('chat.actions.modifyCommand')}
+          >
             {t('chat.actions.modify')}
           </button>
-          <button type="button" className="btn btn-cancel" onClick={() => setAiCommand(null)} title={t('chat.actions.cancelCommand')}>
+          <button
+            type="button"
+            className="btn btn-cancel"
+            onClick={() => setAiCommand(null)}
+            title={t('chat.actions.cancelCommand')}
+          >
             {t('chat.actions.cancel')}
           </button>
         </div>

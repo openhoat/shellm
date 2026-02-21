@@ -518,9 +518,9 @@ describe('Header', () => {
     test('should have tooltip on conversations button', () => {
       render(<Header />)
 
-      const button = screen.getAllByRole('button').find(
-        btn => btn.getAttribute('aria-haspopup') === 'listbox'
-      )
+      const button = screen
+        .getAllByRole('button')
+        .find(btn => btn.getAttribute('aria-haspopup') === 'listbox')
       expect(button).toHaveAttribute('title', 'header.conversations')
     })
 
@@ -542,22 +542,25 @@ describe('Header', () => {
       const user = userEvent.setup()
       render(<Header />)
 
-      const conversationsButton = screen.getAllByRole('button').find(
-        btn => btn.getAttribute('aria-haspopup') === 'listbox'
-      )
+      const conversationsButton = screen
+        .getAllByRole('button')
+        .find(btn => btn.getAttribute('aria-haspopup') === 'listbox')
       await user.click(conversationsButton!)
 
       const closeButtons = screen.getAllByText('✕')
-      expect(closeButtons[0].closest('button')).toHaveAttribute('title', 'header.closeConversations')
+      expect(closeButtons[0].closest('button')).toHaveAttribute(
+        'title',
+        'header.closeConversations'
+      )
     })
 
     test('should have tooltip on delete conversation button', async () => {
       const user = userEvent.setup()
       render(<Header />)
 
-      const conversationsButton = screen.getAllByRole('button').find(
-        btn => btn.getAttribute('aria-haspopup') === 'listbox'
-      )
+      const conversationsButton = screen
+        .getAllByRole('button')
+        .find(btn => btn.getAttribute('aria-haspopup') === 'listbox')
       await user.click(conversationsButton!)
 
       const deleteButtons = screen.getAllByRole('button', { name: '✕' })
