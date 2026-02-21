@@ -185,7 +185,7 @@ export const ConfigPanel = () => {
       >
         <div className="config-header">
           <h2 id="config-panel-title">{t('config.title')}</h2>
-          <button type="button" className="close-button" onClick={toggleConfigPanel}>
+          <button type="button" className="close-button" onClick={toggleConfigPanel} title={t('config.common.close')}>
             <svg
               width="20"
               height="20"
@@ -194,7 +194,7 @@ export const ConfigPanel = () => {
               stroke="currentColor"
               strokeWidth="2"
             >
-              <title>Close</title>
+              <title>{t('config.common.close')}</title>
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -580,7 +580,7 @@ export const ConfigPanel = () => {
 
           <div className="config-section">
             <div className="config-actions">
-              <button type="button" className="btn btn-test" onClick={testConnection}>
+              <button type="button" className="btn btn-test" onClick={testConnection} title={t('test.connectionTooltip')}>
                 {t('test.connection')}
               </button>
             </div>
@@ -715,11 +715,11 @@ export const ConfigPanel = () => {
         </div>
 
         <div className="config-footer">
-          <button type="button" className="btn btn-reset" onClick={handleReset}>
+          <button type="button" className="btn btn-reset" onClick={handleReset} title={t('config.common.resetTooltip')}>
             {t('config.common.reset')}
           </button>
-          <button type="button" className="btn btn-save" onClick={handleSave}>
-            {t('config.ollama.save')}
+          <button type="button" className="btn btn-save" onClick={handleSave} title={t('config.common.saveTooltip')}>
+            {t('config.common.save')}
           </button>
         </div>
       </div>

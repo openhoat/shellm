@@ -122,7 +122,7 @@ export const Header = () => {
             type="button"
             className="icon-button"
             onClick={handleNewConversation}
-            title="New conversation"
+            title={t('header.newConversation')}
           >
             <svg
               width="20"
@@ -132,7 +132,7 @@ export const Header = () => {
               stroke="currentColor"
               strokeWidth="2"
             >
-              <title>New conversation</title>
+              <title>{t('header.newConversation')}</title>
               <line x1="12" y1="5" x2="12" y2="19"></line>
               <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
@@ -141,7 +141,7 @@ export const Header = () => {
             type="button"
             className="icon-button"
             onClick={() => setShowConversationList(!showConversationList)}
-            title="Conversations"
+            title={t('header.conversations')}
             aria-expanded={showConversationList}
             aria-haspopup="listbox"
           >
@@ -153,7 +153,7 @@ export const Header = () => {
               stroke="currentColor"
               strokeWidth="2"
             >
-              <title>Conversations</title>
+              <title>{t('header.conversations')}</title>
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
             </svg>
           </button>
@@ -161,7 +161,7 @@ export const Header = () => {
             type="button"
             className="icon-button"
             onClick={e => handleExportAll(e)}
-            title="Export all conversations"
+            title={t('header.exportAll')}
           >
             <svg
               width="20"
@@ -171,7 +171,7 @@ export const Header = () => {
               stroke="currentColor"
               strokeWidth="2"
             >
-              <title>Export conversations</title>
+              <title>{t('header.exportAll')}</title>
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
               <polyline points="7 10 12 15 17 10"></polyline>
               <line x1="12" y1="15" x2="12" y2="3"></line>
@@ -181,7 +181,7 @@ export const Header = () => {
             <div className="conversation-dropdown">
               <div className="conversation-dropdown-header">
                 <span>Conversations</span>
-                <button type="button" onClick={() => setShowConversationList(false)}>
+                <button type="button" onClick={() => setShowConversationList(false)} title={t('header.closeConversations')}>
                   ✕
                 </button>
               </div>
@@ -194,7 +194,7 @@ export const Header = () => {
                       type="button"
                       className="export-button"
                       onClick={e => handleExportCurrent(e)}
-                      title="Export current conversation"
+                      title={t('header.exportCurrent')}
                       disabled={!currentConversationId}
                     >
                       <svg
@@ -232,7 +232,7 @@ export const Header = () => {
                           type="button"
                           className="conversation-delete"
                           onClick={e => handleDeleteConversation(conv.id, e)}
-                          title="Delete conversation"
+                          title={t('header.deleteConversation')}
                         >
                           ✕
                         </button>
@@ -258,7 +258,7 @@ export const Header = () => {
             stroke="currentColor"
             strokeWidth="2"
           >
-            <title>Configuration</title>
+            <title>{t('header.config')}</title>
             <circle cx="12" cy="12" r="3"></circle>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
           </svg>

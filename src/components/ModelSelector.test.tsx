@@ -2,6 +2,23 @@ import { render, screen } from '@testing-library/react'
 import { describe, expect, test, vi } from 'vitest'
 import { ModelSelector } from './ModelSelector'
 
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string, options?: { count?: number }) => {
+      const translations: Record<string, string> = {
+        'models.refresh': 'Refresh models list',
+        'models.loading': 'Loading models...',
+        'models.emptyHint': 'Type a model name or click ⟳ to load',
+      }
+      if (key === 'models.available' && options?.count !== undefined) {
+        return `${options.count} model${options.count > 1 ? 's' : ''} available`
+      }
+      return translations[key] || key
+    },
+    i18n: { language: 'en', changeLanguage: vi.fn() },
+  }),
+}))
+
 describe('ModelSelector', () => {
   const defaultProps = {
     value: 'llama2',
@@ -51,24 +68,35 @@ describe('ModelSelector', () => {
   test('should show model count when models are available', () => {
     render(<ModelSelector {...defaultProps} availableModels={['llama2', 'mistral']} />)
 
-    expect(screen.getByText('2 modèles disponibles')).toBeInTheDocument()
+    expect(screen.getByText('2 models available')).toBeInTheDocument()
   })
 
   test('should show singular form when only one model is available', () => {
     render(<ModelSelector {...defaultProps} availableModels={['llama2']} />)
 
-    expect(screen.getByText('1 modèle disponible')).toBeInTheDocument()
+    expect(screen.getByText('1 model available')).toBeInTheDocument()
   })
 
   test('should show info message when no models are available', () => {
     render(<ModelSelector {...defaultProps} availableModels={[]} />)
 
-    expect(screen.getByText(/Tapez un nom de modèle ou cliquez/i)).toBeInTheDocument()
+    expect(screen.getByText(/Type a model name or click/i)).toBeInTheDocument()
   })
 
   test('should show loading status when isLoading is true', () => {
     render(<ModelSelector {...defaultProps} isLoading />)
 
-    expect(screen.getByText(/Chargement des modèles/i)).toBeInTheDocument()
+    const loadingStatus = screen.getByText((_, element) => {
+      return element?.classList.contains('model-status') === true && element.textContent === 'Loading models...'
+    })
+    expect(loadingStatus).toBeInTheDocument()
+  })
+
+  test('should have i18n tooltip on refresh button', () => {
+    render(<ModelSelector {...defaultProps} />)
+
+    const button = screen.getByRole('button')
+    expect(button).toHaveAttribute('title', 'Refresh models list')
+    expect(button).toHaveAttribute('aria-label', 'Refresh models list')
   })
 })

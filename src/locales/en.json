@@ -7,7 +7,13 @@
     "header": {
       "models": "Models",
       "config": "Configuration",
-      "settings": "Settings"
+      "settings": "Settings",
+      "newConversation": "New conversation",
+      "conversations": "Conversations",
+      "exportAll": "Export all conversations",
+      "exportCurrent": "Export current conversation",
+      "deleteConversation": "Delete conversation",
+      "closeConversations": "Close conversations list"
     },
     "chat": {
       "title": "AI Chat",
@@ -48,7 +54,9 @@
         "terminalNotReady": "The terminal is not ready yet",
         "executeCommand": "Execute the command",
         "modify": "Modify",
-        "cancel": "Cancel"
+        "modifyCommand": "Modify the proposed command",
+        "cancel": "Cancel",
+        "cancelCommand": "Cancel the proposed command"
       }
     },
     "terminal": {
@@ -106,13 +114,22 @@
         "apiKeyOptional": "API Key (optional)",
         "maxTokens": "Max Tokens",
         "temperature": "Temperature",
-        "reset": "Reset"
+        "reset": "Reset",
+        "resetTooltip": "Reset configuration to defaults",
+        "save": "Save",
+        "saveTooltip": "Save configuration",
+        "close": "Close"
       }
     },
     "models": {
       "title": "Model Selection",
       "select": "Select",
-      "current": "Current model"
+      "current": "Current model",
+      "refresh": "Refresh models list",
+      "loading": "Loading models...",
+      "available_one": "{{count}} model available",
+      "available_other": "{{count}} models available",
+      "emptyHint": "Type a model name or click ⟳ to load"
     },
     "errors": {
       "connection": "Connection error",
@@ -128,7 +145,8 @@
       "unknownError": "An unexpected error occurred. If the problem persists, please restart the application."
     },
     "test": {
-      "connection": "Test connection"
+      "connection": "Test connection",
+      "connectionTooltip": "Test connection to LLM provider"
     }
   }
 }
