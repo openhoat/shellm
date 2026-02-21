@@ -202,11 +202,19 @@ test.describe('Termaid E2E - Conversation Lifecycle', () => {
     })
 
     test('should export current conversation', async () => {
+      // First, send a message to create an active conversation (sets currentConversationId)
+      await waitForChatReady(page)
+      await sendMessage(page, 'Hello for export test')
+      await waitForAIResponse(page)
+
       // Open conversation list to reveal export button
       await openConversationList(page)
 
-      // Click the "Export Current" button
+      // Wait for the export button to be enabled (has a current conversation now)
       const exportButton = page.locator('.export-button')
+      await expect(exportButton).toBeEnabled({ timeout: 5000 })
+
+      // Click the "Export Current" button
       await exportButton.click()
 
       // Verify export status message appears
@@ -217,6 +225,19 @@ test.describe('Termaid E2E - Conversation Lifecycle', () => {
     })
 
     test('should export all conversations', async () => {
+      // Close dropdown if still open from previous test
+      if (
+        await page
+          .locator('.conversation-dropdown')
+          .isVisible()
+          .catch(() => false)
+      ) {
+        await page.keyboard.press('Escape')
+        await page
+          .waitForSelector('.conversation-dropdown', { state: 'hidden', timeout: 5000 })
+          .catch(() => undefined)
+      }
+
       // Click the export all button in the header
       const exportAllButton = page.locator('header button[title="Export all conversations"]')
       await exportAllButton.click()
