@@ -18,9 +18,6 @@
 
 ## 📝 Backlog
 
-- [x] **#test-resizer [20/02/2026 14:32:00] 🟡 P2 ✅ [TEST]** Improve test coverage for `src/components/Resizer.tsx` (62% → 80% target)
-- [x] **#test-e2e [20/02/2026 14:32:00] 🟡 P2 🏗️ [ARCHITECTURE]** Add E2E tests for main user flows
-- [x] **#ux-tooltips [20/02/2026 14:32:00] 🟢 P3 🎨 [UX]** Add tooltips on action buttons for better usability
 - [ ] **#docs-arch [20/02/2026 14:32:00] 🟢 P3 📝 [DOCS]** Add "Architecture" section in documentation
 
 ## 🚧 In Progress

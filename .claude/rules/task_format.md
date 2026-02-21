@@ -105,7 +105,7 @@ Contains the Kanban board with three sections: Backlog, In Progress, Done
 #### Backlog section (## 📝 Backlog)
 
 - Contains **feature ideas** to convert to tasks (`- [ ]`)
-- Checked ideas (`- [x]`) are considered already converted (to ignore)
+- Checked ideas (`- [x]`) must be removed from Backlog (they should have been deleted when moved to In Progress)
 - Format: `- [ ] **[DD/MM/YYYY HH:mm:ss] Priority CategoryEmoji [CATEGORY]** Idea description`
   - `Priority` is one of: `🔴 P1`, `🟡 P2`, `🟢 P3`
   - `CategoryEmoji [CATEGORY]` is one of the category icons listed below
