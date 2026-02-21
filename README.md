@@ -97,6 +97,7 @@ npm run dev
 - [Usage](https://openhoat.github.io/termaid/guide/usage) — How to use the AI assistant and keyboard shortcuts
 - [Configuration](https://openhoat.github.io/termaid/guide/configuration) — Provider settings and environment variables
 - [Build Executables](https://openhoat.github.io/termaid/guide/build) — Package the app for distribution
+- [Architecture](https://openhoat.github.io/termaid/guide/architecture) — Project structure and design overview
 - [Troubleshooting](https://openhoat.github.io/termaid/guide/troubleshooting) — Common issues and solutions
 - [Contributing](https://openhoat.github.io/termaid/guide/contributing) — How to contribute to the project
 - [Changelog](https://github.com/openhoat/termaid/blob/main/CHANGELOG.md) — Version history and release notes

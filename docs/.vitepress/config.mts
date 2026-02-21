@@ -32,6 +32,10 @@ export default defineConfig({
         ],
       },
       {
+        text: 'Reference',
+        items: [{ text: 'Architecture', link: '/guide/architecture' }],
+      },
+      {
         text: 'Help',
         items: [
           { text: 'Troubleshooting', link: '/guide/troubleshooting' },

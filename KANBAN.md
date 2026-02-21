@@ -18,11 +18,11 @@
 
 ## 📝 Backlog
 
-- [ ] **#docs-arch [20/02/2026 14:32:00] 🟢 P3 📝 [DOCS]** Add "Architecture" section in documentation
-
 ## 🚧 In Progress
 
 ## ✅ Done
+
+- [x] **#docs-arch [21/02/2026 09:26:39] 📝 [DOCS]** Add "Architecture" section in documentation (architecture.md, VitePress sidebar, README)
 
 - [x] **#test-e2e [21/02/2026 08:15:00] 🏗️ [ARCHITECTURE]** Add E2E tests for main user flows (conversation lifecycle, keyboard shortcuts, config persistence, error handling)
 - [x] **#ux-tooltips [21/02/2026 08:00:00] 🎨 [UX]** Add i18n tooltips to all action buttons
