@@ -1,6 +1,14 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
+
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+    i18n: { language: 'en', changeLanguage: vi.fn() },
+  }),
+}))
+
 import { Header } from './Header'
 
 // Mock __APP_VERSION__ global
@@ -164,7 +172,7 @@ describe('Header', () => {
       const user = userEvent.setup()
       render(<Header />)
 
-      const configButton = screen.getByTitle('Configuration')
+      const configButton = screen.getByRole('button', { name: 'header.config' })
       await user.click(configButton)
 
       expect(mockToggleConfigPanel).toHaveBeenCalled()
@@ -311,7 +319,7 @@ describe('Header', () => {
       )
       await user.click(conversationsButton!)
 
-      const exportCurrentButton = screen.getByTitle('Export current conversation')
+      const exportCurrentButton = screen.getByRole('button', { name: /Export Current/i })
       await user.click(exportCurrentButton)
 
       expect(mockConversationExport).toHaveBeenCalledWith('1')
@@ -334,7 +342,7 @@ describe('Header', () => {
       )
       await user.click(conversationsButton!)
 
-      const exportCurrentButton = screen.getByTitle('Export current conversation')
+      const exportCurrentButton = screen.getByRole('button', { name: /Export Current/i })
       await user.click(exportCurrentButton)
 
       expect(await screen.findByText('No active conversation to export')).toBeInTheDocument()
@@ -356,7 +364,7 @@ describe('Header', () => {
       )
       await user.click(conversationsButton!)
 
-      const exportCurrentButton = screen.getByTitle('Export current conversation')
+      const exportCurrentButton = screen.getByRole('button', { name: /Export Current/i })
       await user.click(exportCurrentButton)
 
       expect(screen.getByText(/Exported to \/path\/to\/export.json/)).toBeInTheDocument()
@@ -377,7 +385,7 @@ describe('Header', () => {
       )
       await user.click(conversationsButton!)
 
-      const exportCurrentButton = screen.getByTitle('Export current conversation')
+      const exportCurrentButton = screen.getByRole('button', { name: /Export Current/i })
       await user.click(exportCurrentButton)
 
       expect(screen.getByText('Export failed')).toBeInTheDocument()
@@ -395,7 +403,7 @@ describe('Header', () => {
       )
       await user.click(conversationsButton!)
 
-      const exportCurrentButton = screen.getByTitle('Export current conversation')
+      const exportCurrentButton = screen.getByRole('button', { name: /Export Current/i })
       await user.click(exportCurrentButton)
 
       expect(screen.getByText('Network error')).toBeInTheDocument()
@@ -412,7 +420,7 @@ describe('Header', () => {
       const user = userEvent.setup()
       render(<Header />)
 
-      const exportAllButton = screen.getByTitle('Export all conversations')
+      const exportAllButton = screen.getByRole('button', { name: 'header.exportAll' })
       await user.click(exportAllButton)
 
       expect(mockConversationExportAll).toHaveBeenCalled()
@@ -427,7 +435,7 @@ describe('Header', () => {
       const user = userEvent.setup()
       render(<Header />)
 
-      const exportAllButton = screen.getByTitle('Export all conversations')
+      const exportAllButton = screen.getByRole('button', { name: 'header.exportAll' })
       await user.click(exportAllButton)
 
       expect(screen.getByText(/Exported all conversations/)).toBeInTheDocument()
@@ -442,7 +450,7 @@ describe('Header', () => {
       const user = userEvent.setup()
       render(<Header />)
 
-      const exportAllButton = screen.getByTitle('Export all conversations')
+      const exportAllButton = screen.getByRole('button', { name: 'header.exportAll' })
       await user.click(exportAllButton)
 
       expect(screen.getByText('Export failed')).toBeInTheDocument()
@@ -457,7 +465,7 @@ describe('Header', () => {
       const user = userEvent.setup()
       render(<Header />)
 
-      const exportAllButton = screen.getByTitle('Export all conversations')
+      const exportAllButton = screen.getByRole('button', { name: 'header.exportAll' })
       await user.click(exportAllButton)
 
       expect(screen.queryByText(/Exported/)).not.toBeInTheDocument()
@@ -469,7 +477,7 @@ describe('Header', () => {
       const user = userEvent.setup()
       render(<Header />)
 
-      const exportAllButton = screen.getByTitle('Export all conversations')
+      const exportAllButton = screen.getByRole('button', { name: 'header.exportAll' })
       await user.click(exportAllButton)
 
       expect(screen.getByText('Network error')).toBeInTheDocument()
@@ -491,11 +499,73 @@ describe('Header', () => {
       expect(screen.getByText('First conversation')).toBeInTheDocument()
 
       // Click new conversation button
-      const newButton = screen.getByTitle('New conversation')
+      const newButton = screen.getByRole('button', { name: 'header.newConversation' })
       await user.click(newButton)
 
       // Dropdown should be closed
       expect(screen.queryByText('First conversation')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('tooltips', () => {
+    test('should have tooltip on new conversation button', () => {
+      render(<Header />)
+
+      const button = screen.getByRole('button', { name: 'header.newConversation' })
+      expect(button).toHaveAttribute('title', 'header.newConversation')
+    })
+
+    test('should have tooltip on conversations button', () => {
+      render(<Header />)
+
+      const button = screen.getAllByRole('button').find(
+        btn => btn.getAttribute('aria-haspopup') === 'listbox'
+      )
+      expect(button).toHaveAttribute('title', 'header.conversations')
+    })
+
+    test('should have tooltip on export all button', () => {
+      render(<Header />)
+
+      const button = screen.getByRole('button', { name: 'header.exportAll' })
+      expect(button).toHaveAttribute('title', 'header.exportAll')
+    })
+
+    test('should have tooltip on config button', () => {
+      render(<Header />)
+
+      const button = screen.getByRole('button', { name: 'header.config' })
+      expect(button).toHaveAttribute('title', 'header.config')
+    })
+
+    test('should have tooltip on close conversations dropdown button', async () => {
+      const user = userEvent.setup()
+      render(<Header />)
+
+      const conversationsButton = screen.getAllByRole('button').find(
+        btn => btn.getAttribute('aria-haspopup') === 'listbox'
+      )
+      await user.click(conversationsButton!)
+
+      const closeButtons = screen.getAllByText('✕')
+      expect(closeButtons[0].closest('button')).toHaveAttribute('title', 'header.closeConversations')
+    })
+
+    test('should have tooltip on delete conversation button', async () => {
+      const user = userEvent.setup()
+      render(<Header />)
+
+      const conversationsButton = screen.getAllByRole('button').find(
+        btn => btn.getAttribute('aria-haspopup') === 'listbox'
+      )
+      await user.click(conversationsButton!)
+
+      const deleteButtons = screen.getAllByRole('button', { name: '✕' })
+      for (const btn of deleteButtons) {
+        if (btn.classList.contains('conversation-delete')) {
+          expect(btn).toHaveAttribute('title', 'header.deleteConversation')
+        }
+      }
     })
   })
 })

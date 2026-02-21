@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+
 interface ModelSelectorProps {
   value: string
   onChange: (model: string) => void
@@ -21,6 +23,8 @@ export const ModelSelector = ({
   className = '',
   id = 'ollama-model',
 }: ModelSelectorProps) => {
+  const { t } = useTranslation()
+
   return (
     <div className="model-selector-container">
       <div className="model-input-wrapper">
@@ -46,12 +50,12 @@ export const ModelSelector = ({
           className={`refresh-models-button ${className}`}
           onClick={onRefresh}
           disabled={isLoading || disabled}
-          title="Rafraîchir la liste des modèles"
-          aria-label="Rafraîchir la liste des modèles"
+          title={t('models.refresh')}
+          aria-label={t('models.refresh')}
         >
           {isLoading ? (
             <svg className="spinner" viewBox="0 0 24 24">
-              <title>Chargement...</title>
+              <title>{t('models.loading')}</title>
               <circle cx="12" cy="12" r="10" fill="none" strokeWidth="2" stroke="currentColor" />
               <path
                 d="M12 2a10 10 0 0 1 10 10"
@@ -70,7 +74,7 @@ export const ModelSelector = ({
               stroke="currentColor"
               strokeWidth="2"
             >
-              <title>Rafraîchir la liste des modèles</title>
+              <title>{t('models.refresh')}</title>
               <path d="M23 4v6h-6" />
               <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
             </svg>
@@ -78,17 +82,14 @@ export const ModelSelector = ({
         </button>
       </div>
       <div className="model-info">
-        {isLoading && <span className="model-status loading">Chargement des modèles...</span>}
+        {isLoading && <span className="model-status loading">{t('models.loading')}</span>}
         {!isLoading && availableModels.length > 0 && (
           <span className="model-status success">
-            {availableModels.length} modèle{availableModels.length > 1 ? 's' : ''} disponible
-            {availableModels.length > 1 ? 's' : ''}
+            {t('models.available', { count: availableModels.length })}
           </span>
         )}
         {!isLoading && availableModels.length === 0 && (
-          <span className="model-status info">
-            Tapez un nom de modèle ou cliquez sur ⟳ pour charger
-          </span>
+          <span className="model-status info">{t('models.emptyHint')}</span>
         )}
       </div>
     </div>

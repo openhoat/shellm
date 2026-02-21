@@ -147,14 +147,14 @@ describe('ConfigPanel', () => {
   test('should render save and reset buttons', () => {
     render(<ConfigPanel />)
 
-    expect(screen.getByRole('button', { name: /config.ollama.save/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /config.common.save/ })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /config.common.reset/ })).toBeInTheDocument()
   })
 
   test('should render close button', () => {
     render(<ConfigPanel />)
 
-    const closeButton = screen.getByRole('button', { name: /Close/ })
+    const closeButton = screen.getByRole('button', { name: /config\.common\.close/ })
     expect(closeButton).toBeInTheDocument()
   })
 
@@ -162,7 +162,7 @@ describe('ConfigPanel', () => {
     const user = userEvent.setup()
     render(<ConfigPanel />)
 
-    await user.click(screen.getByRole('button', { name: /Close/ }))
+    await user.click(screen.getByRole('button', { name: /config\.common\.close/ }))
 
     expect(mockToggleConfigPanel).toHaveBeenCalled()
   })
@@ -213,7 +213,7 @@ describe('ConfigPanel', () => {
     const user = userEvent.setup()
     render(<ConfigPanel />)
 
-    const saveButton = screen.getByRole('button', { name: /config.ollama.save/ })
+    const saveButton = screen.getByRole('button', { name: /config.common.save/ })
     await user.click(saveButton)
 
     expect(mockSetConfig_electron).toHaveBeenCalledWith(defaultConfig)
@@ -231,7 +231,7 @@ describe('ConfigPanel', () => {
     await user.tripleClick(urlInput) // Select all text
     await user.keyboard('http://custom:11434')
 
-    const saveButton = screen.getByRole('button', { name: /config.ollama.save/ })
+    const saveButton = screen.getByRole('button', { name: /config.common.save/ })
     await user.click(saveButton)
 
     expect(mockSetConfig_electron).toHaveBeenCalledWith(
@@ -460,5 +460,35 @@ describe('ConfigPanel', () => {
 
     const urlInput = await screen.findByDisplayValue('http://localhost:11434')
     expect(urlInput).toBeDisabled()
+  })
+
+  describe('tooltips', () => {
+    test('should have tooltip on close button', () => {
+      render(<ConfigPanel />)
+
+      const closeButton = screen.getByRole('button', { name: /config\.common\.close/ })
+      expect(closeButton).toHaveAttribute('title', 'config.common.close')
+    })
+
+    test('should have tooltip on test connection button', () => {
+      render(<ConfigPanel />)
+
+      const testButton = screen.getByRole('button', { name: /test\.connection/ })
+      expect(testButton).toHaveAttribute('title', 'test.connectionTooltip')
+    })
+
+    test('should have tooltip on reset button', () => {
+      render(<ConfigPanel />)
+
+      const resetButton = screen.getByRole('button', { name: /config\.common\.reset/ })
+      expect(resetButton).toHaveAttribute('title', 'config.common.resetTooltip')
+    })
+
+    test('should have tooltip on save button', () => {
+      render(<ConfigPanel />)
+
+      const saveButton = screen.getByRole('button', { name: /config\.common\.save/ })
+      expect(saveButton).toHaveAttribute('title', 'config.common.saveTooltip')
+    })
   })
 })

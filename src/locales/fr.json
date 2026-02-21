@@ -7,7 +7,13 @@
     "header": {
       "models": "Modèles",
       "config": "Configuration",
-      "settings": "Paramètres"
+      "settings": "Paramètres",
+      "newConversation": "Nouvelle conversation",
+      "conversations": "Conversations",
+      "exportAll": "Exporter toutes les conversations",
+      "exportCurrent": "Exporter la conversation courante",
+      "deleteConversation": "Supprimer la conversation",
+      "closeConversations": "Fermer la liste des conversations"
     },
     "chat": {
       "title": "Chat IA",
@@ -47,7 +53,9 @@
         "terminalNotReady": "Le terminal n'est pas encore prêt",
         "executeCommand": "Exécuter la commande",
         "modify": "Modifier",
-        "cancel": "Annuler"
+        "modifyCommand": "Modifier la commande proposée",
+        "cancel": "Annuler",
+        "cancelCommand": "Annuler la commande proposée"
       },
       "scrollToBottom": "Défiler vers le bas"
     },
@@ -106,13 +114,22 @@
         "apiKeyOptional": "Clé API (optionnelle)",
         "maxTokens": "Tokens maximum",
         "temperature": "Température",
-        "reset": "Réinitialiser"
+        "reset": "Réinitialiser",
+        "resetTooltip": "Réinitialiser la configuration par défaut",
+        "save": "Enregistrer",
+        "saveTooltip": "Enregistrer la configuration",
+        "close": "Fermer"
       }
     },
     "models": {
       "title": "Sélection du modèle",
       "select": "Sélectionner",
-      "current": "Modèle actuel"
+      "current": "Modèle actuel",
+      "refresh": "Rafraîchir la liste des modèles",
+      "loading": "Chargement des modèles...",
+      "available_one": "{{count}} modèle disponible",
+      "available_other": "{{count}} modèles disponibles",
+      "emptyHint": "Tapez un nom de modèle ou cliquez sur ⟳ pour charger"
     },
     "errors": {
       "connection": "Erreur de connexion",
@@ -128,7 +145,8 @@
       "injectionWarning": "Attention: caractères d'injection détectés et supprimés pour la sécurité: {{patterns}}"
     },
     "test": {
-      "connection": "Tester la connexion"
+      "connection": "Tester la connexion",
+      "connectionTooltip": "Tester la connexion au fournisseur LLM"
     }
   }
 }

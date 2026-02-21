@@ -628,4 +628,63 @@ describe('ChatPanel', () => {
     expect(messages[1]).toHaveTextContent('Second message')
     expect(messages[2]).toHaveTextContent('Third message')
   })
+
+  describe('tooltips', () => {
+    test('should have tooltip on execute button', () => {
+      const aiCommand: AICommandShell = {
+        type: 'command',
+        intent: 'list',
+        command: 'ls',
+        explanation: 'List files',
+        confidence: 0.9,
+      }
+      vi.mocked(useChat).mockReturnValue({
+        ...defaultChatState,
+        aiCommand,
+        terminalPid: 123,
+      })
+      render(<ChatPanel />)
+
+      const executeButton = screen.getByRole('button', { name: /chat\.actions\.execute/i })
+      expect(executeButton).toHaveAttribute('title', 'chat.actions.executeCommand')
+    })
+
+    test('should have tooltip on modify button', () => {
+      const aiCommand: AICommandShell = {
+        type: 'command',
+        intent: 'list',
+        command: 'ls',
+        explanation: 'List files',
+        confidence: 0.9,
+      }
+      vi.mocked(useChat).mockReturnValue({
+        ...defaultChatState,
+        aiCommand,
+        terminalPid: 123,
+      })
+      render(<ChatPanel />)
+
+      const modifyButton = screen.getByRole('button', { name: /chat\.actions\.modify/i })
+      expect(modifyButton).toHaveAttribute('title', 'chat.actions.modifyCommand')
+    })
+
+    test('should have tooltip on cancel button', () => {
+      const aiCommand: AICommandShell = {
+        type: 'command',
+        intent: 'list',
+        command: 'ls',
+        explanation: 'List files',
+        confidence: 0.9,
+      }
+      vi.mocked(useChat).mockReturnValue({
+        ...defaultChatState,
+        aiCommand,
+        terminalPid: 123,
+      })
+      render(<ChatPanel />)
+
+      const cancelButton = screen.getByRole('button', { name: /chat\.actions\.cancel/i })
+      expect(cancelButton).toHaveAttribute('title', 'chat.actions.cancelCommand')
+    })
+  })
 })
