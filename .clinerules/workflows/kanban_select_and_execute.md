@@ -122,14 +122,21 @@ For each task in the section:
 
 5. **Repeat** for each task
 
-#### 4e. Create Git commit
+#### 4e. Move completed tasks to Done
 
-When all tasks of an idea are completed:
+After all tasks of an idea are completed:
+
+1. **Add each completed task** as `- [x]` entry at the top of the "## ✅ Done" section
+2. **Delete the idea section from In Progress** using `replace_in_file`
+
+#### 4f. Create Git commit
+
+When all tasks are moved to Done:
 
 1. **Generate commit message:**
    ```
    [TAG]: Description of the idea
-   
+
    - Task 1 description
    - Task 2 description
    ```
@@ -144,9 +151,7 @@ When all tasks of an idea are completed:
    git commit -m "Commit message"
    ```
 
-4. **Delete section from In Progress** using `replace_in_file`
-
-#### 4f. Move to next idea
+#### 4g. Move to next idea
 
 Continue with the next selected idea until all are completed.
 
@@ -181,7 +186,8 @@ Total: 2 ideas completed, 5 tasks executed, 2 commits created
 - **Wait for user input** when breaking down ideas into tasks
 - **One idea = one commit**: All tasks of an idea are committed together
 - **Delete ideas from Backlog** only after "In Progress" section is created
-- **Delete from In Progress** only after successful commit
+- **Move completed tasks to Done** after execution
+- **Delete from In Progress** only after tasks are moved to Done and commit is successful
 - **If a task fails**, ask user whether to continue or abort
 - **Do not skip tasks** without user approval
 

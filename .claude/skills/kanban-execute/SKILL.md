@@ -73,19 +73,24 @@ For each task:
 4. Mark as completed: change `- [ ]` to `- [x]`
 5. If failed: ask user whether to continue or abort
 
-#### 4e. Create Git commit
+#### 4e. Move completed tasks to Done
 
-When all tasks completed:
+After all tasks are completed, move them to the "## ✅ Done" section:
+1. Add each completed task as `- [x]` entry at the top of the Done section
+2. Delete the idea section from In Progress
+
+#### 4f. Create Git commit
+
+When all tasks completed and moved to Done:
 1. Generate commit message
 2. Stage files: `git add <files>`
 3. Commit: `git commit -m "message"`
-4. Delete section from In Progress
 
-### 5. Regenerate CHANGELOG.md
+### 6. Regenerate CHANGELOG.md
 
 Run: `npm run changelog`
 
-### 6. Final report
+### 7. Final report
 
 Display summary:
 ```
@@ -103,7 +108,8 @@ Total: N ideas completed, N tasks executed, N commits created
 - Always ask for confirmation before executing each task
 - One idea = one commit
 - Delete from Backlog only after In Progress section created
-- Delete from In Progress only after successful commit
+- Move completed tasks to Done after execution
+- Delete from In Progress only after tasks are moved to Done and commit is successful
 - If task fails, ask whether to continue or abort
 
 ## Task Tags

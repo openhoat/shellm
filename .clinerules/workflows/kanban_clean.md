@@ -13,10 +13,6 @@ Summary:
 - `- [x]` → checked task (completed)
 - Task format: `- [ ] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
 
-## Important Note
-
-**There is NO "Done" section in KANBAN.** Completed tasks are deleted from In Progress immediately after commit. The complete history is tracked in Git and CHANGELOG.md.
-
 ## Execution instructions
 
 ### 1. Read KANBAN.md
