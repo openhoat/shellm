@@ -185,7 +185,12 @@ export const ConfigPanel = () => {
       >
         <div className="config-header">
           <h2 id="config-panel-title">{t('config.title')}</h2>
-          <button type="button" className="close-button" onClick={toggleConfigPanel} title={t('config.common.close')}>
+          <button
+            type="button"
+            className="close-button"
+            onClick={toggleConfigPanel}
+            title={t('config.common.close')}
+          >
             <svg
               width="20"
               height="20"
@@ -580,7 +585,12 @@ export const ConfigPanel = () => {
 
           <div className="config-section">
             <div className="config-actions">
-              <button type="button" className="btn btn-test" onClick={testConnection} title={t('test.connectionTooltip')}>
+              <button
+                type="button"
+                className="btn btn-test"
+                onClick={testConnection}
+                title={t('test.connectionTooltip')}
+              >
                 {t('test.connection')}
               </button>
             </div>
@@ -715,10 +725,20 @@ export const ConfigPanel = () => {
         </div>
 
         <div className="config-footer">
-          <button type="button" className="btn btn-reset" onClick={handleReset} title={t('config.common.resetTooltip')}>
+          <button
+            type="button"
+            className="btn btn-reset"
+            onClick={handleReset}
+            title={t('config.common.resetTooltip')}
+          >
             {t('config.common.reset')}
           </button>
-          <button type="button" className="btn btn-save" onClick={handleSave} title={t('config.common.saveTooltip')}>
+          <button
+            type="button"
+            className="btn btn-save"
+            onClick={handleSave}
+            title={t('config.common.saveTooltip')}
+          >
             {t('config.common.save')}
           </button>
         </div>

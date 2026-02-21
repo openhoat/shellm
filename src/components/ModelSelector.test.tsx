@@ -87,7 +87,10 @@ describe('ModelSelector', () => {
     render(<ModelSelector {...defaultProps} isLoading />)
 
     const loadingStatus = screen.getByText((_, element) => {
-      return element?.classList.contains('model-status') === true && element.textContent === 'Loading models...'
+      return (
+        element?.classList.contains('model-status') === true &&
+        element.textContent === 'Loading models...'
+      )
     })
     expect(loadingStatus).toBeInTheDocument()
   })
