@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 21/02
 
+- **[09:36:51] 📝 [DOCS]** Add architecture documentation page with project structure, data flow diagrams, and technology stack
 - **[09:21:00] 🔧 [CHORE]** Align Claude and Cline kanban rules: add Done section workflow, clean checked backlog items, fix inconsistencies
 - **[08:15:00] ✅ [TEST]** Add E2E tests for conversation lifecycle, keyboard shortcuts, config persistence, and error handling
 
