@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useStore } from '../store/useStore'
 import './Header.css'
@@ -89,6 +89,36 @@ export const Header = () => {
       setTimeout(() => setExportStatus(null), 3000)
     }
   }
+
+  // Close conversation dropdown on Escape or click outside
+  useEffect(() => {
+    if (!showConversationList) return
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowConversationList(false)
+      }
+    }
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const dropdown = document.querySelector('.conversation-dropdown')
+      const toggleButton = document.querySelector('button[title="Conversations"]')
+      if (
+        dropdown &&
+        !dropdown.contains(e.target as Node) &&
+        !toggleButton?.contains(e.target as Node)
+      ) {
+        setShowConversationList(false)
+      }
+    }
+
+    document.addEventListener('keydown', handleEscape)
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showConversationList])
 
   const getProviderStatus = () => {
     if (config.llmProvider === 'claude') {

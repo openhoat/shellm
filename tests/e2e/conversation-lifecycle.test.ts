@@ -124,11 +124,11 @@ test.describe('Termaid E2E - Conversation Lifecycle', () => {
 
       // Close the dropdown before creating a new conversation
       await page.keyboard.press('Escape')
-      await page.waitForSelector('.conversation-dropdown', { state: 'hidden' })
+      await page.waitForSelector('.conversation-dropdown', { state: 'hidden', timeout: 5000 })
 
       // Create a new conversation
       await createNewConversation(page)
-      await page.waitForTimeout(300)
+      await waitForChatReady(page)
 
       // Send a message in the new conversation
       await waitForChatReady(page)

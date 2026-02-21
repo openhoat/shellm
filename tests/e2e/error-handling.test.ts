@@ -166,7 +166,7 @@ test.describe('Termaid E2E - Error Handling', () => {
       await expect(configPanel).toBeVisible()
 
       await page.keyboard.press('Escape')
-      await page.waitForFunction(() => !document.querySelector('.config-panel'), { timeout: 5000 })
+      await expect(page.locator('.config-panel')).not.toBeVisible({ timeout: 5000 })
 
       // Verify terminal section is still present
       const terminalWrapper = page.locator('.terminal-wrapper')

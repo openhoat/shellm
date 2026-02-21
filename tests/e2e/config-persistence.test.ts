@@ -80,31 +80,19 @@ test.describe('Termaid E2E - Configuration Persistence', () => {
     test('should show correct section when switching providers', async () => {
       await openConfigPanel(page)
 
-      const providerSelect = page.locator('#provider-select')
+      const providerSelect = page.locator('#llm-provider')
 
       // Switch to Claude provider
       await providerSelect.selectOption('claude')
-      await page.waitForTimeout(300)
-
-      // Verify Claude section appears
-      const claudeSection = page.locator('.claude-section, .config-panel :text("Claude")')
-      await expect(claudeSection.first()).toBeVisible()
+      await expect(page.locator('#claude-api-key')).toBeVisible({ timeout: 5000 })
 
       // Switch to OpenAI provider
       await providerSelect.selectOption('openai')
-      await page.waitForTimeout(300)
-
-      // Verify OpenAI section appears
-      const openaiSection = page.locator('.openai-section, .config-panel :text("OpenAI")')
-      await expect(openaiSection.first()).toBeVisible()
+      await expect(page.locator('#openai-api-key')).toBeVisible({ timeout: 5000 })
 
       // Switch back to Ollama provider
       await providerSelect.selectOption('ollama')
-      await page.waitForTimeout(300)
-
-      // Verify Ollama section returns
-      const ollamaSection = page.locator('.ollama-section, .config-panel :text("Ollama")')
-      await expect(ollamaSection.first()).toBeVisible()
+      await expect(page.locator('#ollama-url')).toBeVisible({ timeout: 5000 })
     })
   })
 

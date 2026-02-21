@@ -188,6 +188,19 @@ export function useChat() {
   )
 
   /**
+   * Clear all local chat state (used by Ctrl+K)
+   */
+  const clearChat = useCallback(() => {
+    setConversation([])
+    setMessageCounter(0)
+    setCurrentCommandIndex(null)
+    setPersistedCommandIndex(null)
+    setUserInput('')
+    setError(null)
+    setAiCommand(null)
+  }, [setError, setAiCommand])
+
+  /**
    * Generate AI command from user prompt
    */
   const generateAICommand = useCallback(
@@ -521,5 +534,6 @@ export function useChat() {
     modifyCommand,
     addToHistory,
     navigateHistory,
+    clearChat,
   }
 }

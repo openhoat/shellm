@@ -87,6 +87,9 @@ const defaultChatState: UseChatReturn = {
   generateAICommand: vi.fn(),
   executeCommand: vi.fn(),
   modifyCommand: vi.fn(),
+  addToHistory: vi.fn(),
+  navigateHistory: vi.fn(),
+  clearChat: vi.fn(),
 }
 
 describe('ChatPanel', () => {
