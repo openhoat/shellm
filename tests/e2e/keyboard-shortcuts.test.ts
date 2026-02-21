@@ -69,10 +69,7 @@ test.describe('Termaid E2E - Keyboard Shortcuts', () => {
       await cancelActionByShortcut(page)
 
       // Wait for config panel to close
-      await page.waitForFunction(() => !document.querySelector('.config-panel'), { timeout: 5000 })
-
-      const panelHidden = await isConfigPanelVisible(page)
-      expect(panelHidden).toBe(false)
+      await expect(page.locator('.config-panel')).not.toBeVisible({ timeout: 5000 })
     })
 
     test('should close conversation dropdown when Escape is pressed', async () => {
@@ -86,9 +83,7 @@ test.describe('Termaid E2E - Keyboard Shortcuts', () => {
       await cancelActionByShortcut(page)
 
       // Wait for dropdown to close
-      await page.waitForSelector('.conversation-dropdown', { state: 'hidden', timeout: 5000 })
-
-      await expect(dropdown).not.toBeVisible()
+      await expect(dropdown).not.toBeVisible({ timeout: 5000 })
     })
   })
 
@@ -112,7 +107,12 @@ test.describe('Termaid E2E - Keyboard Shortcuts', () => {
       await clearAllConversationsByShortcut(page)
 
       // Wait for conversation to be cleared
-      await page.waitForTimeout(300)
+      await page.waitForFunction(
+        () =>
+          !!document.querySelector('.chat-welcome') ||
+          document.querySelectorAll('.chat-message').length === 0,
+        { timeout: 10000 }
+      )
 
       // Verify messages are cleared or welcome screen returns
       const welcomeVisible = await isWelcomeMessageVisible(page)
@@ -133,8 +133,13 @@ test.describe('Termaid E2E - Keyboard Shortcuts', () => {
       // Press Ctrl+K to clear
       await clearAllConversationsByShortcut(page)
 
-      // Wait for state to settle
-      await page.waitForTimeout(300)
+      // Wait for conversation to be cleared
+      await page.waitForFunction(
+        () =>
+          !!document.querySelector('.chat-welcome') ||
+          document.querySelectorAll('.chat-message').length === 0,
+        { timeout: 10000 }
+      )
 
       // Verify cleanup occurred
       const welcomeVisible = await isWelcomeMessageVisible(page)

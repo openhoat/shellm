@@ -109,6 +109,7 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
       // Ctrl+K: Clear conversation
       if (e.ctrlKey && e.key === 'k') {
         e.preventDefault()
+        chat.clearChat()
         clearAllConversations()
       }
 

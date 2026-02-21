@@ -84,6 +84,18 @@ export const ConfigPanel = () => {
     loadEnvSources()
   }, [loadEnvSources])
 
+  // Close on Escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        toggleConfigPanel()
+      }
+    }
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [toggleConfigPanel])
+
   // Focus trap: keep focus inside the dialog and focus it on mount
   useEffect(() => {
     const panel = panelRef.current

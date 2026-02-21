@@ -346,17 +346,30 @@ export async function pressTerminalKey(page: Page, key: string): Promise<void> {
  */
 export async function openConversationList(page: Page): Promise<void> {
   const button = page.locator('header button[title="Conversations"]')
+
+  // Retry up to 3 times in case the dropdown doesn't appear
+  for (let attempt = 0; attempt < 3; attempt++) {
+    await button.click()
+    try {
+      await page.waitForSelector('.conversation-dropdown', { state: 'visible', timeout: 5000 })
+      return
+    } catch {
+      // Click again to toggle (might have opened and closed)
+      await page.waitForTimeout(200)
+    }
+  }
+
+  // Final attempt with longer timeout
   await button.click()
-  await page.waitForSelector('.conversation-dropdown', { state: 'visible' })
+  await page.waitForSelector('.conversation-dropdown', { state: 'visible', timeout: 10000 })
 }
 
 /**
  * Close conversation list dropdown
  */
 export async function closeConversationList(page: Page): Promise<void> {
-  // Click outside to close
   await page.keyboard.press('Escape')
-  await page.waitForSelector('.conversation-dropdown', { state: 'hidden' })
+  await page.waitForSelector('.conversation-dropdown', { state: 'hidden', timeout: 5000 })
 }
 
 /**
@@ -656,8 +669,9 @@ export async function mockElectronAPIForError(
  * This ensures a clean slate by:
  * 1. Canceling any pending command actions (Escape)
  * 2. Closing config panel if open
- * 3. Clearing all conversations (Ctrl+K)
- * 4. Brief wait for state to settle
+ * 3. Closing conversation dropdown if open
+ * 4. Clearing all conversations (Ctrl+K)
+ * 5. Waiting for welcome screen or empty state
  */
 export async function resetAppState(page: Page): Promise<void> {
   // Cancel any pending command actions
@@ -668,17 +682,43 @@ export async function resetAppState(page: Page): Promise<void> {
   }
 
   // Close config panel if open
-  const configPanel = page.locator('.config-panel')
-  if (await configPanel.isVisible({ timeout: 200 }).catch(() => false)) {
+  if (
+    await page
+      .locator('.config-panel')
+      .isVisible()
+      .catch(() => false)
+  ) {
     await page.keyboard.press('Escape')
-    await page.waitForTimeout(100)
+    await page
+      .waitForFunction(() => !document.querySelector('.config-panel'), { timeout: 5000 })
+      .catch(() => undefined)
   }
 
-  // Clear all conversations
+  // Close conversation dropdown if open
+  if (
+    await page
+      .locator('.conversation-dropdown')
+      .isVisible()
+      .catch(() => false)
+  ) {
+    await page.keyboard.press('Escape')
+    await page
+      .waitForSelector('.conversation-dropdown', { state: 'hidden', timeout: 5000 })
+      .catch(() => undefined)
+  }
+
+  // Clear all conversations via Ctrl+K
   await page.keyboard.press('Control+k')
 
-  // Brief wait for the clear action to process
-  await page.waitForTimeout(200)
+  // Wait for welcome message or empty state
+  await page
+    .waitForFunction(
+      () =>
+        !!document.querySelector('.chat-welcome') ||
+        document.querySelectorAll('.chat-message').length === 0,
+      { timeout: 5000 }
+    )
+    .catch(() => undefined)
 }
 
 /**
