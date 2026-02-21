@@ -21,11 +21,3 @@
 ## 🚧 In Progress
 
 ## ✅ Done
-
-- [x] **#docs-arch [21/02/2026 09:26:39] 📝 [DOCS]** Add "Architecture" section in documentation (architecture.md, VitePress sidebar, README)
-
-- [x] **#test-e2e [21/02/2026 08:15:00] 🏗️ [ARCHITECTURE]** Add E2E tests for main user flows (conversation lifecycle, keyboard shortcuts, config persistence, error handling)
-- [x] **#ux-tooltips [21/02/2026 08:00:00] 🎨 [UX]** Add i18n tooltips to all action buttons
-- [x] **#test-resizer [20/02/2026 15:30:00] ✅ [TEST]** Improve test coverage for `src/components/Resizer.tsx` (62% → 96.55%)
-- [x] **#test-header [20/02/2026 15:26:00] ✅ [TEST]** Improve test coverage for `src/components/Header.tsx` (58% → 80%)
-- [x] **#test-logger [20/02/2026 14:38:00] ✅ [TEST]** Improve test coverage for `src/utils/logger.ts` (46% → 96.96%)
