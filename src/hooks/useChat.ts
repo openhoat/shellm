@@ -78,9 +78,13 @@ export function useChat() {
     addMessageToConversation,
     updateMessageInConversation,
     loadConversations,
+    chatResetKey,
   } = useStore()
 
   const { addToast } = useToast()
+
+  // Track chatResetKey to reset local state when conversation changes
+  const prevResetKeyRef = useRef(chatResetKey)
 
   // Debounced user input for auto-hiding AI command
   const debouncedUserInput = useDebounce(userInput, DEBOUNCE_MS)
@@ -199,6 +203,14 @@ export function useChat() {
     setError(null)
     setAiCommand(null)
   }, [setError, setAiCommand])
+
+  // Reset local chat state when chatResetKey changes (conversation switch/delete)
+  useEffect(() => {
+    if (chatResetKey !== prevResetKeyRef.current) {
+      prevResetKeyRef.current = chatResetKey
+      clearChat()
+    }
+  }, [chatResetKey, clearChat])
 
   /**
    * Generate AI command from user prompt

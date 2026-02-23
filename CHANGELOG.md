@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 23/02
 
+- **[15:25:00] ♻️ [REFACTOR]** Replace `window.location.reload()` with Zustand `chatResetKey` trigger for conversation switching
 - **[14:50:00] ♻️ [REFACTOR]** Extract model lists to `shared/models.ts`, centralize dangerous command checks, remove dead OllamaService
 - **[13:35:00] 🐛 [FIX]** Remove duplicate chat-language field in ConfigPanel causing invalid HTML
 - **[13:35:00] 🔒 [SECURITY]** Remove dead code `video:save-to-path` handler with path traversal risk

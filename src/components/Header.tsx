@@ -11,6 +11,7 @@ export const Header = () => {
     currentConversationId,
     loadConversation,
     deleteConversation,
+    incrementChatResetKey,
   } = useStore()
   const { t } = useTranslation()
   const [showConversationList, setShowConversationList] = useState(false)
@@ -24,8 +25,7 @@ export const Header = () => {
   const handleLoadConversation = (id: string) => {
     loadConversation(id)
     setShowConversationList(false)
-    // Reload page to reset ChatPanel state
-    window.location.reload()
+    incrementChatResetKey()
   }
 
   const handleDeleteConversation = async (id: string, e: MouseEvent) => {
@@ -33,7 +33,7 @@ export const Header = () => {
     if (window.confirm('Are you sure you want to delete this conversation?')) {
       await deleteConversation(id)
       if (currentConversationId === id) {
-        window.location.reload()
+        incrementChatResetKey()
       }
     }
   }

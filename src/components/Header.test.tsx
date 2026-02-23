@@ -33,12 +33,7 @@ Object.defineProperty(window, 'electronAPI', {
   writable: true,
 })
 
-// Mock window.location.reload
-const mockReload = vi.fn()
-Object.defineProperty(window, 'location', {
-  value: { reload: mockReload },
-  writable: true,
-})
+const mockIncrementChatResetKey = vi.fn()
 
 // Mock confirm - default to true
 const mockConfirm = vi.fn(() => true)
@@ -66,6 +61,7 @@ const createMockStore = (overrides = {}) => ({
   currentConversationId: '1',
   loadConversation: mockLoadConversation,
   deleteConversation: mockDeleteConversation,
+  incrementChatResetKey: mockIncrementChatResetKey,
   ...overrides,
 })
 
@@ -261,7 +257,7 @@ describe('Header', () => {
       await user.click(conversationItem)
 
       expect(mockLoadConversation).toHaveBeenCalledWith('1')
-      expect(mockReload).toHaveBeenCalled()
+      expect(mockIncrementChatResetKey).toHaveBeenCalled()
     })
 
     test('should load conversation with Enter key', async () => {
@@ -280,7 +276,7 @@ describe('Header', () => {
       await user.type(conversationButton!, '{Enter}')
 
       expect(mockLoadConversation).toHaveBeenCalledWith('1')
-      expect(mockReload).toHaveBeenCalled()
+      expect(mockIncrementChatResetKey).toHaveBeenCalled()
     })
 
     test('should load conversation with Space key', async () => {
@@ -299,7 +295,7 @@ describe('Header', () => {
       await user.type(conversationButton!, ' ')
 
       expect(mockLoadConversation).toHaveBeenCalledWith('1')
-      expect(mockReload).toHaveBeenCalled()
+      expect(mockIncrementChatResetKey).toHaveBeenCalled()
     })
   })
 

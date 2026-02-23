@@ -41,6 +41,10 @@ interface AppState {
   deleteConversation: (id: string) => Promise<void>
   clearAllConversations: () => Promise<void>
 
+  // Chat reset
+  chatResetKey: number
+  incrementChatResetKey: () => void
+
   // UI
   showConfigPanel: boolean
   toggleConfigPanel: () => void
@@ -191,6 +195,10 @@ export const useStore = create<AppState>((set, _get) => ({
       currentConversation: null,
     })
   },
+
+  // Chat reset
+  chatResetKey: 0,
+  incrementChatResetKey: () => set(state => ({ chatResetKey: state.chatResetKey + 1 })),
 
   // UI
   showConfigPanel: false,

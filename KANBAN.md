@@ -22,7 +22,6 @@
 - [ ] **#perf-bundle [21/02/2026 10:00:00] 🟡 P2 🚀 [PERFORMANCE]** Add Vite code splitting (`manualChunks`) and lazy-load ConfigPanel with `React.lazy`
 - [ ] **#perf-terminal [21/02/2026 10:00:00] 🟡 P2 🚀 [PERFORMANCE]** Batch terminal output processing and throttle Resizer with `requestAnimationFrame`
 - [ ] **#perf-convo [21/02/2026 10:00:00] 🟡 P2 🚀 [PERFORMANCE]** Add in-memory cache for ConversationService and switch to async file I/O
-- [ ] **#arch-reload [21/02/2026 10:00:00] 🟡 P2 🏗️ [ARCHITECTURE]** Replace `window.location.reload()` with proper state reset for conversation switching
 - [ ] **#i18n-strings [21/02/2026 10:00:00] 🟡 P2 🌍 [I18N]** Replace hardcoded French/English strings with i18n keys in services and Header component
 - [ ] **#dep-xterm [21/02/2026 10:00:00] 🟡 P2 📦 [DEPENDENCIES]** Migrate deprecated `xterm` to `@xterm/xterm` and run `npm audit fix` for fixable vulnerabilities
 - [ ] **#test-cov [21/02/2026 10:00:00] 🟡 P2 ✅ [TEST]** Add unit tests for `useChat.ts` (525 lines, 0%), `base-provider.ts` (402 lines), and `conversationService.ts` (233 lines)
@@ -36,6 +35,7 @@
 
 ## ✅ Done
 
+- [x] **#arch-reload [23/02/2026 15:18:00] ♻️ [REFACTOR]** Replace `window.location.reload()` with `chatResetKey` store trigger
 - [x] **#arch-dedup [23/02/2026 14:43:00] ♻️ [REFACTOR]** Consolidate duplicated code (model lists, dangerous commands, OllamaService)
 - [x] **#fix-configpanel [23/02/2026 13:35:00] 🐛 [FIX]** Fix duplicate chat-language field in ConfigPanel (invalid HTML, broken a11y)
 - [x] **#sec-ipc [23/02/2026 13:35:00] 🔒 [SECURITY]** Remove dead code `video:save-to-path` and add size limit on `terminal:write` IPC handler
