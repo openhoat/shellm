@@ -10,6 +10,10 @@ To view the complete history, use: `git log`
 
 #### 23/02
 
+- **[13:35:00] 🐛 [FIX]** Remove duplicate chat-language field in ConfigPanel causing invalid HTML
+- **[13:35:00] 🔒 [SECURITY]** Remove dead code `video:save-to-path` handler with path traversal risk
+- **[13:35:00] 🔒 [SECURITY]** Add size limit validation on `terminal:write` IPC handler (1 MB max)
+- **[13:35:00] 🔒 [SECURITY]** Enhance `isAppConfig()` validation and add shell allowlist in terminal handler
 - **[08:49:47] 🐛 [FIX]** Skip save dialog in test mode for export handlers to fix CI headless timeout
 - **[08:21:39] ♻️ [REFACTOR]** Consolidate dist-electron, test-results, playwright-report into dist/
 

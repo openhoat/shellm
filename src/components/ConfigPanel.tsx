@@ -661,24 +661,6 @@ export const ConfigPanel = () => {
             </div>
 
             <div className="config-field">
-              <label htmlFor="chat-language">{t('config.chatLanguage.title')}</label>
-              <select
-                id="chat-language"
-                value={localConfig.chatLanguage || 'auto'}
-                onChange={e =>
-                  setLocalConfig({
-                    ...localConfig,
-                    chatLanguage: e.target.value,
-                  })
-                }
-              >
-                <option value="auto">{t('config.chatLanguage.auto')}</option>
-                <option value="en">{t('config.chatLanguage.en')}</option>
-                <option value="fr">{t('config.chatLanguage.fr')}</option>
-              </select>
-            </div>
-
-            <div className="config-field">
               <label htmlFor="font-size">
                 {t('config.interface.fontSize')}: {localConfig.fontSize}px
               </label>

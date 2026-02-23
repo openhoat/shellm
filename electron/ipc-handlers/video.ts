@@ -1,5 +1,4 @@
 import fs from 'node:fs'
-import path from 'node:path'
 import { type BrowserWindow, desktopCapturer, dialog, ipcMain } from 'electron'
 
 type WindowGetter = () => BrowserWindow | null
@@ -75,34 +74,6 @@ export function createVideoHandlers(getWindow: WindowGetter): void {
       } catch (error) {
         // biome-ignore lint/suspicious/noConsole: Debug logging for video save errors
         console.error('[Video] Failed to save video:', error)
-        return {
-          error: error instanceof Error ? error.message : 'Unknown error',
-        }
-      }
-    }
-  )
-
-  /**
-   * Save video data to a specific path (no dialog)
-   */
-  ipcMain.handle(
-    'video:save-to-path',
-    async (_event, { base64Data, filePath }: { base64Data: string; filePath: string }) => {
-      try {
-        // Ensure directory exists
-        const dir = path.dirname(filePath)
-        if (!fs.existsSync(dir)) {
-          fs.mkdirSync(dir, { recursive: true })
-        }
-
-        // Decode base64 and save
-        const buffer = Buffer.from(base64Data, 'base64')
-        fs.writeFileSync(filePath, buffer)
-
-        return { success: true, filePath }
-      } catch (error) {
-        // biome-ignore lint/suspicious/noConsole: Debug logging for video save errors
-        console.error('[Video] Failed to save video to path:', error)
         return {
           error: error instanceof Error ? error.message : 'Unknown error',
         }

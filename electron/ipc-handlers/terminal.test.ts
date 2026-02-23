@@ -73,6 +73,21 @@ describe('Terminal IPC Handlers', () => {
 
       expect(typeof writeHandler).toBe('function')
     })
+
+    test('should reject oversized write data', async () => {
+      createTerminalHandlers(getWindow as any)
+
+      const writeHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'terminal:write'
+      )?.[1]
+
+      if (writeHandler) {
+        const oversizedData = 'x'.repeat(1_048_577)
+        await expect(writeHandler({}, 1, oversizedData)).rejects.toThrow(
+          'Invalid or oversized write data'
+        )
+      }
+    })
   })
 
   describe('terminal:resize', () => {

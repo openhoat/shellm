@@ -102,22 +102,32 @@ describe('Config IPC Handlers', () => {
   })
 
   describe('config:set', () => {
-    test('should store config and notify renderer', async () => {
+    test('should store valid config and notify renderer', async () => {
       const mockStore = {
         get: vi.fn(),
         set: vi.fn(),
       }
 
       const newConfig = {
+        llmProvider: 'ollama',
         ollama: {
           url: 'http://localhost:8080',
           model: 'mistral',
           temperature: 0.5,
           maxTokens: 2000,
         },
+        claude: {
+          apiKey: '',
+          model: 'claude-sonnet-4-20250514',
+        },
+        openai: {
+          apiKey: '',
+          model: 'gpt-4',
+        },
         theme: 'light',
         fontSize: 16,
         shell: 'zsh',
+        chatLanguage: 'auto',
       }
 
       createConfigHandlers(getWindow as any, mockStore as any)
@@ -132,6 +142,24 @@ describe('Config IPC Handlers', () => {
         expect(mockStore.set).toHaveBeenCalledWith('config', newConfig)
         expect(mainWindow.webContents.send).toHaveBeenCalledWith('config:changed', newConfig)
         expect(result).toBe(newConfig)
+      }
+    })
+
+    test('should reject invalid config object', async () => {
+      const mockStore = {
+        get: vi.fn(),
+        set: vi.fn(),
+      }
+
+      createConfigHandlers(getWindow as any, mockStore as any)
+
+      const setHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'config:set'
+      )?.[1]
+
+      if (setHandler) {
+        await expect(setHandler({}, { invalid: true })).rejects.toThrow('Invalid config object')
+        expect(mockStore.set).not.toHaveBeenCalled()
       }
     })
   })

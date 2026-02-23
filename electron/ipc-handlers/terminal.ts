@@ -18,6 +18,12 @@ type WindowGetter = () => BrowserWindow | null
 
 const terminals = new Map<number, TerminalInstance>()
 
+/** Maximum size for terminal write data (1 MB) */
+const MAX_WRITE_SIZE = 1_048_576
+
+/** Allowed shell binaries */
+const SHELL_ALLOWLIST = ['bash', 'zsh', 'fish', 'sh', 'powershell.exe', 'pwsh', 'cmd.exe']
+
 /**
  * Detect the default shell based on the operating system
  */
@@ -68,7 +74,9 @@ export function createTerminalHandlers(getWindow: WindowGetter): void {
     if (shellPreference === 'auto') {
       shell = detectDefaultShell()
     } else {
-      shell = shellPreference
+      // Validate shell against allowlist, fallback to default if invalid
+      const shellName = shellPreference.split('/').pop() || shellPreference
+      shell = SHELL_ALLOWLIST.includes(shellName) ? shellPreference : detectDefaultShell()
     }
 
     // Create a copy of the environment with the correct type for node-pty
@@ -141,6 +149,9 @@ export function createTerminalHandlers(getWindow: WindowGetter): void {
 
   // Write data to terminal
   ipcMain.handle('terminal:write', async (_event, pid: number, data: string) => {
+    if (typeof data !== 'string' || data.length > MAX_WRITE_SIZE) {
+      throw new Error('Invalid or oversized write data')
+    }
     const terminal = terminals.get(pid)
     if (terminal) {
       terminal.pty.write(data)
