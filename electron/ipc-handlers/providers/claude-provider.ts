@@ -1,16 +1,8 @@
 import { ChatAnthropic } from '@langchain/anthropic'
 import { ChatPromptTemplate } from '@langchain/core/prompts'
+import { CLAUDE_MODELS } from '@shared/models'
 import type { ClaudeConfig } from '@shared/types'
 import { BaseLLMProvider } from './base-provider'
-
-// Available Claude models
-export const CLAUDE_MODELS = [
-  'claude-opus-4-6',
-  'claude-sonnet-4-5-20250929',
-  'claude-haiku-4-5-20251001',
-  'claude-3-5-sonnet-20241022',
-  'claude-3-haiku-20240307',
-]
 
 /**
  * Claude (Anthropic) LLM provider

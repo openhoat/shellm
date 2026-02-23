@@ -1,3 +1,5 @@
+import { isCommandDangerous } from '@shared/dangerousCommands'
+
 /**
  * Service pur pour la logique liée au terminal
  * Testable sans dépendance à React ou Electron
@@ -66,18 +68,10 @@ export const terminalService = {
    * (peut être étendu avec des règles de sécurité)
    */
   isCommandSafe(command: string): { safe: boolean; reason?: string } {
-    const dangerousCommands = ['rm -rf /', 'mkfs', 'dd if=/dev/zero']
-    const lowerCommand = command.toLowerCase()
-
-    for (const dangerous of dangerousCommands) {
-      if (lowerCommand.includes(dangerous.toLowerCase())) {
-        return {
-          safe: false,
-          reason: `Commande potentiellement dangereuse détectée: ${dangerous}`,
-        }
-      }
+    const result = isCommandDangerous(command)
+    if (result.dangerous) {
+      return { safe: false, reason: result.reason }
     }
-
     return { safe: true }
   },
 }

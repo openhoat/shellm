@@ -1,10 +1,8 @@
 import { ChatPromptTemplate } from '@langchain/core/prompts'
 import { ChatOpenAI } from '@langchain/openai'
+import { OPENAI_MODELS } from '@shared/models'
 import type { OpenAIConfig } from '@shared/types'
 import { BaseLLMProvider } from './base-provider'
-
-// Available OpenAI models
-export const OPENAI_MODELS = ['gpt-4o', 'gpt-4o-mini', 'gpt-4', 'gpt-4-turbo', 'gpt-3.5-turbo']
 
 /**
  * OpenAI LLM provider

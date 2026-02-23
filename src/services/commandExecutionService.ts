@@ -1,5 +1,8 @@
+import { isCommandDangerous } from '@shared/dangerousCommands'
 import type { ConversationHistory } from '@shared/types'
 import { chatService } from './chatService'
+
+export { isCommandDangerous }
 
 export interface ExecuteCommandOptions {
   command: string
@@ -15,31 +18,6 @@ export interface ExecuteCommandResult {
 }
 
 /**
- * Dangerous command blacklist patterns
- * These patterns match commands that could be destructive or harmful
- */
-const DANGEROUS_COMMAND_PATTERNS = [
-  // File deletion
-  /^rm\s+-rf?\s+\/$/,
-  /^rm\s+-rf?\s+\/\w/,
-  /^dd\s+.*\s+of=\/dev\/(sda|hda|vda|sd|hd|vd)/i,
-  /^mkfs\./i,
-  /^mkfs\s+/i,
-  /^format\s/i,
-  // System destruction
-  /^:(){:|:&};:/, // Fork bomb
-  /^shutdown/i,
-  /^poweroff/i,
-  /^reboot/i,
-  // Disk operations
-  /^wipefs\s+/i,
-  /^shred\s+/i,
-  // Kernel operations
-  /^rmmod\s+/i,
-  /^modprobe\s+-r\s+/i,
-]
-
-/**
  * Character patterns that could indicate command injection
  */
 const INJECTION_PATTERNS = [
@@ -50,39 +28,6 @@ const INJECTION_PATTERNS = [
   /\\n/i, // Newline
   /\\r/i, // Carriage return
 ]
-
-/**
- * Checks if a command is dangerous based on the blacklist patterns
- * @param command - The command string to check
- * @returns An object indicating if the command is dangerous and the reason
- */
-export function isCommandDangerous(command: string): { dangerous: boolean; reason?: string } {
-  const trimmedCommand = command.trim()
-
-  for (const pattern of DANGEROUS_COMMAND_PATTERNS) {
-    if (pattern.test(trimmedCommand)) {
-      return {
-        dangerous: true,
-        reason: 'Command matches dangerous pattern',
-      }
-    }
-  }
-
-  // Check for sudo with destructive commands
-  if (/^sudo\s+/i.test(trimmedCommand)) {
-    const sudoCommand = trimmedCommand.substring(5).trim()
-    for (const pattern of DANGEROUS_COMMAND_PATTERNS) {
-      if (pattern.test(sudoCommand)) {
-        return {
-          dangerous: true,
-          reason: 'Sudo command with destructive pattern',
-        }
-      }
-    }
-  }
-
-  return { dangerous: false }
-}
 
 /**
  * Sanitizes user input to prevent command injection

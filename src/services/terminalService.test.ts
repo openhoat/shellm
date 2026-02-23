@@ -122,19 +122,19 @@ describe('terminalService', () => {
     test('should detect dangerous rm -rf / command', () => {
       const result = terminalService.isCommandSafe('rm -rf /')
       expect(result.safe).toBe(false)
-      expect(result.reason).toBe('Commande potentiellement dangereuse détectée: rm -rf /')
+      expect(result.reason).toBe('Command matches dangerous pattern')
     })
 
     test('should detect dangerous mkfs command', () => {
       const result = terminalService.isCommandSafe('mkfs.ext4 /dev/sda1')
       expect(result.safe).toBe(false)
-      expect(result.reason).toBe('Commande potentiellement dangereuse détectée: mkfs')
+      expect(result.reason).toBe('Command matches dangerous pattern')
     })
 
     test('should detect dangerous dd command', () => {
       const result = terminalService.isCommandSafe('dd if=/dev/zero of=/dev/sda')
       expect(result.safe).toBe(false)
-      expect(result.reason).toBe('Commande potentiellement dangereuse détectée: dd if=/dev/zero')
+      expect(result.reason).toBe('Command matches dangerous pattern')
     })
 
     test('should be case insensitive for dangerous commands', () => {
