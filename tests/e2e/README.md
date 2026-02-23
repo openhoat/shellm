@@ -161,5 +161,5 @@ For CI environments, the tests will:
 ## Notes
 
 - E2E tests require a display (X11 on Linux, or headless mode)
-- The Electron app is built automatically if `dist-electron/` doesn't exist
+- The Electron app is built automatically if `dist/electron/` doesn't exist
 - Each test runs in isolation with a fresh app instance

@@ -41,7 +41,7 @@ Invoke this skill when you need to:
 ```
 ✓ Vite build completed
 ✓ Electron build completed
-Build artifacts in: dist/, dist-electron/
+Build artifacts in: dist/ (frontend in dist/assets/, backend in dist/electron/)
 ```
 
 ### Failure Output
@@ -67,6 +67,6 @@ If build fails:
 ## Notes
 
 - TypeScript configuration is in `tsconfig.json` and `electron/tsconfig.json`
-- Build artifacts go to `dist/` (frontend) and `dist-electron/` (backend)
+- Build artifacts go to `dist/` (frontend in `dist/assets/`, backend in `dist/electron/`)
 - The build includes prompt file copying for Electron
 - Use this skill before deployment to ensure compilation succeeds

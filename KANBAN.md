@@ -18,7 +18,6 @@
 
 ## 📝 Backlog
 
-- [ ] **#test-e2e-ci [21/02/2026 09:45:00] 🔴 P1 ✅ [TEST]** Fix flaky E2E tests in CI (10 failures: keyboard-shortcuts, conversation-lifecycle, config-persistence, error-handling — timing/selector issues in headless Electron)
 - [ ] **#sec-ipc [21/02/2026 10:00:00] 🔴 P1 🔒 [SECURITY]** Fix path traversal in `video:save-to-path` and add server-side command validation in `terminal:write` IPC handler
 - [ ] **#sec-config [21/02/2026 10:00:00] 🔴 P1 🔒 [SECURITY]** Add input validation on `config:set` IPC handler and shell allowlist in terminal handler
 - [ ] **#fix-configpanel [21/02/2026 10:00:00] 🔴 P1 🏗️ [ARCHITECTURE]** Fix duplicate chat-language field in ConfigPanel (invalid HTML, broken a11y)
@@ -39,4 +38,12 @@
 
 ## 🚧 In Progress
 
+### [21/02/2026 09:45:00] 🔴 P1 ✅ [TEST] Fix flaky E2E tests in CI (10 failures in headless Electron)
+- [ ] **[21/02/2026 14:00:00] ✅ [TEST]** Harden E2E helpers for headless reliability (resetAppState, openConversationList, panel close)
+- [ ] **[21/02/2026 14:00:00] ✅ [TEST]** Fix keyboard-shortcuts.test.ts (4 failures: Escape + Ctrl+K)
+- [ ] **[21/02/2026 14:00:00] ✅ [TEST]** Fix conversation-lifecycle.test.ts (5 failures: timing + selectors)
+- [ ] **[21/02/2026 14:00:00] ✅ [TEST]** Fix config-persistence.test.ts + error-handling.test.ts (2 failures)
+
 ## ✅ Done
+
+- [x] **[23/02/2026 08:19:00] ♻️ [REFACTOR]** Consolidate `dist-electron`, `test-results`, `playwright-report` directories into `dist/`

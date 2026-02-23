@@ -10,7 +10,6 @@ lerna-debug.log*
 # Dependencies
 node_modules/
 dist
-dist-electron
 /release
 
 # Editor directories and files
@@ -54,8 +53,6 @@ Thumbs.db
 .nyc_output/
 
 # Playwright E2E tests
-test-results/
-playwright-report/
 blob-report/
 playwright/.cache/
 

@@ -9,7 +9,7 @@ echo "🎬 Generating Termaid demo GIF..."
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUTPUT_DIR="$PROJECT_ROOT/dist/demo"
-FRAME_DIR="$PROJECT_ROOT/test-results/demo-frames"
+FRAME_DIR="$PROJECT_ROOT/dist/test-results/demo-frames"
 
 # Clean previous output
 rm -rf "$OUTPUT_DIR"
@@ -59,6 +59,6 @@ echo "✅ Demo MP4: dist/demo/demo.mp4 ($MP4_SIZE)"
 echo "✅ Copied to: docs/public/demo.gif"
 
 # Clean up test artifacts
-rm -rf "$PROJECT_ROOT/test-results"
+rm -rf "$PROJECT_ROOT/dist/test-results"
 
 echo "🎉 Done!"

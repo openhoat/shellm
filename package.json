@@ -2,7 +2,7 @@
   "name": "termaid",
   "version": "1.2.3",
   "description": "Modern AI-powered terminal with Ollama integration",
-  "main": "dist-electron/electron/main.js",
+  "main": "dist/electron/main.js",
   "homepage": "https://github.com/openhoat/termaid",
   "scripts": {
     "build": "wireit",
@@ -10,7 +10,7 @@
     "build:vite": "wireit",
     "bump-version": "node scripts/bump-version.js",
     "changelog": "node scripts/generate-changelog.js",
-    "clean": "rimraf -g -v dist dist-electron release **/tsconfig.tsbuildinfo",
+    "clean": "rimraf -g -v dist release **/tsconfig.tsbuildinfo",
     "commit:lint": "commitlint --edit",
     "dev": "wireit",
     "dev:electron": "wireit",
@@ -103,11 +103,13 @@
         "index.html"
       ],
       "output": [
-        "dist/**/*"
+        "dist/index.html",
+        "dist/assets/**/*",
+        "dist/logo.svg"
       ]
     },
     "build:electron": {
-      "command": "tsc -p electron/tsconfig.json && tsc-alias -p electron/tsconfig.json && node scripts/fix-imports.js && node -e \"const fs=require('fs');const path=require('path');const src=path.join('electron','prompts');const dest=path.join('dist-electron','electron','prompts');if(fs.existsSync(src)){fs.mkdirSync(dest,{recursive:true});fs.readdirSync(src).forEach(f=>fs.copyFileSync(path.join(src,f),path.join(dest,f)))}\"",
+      "command": "tsc -p electron/tsconfig.json && tsc-alias -p electron/tsconfig.json && node scripts/fix-imports.js && node -e \"const fs=require('fs');const path=require('path');const src=path.join('electron','prompts');const dest=path.join('dist','electron','prompts');if(fs.existsSync(src)){fs.mkdirSync(dest,{recursive:true});fs.readdirSync(src).forEach(f=>fs.copyFileSync(path.join(src,f),path.join(dest,f)))}\"",
       "dependencies": [
         "build:vite"
       ],
@@ -119,7 +121,8 @@
         "scripts/fix-imports.js"
       ],
       "output": [
-        "dist-electron/**/*"
+        "dist/electron/**/*",
+        "dist/shared/**/*"
       ]
     },
     "build": {
@@ -145,7 +148,6 @@
       ],
       "files": [
         "dist/**/*",
-        "dist-electron/**/*",
         "package.json",
         "electron-builder.yml"
       ],
@@ -160,7 +162,6 @@
       ],
       "files": [
         "dist/**/*",
-        "dist-electron/**/*",
         "package.json",
         "electron-builder.yml"
       ],
@@ -175,7 +176,6 @@
       ],
       "files": [
         "dist/**/*",
-        "dist-electron/**/*",
         "package.json",
         "electron-builder.yml"
       ],
@@ -190,7 +190,6 @@
       ],
       "files": [
         "dist/**/*",
-        "dist-electron/**/*",
         "package.json",
         "electron-builder.yml"
       ],
@@ -229,7 +228,6 @@
       "files": [
         "tests/e2e/**/*.ts",
         "playwright.config.ts",
-        "dist-electron/**/*",
         "dist/**/*"
       ],
       "output": [],
@@ -260,7 +258,8 @@
         "build:electron"
       ],
       "files": [
-        "dist-electron/**/*"
+        "dist/electron/**/*",
+        "dist/shared/**/*"
       ],
       "service": true
     },
@@ -285,8 +284,11 @@
     },
     "files": [
       "dist/**/*",
-      "dist-electron/**/*",
-      "!dist-electron/**/*.map",
+      "!dist/**/*.map",
+      "!dist/coverage/**",
+      "!dist/test-results/**",
+      "!dist/playwright-report/**",
+      "!dist/demo/**",
       "package.json",
       "build/**/*"
     ],

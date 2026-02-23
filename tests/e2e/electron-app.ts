@@ -35,16 +35,16 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
   // Build the app first if needed
   const projectRoot = path.resolve(__dirname, '..', '..')
 
-  // Check if dist-electron exists, if not build it
+  // Check if dist/electron exists, if not build it
   try {
-    execSync('test -d dist-electron/electron', { cwd: projectRoot, stdio: 'pipe' })
+    execSync('test -d dist/electron', { cwd: projectRoot, stdio: 'pipe' })
   } catch {
     // Build Electron app for E2E tests
     execSync('npm run build:electron', { cwd: projectRoot, stdio: 'inherit' })
   }
 
   // Build args for Electron
-  const args = [path.join(projectRoot, 'dist-electron', 'electron', 'main.js')]
+  const args = [path.join(projectRoot, 'dist', 'electron', 'main.js')]
 
   // Add X11 and headless flags when running in headless mode (via xvfb-run)
   // This forces Electron to use X11 instead of Wayland, allowing xvfb to capture the display

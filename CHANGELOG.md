@@ -8,6 +8,10 @@ To view the complete history, use: `git log`
 
 ### 2026
 
+#### 23/02
+
+- **[08:19:00] ♻️ [REFACTOR]** Consolidate `dist-electron`, `test-results`, `playwright-report` directories under `dist/`
+
 #### 21/02
 
 - **[09:37:07] 📝 [DOCS]** Add architecture documentation page

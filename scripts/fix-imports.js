@@ -76,14 +76,17 @@ function fixImportsInFile(filePath) {
   }
 }
 
-// Main
-const distDir = path.join(__dirname, '..', 'dist-electron')
+// Main - process electron and shared output directories
+const distBase = path.join(__dirname, '..', 'dist')
+const dirs = [path.join(distBase, 'electron'), path.join(distBase, 'shared')].filter(dir =>
+  fs.existsSync(dir)
+)
 
-if (!fs.existsSync(distDir)) {
+if (dirs.length === 0) {
   process.exit(0)
 }
 
-const jsFiles = findJsFiles(distDir)
+const jsFiles = dirs.flatMap(dir => findJsFiles(dir))
 
 for (const file of jsFiles) {
   fixImportsInFile(file)

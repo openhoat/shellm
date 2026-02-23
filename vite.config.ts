@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     outDir: 'dist',
-    emptyOutDir: true,
+    emptyOutDir: false,
     sourcemap: mode === 'development',
     rollupOptions: {
       onwarn(warning, warn) {

@@ -14,7 +14,7 @@ import {
 let app: ElectronApplication
 let page: Page
 
-const FRAME_DIR = path.resolve('test-results', 'demo-frames')
+const FRAME_DIR = path.resolve('dist', 'test-results', 'demo-frames')
 const FRAME_INTERVAL_MS = 100 // 10 fps
 
 let frameCounter = 0
@@ -160,7 +160,7 @@ test.describe('Termaid Demo', () => {
     const commandActionsVisible = await isCommandActionsVisible(page)
     if (!commandActionsVisible) {
       await stopFrameCapture(page)
-      await page.screenshot({ path: 'test-results/demo-debug.png' })
+      await page.screenshot({ path: 'dist/test-results/demo-debug.png' })
       throw new Error('Command actions not visible after AI response')
     }
 
