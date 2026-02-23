@@ -1,4 +1,4 @@
-import { type BrowserWindow, dialog, ipcMain } from 'electron'
+import { app, type BrowserWindow, dialog, ipcMain } from 'electron'
 import type { Conversation, ConversationMessage } from '../../shared/types'
 import { getConversationService } from '../services/conversationService'
 
@@ -74,6 +74,17 @@ export function createConversationHandlers(_getWindow: WindowGetter): void {
         ? `${conversation.title.replace(/[^a-zA-Z0-9_-]/g, '_')}_export.json`
         : 'conversation_export.json'
 
+      const fs = await import('node:fs')
+      const path = await import('node:path')
+
+      // In test mode, write to a temp file without showing a dialog
+      if (process.env.NODE_ENV === 'test') {
+        const tempDir = app.getPath('temp')
+        const filePath = path.join(tempDir, defaultName)
+        fs.writeFileSync(filePath, exportData, 'utf-8')
+        return { success: true, filePath }
+      }
+
       const { filePath } = await dialog.showSaveDialog({
         title: 'Export Conversation',
         defaultPath: defaultName,
@@ -84,7 +95,6 @@ export function createConversationHandlers(_getWindow: WindowGetter): void {
       })
 
       if (filePath) {
-        const fs = await import('node:fs')
         fs.writeFileSync(filePath, exportData, 'utf-8')
         return { success: true, filePath }
       }
@@ -108,6 +118,17 @@ export function createConversationHandlers(_getWindow: WindowGetter): void {
       const date = new Date().toISOString().split('T')[0]
       const defaultName = `termaid_conversations_${date}.json`
 
+      const fs = await import('node:fs')
+      const path = await import('node:path')
+
+      // In test mode, write to a temp file without showing a dialog
+      if (process.env.NODE_ENV === 'test') {
+        const tempDir = app.getPath('temp')
+        const filePath = path.join(tempDir, defaultName)
+        fs.writeFileSync(filePath, exportData, 'utf-8')
+        return { success: true, filePath }
+      }
+
       const { filePath } = await dialog.showSaveDialog({
         title: 'Export All Conversations',
         defaultPath: defaultName,
@@ -118,7 +139,6 @@ export function createConversationHandlers(_getWindow: WindowGetter): void {
       })
 
       if (filePath) {
-        const fs = await import('node:fs')
         fs.writeFileSync(filePath, exportData, 'utf-8')
         return { success: true, filePath }
       }
