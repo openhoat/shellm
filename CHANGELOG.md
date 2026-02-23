@@ -10,10 +10,16 @@ To view the complete history, use: `git log`
 
 #### 23/02
 
-- **[08:19:00] ♻️ [REFACTOR]** Consolidate `dist-electron`, `test-results`, `playwright-report` directories under `dist/`
+- **[08:49:47] 🐛 [FIX]** Skip save dialog in test mode for export handlers to fix CI headless timeout
+- **[08:21:39] ♻️ [REFACTOR]** Consolidate dist-electron, test-results, playwright-report into dist/
 
 #### 21/02
 
+- **[19:46:52] 🐛 [FIX]** Use api verification for export tests instead of ui status element
+- **[19:36:02] 🐛 [FIX]** Fix export conversation tests by creating active conversation
+- **[19:26:52] 🐛 [FIX]** Fix 10 flaky e2e tests in ci headless environment
+- **[09:47:43] 🔧 [CHORE]** Add 18 improvement ideas from comprehensive project audit
+- **[09:40:17] 🔧 [CHORE]** Clean kanban done section and update changelog
 - **[09:37:07] 📝 [DOCS]** Add architecture documentation page
 - **[09:24:28] 🔧 [CHORE]** Align claude and cline kanban workflow rules
 - **[09:15:11] ✅ [TEST]** Add e2e tests for main user flows
