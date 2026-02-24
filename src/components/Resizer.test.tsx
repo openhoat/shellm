@@ -13,7 +13,7 @@ describe('Resizer', () => {
       const onResize = vi.fn()
       render(<Resizer onResize={onResize} />)
 
-      const resizer = screen.getByTitle('Drag to resize')
+      const resizer = screen.getByRole('separator')
       expect(resizer).toBeInTheDocument()
       expect(resizer).toHaveClass('resizer')
       expect(resizer).toHaveClass('resizer-horizontal')
@@ -23,7 +23,7 @@ describe('Resizer', () => {
       const onResize = vi.fn()
       render(<Resizer onResize={onResize} direction="vertical" />)
 
-      const resizer = screen.getByTitle('Drag to resize')
+      const resizer = screen.getByRole('separator')
       expect(resizer).toHaveClass('resizer-vertical')
       expect(resizer).not.toHaveClass('resizer-horizontal')
     })
@@ -32,7 +32,7 @@ describe('Resizer', () => {
       const onResize = vi.fn()
       render(<Resizer onResize={onResize} />)
 
-      const resizer = screen.getByTitle('Drag to resize')
+      const resizer = screen.getByRole('separator')
       expect(resizer).not.toHaveClass('resizer-active')
     })
 
@@ -40,7 +40,7 @@ describe('Resizer', () => {
       const onResize = vi.fn()
       render(<Resizer onResize={onResize} minSize={200} />)
 
-      const resizer = screen.getByTitle('Drag to resize')
+      const resizer = screen.getByRole('separator')
       expect(resizer).toBeInTheDocument()
     })
   })
@@ -51,7 +51,7 @@ describe('Resizer', () => {
       const onResize = vi.fn()
       render(<Resizer onResize={onResize} />)
 
-      const resizer = screen.getByTitle('Drag to resize')
+      const resizer = screen.getByRole('separator')
       await user.pointer({ target: resizer, keys: '[MouseLeft>]' })
 
       expect(resizer).toHaveClass('resizer-active')
@@ -62,7 +62,7 @@ describe('Resizer', () => {
       const onResize = vi.fn()
       render(<Resizer onResize={onResize} />)
 
-      const resizer = screen.getByTitle('Drag to resize')
+      const resizer = screen.getByRole('separator')
       await user.pointer({ target: resizer, keys: '[MouseLeft>]' })
       await user.pointer({ keys: '[/MouseLeft]' })
 
@@ -73,7 +73,7 @@ describe('Resizer', () => {
       const onResize = vi.fn()
       render(<Resizer onResize={onResize} />)
 
-      const resizer = screen.getByTitle('Drag to resize')
+      const resizer = screen.getByRole('separator')
       const event = new MouseEvent('mousedown', {
         bubbles: true,
         cancelable: true,
@@ -99,7 +99,7 @@ describe('Resizer', () => {
         </div>
       )
 
-      const resizer = screen.getByTitle('Drag to resize')
+      const resizer = screen.getByRole('separator')
 
       // Mock the parent element's getBoundingClientRect
       const mockParent = {
@@ -132,7 +132,7 @@ describe('Resizer', () => {
         </div>
       )
 
-      const resizer = screen.getByTitle('Drag to resize')
+      const resizer = screen.getByRole('separator')
 
       const mockParent = {
         getBoundingClientRect: () => containerRect,
@@ -164,7 +164,7 @@ describe('Resizer', () => {
         </div>
       )
 
-      const resizer = screen.getByTitle('Drag to resize')
+      const resizer = screen.getByRole('separator')
 
       const mockParent = {
         getBoundingClientRect: () => containerRect,
@@ -199,7 +199,7 @@ describe('Resizer', () => {
         </div>
       )
 
-      const resizer = screen.getByTitle('Drag to resize')
+      const resizer = screen.getByRole('separator')
 
       const mockParent = {
         getBoundingClientRect: () => containerRect,
@@ -231,7 +231,7 @@ describe('Resizer', () => {
         </div>
       )
 
-      const resizer = screen.getByTitle('Drag to resize')
+      const resizer = screen.getByRole('separator')
 
       const mockParent = {
         getBoundingClientRect: () => containerRect,
@@ -254,6 +254,195 @@ describe('Resizer', () => {
     })
   })
 
+  describe('accessibility', () => {
+    test('should have separator role', () => {
+      const onResize = vi.fn()
+      render(<Resizer onResize={onResize} />)
+
+      expect(screen.getByRole('separator')).toBeInTheDocument()
+    })
+
+    test('should have aria-orientation matching direction', () => {
+      const onResize = vi.fn()
+      const { rerender } = render(<Resizer onResize={onResize} direction="horizontal" />)
+
+      const resizer = screen.getByRole('separator')
+      expect(resizer).toHaveAttribute('aria-orientation', 'horizontal')
+
+      rerender(<Resizer onResize={onResize} direction="vertical" />)
+      expect(resizer).toHaveAttribute('aria-orientation', 'vertical')
+    })
+
+    test('should have aria-label', () => {
+      const onResize = vi.fn()
+      render(<Resizer onResize={onResize} />)
+
+      expect(screen.getByRole('separator')).toHaveAttribute('aria-label', 'Resize panels')
+    })
+
+    test('should be focusable via tabIndex', () => {
+      const onResize = vi.fn()
+      render(<Resizer onResize={onResize} />)
+
+      expect(screen.getByRole('separator')).toHaveAttribute('tabindex', '0')
+    })
+
+    test('should resize with ArrowRight key in horizontal mode', () => {
+      const onResize = vi.fn()
+      const containerRect = { left: 0, top: 0, width: 1000, height: 600 }
+
+      render(
+        <div>
+          <Resizer onResize={onResize} direction="horizontal" minSize={100} />
+        </div>
+      )
+
+      const resizer = screen.getByRole('separator')
+
+      Object.defineProperty(resizer, 'parentElement', {
+        value: { getBoundingClientRect: () => containerRect },
+        writable: true,
+      })
+      vi.spyOn(resizer, 'getBoundingClientRect').mockReturnValue({
+        left: 500,
+        top: 0,
+        width: 4,
+        height: 600,
+        right: 504,
+        bottom: 600,
+        x: 500,
+        y: 0,
+        toJSON: () => undefined,
+      })
+
+      fireEvent.keyDown(resizer, { key: 'ArrowRight' })
+
+      expect(onResize).toHaveBeenCalledWith(520)
+    })
+
+    test('should resize with ArrowLeft key in horizontal mode', () => {
+      const onResize = vi.fn()
+      const containerRect = { left: 0, top: 0, width: 1000, height: 600 }
+
+      render(
+        <div>
+          <Resizer onResize={onResize} direction="horizontal" minSize={100} />
+        </div>
+      )
+
+      const resizer = screen.getByRole('separator')
+
+      Object.defineProperty(resizer, 'parentElement', {
+        value: { getBoundingClientRect: () => containerRect },
+        writable: true,
+      })
+      vi.spyOn(resizer, 'getBoundingClientRect').mockReturnValue({
+        left: 500,
+        top: 0,
+        width: 4,
+        height: 600,
+        right: 504,
+        bottom: 600,
+        x: 500,
+        y: 0,
+        toJSON: () => undefined,
+      })
+
+      fireEvent.keyDown(resizer, { key: 'ArrowLeft' })
+
+      expect(onResize).toHaveBeenCalledWith(480)
+    })
+
+    test('should resize with ArrowDown key in vertical mode', () => {
+      const onResize = vi.fn()
+      const containerRect = { left: 0, top: 0, width: 1000, height: 600 }
+
+      render(
+        <div>
+          <Resizer onResize={onResize} direction="vertical" minSize={100} />
+        </div>
+      )
+
+      const resizer = screen.getByRole('separator')
+
+      Object.defineProperty(resizer, 'parentElement', {
+        value: { getBoundingClientRect: () => containerRect },
+        writable: true,
+      })
+      vi.spyOn(resizer, 'getBoundingClientRect').mockReturnValue({
+        left: 0,
+        top: 300,
+        width: 1000,
+        height: 4,
+        right: 1000,
+        bottom: 304,
+        x: 0,
+        y: 300,
+        toJSON: () => undefined,
+      })
+
+      fireEvent.keyDown(resizer, { key: 'ArrowDown' })
+
+      expect(onResize).toHaveBeenCalledWith(320)
+    })
+
+    test('should ignore irrelevant keys in horizontal mode', () => {
+      const onResize = vi.fn()
+      const containerRect = { left: 0, top: 0, width: 1000, height: 600 }
+
+      render(
+        <div>
+          <Resizer onResize={onResize} direction="horizontal" minSize={100} />
+        </div>
+      )
+
+      const resizer = screen.getByRole('separator')
+
+      Object.defineProperty(resizer, 'parentElement', {
+        value: { getBoundingClientRect: () => containerRect },
+        writable: true,
+      })
+
+      fireEvent.keyDown(resizer, { key: 'ArrowUp' })
+
+      expect(onResize).not.toHaveBeenCalled()
+    })
+
+    test('should clamp keyboard resize to minSize', () => {
+      const onResize = vi.fn()
+      const containerRect = { left: 0, top: 0, width: 1000, height: 600 }
+
+      render(
+        <div>
+          <Resizer onResize={onResize} direction="horizontal" minSize={100} />
+        </div>
+      )
+
+      const resizer = screen.getByRole('separator')
+
+      Object.defineProperty(resizer, 'parentElement', {
+        value: { getBoundingClientRect: () => containerRect },
+        writable: true,
+      })
+      vi.spyOn(resizer, 'getBoundingClientRect').mockReturnValue({
+        left: 105,
+        top: 0,
+        width: 4,
+        height: 600,
+        right: 109,
+        bottom: 600,
+        x: 105,
+        y: 0,
+        toJSON: () => undefined,
+      })
+
+      fireEvent.keyDown(resizer, { key: 'ArrowLeft' })
+
+      // 105 - 20 = 85, clamped to minSize 100
+      expect(onResize).toHaveBeenCalledWith(100)
+    })
+  })
+
   describe('edge cases', () => {
     test('should not call onResize when not dragging', async () => {
       const onResize = vi.fn()
@@ -271,7 +460,7 @@ describe('Resizer', () => {
 
       render(<Resizer onResize={onResize} />)
 
-      const resizer = screen.getByTitle('Drag to resize')
+      const resizer = screen.getByRole('separator')
 
       // Mock parentElement to be null
       Object.defineProperty(resizer, 'parentElement', {
@@ -296,7 +485,7 @@ describe('Resizer', () => {
 
       render(<Resizer onResize={onResize} />)
 
-      const resizer = screen.getByTitle('Drag to resize')
+      const resizer = screen.getByRole('separator')
 
       // Mock parentElement with getBoundingClientRect returning null
       const mockParent = {
@@ -325,7 +514,7 @@ describe('Resizer', () => {
 
       const { unmount } = render(<Resizer onResize={onResize} />)
 
-      const resizer = screen.getByTitle('Drag to resize')
+      const resizer = screen.getByRole('separator')
 
       // Start drag
       fireEvent.mouseDown(resizer, { clientX: 100, clientY: 50 })

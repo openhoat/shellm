@@ -82,7 +82,7 @@ export const ModelSelector = ({
         </button>
       </div>
       <div className="model-info">
-        {isLoading && <span className="model-status loading">{t('models.loading')}</span>}
+        {isLoading && <output className="model-status loading">{t('models.loading')}</output>}
         {!isLoading && availableModels.length > 0 && (
           <span className="model-status success">
             {t('models.available', { count: availableModels.length })}

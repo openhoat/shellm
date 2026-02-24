@@ -632,6 +632,66 @@ describe('ChatPanel', () => {
     expect(messages[2]).toHaveTextContent('Third message')
   })
 
+  describe('accessibility', () => {
+    test('should have log role on messages container', () => {
+      render(<ChatPanel />)
+
+      expect(screen.getByRole('log')).toBeInTheDocument()
+    })
+
+    test('should have aria-live="polite" on messages container', () => {
+      render(<ChatPanel />)
+
+      expect(screen.getByRole('log')).toHaveAttribute('aria-live', 'polite')
+    })
+
+    test('should have aria-label on messages container', () => {
+      render(<ChatPanel />)
+
+      expect(screen.getByRole('log')).toHaveAttribute('aria-label', 'Chat messages')
+    })
+
+    test('should have aria-label on loading spinner', () => {
+      vi.mocked(useChat).mockReturnValue({
+        ...defaultChatState,
+        isLoading: true,
+      })
+      render(<ChatPanel />)
+
+      const spinner = document.querySelector('.loading-spinner')
+      expect(spinner).toHaveAttribute('aria-label', 'Loading')
+      expect(spinner?.tagName).toBe('OUTPUT')
+    })
+
+    test('should have aria-label on interpreting spinner', () => {
+      vi.mocked(useChat).mockReturnValue({
+        ...defaultChatState,
+        isInterpreting: true,
+      })
+      render(<ChatPanel />)
+
+      const spinner = document.querySelector('.loading-spinner')
+      expect(spinner).toHaveAttribute('aria-label', 'Interpreting')
+      expect(spinner?.tagName).toBe('OUTPUT')
+    })
+
+    test('should have progressbar role with correct ARIA attributes during execution', () => {
+      vi.mocked(useChat).mockReturnValue({
+        ...defaultChatState,
+        isExecuting: true,
+        executionProgress: 45,
+      })
+      render(<ChatPanel />)
+
+      const progressbar = screen.getByRole('progressbar')
+      expect(progressbar).toBeInTheDocument()
+      expect(progressbar).toHaveAttribute('aria-valuenow', '45')
+      expect(progressbar).toHaveAttribute('aria-valuemin', '0')
+      expect(progressbar).toHaveAttribute('aria-valuemax', '100')
+      expect(progressbar).toHaveAttribute('aria-label', 'Command execution progress')
+    })
+  })
+
   describe('tooltips', () => {
     test('should have tooltip on execute button', () => {
       const aiCommand: AICommandShell = {

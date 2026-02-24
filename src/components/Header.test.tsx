@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
@@ -503,6 +503,149 @@ describe('Header', () => {
     })
   })
 
+  describe('accessibility', () => {
+    test('should set aria-expanded to false when dropdown is closed', () => {
+      render(<Header />)
+
+      const conversationsButton = screen
+        .getAllByRole('button')
+        .find(btn => btn.getAttribute('aria-haspopup') === 'listbox')
+      expect(conversationsButton).toHaveAttribute('aria-expanded', 'false')
+    })
+
+    test('should set aria-expanded to true when dropdown is open', async () => {
+      const user = userEvent.setup()
+      render(<Header />)
+
+      const conversationsButton = screen
+        .getAllByRole('button')
+        .find(btn => btn.getAttribute('aria-haspopup') === 'listbox')
+      await user.click(conversationsButton!)
+
+      expect(conversationsButton).toHaveAttribute('aria-expanded', 'true')
+    })
+
+    test('should have aria-haspopup="listbox" on conversations button', () => {
+      render(<Header />)
+
+      const conversationsButton = screen
+        .getAllByRole('button')
+        .find(btn => btn.getAttribute('aria-haspopup') === 'listbox')
+      expect(conversationsButton).toBeInTheDocument()
+    })
+
+    test('should have listbox role on conversation list', async () => {
+      const user = userEvent.setup()
+      render(<Header />)
+
+      const conversationsButton = screen
+        .getAllByRole('button')
+        .find(btn => btn.getAttribute('aria-haspopup') === 'listbox')
+      await user.click(conversationsButton!)
+
+      expect(screen.getByRole('listbox')).toBeInTheDocument()
+      expect(screen.getByRole('listbox')).toHaveAttribute('aria-label', 'Conversations')
+    })
+
+    test('should set aria-current on the active conversation', async () => {
+      const user = userEvent.setup()
+      render(<Header />)
+
+      const conversationsButton = screen
+        .getAllByRole('button')
+        .find(btn => btn.getAttribute('aria-haspopup') === 'listbox')
+      await user.click(conversationsButton!)
+
+      const activeItem = screen.getByText('First conversation').closest('button.conversation-item')
+      expect(activeItem).toHaveAttribute('aria-current', 'true')
+
+      const inactiveItem = screen
+        .getByText('Second conversation')
+        .closest('button.conversation-item')
+      expect(inactiveItem).not.toHaveAttribute('aria-current')
+    })
+
+    test('should navigate to next conversation with ArrowDown', async () => {
+      const user = userEvent.setup()
+      render(<Header />)
+
+      const conversationsButton = screen
+        .getAllByRole('button')
+        .find(btn => btn.getAttribute('aria-haspopup') === 'listbox')
+      await user.click(conversationsButton!)
+
+      const firstItem = screen.getByText('First conversation').closest('button.conversation-item')
+      firstItem?.focus()
+
+      // ArrowDown should move focus to next item
+      fireEvent.keyDown(firstItem!, { key: 'ArrowDown' })
+
+      const secondItem = screen.getByText('Second conversation').closest('button.conversation-item')
+      expect(document.activeElement).toBe(secondItem)
+    })
+
+    test('should navigate to previous conversation with ArrowUp', async () => {
+      const user = userEvent.setup()
+      render(<Header />)
+
+      const conversationsButton = screen
+        .getAllByRole('button')
+        .find(btn => btn.getAttribute('aria-haspopup') === 'listbox')
+      await user.click(conversationsButton!)
+
+      const secondItem = screen.getByText('Second conversation').closest('button.conversation-item')
+      secondItem?.focus()
+
+      fireEvent.keyDown(secondItem!, { key: 'ArrowUp' })
+
+      const firstItem = screen.getByText('First conversation').closest('button.conversation-item')
+      expect(document.activeElement).toBe(firstItem)
+    })
+
+    test('should close dropdown with Escape key from conversation item', async () => {
+      const user = userEvent.setup()
+      render(<Header />)
+
+      const conversationsButton = screen
+        .getAllByRole('button')
+        .find(btn => btn.getAttribute('aria-haspopup') === 'listbox')
+      await user.click(conversationsButton!)
+
+      expect(screen.getByText('First conversation')).toBeInTheDocument()
+
+      const firstItem = screen.getByText('First conversation').closest('button.conversation-item')
+      fireEvent.keyDown(firstItem!, { key: 'Escape' })
+
+      expect(screen.queryByText('First conversation')).not.toBeInTheDocument()
+    })
+
+    test('should have aria-label on close and delete buttons', async () => {
+      const user = userEvent.setup()
+      render(<Header />)
+
+      const conversationsButton = screen
+        .getAllByRole('button')
+        .find(btn => btn.getAttribute('aria-haspopup') === 'listbox')
+      await user.click(conversationsButton!)
+
+      // Close button
+      const closeButtons = screen.getAllByText('✕')
+      expect(closeButtons[0].closest('button')).toHaveAttribute(
+        'aria-label',
+        'header.closeConversations'
+      )
+
+      // Delete buttons
+      const deleteButtons = screen.getAllByRole('button', {
+        name: 'header.deleteConversation',
+      })
+      expect(deleteButtons.length).toBeGreaterThan(0)
+      for (const btn of deleteButtons) {
+        expect(btn).toHaveAttribute('aria-label', 'header.deleteConversation')
+      }
+    })
+  })
+
   describe('tooltips', () => {
     test('should have tooltip on new conversation button', () => {
       render(<Header />)
@@ -559,11 +702,12 @@ describe('Header', () => {
         .find(btn => btn.getAttribute('aria-haspopup') === 'listbox')
       await user.click(conversationsButton!)
 
-      const deleteButtons = screen.getAllByRole('button', { name: '✕' })
+      const deleteButtons = screen.getAllByRole('button', {
+        name: 'header.deleteConversation',
+      })
       for (const btn of deleteButtons) {
-        if (btn.classList.contains('conversation-delete')) {
-          expect(btn).toHaveAttribute('title', 'header.deleteConversation')
-        }
+        expect(btn).toHaveAttribute('title', 'header.deleteConversation')
+        expect(btn).toHaveAttribute('aria-label', 'header.deleteConversation')
       }
     })
   })

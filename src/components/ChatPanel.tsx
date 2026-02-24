@@ -228,11 +228,11 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
         {chat.isLoading && (
           <div className="chat-message ai">
             <div className="message-content">
-              <div className="loading-spinner">
+              <output className="loading-spinner" aria-label="Loading">
                 <span></span>
                 <span></span>
                 <span></span>
-              </div>
+              </output>
             </div>
           </div>
         )}
@@ -240,11 +240,11 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
         {chat.isInterpreting && (
           <div className="chat-message ai">
             <div className="message-content">
-              <div className="loading-spinner">
+              <output className="loading-spinner" aria-label="Interpreting">
                 <span></span>
                 <span></span>
                 <span></span>
-              </div>
+              </output>
               <p>{t('chat.progress.interpreting')}</p>
             </div>
           </div>
@@ -254,7 +254,14 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
           <div className="chat-message ai">
             <div className="message-content">
               <div className="progress-indicator">
-                <div className="progress-bar">
+                <div
+                  className="progress-bar"
+                  role="progressbar"
+                  aria-valuenow={chat.executionProgress}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label="Command execution progress"
+                >
                   <div
                     className="progress-fill"
                     style={{ width: `${chat.executionProgress}%` }}

@@ -369,4 +369,18 @@ describe('Terminal', () => {
     expect(container).toContainElement(header)
     expect(container).toContainElement(content)
   })
+
+  describe('accessibility', () => {
+    test('should have region role on terminal content', () => {
+      render(<Terminal />)
+
+      expect(screen.getByRole('region')).toBeInTheDocument()
+    })
+
+    test('should have aria-label on terminal content', () => {
+      render(<Terminal />)
+
+      expect(screen.getByRole('region')).toHaveAttribute('aria-label', 'Terminal output')
+    })
+  })
 })

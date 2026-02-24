@@ -26,7 +26,6 @@
 - [ ] **#dep-xterm [21/02/2026 10:00:00] 🟡 P2 📦 [DEPENDENCIES]** Migrate deprecated `xterm` to `@xterm/xterm` and run `npm audit fix` for fixable vulnerabilities
 - [ ] **#test-cov [21/02/2026 10:00:00] 🟡 P2 ✅ [TEST]** Add unit tests for `useChat.ts` (525 lines, 0%), `base-provider.ts` (402 lines), and `conversationService.ts` (233 lines)
 - [ ] **#sec-mock [21/02/2026 10:00:00] 🟡 P2 🔒 [SECURITY]** Strip E2E mock code from production builds (gate behind `NODE_ENV === 'test'`)
-- [ ] **#ux-a11y [21/02/2026 10:00:00] 🟢 P3 🎨 [UX]** Improve accessibility (Resizer ARIA roles, Terminal ARIA labels, dropdown keyboard nav, spinner status)
 - [ ] **#sec-keys [21/02/2026 10:00:00] 🟢 P3 🔒 [SECURITY]** Use Electron `safeStorage` for API keys and disable DevTools in production builds
 - [ ] **#arch-types [21/02/2026 10:00:00] 🟢 P3 🏗️ [ARCHITECTURE]** Fix unsafe type assertions, Terminal cleanup leak, store async error handling, and export consistency
 - [ ] **#dep-update [21/02/2026 10:00:00] 🟢 P3 📦 [DEPENDENCIES]** Apply patch/minor dependency updates (`@langchain/*`, `biome`, `electron`, `i18next`, etc.)
@@ -34,6 +33,8 @@
 ## 🚧 In Progress
 
 ## ✅ Done
+
+- [x] **#ux-a11y [24/02/2026 14:25:00] 🎨 [STYLE]** Add ARIA roles, keyboard support, and accessibility tests to Resizer, Terminal, Header dropdown, and ChatPanel spinners
 
 - [x] **#arch-reload [23/02/2026 15:18:00] ♻️ [REFACTOR]** Replace `window.location.reload()` with `chatResetKey` store trigger
 - [x] **#arch-dedup [23/02/2026 14:43:00] ♻️ [REFACTOR]** Consolidate duplicated code (model lists, dangerous commands, OllamaService)

@@ -215,6 +215,7 @@ export const Header = () => {
                   type="button"
                   onClick={() => setShowConversationList(false)}
                   title={t('header.closeConversations')}
+                  aria-label={t('header.closeConversations')}
                 >
                   ✕
                 </button>
@@ -247,30 +248,53 @@ export const Header = () => {
                       Export Current
                     </button>
                   </div>
-                  <ul className="conversation-list">
+                  {/* biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: Listbox pattern requires role on container */}
+                  <ul className="conversation-list" role="listbox" aria-label="Conversations">
                     {conversations.map(conv => (
-                      <button
-                        type="button"
-                        key={conv.id}
-                        className={`conversation-item ${conv.id === currentConversationId ? 'active' : ''}`}
-                        onClick={() => handleLoadConversation(conv.id)}
-                        onKeyDown={e => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault()
-                            handleLoadConversation(conv.id)
-                          }
-                        }}
-                      >
-                        <span className="conversation-title">{conv.title}</span>
+                      <li key={conv.id}>
                         <button
                           type="button"
-                          className="conversation-delete"
-                          onClick={e => handleDeleteConversation(conv.id, e)}
-                          title={t('header.deleteConversation')}
+                          className={`conversation-item ${conv.id === currentConversationId ? 'active' : ''}`}
+                          aria-current={conv.id === currentConversationId ? 'true' : undefined}
+                          onClick={() => handleLoadConversation(conv.id)}
+                          onKeyDown={e => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault()
+                              handleLoadConversation(conv.id)
+                            }
+                            if (e.key === 'ArrowDown') {
+                              e.preventDefault()
+                              const next = e.currentTarget.parentElement?.nextElementSibling
+                              const btn = next?.querySelector(
+                                'button.conversation-item'
+                              ) as HTMLElement
+                              btn?.focus()
+                            }
+                            if (e.key === 'ArrowUp') {
+                              e.preventDefault()
+                              const prev = e.currentTarget.parentElement?.previousElementSibling
+                              const btn = prev?.querySelector(
+                                'button.conversation-item'
+                              ) as HTMLElement
+                              btn?.focus()
+                            }
+                            if (e.key === 'Escape') {
+                              setShowConversationList(false)
+                            }
+                          }}
                         >
-                          ✕
+                          <span className="conversation-title">{conv.title}</span>
+                          <button
+                            type="button"
+                            className="conversation-delete"
+                            onClick={e => handleDeleteConversation(conv.id, e)}
+                            title={t('header.deleteConversation')}
+                            aria-label={t('header.deleteConversation')}
+                          >
+                            ✕
+                          </button>
                         </button>
-                      </button>
+                      </li>
                     ))}
                   </ul>
                 </>

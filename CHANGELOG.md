@@ -8,6 +8,10 @@ To view the complete history, use: `git log`
 
 ### 2026
 
+#### 24/02
+
+- **[14:25:00] 🎨 [STYLE]** Add ARIA `aria-valuenow` to Resizer separator and accessibility tests for Resizer, Terminal, Header dropdown, and ChatPanel spinners
+
 #### 23/02
 
 - **[15:25:00] ♻️ [REFACTOR]** Replace `window.location.reload()` with Zustand `chatResetKey` trigger for conversation switching

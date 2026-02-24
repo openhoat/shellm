@@ -218,7 +218,13 @@ export const Terminal = () => {
       <div className="terminal-header">
         <span className="terminal-title">Terminal</span>
       </div>
-      <div ref={terminalRef} className="terminal-content" />
+      {/* biome-ignore lint/a11y/useSemanticElements: terminal content managed by xterm.js, section not suitable */}
+      <div
+        ref={terminalRef}
+        className="terminal-content"
+        role="region"
+        aria-label="Terminal output"
+      />
     </div>
   )
 }

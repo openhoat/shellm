@@ -9,6 +9,7 @@ interface ResizerProps {
 
 export const Resizer = ({ onResize, direction = 'horizontal', minSize = 300 }: ResizerProps) => {
   const [isDragging, setIsDragging] = useState(false)
+  const [positionPercent, setPositionPercent] = useState(50)
   const resizerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -31,8 +32,11 @@ export const Resizer = ({ onResize, direction = 'horizontal', minSize = 300 }: R
       }
 
       // Clamp position within min and max bounds
-      newPosition = Math.max(minSize, Math.min(newPosition, containerRect.width - minSize))
+      const maxBound = containerRect.width - minSize
+      newPosition = Math.max(minSize, Math.min(newPosition, maxBound))
 
+      const range = maxBound - minSize
+      setPositionPercent(range > 0 ? Math.round(((newPosition - minSize) / range) * 100) : 50)
       onResize(newPosition)
     }
 
@@ -57,13 +61,52 @@ export const Resizer = ({ onResize, direction = 'horizontal', minSize = 300 }: R
     setIsDragging(true)
   }
 
+  const KEYBOARD_STEP = 20
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!resizerRef.current) return
+    const containerRect = resizerRef.current.parentElement?.getBoundingClientRect()
+    if (!containerRect) return
+
+    const resizerRect = resizerRef.current.getBoundingClientRect()
+    let currentPos =
+      direction === 'horizontal'
+        ? resizerRect.left - containerRect.left
+        : resizerRect.top - containerRect.top
+
+    const relevantKeys =
+      direction === 'horizontal' ? ['ArrowLeft', 'ArrowRight'] : ['ArrowUp', 'ArrowDown']
+    if (!relevantKeys.includes(e.key)) return
+
+    e.preventDefault()
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      currentPos += KEYBOARD_STEP
+    } else {
+      currentPos -= KEYBOARD_STEP
+    }
+
+    const maxSize = direction === 'horizontal' ? containerRect.width : containerRect.height
+    const maxBound = maxSize - minSize
+    const clampedPos = Math.max(minSize, Math.min(currentPos, maxBound))
+    const range = maxBound - minSize
+    setPositionPercent(range > 0 ? Math.round(((clampedPos - minSize) / range) * 100) : 50)
+    onResize(clampedPos)
+  }
+
   return (
-    // biome-ignore lint/a11y/noStaticElementInteractions: Custom resizer component that handles drag interactions
+    // biome-ignore lint/a11y/useSemanticElements: custom resizer needs div with separator role
     <div
       ref={resizerRef}
+      role="separator"
+      aria-orientation={direction}
+      aria-valuenow={positionPercent}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label="Resize panels"
+      tabIndex={0}
       className={`resizer resizer-${direction} ${isDragging ? 'resizer-active' : ''}`}
       onMouseDown={handleMouseDown}
-      title="Drag to resize"
+      onKeyDown={handleKeyDown}
     />
   )
 }
