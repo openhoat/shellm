@@ -9,6 +9,8 @@ vi.mock('react-i18next', () => ({
   }),
 }))
 
+vi.mock('/logo.svg', () => ({ default: '/logo.svg' }))
+
 import { Header } from './Header'
 
 // Mock __APP_VERSION__ global

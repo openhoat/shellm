@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import logoSvg from '/logo.svg'
 import { useStore } from '../store/useStore'
 import './Header.css'
 
@@ -137,7 +138,7 @@ export const Header = () => {
     <header className="header">
       <div className="header-left">
         <h1 className="app-title">
-          <img src="/logo.svg" alt="Termaid" className="app-title-icon" />
+          <img src={logoSvg} alt="Termaid" className="app-title-icon" />
           Termaid
         </h1>
         <span className="app-version">v{__APP_VERSION__}</span>
