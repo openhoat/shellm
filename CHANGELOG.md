@@ -10,6 +10,8 @@ To view the complete history, use: `git log`
 
 #### 24/02
 
+- **[14:28:18] 🔧 [CHORE]** Clean done section
+- **[14:25:01] 📝 [DOCS]** Regenerate from git history
 - **[14:24:48] 🎨 [STYLE]** Add aria attributes and accessibility tests to components
 
 #### 23/02
