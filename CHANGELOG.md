@@ -10,17 +10,15 @@ To view the complete history, use: `git log`
 
 #### 24/02
 
-- **[14:25:00] 🎨 [STYLE]** Add ARIA `aria-valuenow` to Resizer separator and accessibility tests for Resizer, Terminal, Header dropdown, and ChatPanel spinners
+- **[14:24:48] 🎨 [STYLE]** Add aria attributes and accessibility tests to components
 
 #### 23/02
 
-- **[15:25:00] ♻️ [REFACTOR]** Replace `window.location.reload()` with Zustand `chatResetKey` trigger for conversation switching
-- **[14:50:00] ♻️ [REFACTOR]** Extract model lists to `shared/models.ts`, centralize dangerous command checks, remove dead OllamaService
-- **[13:35:00] 🐛 [FIX]** Remove duplicate chat-language field in ConfigPanel causing invalid HTML
-- **[13:35:00] 🔒 [SECURITY]** Remove dead code `video:save-to-path` handler with path traversal risk
-- **[13:35:00] 🔒 [SECURITY]** Add size limit validation on `terminal:write` IPC handler (1 MB max)
-- **[13:35:00] 🔒 [SECURITY]** Enhance `isAppConfig()` validation and add shell allowlist in terminal handler
-- **[08:49:47] 🐛 [FIX]** Skip save dialog in test mode for export handlers to fix CI headless timeout
+- **[15:20:37] ♻️ [REFACTOR]** Replace window.location.reload with store-driven state reset
+- **[14:47:49] ♻️ [REFACTOR]** Consolidate duplicated code across services
+- **[14:35:38] 🐛 [FIX]** Harden ipc handlers and fix configpanel duplicate field
+- **[08:49:55] 📝 [DOCS]** Add export handler fix entry
+- **[08:47:44] 🐛 [FIX]** Skip save dialog in test mode for export handlers
 - **[08:21:39] ♻️ [REFACTOR]** Consolidate dist-electron, test-results, playwright-report into dist/
 
 #### 21/02
