@@ -33,13 +33,3 @@
 ## 🚧 In Progress
 
 ## ✅ Done
-
-- [x] **#ux-a11y [24/02/2026 14:25:00] 🎨 [STYLE]** Add ARIA roles, keyboard support, and accessibility tests to Resizer, Terminal, Header dropdown, and ChatPanel spinners
-
-- [x] **#arch-reload [23/02/2026 15:18:00] ♻️ [REFACTOR]** Replace `window.location.reload()` with `chatResetKey` store trigger
-- [x] **#arch-dedup [23/02/2026 14:43:00] ♻️ [REFACTOR]** Consolidate duplicated code (model lists, dangerous commands, OllamaService)
-- [x] **#fix-configpanel [23/02/2026 13:35:00] 🐛 [FIX]** Fix duplicate chat-language field in ConfigPanel (invalid HTML, broken a11y)
-- [x] **#sec-ipc [23/02/2026 13:35:00] 🔒 [SECURITY]** Remove dead code `video:save-to-path` and add size limit on `terminal:write` IPC handler
-- [x] **#sec-config [23/02/2026 13:35:00] 🔒 [SECURITY]** Add input validation on `config:set` IPC handler and shell allowlist in terminal handler
-- [x] **[23/02/2026 09:00:00] ✅ [TEST]** Fix flaky E2E tests in CI: harden helpers, fix keyboard-shortcuts, conversation-lifecycle, config-persistence, error-handling, and export tests
-- [x] **[23/02/2026 08:19:00] ♻️ [REFACTOR]** Consolidate `dist-electron`, `test-results`, `playwright-report` directories into `dist/`
