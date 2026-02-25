@@ -52,7 +52,7 @@ export const Header = () => {
 
   const handleDeleteConversation = async (id: string, e: MouseEvent) => {
     e.stopPropagation()
-    if (window.confirm('Are you sure you want to delete this conversation?')) {
+    if (window.confirm(t('header.confirmDelete'))) {
       await deleteConversation(id)
       if (currentConversationId === id) {
         incrementChatResetKey()
@@ -65,23 +65,23 @@ export const Header = () => {
     e.stopPropagation()
 
     if (!currentConversationId) {
-      setTemporaryExportStatus('No active conversation to export')
+      setTemporaryExportStatus(t('header.noConversationToExport'))
       return
     }
 
     try {
       const result = await window.electronAPI.conversationExport(currentConversationId)
       if (result.success && result.filePath) {
-        setTemporaryExportStatus(`Exported to ${result.filePath}`)
+        setTemporaryExportStatus(t('header.exportedTo', { filePath: result.filePath }))
       } else if (result.cancelled) {
         setExportStatus(null)
       } else {
-        setTemporaryExportStatus(result.error || 'Export failed')
+        setTemporaryExportStatus(result.error || t('header.exportFailed'))
       }
     } catch (error) {
       // biome-ignore lint/suspicious/noConsole: Debug logging for export errors
       console.error('[Header] Failed to export conversation:', error)
-      setTemporaryExportStatus(error instanceof Error ? error.message : 'Export failed')
+      setTemporaryExportStatus(error instanceof Error ? error.message : t('header.exportFailed'))
     }
   }
 
@@ -92,7 +92,7 @@ export const Header = () => {
     try {
       const result = await window.electronAPI.conversationExportAll()
       if (result.success && result.filePath) {
-        setTemporaryExportStatus(`Exported all conversations to ${result.filePath}`)
+        setTemporaryExportStatus(t('header.exportedAll', { filePath: result.filePath }))
       } else if (result.cancelled) {
         setExportStatus(null)
       } else {
@@ -117,7 +117,7 @@ export const Header = () => {
 
     const handleClickOutside = (e: MouseEvent) => {
       const dropdown = document.querySelector('.conversation-dropdown')
-      const toggleButton = document.querySelector('button[title="Conversations"]')
+      const toggleButton = document.querySelector(`button[title="${t('header.conversations')}"]`)
       if (
         dropdown &&
         !dropdown.contains(e.target as Node) &&
@@ -133,7 +133,7 @@ export const Header = () => {
       document.removeEventListener('keydown', handleEscape)
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [showConversationList])
+  }, [showConversationList, t])
 
   const getProviderStatus = () => {
     if (config.llmProvider === 'claude') {

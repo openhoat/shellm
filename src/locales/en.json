@@ -10,10 +10,18 @@
       "settings": "Settings",
       "newConversation": "New conversation",
       "conversations": "Conversations",
+      "conversationsTitle": "Conversations",
+      "noConversations": "No conversations yet",
       "exportAll": "Export all conversations",
       "exportCurrent": "Export current conversation",
+      "exportCurrentButton": "Export Current",
       "deleteConversation": "Delete conversation",
-      "closeConversations": "Close conversations list"
+      "closeConversations": "Close conversations list",
+      "confirmDelete": "Are you sure you want to delete this conversation?",
+      "noConversationToExport": "No active conversation to export",
+      "exportedTo": "Exported to {{filePath}}",
+      "exportedAll": "Exported all conversations to {{filePath}}",
+      "exportFailed": "Export failed"
     },
     "chat": {
       "title": "AI Chat",
