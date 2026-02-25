@@ -12,25 +12,22 @@ on:
 
 # Run jobs on multiple operating systems
 jobs:
-  ci:
-    name: Continuous Integration (${{ matrix.os }})
+  # Linting job (Linux only)
+  lint:
+    name: Lint (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-
+        os: [ubuntu-latest]
     steps:
-      # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Setup Node.js 22.x
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22.x'
 
-      # Cache node_modules for faster builds
       - name: Cache node modules
         uses: actions/cache@v5
         with:
@@ -39,29 +36,42 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      # Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      # Cache Playwright browsers for faster E2E tests
-      - name: Cache Playwright browsers
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
-
-      # Run linting (skip on Windows due to Biome cross-platform limitations)
       - name: Run linting
-        if: runner.os != 'Windows'
         run: npm run qa
 
-      # Run tests with coverage
+  # Test job (all OS)
+  test:
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Cache node modules
+        uses: actions/cache@v5
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Run tests with coverage
         run: npm run test:coverage
 
-      # Upload coverage to Codecov (only from Ubuntu to avoid duplicate uploads)
       - name: Upload coverage to Codecov
         if: runner.os == 'Linux'
         uses: codecov/codecov-action@v5
@@ -70,16 +80,71 @@ jobs:
           files: ./coverage/lcov.info
           fail_ci_if_error: false
 
-      # Run build
+  # Build job (all OS)
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Cache node modules
+        uses: actions/cache@v5
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Build project
         run: npm run build
 
-      # Install Playwright system dependencies for Electron E2E tests (Linux only)
+  # E2E job (Linux only, depends on build)
+  e2e:
+    name: E2E
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Cache node modules
+        uses: actions/cache@v5
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
       - name: Install Playwright system dependencies
-        if: runner.os == 'Linux'
         run: npx playwright install-deps
 
-      # Run E2E tests in headless mode using xvfb virtual display (Linux only)
       - name: Run E2E tests
-        if: runner.os == 'Linux'
         run: npm run test:e2e:headless
