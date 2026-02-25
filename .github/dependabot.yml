@@ -21,16 +21,12 @@ updates:
       - "dependabot"
     reviewers:
       - "openhoat"
-    # Auto-merge patch and minor updates
-    automerged-dependencies:
-      - dependency-type: "production"
-        update-type: "version-update:semver-patch"
-      - dependency-type: "development"
-        update-type: "version-update:semver-patch"
-      - dependency-type: "production"
-        update-type: "version-update:semver-minor"
-      - dependency-type: "development"
-        update-type: "version-update:semver-minor"
+    groups:
+      # Group minor and patch updates into a single PR
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
 
   # Enable version updates for GitHub Actions
   - package-ecosystem: "github-actions"
@@ -47,7 +43,8 @@ updates:
       - "github-actions"
     reviewers:
       - "openhoat"
-    # Auto-merge patch updates for GitHub Actions
-    automerged-dependencies:
-      - dependency-type: "production"
-        update-type: "version-update:semver-patch"
+    groups:
+      # Group patch updates into a single PR
+      patch:
+        update-types:
+          - "patch"
