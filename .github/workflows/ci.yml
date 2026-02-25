@@ -42,13 +42,10 @@ jobs:
       - name: Run linting
         run: npm run qa
 
-  # Test job (all OS)
+  # Test job (Linux only - unit tests are OS-independent)
   test:
-    name: Test (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+    name: Test
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
