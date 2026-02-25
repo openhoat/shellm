@@ -3,7 +3,7 @@ import { type FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useChat } from '@/hooks/useChat'
 import { useStore } from '@/store/useStore'
-import Logger from '@/utils/logger'
+import { Logger } from '@/utils/logger'
 import { ChatMessage } from './chat'
 import './ChatPanel.css'
 
@@ -81,18 +81,22 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
     }
   }, [chat.isLoading])
 
+  const executeCurrentCommand = useCallback(async () => {
+    logger.debug('Execute command triggered')
+    logger.debug('Button terminalPid check:', chat.terminalPid)
+    logger.debug('Using currentCommandIndex:', chat.currentCommandIndex)
+    if (chat.aiCommand?.type === 'command') {
+      await chat.executeCommand(chat.aiCommand.command, chat.currentCommandIndex ?? undefined)
+    }
+  }, [chat.aiCommand, chat.terminalPid, chat.currentCommandIndex, chat.executeCommand])
+
   const handleExecuteCommand = useCallback(
-    async (e: React.MouseEvent) => {
+    (e: React.MouseEvent) => {
       e.preventDefault()
       e.stopPropagation()
-      logger.debug('Execute button clicked!')
-      logger.debug('Button terminalPid check:', chat.terminalPid)
-      logger.debug('Using currentCommandIndex:', chat.currentCommandIndex)
-      if (chat.aiCommand?.type === 'command') {
-        await chat.executeCommand(chat.aiCommand.command, chat.currentCommandIndex ?? undefined)
-      }
+      executeCurrentCommand()
     },
-    [chat.aiCommand, chat.terminalPid, chat.currentCommandIndex, chat.executeCommand]
+    [executeCurrentCommand]
   )
 
   // Handle keyboard shortcuts
@@ -102,7 +106,7 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
       if (e.ctrlKey && e.key === 'Enter') {
         e.preventDefault()
         if (chat.aiCommand?.type === 'command') {
-          handleExecuteCommand(e as unknown as React.MouseEvent)
+          executeCurrentCommand()
         }
       }
 
@@ -129,7 +133,14 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [chat.aiCommand, chat.error, setAiCommand, clearAllConversations, chat, handleExecuteCommand])
+  }, [chat.aiCommand, chat.error, setAiCommand, clearAllConversations, chat, executeCurrentCommand])
+
+  const submitMessage = useCallback(async () => {
+    if (!chat.userInput.trim() || chat.isLoading) return
+    const prompt = chat.userInput.trim()
+    chat.setUserInput('')
+    await chat.generateAICommand(prompt)
+  }, [chat.userInput, chat.isLoading, chat.setUserInput, chat.generateAICommand])
 
   const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     // Arrow Up: Navigate to previous input in history
@@ -157,20 +168,14 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
     // Enter alone = submit (unless Shift is pressed)
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSubmit(e as unknown as FormEvent)
+      submitMessage()
     }
     // Shift+Enter = new line (default textarea behavior)
   }
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
-    if (!chat.userInput.trim() || chat.isLoading) return
-
-    const prompt = chat.userInput.trim()
-    chat.setUserInput('')
-
-    // Use the generateAICommand function from the hook
-    await chat.generateAICommand(prompt)
+    submitMessage()
   }
 
   return (

@@ -4,7 +4,7 @@ import { FitAddon } from 'xterm-addon-fit'
 import 'xterm/css/xterm.css'
 import { stripAnsiCodes, stripOscSequences } from '@shared/ansi'
 import { useStore } from '../store/useStore'
-import Logger from '../utils/logger'
+import { Logger } from '../utils/logger'
 import './Terminal.css'
 
 const logger = new Logger('Terminal')
@@ -31,16 +31,17 @@ export const Terminal = () => {
       }
     }
 
-    window.electronAPI.onTerminalExit(handleTerminalExit)
+    const unsubscribe = window.electronAPI.onTerminalExit(handleTerminalExit)
 
-    return () => {
-      // Cleanup is handled by the event system
-    }
+    return unsubscribe
   }, [setTerminalPid])
 
   // Create terminal PTY and initialize xterm
   useEffect(() => {
     if (terminalCreatedRef.current || !terminalRef.current || xtermRef.current) return
+
+    let unsubscribeData: (() => void) | undefined
+    let handleResize: (() => void) | undefined
 
     const initializeTerminal = async () => {
       logger.debug('Creating terminal...')
@@ -100,7 +101,6 @@ export const Terminal = () => {
         logger.debug(`Received data for PID: ${data.pid}, Current PID: ${terminalPidRef.current}`)
 
         if (terminalPidRef.current === null) {
-          // Terminal not created yet, ignore data
           logger.debug('Ignoring data - terminal not created yet')
           return
         }
@@ -110,28 +110,20 @@ export const Terminal = () => {
           xterm.write(data.data)
 
           // Capture terminal output for interpretation
-          // Split by newlines and filter out shell prompts, empty lines, and control sequences
           const allLines = data.data.split('\n')
 
           const filteredLines = allLines
             .map(line => {
-              // Clean OSC sequences
               const cleanedOsc = stripOscSequences(line)
-              // Clean ANSI codes
               const cleanedAnsi = stripAnsiCodes(cleanedOsc)
-              // Clean control characters \r
               const cleanedCr = cleanedAnsi.replace(/\r/g, '')
-              // Clean spaces at beginning and end
               return cleanedCr.trim()
             })
             .filter(line => {
-              // Skip empty lines
               if (line.length === 0) {
                 return false
               }
 
-              // Skip bash prompts (format: user@hostname:~$)
-              // Pattern is: word@word:word$
               const isBashPrompt = /^[\w-]+@[\w-]+:[~\w-/]*\$$/.test(line)
 
               if (isBashPrompt) {
@@ -155,7 +147,7 @@ export const Terminal = () => {
         }
       }
 
-      window.electronAPI.onTerminalData(handleTerminalData)
+      unsubscribeData = window.electronAPI.onTerminalData(handleTerminalData)
 
       // Handle user input
       xterm.onData(data => {
@@ -168,7 +160,7 @@ export const Terminal = () => {
       })
 
       // Handle resize
-      const handleResize = () => {
+      handleResize = () => {
         fitAddon.fit()
         if (terminalPidRef.current) {
           window.electronAPI.terminalResize(terminalPidRef.current, xterm.cols, xterm.rows)
@@ -189,19 +181,22 @@ export const Terminal = () => {
       } catch (error) {
         logger.error('Failed to create terminal', error)
       }
-
-      // Cleanup function
-      return () => {
-        window.removeEventListener('resize', handleResize)
-        xterm.dispose()
-        // Event listener cleanup is handled by the event system
-        if (terminalPidRef.current) {
-          window.electronAPI.terminalDestroy(terminalPidRef.current)
-        }
-      }
     }
 
     initializeTerminal()
+
+    return () => {
+      unsubscribeData?.()
+      if (handleResize) {
+        window.removeEventListener('resize', handleResize)
+      }
+      if (xtermRef.current) {
+        xtermRef.current.dispose()
+      }
+      if (terminalPidRef.current) {
+        window.electronAPI.terminalDestroy(terminalPidRef.current)
+      }
+    }
   }, [setTerminalPid, appendTerminalOutput])
 
   useEffect(() => {

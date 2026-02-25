@@ -55,9 +55,9 @@ export interface ElectronAPI {
     options?: PromptDetectionOptions
   ) => Promise<WaitForPromptResult>
 
-  // Terminal events
-  onTerminalData: (callback: (data: { pid: number; data: string }) => void) => void
-  onTerminalExit: (callback: (data: { pid: number; code: number }) => void) => void
+  // Terminal events (return unsubscribe functions for cleanup)
+  onTerminalData: (callback: (data: { pid: number; data: string }) => void) => () => void
+  onTerminalExit: (callback: (data: { pid: number; code: number }) => void) => () => void
 
   // LLM
   llmInit: (config: AppConfig) => Promise<void>

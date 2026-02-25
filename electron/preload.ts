@@ -26,12 +26,22 @@ contextBridge.exposeInMainWorld('electronAPI', {
     }
   ) => ipcRenderer.invoke('terminal:waitForPrompt', pid, options),
 
-  // Terminal events
+  // Terminal events (return unsubscribe functions for cleanup)
   onTerminalData: (callback: (data: { pid: number; data: string }) => void) => {
-    ipcRenderer.on('terminal:data', (_event, data) => callback(data))
+    const handler = (_event: Electron.IpcRendererEvent, data: { pid: number; data: string }) =>
+      callback(data)
+    ipcRenderer.on('terminal:data', handler)
+    return () => {
+      ipcRenderer.removeListener('terminal:data', handler)
+    }
   },
   onTerminalExit: (callback: (data: { pid: number; code: number }) => void) => {
-    ipcRenderer.on('terminal:exit', (_event, data) => callback(data))
+    const handler = (_event: Electron.IpcRendererEvent, data: { pid: number; code: number }) =>
+      callback(data)
+    ipcRenderer.on('terminal:exit', handler)
+    return () => {
+      ipcRenderer.removeListener('terminal:exit', handler)
+    }
   },
 
   // LLM

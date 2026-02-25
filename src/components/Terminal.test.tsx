@@ -33,7 +33,7 @@ vi.mock('../utils/logger', () => {
     error = vi.fn()
     warn = vi.fn()
   }
-  return { default: MockLogger }
+  return { Logger: MockLogger }
 })
 
 import { useStore } from '../store/useStore'

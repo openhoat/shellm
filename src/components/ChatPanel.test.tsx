@@ -19,7 +19,7 @@ vi.mock('@/utils/logger', () => {
     info = vi.fn()
     error = vi.fn()
   }
-  return { default: MockLogger }
+  return { Logger: MockLogger }
 })
 vi.mock('./chat', () => ({
   ChatMessage: ({ message }: { message: { content: string } }) => (

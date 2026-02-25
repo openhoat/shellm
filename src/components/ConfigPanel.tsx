@@ -3,7 +3,7 @@ import type { AppConfig } from '@shared/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useStore } from '../store/useStore'
-import LanguageSelector from './LanguageSelector'
+import { LanguageSelector } from './LanguageSelector'
 import { ModelSelector } from './ModelSelector'
 import './ConfigPanel.css'
 

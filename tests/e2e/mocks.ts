@@ -203,14 +203,16 @@ export function createMockElectronAPI(
     terminalStartCapture: async (_pid: number) => true,
     terminalGetCapture: async (_pid: number) => pendingCommandOutput,
 
-    // Terminal events
+    // Terminal events (return unsubscribe functions for cleanup)
     onTerminalData: (_callback: (data: { pid: number; data: string }) => void) => {
-      // Mock terminal data listener
-      // Could be enhanced to simulate real terminal output
+      return () => {
+        // No-op unsubscribe for mock
+      }
     },
     onTerminalExit: (_callback: (data: { pid: number; code: number }) => void) => {
-      // Mock terminal exit listener
-      // Could be enhanced to simulate command completion
+      return () => {
+        // No-op unsubscribe for mock
+      }
     },
 
     // LLM

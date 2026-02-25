@@ -7,7 +7,7 @@ import { Terminal } from './components/Terminal'
 import { useStore } from './store/useStore'
 import './App.css'
 
-const App = () => {
+export const App = () => {
   const { initConfig, showConfigPanel } = useStore()
   const [splitPosition, setSplitPosition] = useState(600) // Initial split position in pixels
 
@@ -54,5 +54,3 @@ const App = () => {
     </div>
   )
 }
-
-export default App

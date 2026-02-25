@@ -13,7 +13,7 @@ vi.mock('react-i18next', () => ({
   initReactI18next: { type: '3rdParty', init: vi.fn() },
 }))
 vi.mock('./LanguageSelector', () => ({
-  default: () => <div data-testid="language-selector" />,
+  LanguageSelector: () => <div data-testid="language-selector" />,
 }))
 vi.mock('./ModelSelector', () => ({
   ModelSelector: ({ value }: { value: string }) => (

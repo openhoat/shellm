@@ -6,7 +6,7 @@ import type { ChatMessageData } from '@/components/chat'
 import { useToast } from '@/hooks/useToast'
 import { hasInjectionPatterns, sanitizeUserInput } from '@/services/commandExecutionService'
 import { useStore } from '@/store/useStore'
-import Logger from '@/utils/logger'
+import { Logger } from '@/utils/logger'
 
 const logger = new Logger('useChat')
 

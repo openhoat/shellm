@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import logoSvg from '/logo.svg'
 import { useStore } from '../store/useStore'
@@ -17,6 +17,27 @@ export const Header = () => {
   const { t } = useTranslation()
   const [showConversationList, setShowConversationList] = useState(false)
   const [exportStatus, setExportStatus] = useState<string | null>(null)
+  const exportTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const setTemporaryExportStatus = useCallback((status: string) => {
+    if (exportTimerRef.current) {
+      clearTimeout(exportTimerRef.current)
+    }
+    setExportStatus(status)
+    exportTimerRef.current = setTimeout(() => {
+      setExportStatus(null)
+      exportTimerRef.current = null
+    }, 3000)
+  }, [])
+
+  // Clean up export status timer on unmount
+  useEffect(() => {
+    return () => {
+      if (exportTimerRef.current) {
+        clearTimeout(exportTimerRef.current)
+      }
+    }
+  }, [])
 
   const handleNewConversation = () => {
     // This will be handled by ChatPanel when the user sends a message
@@ -44,27 +65,23 @@ export const Header = () => {
     e.stopPropagation()
 
     if (!currentConversationId) {
-      setExportStatus('No active conversation to export')
-      setTimeout(() => setExportStatus(null), 3000)
+      setTemporaryExportStatus('No active conversation to export')
       return
     }
 
     try {
       const result = await window.electronAPI.conversationExport(currentConversationId)
       if (result.success && result.filePath) {
-        setExportStatus(`Exported to ${result.filePath}`)
-        setTimeout(() => setExportStatus(null), 3000)
+        setTemporaryExportStatus(`Exported to ${result.filePath}`)
       } else if (result.cancelled) {
         setExportStatus(null)
       } else {
-        setExportStatus(result.error || 'Export failed')
-        setTimeout(() => setExportStatus(null), 3000)
+        setTemporaryExportStatus(result.error || 'Export failed')
       }
     } catch (error) {
       // biome-ignore lint/suspicious/noConsole: Debug logging for export errors
       console.error('[Header] Failed to export conversation:', error)
-      setExportStatus(error instanceof Error ? error.message : 'Export failed')
-      setTimeout(() => setExportStatus(null), 3000)
+      setTemporaryExportStatus(error instanceof Error ? error.message : 'Export failed')
     }
   }
 
@@ -75,19 +92,16 @@ export const Header = () => {
     try {
       const result = await window.electronAPI.conversationExportAll()
       if (result.success && result.filePath) {
-        setExportStatus(`Exported all conversations to ${result.filePath}`)
-        setTimeout(() => setExportStatus(null), 3000)
+        setTemporaryExportStatus(`Exported all conversations to ${result.filePath}`)
       } else if (result.cancelled) {
         setExportStatus(null)
       } else {
-        setExportStatus(result.error || 'Export failed')
-        setTimeout(() => setExportStatus(null), 3000)
+        setTemporaryExportStatus(result.error || 'Export failed')
       }
     } catch (error) {
       // biome-ignore lint/suspicious/noConsole: Debug logging for export errors
       console.error('[Header] Failed to export all conversations:', error)
-      setExportStatus(error instanceof Error ? error.message : 'Export failed')
-      setTimeout(() => setExportStatus(null), 3000)
+      setTemporaryExportStatus(error instanceof Error ? error.message : 'Export failed')
     }
   }
 

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, test, vi } from 'vitest'
-import LanguageSelector from './LanguageSelector'
+import { LanguageSelector } from './LanguageSelector'
 
 // Mock react-i18next
 vi.mock('react-i18next', () => ({

@@ -12,8 +12,8 @@ const mockTerminalGetCapture = vi.fn().mockResolvedValue('')
 const mockTerminalWaitForPrompt = vi
   .fn()
   .mockResolvedValue({ detected: true, output: '', timedOut: false })
-const mockOnTerminalData = vi.fn()
-const mockOnTerminalExit = vi.fn()
+const mockOnTerminalData = vi.fn().mockReturnValue(vi.fn())
+const mockOnTerminalExit = vi.fn().mockReturnValue(vi.fn())
 
 const defaultAICommand: AICommand = {
   type: 'command',

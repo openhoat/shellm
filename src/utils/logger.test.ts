@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import Logger, { type LogEntry, LogLevel, logManager } from './logger'
+import { type LogEntry, Logger, LogLevel, logManager } from './logger'
 
 describe('LogLevel', () => {
   test('should have correct numeric values', () => {

@@ -27,9 +27,14 @@
 - [ ] **#test-cov [21/02/2026 10:00:00] 🟡 P2 ✅ [TEST]** Add unit tests for `useChat.ts` (525 lines, 0%), `base-provider.ts` (402 lines), and `conversationService.ts` (233 lines)
 - [ ] **#sec-mock [21/02/2026 10:00:00] 🟡 P2 🔒 [SECURITY]** Strip E2E mock code from production builds (gate behind `NODE_ENV === 'test'`)
 - [ ] **#sec-keys [21/02/2026 10:00:00] 🟢 P3 🔒 [SECURITY]** Use Electron `safeStorage` for API keys and disable DevTools in production builds
-- [ ] **#arch-types [21/02/2026 10:00:00] 🟢 P3 🏗️ [ARCHITECTURE]** Fix unsafe type assertions, Terminal cleanup leak, store async error handling, and export consistency
 - [ ] **#dep-update [21/02/2026 10:00:00] 🟢 P3 📦 [DEPENDENCIES]** Apply patch/minor dependency updates (`@langchain/*`, `biome`, `electron`, `i18next`, etc.)
 
 ## 🚧 In Progress
 
 ## ✅ Done
+
+- [x] **[25/02/2026 10:04:00] 🐛 [FIX]** Fix setTimeout cleanup leaks in Header.tsx
+- [x] **[25/02/2026 10:03:00] ♻️ [REFACTOR]** Standardize export consistency (convert default exports to named exports)
+- [x] **[25/02/2026 10:02:00] 🐛 [FIX]** Add error handling to store async actions in useStore.ts
+- [x] **[25/02/2026 10:01:00] 🐛 [FIX]** Fix Terminal cleanup memory leaks for electronAPI listeners in Terminal.tsx
+- [x] **[25/02/2026 10:00:00] ♻️ [REFACTOR]** Fix unsafe type assertions (`as unknown as`) in ChatPanel.tsx

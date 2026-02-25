@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 
-const LanguageSelector = () => {
+export const LanguageSelector = () => {
   const { i18n } = useTranslation()
 
   const changeLanguage = (lng: string) => {
@@ -19,5 +19,3 @@ const LanguageSelector = () => {
     </select>
   )
 }
-
-export default LanguageSelector

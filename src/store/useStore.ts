@@ -1,6 +1,6 @@
 import type { AICommand, AppConfig, Conversation, ConversationMessage } from '@shared/types'
 import { create } from 'zustand'
-import Logger from '@/utils/logger'
+import { Logger } from '@/utils/logger'
 
 const logger = new Logger('useStore')
 
@@ -121,79 +121,107 @@ export const useStore = create<AppState>((set, _get) => ({
   currentConversationId: null,
   currentConversation: null,
   loadConversations: async () => {
-    const conversations = await window.electronAPI.conversationGetAll()
-    set({ conversations })
+    try {
+      const conversations = await window.electronAPI.conversationGetAll()
+      set({ conversations })
+    } catch (error) {
+      logger.error('Failed to load conversations:', error)
+    }
   },
   loadConversation: async id => {
-    const conversation = await window.electronAPI.conversationGet(id)
-    if (conversation) {
-      set({ currentConversationId: id, currentConversation: conversation })
+    try {
+      const conversation = await window.electronAPI.conversationGet(id)
+      if (conversation) {
+        set({ currentConversationId: id, currentConversation: conversation })
+      }
+    } catch (error) {
+      logger.error('Failed to load conversation:', error)
     }
   },
   createConversation: async firstMessage => {
-    const newConversation = await window.electronAPI.conversationCreate(firstMessage)
-    set(state => ({
-      conversations: [newConversation, ...state.conversations],
-      currentConversationId: newConversation.id,
-      currentConversation: newConversation,
-    }))
+    try {
+      const newConversation = await window.electronAPI.conversationCreate(firstMessage)
+      set(state => ({
+        conversations: [newConversation, ...state.conversations],
+        currentConversationId: newConversation.id,
+        currentConversation: newConversation,
+      }))
+    } catch (error) {
+      logger.error('Failed to create conversation:', error)
+    }
   },
   addMessageToConversation: async message => {
     const { currentConversationId } = _get()
     if (!currentConversationId) return
 
-    const updatedConversation = await window.electronAPI.conversationAddMessage(
-      currentConversationId,
-      message
-    )
-    if (updatedConversation) {
-      set(state => ({
-        currentConversation: updatedConversation,
-        conversations: state.conversations.map(conv =>
-          conv.id === updatedConversation.id ? updatedConversation : conv
-        ),
-      }))
+    try {
+      const updatedConversation = await window.electronAPI.conversationAddMessage(
+        currentConversationId,
+        message
+      )
+      if (updatedConversation) {
+        set(state => ({
+          currentConversation: updatedConversation,
+          conversations: state.conversations.map(conv =>
+            conv.id === updatedConversation.id ? updatedConversation : conv
+          ),
+        }))
+      }
+    } catch (error) {
+      logger.error('Failed to add message to conversation:', error)
     }
   },
   updateMessageInConversation: async (messageIndex, updates) => {
     const { currentConversationId } = _get()
     if (!currentConversationId) return
 
-    const updatedConversation = await window.electronAPI.conversationUpdateMessage(
-      currentConversationId,
-      messageIndex,
-      updates
-    )
-    if (updatedConversation) {
-      set(state => ({
-        currentConversation: updatedConversation,
-        conversations: state.conversations.map(conv =>
-          conv.id === updatedConversation.id ? updatedConversation : conv
-        ),
-      }))
+    try {
+      const updatedConversation = await window.electronAPI.conversationUpdateMessage(
+        currentConversationId,
+        messageIndex,
+        updates
+      )
+      if (updatedConversation) {
+        set(state => ({
+          currentConversation: updatedConversation,
+          conversations: state.conversations.map(conv =>
+            conv.id === updatedConversation.id ? updatedConversation : conv
+          ),
+        }))
+      }
+    } catch (error) {
+      logger.error('Failed to update message in conversation:', error)
     }
   },
   deleteConversation: async id => {
-    await window.electronAPI.conversationDelete(id)
-    set(state => {
-      const newConversations = state.conversations.filter(conv => conv.id !== id)
-      if (state.currentConversationId === id) {
-        return {
-          conversations: newConversations,
-          currentConversationId: null,
-          currentConversation: null,
+    try {
+      await window.electronAPI.conversationDelete(id)
+      set(state => {
+        const newConversations = state.conversations.filter(conv => conv.id !== id)
+        if (state.currentConversationId === id) {
+          return {
+            conversations: newConversations,
+            currentConversationId: null,
+            currentConversation: null,
+          }
         }
-      }
-      return { conversations: newConversations }
-    })
+        return { conversations: newConversations }
+      })
+    } catch (error) {
+      logger.error('Failed to delete conversation:', error)
+    }
   },
   clearAllConversations: async () => {
-    await window.electronAPI.conversationClearAll()
-    set({
-      conversations: [],
-      currentConversationId: null,
-      currentConversation: null,
-    })
+    try {
+      await window.electronAPI.conversationClearAll()
+      set({
+        conversations: [],
+        currentConversationId: null,
+        currentConversation: null,
+      })
+    } catch (error) {
+      logger.error('Failed to clear all conversations:', error)
+    }
   },
 
   // Chat reset
