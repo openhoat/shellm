@@ -10,6 +10,12 @@ To view the complete history, use: `git log`
 
 #### 25/02
 
+- **[21:20:00] ⚡ [PERF]** Batch terminal output processing and add RAF throttling to Resizer
+- **[21:20:00] 🌍 [I18N]** Add i18n keys for Header component strings
+- **[21:20:00] ✅ [TEST]** Add unit tests for useChat, base-provider, and conversationService
+- **[21:20:00] ⚡ [PERF]** Add batch processing for terminal output and RAF throttling for Resizer
+- **[21:20:00] ✅ [TEST]** Add unit tests for useChat, base-provider, and conversationService
+- **[21:20:00] 🌍 [I18N]** Add i18n keys for Header component strings
 - **[19:50:00] 📝 [DOCS]** Add native worktree workflow rules for Claude Code and Cline
 - **[18:34:32] ⚡ [PERF]** Add in-memory cache for conversationservice with async io
 - **[16:51:23] ⚡ [PERF]** Add zustand selectors and vite code splitting
