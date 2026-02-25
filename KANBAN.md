@@ -25,7 +25,6 @@
 - [ ] **#i18n-strings [21/02/2026 10:00:00] 🟡 P2 🌍 [I18N]** Replace hardcoded French/English strings with i18n keys in services and Header component
 - [ ] **#dep-xterm [21/02/2026 10:00:00] 🟡 P2 📦 [DEPENDENCIES]** Migrate deprecated `xterm` to `@xterm/xterm` and run `npm audit fix` for fixable vulnerabilities
 - [ ] **#test-cov [21/02/2026 10:00:00] 🟡 P2 ✅ [TEST]** Add unit tests for `useChat.ts` (525 lines, 0%), `base-provider.ts` (402 lines), and `conversationService.ts` (233 lines)
-- [ ] **#sec-mock [21/02/2026 10:00:00] 🟡 P2 🔒 [SECURITY]** Strip E2E mock code from production builds (gate behind `NODE_ENV === 'test'`)
 - [ ] **#arch-shell [25/02/2026 10:30:00] 🟡 P2 🏗️ [ARCHITECTURE]** Create `termaidsh` meta-shell: interactive shell wrapper with AI command suggestion, pre-filled validation, and output interpretation (reusing shared LLM providers)
 - [ ] **#sec-keys [21/02/2026 10:00:00] 🟢 P3 🔒 [SECURITY]** Use Electron `safeStorage` for API keys and disable DevTools in production builds
 - [ ] **#dep-update [21/02/2026 10:00:00] 🟢 P3 📦 [DEPENDENCIES]** Apply patch/minor dependency updates (`@langchain/*`, `biome`, `electron`, `i18next`, etc.)
@@ -33,3 +32,7 @@
 ## 🚧 In Progress
 
 ## ✅ Done
+
+- [x] **[25/02/2026 10:44:00] ♻️ [REFACTOR]** Gate mock initialization and checks in llm-service.ts behind `NODE_ENV === 'test'`
+- [x] **[25/02/2026 10:44:00] ✅ [TEST]** Verify conversation.ts mock gating is already correct
+- [x] **[25/02/2026 10:44:00] 🔧 [CHORE]** Run full validation (QA, build, tests)

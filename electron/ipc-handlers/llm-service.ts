@@ -29,42 +29,12 @@ function createProvider(config: AppConfig): BaseLLMProvider {
 export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppConfig): void {
   let service: BaseLLMProvider | null = null
 
-  // Check for E2E test mock mode (parse safely)
+  // E2E mock state — only initialized when NODE_ENV === 'test'
   let mockErrors: Record<string, string> | null = null
-  try {
-    if (process.env.TERMAID_E2E_MOCK_ERRORS) {
-      mockErrors = JSON.parse(process.env.TERMAID_E2E_MOCK_ERRORS)
-    }
-  } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: Debug logging for mock configuration errors
-    console.error('[LLMService] Failed to parse TERMAID_E2E_MOCK_ERRORS:', error)
-  }
-
-  const mockConnectionFailed = process.env.TERMAID_E2E_MOCK_CONNECTION_FAILED === 'true'
-
+  let mockConnectionFailed = false
   let mockModels: string[] | null = null
-  try {
-    if (process.env.TERMAID_E2E_MOCK_MODELS) {
-      mockModels = JSON.parse(process.env.TERMAID_E2E_MOCK_MODELS)
-    }
-  } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: Debug logging for mock configuration errors
-    console.error('[LLMService] Failed to parse TERMAID_E2E_MOCK_MODELS:', error)
-  }
-
   let mockAIResponses: AICommand[] | null = null
   let mockAIResponseIndex = 0
-  try {
-    if (process.env.TERMAID_E2E_MOCK_AI_RESPONSE) {
-      const parsed = JSON.parse(process.env.TERMAID_E2E_MOCK_AI_RESPONSE)
-      mockAIResponses = Array.isArray(parsed) ? parsed : [parsed]
-    }
-  } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: Debug logging for mock configuration errors
-    console.error('[LLMService] Failed to parse TERMAID_E2E_MOCK_AI_RESPONSE:', error)
-  }
-
-  // E2E mock for interpretations
   let mockInterpretations: Array<{
     summary: string
     key_findings: string[]
@@ -74,14 +44,47 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
     successful: boolean
   }> | null = null
   let mockInterpretationIndex = 0
-  try {
-    if (process.env.TERMAID_E2E_MOCK_INTERPRETATION) {
-      const parsed = JSON.parse(process.env.TERMAID_E2E_MOCK_INTERPRETATION)
-      mockInterpretations = Array.isArray(parsed) ? parsed : [parsed]
+
+  if (process.env.NODE_ENV === 'test') {
+    try {
+      if (process.env.TERMAID_E2E_MOCK_ERRORS) {
+        mockErrors = JSON.parse(process.env.TERMAID_E2E_MOCK_ERRORS)
+      }
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for mock configuration errors
+      console.error('[LLMService] Failed to parse TERMAID_E2E_MOCK_ERRORS:', error)
     }
-  } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: Debug logging for mock configuration errors
-    console.error('[LLMService] Failed to parse TERMAID_E2E_MOCK_INTERPRETATION:', error)
+
+    mockConnectionFailed = process.env.TERMAID_E2E_MOCK_CONNECTION_FAILED === 'true'
+
+    try {
+      if (process.env.TERMAID_E2E_MOCK_MODELS) {
+        mockModels = JSON.parse(process.env.TERMAID_E2E_MOCK_MODELS)
+      }
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for mock configuration errors
+      console.error('[LLMService] Failed to parse TERMAID_E2E_MOCK_MODELS:', error)
+    }
+
+    try {
+      if (process.env.TERMAID_E2E_MOCK_AI_RESPONSE) {
+        const parsed = JSON.parse(process.env.TERMAID_E2E_MOCK_AI_RESPONSE)
+        mockAIResponses = Array.isArray(parsed) ? parsed : [parsed]
+      }
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for mock configuration errors
+      console.error('[LLMService] Failed to parse TERMAID_E2E_MOCK_AI_RESPONSE:', error)
+    }
+
+    try {
+      if (process.env.TERMAID_E2E_MOCK_INTERPRETATION) {
+        const parsed = JSON.parse(process.env.TERMAID_E2E_MOCK_INTERPRETATION)
+        mockInterpretations = Array.isArray(parsed) ? parsed : [parsed]
+      }
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for mock configuration errors
+      console.error('[LLMService] Failed to parse TERMAID_E2E_MOCK_INTERPRETATION:', error)
+    }
   }
 
   if (initialConfig) {
