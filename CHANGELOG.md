@@ -10,7 +10,9 @@ To view the complete history, use: `git log`
 
 #### 25/02
 
-- **[10:45:00] 🔒 [SECURITY]** Gate E2E mock code behind `NODE_ENV === 'test'` in llm-service.ts to strip from production builds
+- **[10:45:47] ♻️ [REFACTOR]** Gate e2e mock code behind node_env test check
+- **[10:39:33] 📝 [DOCS]** Add termaidsh meta-shell idea and clean done tasks
+- **[10:32:07] 📝 [DOCS]** Add architecture fixes entry
 - **[10:31:59] ♻️ [REFACTOR]** Fix type safety, memory leaks, error handling, and export consistency
 
 #### 24/02
