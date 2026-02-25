@@ -184,7 +184,7 @@ app.whenReady().then(() => {
   // Register IPC handlers BEFORE creating the window to avoid race conditions
   // The handlers use getMainWindow() to get the window when needed
   createTerminalHandlers(getMainWindow)
-  createConversationHandlers(getMainWindow)
+  createConversationHandlers()
 
   // Get initial config and merge with environment variables
   const storedConfig = store.get('config')

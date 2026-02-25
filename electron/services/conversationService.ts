@@ -1,40 +1,73 @@
-import fs from 'node:fs'
+import fs from 'node:fs/promises'
 import path from 'node:path'
 import { app } from 'electron'
 import type { Conversation, ConversationMessage, ConversationsList } from '../../shared/types'
+
+// Cache entry with TTL
+interface CacheEntry<T> {
+  data: T
+  expiresAt: number
+}
+
+const DEFAULT_TTL_MS = 60_000 // 1 minute
 
 /**
  * Service for managing conversation persistence on disk
  */
 class ConversationService {
   private filePath: string
+  private cache: Map<string, CacheEntry<Conversation>> = new Map()
+  private listCache: CacheEntry<Conversation[]> | null = null
+  private ttlMs: number
 
-  constructor() {
+  constructor(ttlMs: number = DEFAULT_TTL_MS) {
     const userDataPath = app.getPath('userData')
     this.filePath = path.join(userDataPath, 'conversations.json')
-    this.ensureFileExists()
+    this.ttlMs = ttlMs
+    // Sync initialization for backward compatibility
+    this.ensureFileExistsSync()
   }
 
   /**
-   * Ensure the conversations file exists
+   * Ensure the conversations file exists (sync version for constructor)
    */
-  private ensureFileExists(): void {
+  private ensureFileExistsSync(): void {
+    const fsSync = require('node:fs')
     const dir = path.dirname(this.filePath)
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true })
+    if (!fsSync.existsSync(dir)) {
+      fsSync.mkdirSync(dir, { recursive: true })
     }
-
-    if (!fs.existsSync(this.filePath)) {
-      this.save({ conversations: [] })
+    if (!fsSync.existsSync(this.filePath)) {
+      fsSync.writeFileSync(this.filePath, JSON.stringify({ conversations: [] }), 'utf-8')
     }
   }
 
   /**
-   * Read conversations from disk
+   * Check if cache is valid
    */
-  private read(): ConversationsList {
+  private isCacheValid(entry: CacheEntry<unknown> | undefined | null): boolean {
+    if (!entry) return false
+    return Date.now() < entry.expiresAt
+  }
+
+  /**
+   * Invalidate cache for a specific conversation
+   */
+  private invalidateCache(conversationId?: string): void {
+    if (conversationId) {
+      this.cache.delete(conversationId)
+    } else {
+      this.cache.clear()
+    }
+    this.listCache = null
+  }
+
+  /**
+   * Read conversations from disk (async)
+   */
+  private async read(): Promise<ConversationsList> {
     try {
-      const data = fs.readFileSync(this.filePath, 'utf-8')
+      const data = await fs.readFile(this.filePath, 'utf-8')
       return JSON.parse(data) as ConversationsList
     } catch (error) {
       // biome-ignore lint/suspicious/noConsole: Debug logging for conversation read errors
@@ -44,17 +77,16 @@ class ConversationService {
   }
 
   /**
-   * Save conversations to disk
+   * Save conversations to disk (async)
    */
-  private save(data: ConversationsList): void {
-    fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8')
+  private async save(data: ConversationsList): Promise<void> {
+    await fs.writeFile(this.filePath, JSON.stringify(data, null, 2), 'utf-8')
   }
 
   /**
    * Generate a conversation title from the first user message
    */
   private generateTitle(firstMessage: string): string {
-    // Truncate to 50 characters max
     const truncated = firstMessage.slice(0, 50)
     return truncated + (firstMessage.length > 50 ? '...' : '')
   }
@@ -62,8 +94,8 @@ class ConversationService {
   /**
    * Create a new conversation
    */
-  createConversation(firstMessage: string): Conversation {
-    const data = this.read()
+  async createConversation(firstMessage: string): Promise<Conversation> {
+    const data = await this.read()
     const now = Date.now()
     const newConversation: Conversation = {
       id: `${now}-${Math.random().toString(36).slice(2, 11)}`,
@@ -73,32 +105,63 @@ class ConversationService {
       messages: [],
     }
     data.conversations.push(newConversation)
-    this.save(data)
+    await this.save(data)
+    this.invalidateCache()
     return newConversation
   }
 
   /**
    * Get all conversations
    */
-  getAllConversations(): Conversation[] {
-    const data = this.read()
-    // Sort by updatedAt descending (most recent first)
-    return data.conversations.sort((a, b) => b.updatedAt - a.updatedAt)
+  async getAllConversations(): Promise<Conversation[]> {
+    // Check list cache
+    if (this.listCache && this.isCacheValid(this.listCache)) {
+      return this.listCache.data
+    }
+
+    const data = await this.read()
+    const sorted = data.conversations.sort((a, b) => b.updatedAt - a.updatedAt)
+
+    // Update cache
+    this.listCache = {
+      data: sorted,
+      expiresAt: Date.now() + this.ttlMs,
+    }
+
+    return sorted
   }
 
   /**
    * Get a conversation by ID
    */
-  getConversation(id: string): Conversation | null {
-    const data = this.read()
-    return data.conversations.find(conv => conv.id === id) || null
+  async getConversation(id: string): Promise<Conversation | null> {
+    // Check single-item cache
+    const cached = this.cache.get(id)
+    if (cached && this.isCacheValid(cached)) {
+      return cached.data
+    }
+
+    const data = await this.read()
+    const conversation = data.conversations.find(conv => conv.id === id) || null
+
+    if (conversation) {
+      this.cache.set(id, {
+        data: conversation,
+        expiresAt: Date.now() + this.ttlMs,
+      })
+    }
+
+    return conversation
   }
 
   /**
    * Add a message to a conversation
    */
-  addMessage(conversationId: string, message: ConversationMessage): Conversation | null {
-    const data = this.read()
+  async addMessage(
+    conversationId: string,
+    message: ConversationMessage
+  ): Promise<Conversation | null> {
+    const data = await this.read()
     const conversation = data.conversations.find(conv => conv.id === conversationId)
 
     if (!conversation) {
@@ -108,15 +171,19 @@ class ConversationService {
     conversation.messages.push(message)
     conversation.updatedAt = Date.now()
 
-    this.save(data)
+    await this.save(data)
+    this.invalidateCache(conversationId)
     return conversation
   }
 
   /**
    * Update a conversation (e.g., rename)
    */
-  updateConversation(id: string, updates: Partial<Conversation>): Conversation | null {
-    const data = this.read()
+  async updateConversation(
+    id: string,
+    updates: Partial<Conversation>
+  ): Promise<Conversation | null> {
+    const data = await this.read()
     const conversation = data.conversations.find(conv => conv.id === id)
 
     if (!conversation) {
@@ -125,20 +192,20 @@ class ConversationService {
 
     Object.assign(conversation, updates, { updatedAt: Date.now() })
 
-    this.save(data)
+    await this.save(data)
+    this.invalidateCache(id)
     return conversation
   }
 
   /**
    * Update a specific message in a conversation
-   * Used to add command output and interpretation after execution
    */
-  updateMessage(
+  async updateMessage(
     conversationId: string,
     messageIndex: number,
     updates: Partial<ConversationMessage>
-  ): Conversation | null {
-    const data = this.read()
+  ): Promise<Conversation | null> {
+    const data = await this.read()
     const conversation = data.conversations.find(conv => conv.id === conversationId)
 
     if (!conversation) {
@@ -149,27 +216,28 @@ class ConversationService {
       return null
     }
 
-    // Merge the updates into the existing message
     conversation.messages[messageIndex] = {
       ...conversation.messages[messageIndex],
       ...updates,
     }
     conversation.updatedAt = Date.now()
 
-    this.save(data)
+    await this.save(data)
+    this.invalidateCache(conversationId)
     return conversation
   }
 
   /**
    * Delete a conversation
    */
-  deleteConversation(id: string): boolean {
-    const data = this.read()
+  async deleteConversation(id: string): Promise<boolean> {
+    const data = await this.read()
     const initialLength = data.conversations.length
     data.conversations = data.conversations.filter(conv => conv.id !== id)
 
     if (data.conversations.length < initialLength) {
-      this.save(data)
+      await this.save(data)
+      this.invalidateCache(id)
       return true
     }
 
@@ -179,15 +247,16 @@ class ConversationService {
   /**
    * Clear all conversations (for testing or reset)
    */
-  clearAllConversations(): void {
-    this.save({ conversations: [] })
+  async clearAllConversations(): Promise<void> {
+    await this.save({ conversations: [] })
+    this.invalidateCache()
   }
 
   /**
    * Export a single conversation to JSON format
    */
-  exportConversation(id: string): string {
-    const conversation = this.getConversation(id)
+  async exportConversation(id: string): Promise<string> {
+    const conversation = await this.getConversation(id)
     if (!conversation) {
       throw new Error(`Conversation with id ${id} not found`)
     }
@@ -205,8 +274,8 @@ class ConversationService {
   /**
    * Export all conversations to JSON format
    */
-  exportAllConversations(): string {
-    const conversations = this.getAllConversations()
+  async exportAllConversations(): Promise<string> {
+    const conversations = await this.getAllConversations()
 
     const exportData = {
       $schema: 'https://github.com/openhoat/termaid/schemas/conversation-export.schema.json',

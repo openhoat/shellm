@@ -1,13 +1,11 @@
-import { app, type BrowserWindow, dialog, ipcMain } from 'electron'
+import { app, dialog, ipcMain } from 'electron'
 import type { Conversation, ConversationMessage } from '../../shared/types'
 import { getConversationService } from '../services/conversationService'
-
-type WindowGetter = () => BrowserWindow | null
 
 /**
  * Create IPC handlers for conversation management
  */
-export function createConversationHandlers(_getWindow: WindowGetter): void {
+export function createConversationHandlers(): void {
   const conversationService = getConversationService()
 
   // Get all conversations
@@ -61,15 +59,15 @@ export function createConversationHandlers(_getWindow: WindowGetter): void {
 
   // Clear all conversations (for testing/reset)
   ipcMain.handle('conversation:clear-all', async () => {
-    conversationService.clearAllConversations()
+    await conversationService.clearAllConversations()
     return true
   })
 
   // Export a single conversation to JSON file
   ipcMain.handle('conversation:export', async (_event, id: string) => {
     try {
-      const exportData = conversationService.exportConversation(id)
-      const conversation = conversationService.getConversation(id)
+      const exportData = await conversationService.exportConversation(id)
+      const conversation = await conversationService.getConversation(id)
       const defaultName = conversation
         ? `${conversation.title.replace(/[^a-zA-Z0-9_-]/g, '_')}_export.json`
         : 'conversation_export.json'
@@ -114,7 +112,7 @@ export function createConversationHandlers(_getWindow: WindowGetter): void {
   // Export all conversations to JSON file
   ipcMain.handle('conversation:export-all', async () => {
     try {
-      const exportData = conversationService.exportAllConversations()
+      const exportData = await conversationService.exportAllConversations()
       const date = new Date().toISOString().split('T')[0]
       const defaultName = `termaid_conversations_${date}.json`
 
