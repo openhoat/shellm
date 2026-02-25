@@ -1,0 +1,53 @@
+# Dependabot configuration for automated dependency updates
+version: 2
+updates:
+  # Enable version updates for npm packages
+  - package-ecosystem: "npm"
+    # Check for updates on the default branch
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "UTC"
+    # Open pull requests for version updates
+    open-pull-requests-limit: 10
+    # Group minor and patch updates together
+    versioning-strategy: increase
+    commit-message:
+      prefix: "deps"
+    labels:
+      - "dependencies"
+      - "dependabot"
+    reviewers:
+      - "openhoat"
+    # Auto-merge patch and minor updates
+    automerged-dependencies:
+      - dependency-type: "production"
+        update-type: "version-update:semver-patch"
+      - dependency-type: "development"
+        update-type: "version-update:semver-patch"
+      - dependency-type: "production"
+        update-type: "version-update:semver-minor"
+      - dependency-type: "development"
+        update-type: "version-update:semver-minor"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "UTC"
+    commit-message:
+      prefix: "ci"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    reviewers:
+      - "openhoat"
+    # Auto-merge patch updates for GitHub Actions
+    automerged-dependencies:
+      - dependency-type: "production"
+        update-type: "version-update:semver-patch"
