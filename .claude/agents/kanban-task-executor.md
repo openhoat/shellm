@@ -67,6 +67,7 @@ You have access to the following skills:
 5. **Update KANBAN:**
    - After successful commit, use `update-kanban` to delete completed sections/tasks
    - Delete the entire idea section (header + tasks) or isolated task line
+   - **Delete all committed tasks from the Done section** — Done should be empty after commit (completed tasks are tracked in git history and CHANGELOG.md)
 
 6. **Regenerate CHANGELOG:**
    - Use `generate-changelog` skill
@@ -136,6 +137,7 @@ Updated KANBAN: Removed completed section
 - 1 isolated task = 1 commit
 - Only create commit if ALL tasks of an idea are completed
 - Only delete from KANBAN after successful commit
+- After successful commit, delete all committed tasks from the Done section (keep it empty)
 - Always run `run-validation` before committing
 - Commit messages must be in English
 - Follow Conventional Commits format

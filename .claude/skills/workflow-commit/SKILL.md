@@ -78,10 +78,11 @@ git commit --amend --no-edit
 
 ### 5. Update kanban
 
-Update KANBAN.md to mark completed tasks:
+Update KANBAN.md to reflect completed work:
 - Check tasks in the "In Progress" section
-- Move completed tasks to "Done" or remove them
-- Update task status
+- Move completed tasks to "Done"
+- Delete from "In Progress" after tasks are in Done
+- **After successful commit**: Delete all committed tasks from the "Done" section (Done should be empty after commit — completed tasks are tracked in git history and CHANGELOG.md)
 
 ## Output Format
 

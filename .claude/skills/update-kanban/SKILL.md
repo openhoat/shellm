@@ -75,6 +75,7 @@ INSERT:
 - SEARCH blocks must match the exact content
 - One idea = all tasks committed together
 - Only delete sections/tasks after successful git commit
+- After successful commit, delete all committed tasks from the Done section (keep Done empty — completed tasks are tracked in git history and CHANGELOG.md)
 - Always include proper formatting with bold and tags
 
 ## Format Rules Reference

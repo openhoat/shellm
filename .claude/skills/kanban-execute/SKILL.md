@@ -86,6 +86,12 @@ When all tasks completed and moved to Done:
 2. Stage files: `git add <files>`
 3. Commit: `git commit -m "message"`
 
+#### 4g. Clean up Done section
+
+After a successful commit:
+1. Delete all committed tasks from the "## ✅ Done" section
+2. The Done section should be empty after cleanup (completed tasks are tracked in git history and CHANGELOG.md)
+
 ### 6. Regenerate CHANGELOG.md
 
 Run: `npm run changelog`
@@ -110,6 +116,7 @@ Total: N ideas completed, N tasks executed, N commits created
 - Delete from Backlog only after In Progress section created
 - Move completed tasks to Done after execution
 - Delete from In Progress only after tasks are moved to Done and commit is successful
+- After successful commit, delete all committed tasks from Done section (keep Done section empty)
 - If task fails, ask whether to continue or abort
 
 ## Task Tags

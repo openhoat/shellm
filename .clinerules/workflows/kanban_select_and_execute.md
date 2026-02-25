@@ -151,7 +151,13 @@ When all tasks are moved to Done:
    git commit -m "Commit message"
    ```
 
-#### 4g. Move to next idea
+#### 4g. Clean up Done section
+
+After a successful commit:
+1. **Delete all committed tasks** from the "## ✅ Done" section
+2. The Done section should be empty after cleanup (completed tasks are tracked in git history and CHANGELOG.md)
+
+#### 4h. Move to next idea
 
 Continue with the next selected idea until all are completed.
 
@@ -188,6 +194,7 @@ Total: 2 ideas completed, 5 tasks executed, 2 commits created
 - **Delete ideas from Backlog** only after "In Progress" section is created
 - **Move completed tasks to Done** after execution
 - **Delete from In Progress** only after tasks are moved to Done and commit is successful
+- **After successful commit**, delete all committed tasks from Done section (keep Done empty)
 - **If a task fails**, ask user whether to continue or abort
 - **Do not skip tasks** without user approval
 

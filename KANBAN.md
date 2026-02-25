@@ -32,7 +32,3 @@
 ## 🚧 In Progress
 
 ## ✅ Done
-
-- [x] **[25/02/2026 10:44:00] ♻️ [REFACTOR]** Gate mock initialization and checks in llm-service.ts behind `NODE_ENV === 'test'`
-- [x] **[25/02/2026 10:44:00] ✅ [TEST]** Verify conversation.ts mock gating is already correct
-- [x] **[25/02/2026 10:44:00] 🔧 [CHORE]** Run full validation (QA, build, tests)
