@@ -25,8 +25,3 @@
 ## 🚧 In Progress
 
 ## ✅ Done
-
-- [x] **#test-cov [21/02/2026 10:00:00] 🟡 P2 ✅ [TEST]** Add unit tests for `useChat.ts`, `base-provider.ts`, and `conversationService.ts`
-- [x] **#perf-terminal [21/02/2026 10:00:00] 🟡 P2 🚀 [PERFORMANCE]** Batch terminal output processing and throttle Resizer with `requestAnimationFrame`
-- [x] **#i18n-strings [21/02/2026 10:00:00] 🟡 P2 🌍 [I18N]** Replace hardcoded French/English strings with i18n keys in services and Header component
-- [x] **#dep-xterm [21/02/2026 10:00:00] 🟡 P2 📦 [DEPENDENCIES]** Migrate deprecated `xterm` to `@xterm/xterm` and run `npm audit fix` for fixable vulnerabilities
