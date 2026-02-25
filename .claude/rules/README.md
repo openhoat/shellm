@@ -16,6 +16,7 @@ This directory contains project rules adapted for Claude Code.
 | `subagents.md` | When and how to use Claude Code subagents |
 | `task_format.md` | Task format for KANBAN.md and CHANGELOG.md |
 | `testing.md` | Testing standards (use `test` instead of `it`) |
+| `worktree.md` | Native git worktrees workflow for multi-branch development |
 
 ## Agents
 
@@ -66,6 +67,8 @@ Skills are located in `.claude/skills/` and can be invoked with `/skill-name`.
 
 | Command | Description |
 |---------|-------------|
+| `/create-worktree` | Create a new git worktree for a feature branch |
+| `/list-worktrees` | List all git worktrees and branches |
 | `/create-git-commit` | Create commit with Conventional Commits format |
 | `/generate-changelog` | Regenerate CHANGELOG.md from Git history |
 | `/release` | Automate versioning (bump, changelog, commit, tag, push) |
@@ -76,14 +79,16 @@ Skills are located in `.claude/skills/` and can be invoked with `/skill-name`.
 When working on this project with Claude Code:
 
 1. **Read and understand** the rules before starting work
-2. **Use English** for all code, comments, documentation, and commit messages
-3. **Follow Kanban workflow** when working on tasks:
+2. **Use native worktrees** for each feature/PR (see `worktree.md`)
+3. **Use English** for all code, comments, documentation, and commit messages
+4. **Follow Kanban workflow** when working on tasks:
    - Use `/kanban-execute` to select and execute backlog ideas
    - Use `/kanban-add-idea` to add new ideas to backlog
    - Use `/read-kanban` to check current state
-4. **Run quality checks** (`/run-validation` or `/workflow-commit`) after each code modification
-5. **Log changes** in CHANGELOG.md after successful modifications
-6. **Follow Conventional Commits** for all git commits
+5. **Run quality checks** (`/run-validation` or `/workflow-commit`) after each code modification
+6. **Log changes** in CHANGELOG.md after successful modifications
+7. **Follow Conventional Commits** for all git commits
+8. **Create Pull Request** for each worktree when changes are ready
 
 ## Quick Reference
 
@@ -102,11 +107,18 @@ Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`
 Tags: `[FEAT]`, `[FIX]`, `[REFACTOR]`, `[PERF]`, `[DOCS]`, `[STYLE]`, `[TEST]`, `[CHORE]`
 
 ### Kanban Workflow Summary
-1. `/kanban-add-idea` - Add ideas to backlog
-2. `/kanban-execute` - Select and execute ideas
-3. Complete tasks and mark as done
-4. Use `/workflow-commit` for full automation
-5. Or: `/create-git-commit` + `/generate-changelog`
+1. `/create-worktree` - Create a new worktree for the feature
+2. Start Claude Code in the new worktree directory
+3. Work on the feature and commit changes
+4. Create PR with `/workflow-commit` or manually
+5. After merge, remove worktree with `/cleanup-worktree`
+
+### Worktree Workflow
+1. `/create-worktree <name>` - Create new worktree for feature
+2. `cd ../termaid-<name>` - Switch to worktree
+3. Make changes, run validation
+4. `git push -u origin <branch>` - Push and create PR
+5. After PR merge: `git worktree remove ../termaid-<name> && git branch -d <branch>`
 
 ### Recommended Agent Usage
 
