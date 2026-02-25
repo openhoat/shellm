@@ -4,7 +4,17 @@ import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string) => key,
+    t: (key: string, params?: Record<string, string>) => {
+      // Handle i18n keys with interpolation - return key with interpolated values
+      if (key === 'header.exportedTo' && params?.filePath) {
+        return `Exported to ${params.filePath}`
+      }
+      if (key === 'header.exportedAll' && params?.filePath) {
+        return `Exported all conversations to to ${params.filePath}`
+      }
+      // Return the key itself (which is what the original mock did)
+      return key
+    },
     i18n: { language: 'en', changeLanguage: vi.fn() },
   }),
 }))
@@ -436,7 +446,7 @@ describe('Header', () => {
       const exportAllButton = screen.getByRole('button', { name: 'header.exportAll' })
       await user.click(exportAllButton)
 
-      expect(screen.getByText(/Exported all conversations/)).toBeInTheDocument()
+      expect(screen.getByText(/Exported all conversations to/)).toBeInTheDocument()
     })
 
     test('should show error status on failed export', async () => {

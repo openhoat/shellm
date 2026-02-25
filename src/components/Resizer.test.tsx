@@ -3,6 +3,32 @@ import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { Resizer } from './Resizer'
 
+// Helper to wait for requestAnimationFrame
+const waitForAnimationFrame = () =>
+  new Promise(resolve => {
+    // Use setTimeout to allow RAF to complete
+    setTimeout(resolve, 16) // ~60fps
+  })
+
+// Mock requestAnimationFrame to run immediately
+const mockRaf = vi.fn(cb => {
+  cb(0)
+  return 0
+})
+mockRaf.cancel = vi.fn()
+mockRaf.flush = async () => {
+  await waitForAnimationFrame()
+}
+
+beforeAll(() => {
+  vi.stubGlobal('requestAnimationFrame', mockRaf)
+  vi.stubGlobal('cancelAnimationFrame', mockRaf.cancel)
+})
+
+afterAll(() => {
+  vi.unstubAllGlobals()
+})
+
 describe('Resizer', () => {
   beforeEach(() => {
     vi.clearAllMocks()

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import './Resizer.css'
 
 interface ResizerProps {
@@ -11,6 +11,26 @@ export const Resizer = ({ onResize, direction = 'horizontal', minSize = 300 }: R
   const [isDragging, setIsDragging] = useState(false)
   const [positionPercent, setPositionPercent] = useState(50)
   const resizerRef = useRef<HTMLDivElement>(null)
+  const rafIdRef = useRef<number | null>(null)
+  const pendingPositionRef = useRef<number | null>(null)
+
+  // Throttled resize handler using requestAnimationFrame
+  const throttledResize = useCallback(
+    (position: number) => {
+      pendingPositionRef.current = position
+
+      if (rafIdRef.current === null) {
+        rafIdRef.current = requestAnimationFrame(() => {
+          if (pendingPositionRef.current !== null) {
+            onResize(pendingPositionRef.current)
+            pendingPositionRef.current = null
+          }
+          rafIdRef.current = null
+        })
+      }
+    },
+    [onResize]
+  )
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -37,11 +57,21 @@ export const Resizer = ({ onResize, direction = 'horizontal', minSize = 300 }: R
 
       const range = maxBound - minSize
       setPositionPercent(range > 0 ? Math.round(((newPosition - minSize) / range) * 100) : 50)
-      onResize(newPosition)
+      throttledResize(newPosition)
     }
 
     const handleMouseUp = () => {
       setIsDragging(false)
+      // Cancel any pending RAF
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current)
+        rafIdRef.current = null
+      }
+      // Execute final resize if pending
+      if (pendingPositionRef.current !== null) {
+        onResize(pendingPositionRef.current)
+        pendingPositionRef.current = null
+      }
     }
 
     if (isDragging) {
@@ -53,7 +83,7 @@ export const Resizer = ({ onResize, direction = 'horizontal', minSize = 300 }: R
       document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseup', handleMouseUp)
     }
-  }, [isDragging, direction, minSize, onResize])
+  }, [isDragging, direction, minSize, onResize, throttledResize])
 
   const handleMouseDown = (e: MouseEvent) => {
     e.preventDefault()

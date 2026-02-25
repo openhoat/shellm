@@ -10,10 +10,18 @@
       "settings": "Paramètres",
       "newConversation": "Nouvelle conversation",
       "conversations": "Conversations",
+      "conversationsTitle": "Conversations",
+      "noConversations": "Aucune conversation",
       "exportAll": "Exporter toutes les conversations",
       "exportCurrent": "Exporter la conversation courante",
+      "exportCurrentButton": "Exporter",
       "deleteConversation": "Supprimer la conversation",
-      "closeConversations": "Fermer la liste des conversations"
+      "closeConversations": "Fermer la liste des conversations",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette conversation ?",
+      "noConversationToExport": "Aucune conversation active à exporter",
+      "exportedTo": "Exporté vers {{filePath}}",
+      "exportedAll": "Toutes les conversations exportées vers {{filePath}}",
+      "exportFailed": "Échec de l'export"
     },
     "chat": {
       "title": "Chat IA",
