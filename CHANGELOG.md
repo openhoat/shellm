@@ -10,6 +10,8 @@ To view the complete history, use: `git log`
 
 #### 25/02
 
+- **[16:19:14] ⚡ [PERF]** Add zustand selectors and vite code splitting
+- **[10:48:59] 📝 [DOCS]** Add kanban cleanup rule entry
 - **[10:48:52] 📝 [DOCS]** Add done section cleanup rule after commit
 - **[10:46:01] 📝 [DOCS]** Add e2e mock gating entry
 - **[10:45:47] ♻️ [REFACTOR]** Gate e2e mock code behind node_env test check

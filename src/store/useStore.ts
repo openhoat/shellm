@@ -1,8 +1,37 @@
 import type { AICommand, AppConfig, Conversation, ConversationMessage } from '@shared/types'
 import { create } from 'zustand'
+import { useShallow } from 'zustand/react/shallow'
 import { Logger } from '@/utils/logger'
 
 const logger = new Logger('useStore')
+
+// Selectors for optimized re-renders (available for use but components keep using useStore)
+const selectConfig = (state: AppState) => state.config
+const selectSetConfig = (state: AppState) => state.setConfig
+const selectTerminalPid = (state: AppState) => state.terminalPid
+const selectSetTerminalPid = (state: AppState) => state.setTerminalPid
+const selectAppendTerminalOutput = (state: AppState) => state.appendTerminalOutput
+const selectAiCommand = (state: AppState) => state.aiCommand
+const selectSetAiCommand = (state: AppState) => state.setAiCommand
+const selectConversations = (state: AppState) => state.conversations
+const selectCurrentConversationId = (state: AppState) => state.currentConversationId
+const selectShowConfigPanel = (state: AppState) => state.showConfigPanel
+const selectToggleConfigPanel = (state: AppState) => state.toggleConfigPanel
+const selectClearAllConversations = (state: AppState) => state.clearAllConversations
+
+// Optimized hooks - available for future use
+export const useConfig = () => useStore(selectConfig, useShallow)
+export const useSetConfig = () => useStore(selectSetConfig)
+export const useTerminalPid = () => useStore(selectTerminalPid)
+export const useSetTerminalPid = () => useStore(selectSetTerminalPid)
+export const useAppendTerminalOutput = () => useStore(selectAppendTerminalOutput)
+export const useAiCommand = () => useStore(selectAiCommand)
+export const useSetAiCommand = () => useStore(selectSetAiCommand)
+export const useConversations = () => useStore(selectConversations, useShallow)
+export const useCurrentConversationId = () => useStore(selectCurrentConversationId)
+export const useShowConfigPanel = () => useStore(selectShowConfigPanel)
+export const useToggleConfigPanel = () => useStore(selectToggleConfigPanel)
+export const useClearAllConversations = () => useStore(selectClearAllConversations)
 
 interface AppState {
   // Config

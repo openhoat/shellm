@@ -34,6 +34,18 @@ export default defineConfig(({ mode }) => ({
         }
         warn(warning)
       },
+      output: {
+        manualChunks: {
+          // Split React ecosystem
+          'vendor-react': ['react', 'react-dom'],
+          // Split Zustand for state management
+          'vendor-zustand': ['zustand'],
+          // Split i18n
+          'vendor-i18n': ['i18next', 'react-i18next'],
+          // Split xterm for terminal
+          'vendor-xterm': ['xterm', 'xterm-addon-fit'],
+        },
+      },
     },
   },
 }))

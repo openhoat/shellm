@@ -18,8 +18,6 @@
 
 ## 📝 Backlog
 
-- [ ] **#perf-zustand [21/02/2026 10:00:00] 🟡 P2 🚀 [PERFORMANCE]** Add Zustand selectors with `useShallow` to prevent unnecessary re-renders across all components
-- [ ] **#perf-bundle [21/02/2026 10:00:00] 🟡 P2 🚀 [PERFORMANCE]** Add Vite code splitting (`manualChunks`) and lazy-load ConfigPanel with `React.lazy`
 - [ ] **#perf-terminal [21/02/2026 10:00:00] 🟡 P2 🚀 [PERFORMANCE]** Batch terminal output processing and throttle Resizer with `requestAnimationFrame`
 - [ ] **#perf-convo [21/02/2026 10:00:00] 🟡 P2 🚀 [PERFORMANCE]** Add in-memory cache for ConversationService and switch to async file I/O
 - [ ] **#i18n-strings [21/02/2026 10:00:00] 🟡 P2 🌍 [I18N]** Replace hardcoded French/English strings with i18n keys in services and Header component
@@ -32,3 +30,5 @@
 ## 🚧 In Progress
 
 ## ✅ Done
+- [x] **[25/02/2026 10:00:00] 🔧 [CHORE]** Add Zustand optimized selectors with useShallow in useStore.ts (available for future use)
+- [x] **[25/02/2026 10:00:00] 🔧 [CHORE]** Add Vite code splitting with manualChunks for vendor bundles
