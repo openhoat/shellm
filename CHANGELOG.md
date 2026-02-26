@@ -10,21 +10,21 @@ To view the complete history, use: `git log`
 
 #### 26/02
 
-**[08:56:00] 🔒 [SECURITY]** Disable DevTools in production builds and restrict keyboard shortcut to dev mode only
+- **[08:59:23] ✨ [FEAT]** Disable devtools in production builds
+- **[08:50:48] ⚡ [PERF]** Remove double build for e2e-manual jobs on windows/mac
+- **[08:24:28] 🔧 [CHORE]** Add inline build for e2e-manual jobs on windows/mac
 
-**[14:30:00] 🔧 [DEVOPS]** Optimize CI by removing double build for e2e-manual jobs
+#### 25/02
 
-### 2025
-
-- **[21:20:00] ⚡ [PERF]** Batch terminal output processing and add RAF throttling to Resizer
-- **[21:20:00] 🌍 [I18N]** Add i18n keys for Header component strings
-- **[21:20:00] ✅ [TEST]** Add unit tests for useChat, base-provider, and conversationService
-- **[21:20:00] ⚡ [PERF]** Add batch processing for terminal output and RAF throttling for Resizer
-- **[21:20:00] ✅ [TEST]** Add unit tests for useChat, base-provider, and conversationService
-- **[21:20:00] 🌍 [I18N]** Add i18n keys for Header component strings
-- **[19:50:00] 📝 [DOCS]** Add native worktree workflow rules for Claude Code and Cline
-- **[19:34:00] 🔧 [DEVOPS]** Add Dependabot configuration for automated dependency updates
-- **[18:34:32] ⚡ [PERF]** Add in-memory cache for conversationservice with async io
+- **[22:35:54] 🐛 [FIX]** Use github.ref directly in matrix expression
+- **[22:18:53] 🐛 [FIX]** Regenerate package-lock.json with missing transitive dependencies
+- **[21:52:03] 🐛 [FIX]** Remove invalid automerged-dependencies from dependabot config
+- **[21:39:42] 🔧 [CHORE]** Add Dependabot configuration for automated dependency updates
+- **[21:30:57] 📝 [DOCS]** Clean up kanban done section after commit
+- **[21:27:47] 📝 [DOCS]** Update changelog with recent changes
+- **[21:25:42] ⚡ [PERF]** Optimize terminal output and add unit tests
+- **[20:53:45] 📝 [DOCS]** Add native worktree workflow rules for Claude Code and Cline
+- **[18:40:03] ⚡ [PERF]** Add in-memory cache and async io to conversation service
 - **[16:51:23] ⚡ [PERF]** Add zustand selectors and vite code splitting
 - **[10:48:59] 📝 [DOCS]** Add kanban cleanup rule entry
 - **[10:48:52] 📝 [DOCS]** Add done section cleanup rule after commit
