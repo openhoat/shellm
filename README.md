@@ -15,7 +15,7 @@ A modern terminal powered by artificial intelligence, inspired by [Warp](https:/
 
 Termaid allows you to describe what you want to do in natural language and the AI generates the appropriate shell commands.
 
-> 🤖 **This project was entirely built with AI** — from architecture to code, tests, and documentation, using [Claude Code](https://claude.ai/claude-code) (Anthropic).
+> 🤖 **This project was entirely built with AI** — from architecture to code, tests, and documentation.
 
 ## 🎬 Demo
 
@@ -124,5 +124,4 @@ Olivier Penhoat <openhoat@gmail.com>
 - [Warp](https://www.warp.dev) for the inspiration
 - The Ollama team for their excellent tool
 - Anthropic for the Claude API
-- [Claude Code](https://claude.ai/claude-code) — the AI assistant that built this project
 - The open-source community
