@@ -78,6 +78,9 @@ const defaultChatState: UseChatReturn = {
   isInterpreting: false,
   isExecuting: false,
   executionProgress: 0,
+  isStreaming: false,
+  streamingContent: '',
+  streamingProgress: null,
   aiCommand: null,
   isLoading: false,
   error: null,
@@ -85,6 +88,8 @@ const defaultChatState: UseChatReturn = {
   setUserInput: vi.fn(),
   handleInputChange: vi.fn(),
   generateAICommand: vi.fn(),
+  streamAICommand: vi.fn(),
+  cancelStreaming: vi.fn(),
   executeCommand: vi.fn(),
   modifyCommand: vi.fn(),
   addToHistory: vi.fn(),
@@ -343,22 +348,22 @@ describe('ChatPanel', () => {
   })
 
   // handleSubmit tests
-  test('should call generateAICommand when form is submitted with text', async () => {
+  test('should call streamAICommand when form is submitted with text', async () => {
     const user = userEvent.setup()
-    const mockGenerateAICommand = vi.fn()
+    const mockStreamAICommand = vi.fn()
     const mockSetUserInput = vi.fn()
     vi.mocked(useChat).mockReturnValue({
       ...defaultChatState,
       userInput: 'list files',
       setUserInput: mockSetUserInput,
-      generateAICommand: mockGenerateAICommand,
+      streamAICommand: mockStreamAICommand,
     })
     render(<ChatPanel />)
 
     const submitButton = screen.getByRole('button', { name: /chat\.send/ })
     await user.click(submitButton)
 
-    expect(mockGenerateAICommand).toHaveBeenCalledWith('list files')
+    expect(mockStreamAICommand).toHaveBeenCalledWith('list files')
     expect(mockSetUserInput).toHaveBeenCalledWith('')
   })
 
@@ -456,13 +461,13 @@ describe('ChatPanel', () => {
   })
 
   test('should submit form when Enter is pressed without Shift', async () => {
-    const mockGenerateAICommand = vi.fn()
+    const mockStreamAICommand = vi.fn()
     const mockSetUserInput = vi.fn()
     vi.mocked(useChat).mockReturnValue({
       ...defaultChatState,
       userInput: 'list files',
       setUserInput: mockSetUserInput,
-      generateAICommand: mockGenerateAICommand,
+      streamAICommand: mockStreamAICommand,
     })
     render(<ChatPanel />)
 
@@ -473,7 +478,7 @@ describe('ChatPanel', () => {
     const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })
     textarea.dispatchEvent(event)
 
-    expect(mockGenerateAICommand).toHaveBeenCalled()
+    expect(mockStreamAICommand).toHaveBeenCalled()
   })
 
   // isInterpreting and isExecuting state tests

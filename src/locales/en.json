@@ -43,7 +43,10 @@
         "executing": "Executing command...",
         "retrieving": "Retrieving results...",
         "finalizing": "Finalizing...",
-        "interpreting": "Analyzing results..."
+        "interpreting": "Analyzing results...",
+        "connecting": "Connecting to AI...",
+        "receiving": "Receiving response...",
+        "processing": "Processing response..."
       },
       "command": {
         "proposed": "Proposed command:",
@@ -64,7 +67,8 @@
         "modify": "Modify",
         "modifyCommand": "Modify the proposed command",
         "cancel": "Cancel",
-        "cancelCommand": "Cancel the proposed command"
+        "cancelCommand": "Cancel the proposed command",
+        "cancelStream": "Cancel streaming response"
       }
     },
     "terminal": {

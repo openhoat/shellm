@@ -1,4 +1,5 @@
-import type { AICommand, ConversationMessage } from '@shared/types'
+import { detectPrompt } from '@shared/promptDetection'
+import type { AICommand, ConversationMessage, StreamingProgress } from '@shared/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ChatMessageData } from '@/components/chat'
@@ -13,6 +14,13 @@ const logger = new Logger('useChat')
 const DEBOUNCE_MS = 300 // Debounce delay for user input
 const INPUT_HISTORY_KEY = 'termaid-chat-input-history'
 const MAX_HISTORY_SIZE = 50
+
+/**
+ * Generate a unique request ID for streaming
+ */
+function generateRequestId(): string {
+  return `stream-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+}
 
 /**
  * Simple debounce hook
@@ -47,6 +55,12 @@ export function useChat() {
   const [executionProgress, setExecutionProgress] = useState(0)
   const [conversation, setConversation] = useState<ChatMessageData[]>([])
   const [messageCounter, setMessageCounter] = useState(0)
+
+  // Streaming state
+  const [isStreaming, setIsStreaming] = useState(false)
+  const [streamingContent, setStreamingContent] = useState('')
+  const [streamingProgress, setStreamingProgress] = useState<StreamingProgress | null>(null)
+  const currentRequestIdRef = useRef<string | null>(null)
 
   // Input history for up/down arrow navigation
   const [inputHistory, setInputHistory] = useState<string[]>(() => {
@@ -352,6 +366,205 @@ export function useChat() {
   )
 
   /**
+   * Stream AI command generation with real-time progress updates
+   */
+  const streamAICommand = useCallback(
+    async (prompt: string) => {
+      if (!prompt.trim() || isLoading || isStreaming) return
+
+      setError(null)
+      addToHistory(prompt)
+
+      // Add user message to local conversation state
+      setConversation(prev => [
+        ...prev,
+        { id: `msg-${messageCounter}`, type: 'user', content: prompt },
+      ])
+      setMessageCounter(prev => prev + 1)
+
+      // Create new conversation if none exists
+      if (!currentConversation) {
+        await createConversation(prompt)
+      }
+
+      // Build conversation history for LLM context
+      const conversationHistory: ConversationMessage[] = conversation.map(msg => ({
+        role: msg.type === 'user' ? 'user' : 'assistant',
+        content: msg.content,
+      }))
+      conversationHistory.push({ role: 'user', content: prompt })
+
+      // Save user message to persistent storage
+      await addMessageToConversation({ role: 'user', content: prompt })
+
+      // Generate unique request ID for this streaming session
+      const requestId = generateRequestId()
+      currentRequestIdRef.current = requestId
+
+      setIsStreaming(true)
+      setStreamingContent('')
+      setStreamingProgress({ type: 'connecting' })
+
+      // Add a placeholder AI message for streaming content
+      const streamingMessageId = `msg-streaming-${Date.now()}`
+      setConversation(prev => [
+        ...prev,
+        {
+          id: streamingMessageId,
+          type: 'ai',
+          content: '',
+          isStreaming: true,
+        },
+      ])
+
+      try {
+        // Set up progress listener
+        const unsubscribe = window.electronAPI.onLlmStreamProgress(requestId, progress => {
+          setStreamingProgress(progress)
+
+          if (progress.type === 'receiving' && progress.content) {
+            setStreamingContent(progress.content)
+
+            // Update the streaming message in conversation
+            setConversation(prev =>
+              prev.map(msg =>
+                msg.id === streamingMessageId ? { ...msg, content: progress.content || '' } : msg
+              )
+            )
+          }
+
+          if (progress.type === 'complete' && progress.partialCommand) {
+            // Final update with the complete response
+            const response = progress.partialCommand
+            setAiCommand(response)
+
+            let aiContent: string
+            if (response.type === 'text') {
+              aiContent = response.content
+            } else {
+              aiContent = `${response.explanation}\n\nCommand: ${response.command}`
+            }
+
+            // Update the message with final content
+            setConversation(prev =>
+              prev.map(msg =>
+                msg.id === streamingMessageId
+                  ? {
+                      ...msg,
+                      content: aiContent,
+                      command: response.type === 'command' ? response : undefined,
+                      isStreaming: false,
+                    }
+                  : msg
+              )
+            )
+
+            // Save AI response to persistent storage
+            const messageToSave: ConversationMessage = {
+              role: 'assistant',
+              content: aiContent,
+            }
+            if (response.type === 'command') {
+              messageToSave.command = response.command
+            }
+            addMessageToConversation(messageToSave)
+
+            if (response.type === 'command') {
+              setCurrentCommandIndex(conversation.length + 1)
+            }
+          }
+
+          if (progress.type === 'error') {
+            setError(progress.error || 'Streaming failed')
+          }
+        })
+
+        // Start the streaming request
+        const result = await window.electronAPI.llmStreamCommand(
+          requestId,
+          prompt,
+          conversationHistory,
+          i18n.language
+        )
+
+        // Clean up listener
+        unsubscribe()
+
+        // Handle the result if it came through the invoke response
+        if (result && !streamingProgress?.partialCommand) {
+          setAiCommand(result)
+
+          let aiContent: string
+          if (result.type === 'text') {
+            aiContent = result.content
+          } else {
+            aiContent = `${result.explanation}\n\nCommand: ${result.command}`
+          }
+
+          setConversation(prev =>
+            prev.map(msg =>
+              msg.id === streamingMessageId
+                ? {
+                    ...msg,
+                    content: aiContent,
+                    command: result.type === 'command' ? result : undefined,
+                    isStreaming: false,
+                  }
+                : msg
+            )
+          )
+        }
+      } catch (err) {
+        let errorMessage: string
+        if (err instanceof Error) {
+          errorMessage = `${i18n.t('errors.aiGenerationFailed')} (${err.message})`
+        } else {
+          errorMessage = i18n.t('errors.unknownError')
+        }
+        setError(errorMessage)
+        addToast('error', errorMessage)
+
+        // Remove the streaming placeholder on error
+        setConversation(prev => prev.filter(msg => msg.id !== streamingMessageId))
+      } finally {
+        setIsStreaming(false)
+        setStreamingContent('')
+        setStreamingProgress(null)
+        currentRequestIdRef.current = null
+      }
+    },
+    [
+      messageCounter,
+      isLoading,
+      isStreaming,
+      currentConversation,
+      conversation,
+      i18n.language,
+      addMessageToConversation,
+      setAiCommand,
+      createConversation,
+      setError,
+      addToast,
+      i18n.t,
+      addToHistory,
+      streamingProgress,
+    ]
+  )
+
+  /**
+   * Cancel an active streaming request
+   */
+  const cancelStreaming = useCallback(async () => {
+    if (currentRequestIdRef.current) {
+      await window.electronAPI.llmCancelStream(currentRequestIdRef.current)
+      currentRequestIdRef.current = null
+      setIsStreaming(false)
+      setStreamingContent('')
+      setStreamingProgress(null)
+    }
+  }, [])
+
+  /**
    * Execute a command in the terminal
    */
   const executeCommand = useCallback(
@@ -516,6 +729,11 @@ export function useChat() {
     isExecuting,
     executionProgress,
 
+    // Streaming state
+    isStreaming,
+    streamingContent,
+    streamingProgress,
+
     // Global state from store
     aiCommand,
     isLoading,
@@ -526,6 +744,8 @@ export function useChat() {
     setUserInput,
     handleInputChange,
     generateAICommand,
+    streamAICommand,
+    cancelStreaming,
     executeCommand,
     modifyCommand,
     addToHistory,

@@ -42,7 +42,10 @@
         "executing": "Exécution de la commande...",
         "retrieving": "Récupération des résultats...",
         "finalizing": "Finalisation...",
-        "interpreting": "Analyse des résultats en cours..."
+        "interpreting": "Analyse des résultats en cours...",
+        "connecting": "Connexion à l'IA...",
+        "receiving": "Réception de la réponse...",
+        "processing": "Traitement en cours..."
       },
       "command": {
         "proposed": "Commande proposée :",
@@ -63,7 +66,8 @@
         "modify": "Modifier",
         "modifyCommand": "Modifier la commande proposée",
         "cancel": "Annuler",
-        "cancelCommand": "Annuler la commande proposée"
+        "cancelCommand": "Annuler la commande proposée",
+        "cancelStream": "Annuler la réponse en cours"
       },
       "scrollToBottom": "Défiler vers le bas"
     },
