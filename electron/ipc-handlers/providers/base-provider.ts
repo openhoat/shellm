@@ -4,7 +4,12 @@ import type { BaseChatModel } from '@langchain/core/language_models/chat_models'
 import { AIMessage, HumanMessage } from '@langchain/core/messages'
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts'
 import { stripAnsiCodes, stripOscSequences } from '@shared/ansi'
-import type { AICommand, CommandInterpretation, ConversationMessage } from '@shared/types'
+import type {
+  AICommand,
+  CommandInterpretation,
+  ConversationMessage,
+  StreamingCallback,
+} from '@shared/types'
 import { z } from 'zod'
 
 // Constants
@@ -170,6 +175,149 @@ export abstract class BaseLLMProvider {
         console.error('[BaseLLMProvider] Failed to parse fallback JSON response:', parseError)
         return { type: 'text', content: fallbackResponseText.trim() }
       }
+    }
+  }
+
+  /**
+   * Stream a shell command generation with progress callbacks
+   * This method streams text response and parses it at the end
+   */
+  async streamCommand(
+    prompt: string,
+    conversationHistory: ConversationMessage[] | undefined,
+    language: string,
+    onProgress: StreamingCallback,
+    signal?: AbortSignal
+  ): Promise<AICommand> {
+    const systemPrompt = loadPrompt('system-prompt.md')
+
+    const messages: (HumanMessage | AIMessage)[] = []
+
+    if (conversationHistory && conversationHistory.length > 0) {
+      const limitedHistory = conversationHistory.slice(-MAX_CONVERSATION_HISTORY)
+      for (const msg of limitedHistory) {
+        if (msg.role === 'user') {
+          messages.push(new HumanMessage(msg.content))
+        } else {
+          messages.push(new AIMessage(msg.content))
+        }
+      }
+    }
+
+    const enhancedSystemPrompt = `${systemPrompt}\n\n[Language hint: User interface language is ${language}]`
+
+    // Notify connecting
+    onProgress({ type: 'connecting' })
+
+    try {
+      const promptTemplate = ChatPromptTemplate.fromMessages([
+        ['system', enhancedSystemPrompt],
+        new MessagesPlaceholder('history'),
+        ['human', '{input}'],
+      ])
+
+      const chain = promptTemplate.pipe(this.model)
+
+      // Stream the response
+      const stream = await chain.stream({ input: prompt, history: messages })
+
+      let accumulatedContent = ''
+
+      // Notify receiving started
+      onProgress({ type: 'receiving' })
+
+      for await (const chunk of stream) {
+        // Check for abort
+        if (signal?.aborted) {
+          onProgress({ type: 'error', error: 'Request cancelled' })
+          return { type: 'text', content: accumulatedContent }
+        }
+
+        const content = chunk.content
+        if (typeof content === 'string') {
+          accumulatedContent += content
+          // Send partial content update
+          onProgress({
+            type: 'receiving',
+            content: accumulatedContent,
+          })
+        }
+      }
+
+      // Notify processing
+      onProgress({ type: 'processing', content: accumulatedContent })
+
+      // Parse the accumulated content
+      const result = this.parseCommandResponse(accumulatedContent, language)
+
+      // Notify complete
+      onProgress({ type: 'complete', partialCommand: result })
+
+      return result
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      onProgress({ type: 'error', error: errorMessage })
+
+      // Check if it's a quota error
+      const isQuotaError =
+        errorMessage.includes('429') || errorMessage.toLowerCase().includes('usage limit')
+
+      return {
+        type: 'text',
+        content: this.getFallbackMessage(
+          isQuotaError ? 'quota_exceeded' : 'parsing_failed',
+          language
+        ),
+      }
+    }
+  }
+
+  /**
+   * Parse command response from accumulated text
+   */
+  private parseCommandResponse(responseText: string, _language: string): AICommand {
+    const commandSchema = z.object({
+      type: z.enum(['command', 'text']),
+      intent: z.string().optional(),
+      command: z.string().optional(),
+      explanation: z.string().optional(),
+      confidence: z.number().optional(),
+      content: z.string().optional(),
+    })
+
+    // Try to extract JSON from code block first
+    const codeBlockMatch = responseText.match(/```(?:json)?\s*([\s\S]*?)\s*```/)
+    const textToSearch = codeBlockMatch ? codeBlockMatch[1] : responseText
+
+    // Try to find JSON object
+    let jsonMatch = textToSearch.match(/\{[^{}]*"type"[^{}]*\}/)
+    if (!jsonMatch) {
+      jsonMatch = textToSearch.match(/\{(?:[^{}]|\{[^{}]*\})*\}/)
+    }
+
+    if (!jsonMatch) {
+      return { type: 'text', content: responseText.trim() }
+    }
+
+    try {
+      const parsed = JSON.parse(jsonMatch[0])
+      const validated = commandSchema.parse(parsed)
+
+      if (validated.type === 'text') {
+        return { type: 'text', content: validated.content || '' }
+      }
+
+      return {
+        type: 'command',
+        intent: validated.intent || 'Execute command',
+        command: validated.command || '',
+        explanation: validated.explanation || '',
+        confidence: validated.confidence || 0.5,
+      }
+    } catch (parseError) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for command parsing errors
+      console.error('[BaseLLMProvider] Failed to parse JSON response:', parseError)
+      return { type: 'text', content: responseText.trim() }
     }
   }
 

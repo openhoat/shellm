@@ -109,5 +109,15 @@ export interface ConversationsList {
   conversations: Conversation[]
 }
 
+// Streaming progress callback
+export interface StreamingProgress {
+  type: 'connecting' | 'receiving' | 'processing' | 'complete' | 'error'
+  content?: string
+  partialCommand?: AICommand
+  error?: string
+}
+
+export type StreamingCallback = (progress: StreamingProgress) => void
+
 // Configuration par défaut et fonctions utilitaires
 export { DEFAULT_CONFIG, getEnvConfig, getEnvSources, mergeConfig } from './config'

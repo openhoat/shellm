@@ -1,4 +1,4 @@
-import type { AppConfig, Conversation, ConversationMessage } from '@shared/types'
+import type { AppConfig, Conversation, ConversationMessage, StreamingProgress } from '@shared/types'
 import { contextBridge, desktopCapturer, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld('electronAPI', {
@@ -62,6 +62,24 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.invoke('llm:interpret-output', output, language),
   llmTestConnection: () => ipcRenderer.invoke('llm:test-connection'),
   llmListModels: () => ipcRenderer.invoke('llm:list-models'),
+
+  // LLM Streaming
+  llmStreamCommand: (
+    requestId: string,
+    prompt: string,
+    conversationHistory?: ConversationMessage[],
+    language?: string
+  ) => ipcRenderer.invoke('llm:stream-command', requestId, prompt, conversationHistory, language),
+  llmCancelStream: (requestId: string) => ipcRenderer.invoke('llm:cancel-stream', requestId),
+  onLlmStreamProgress: (requestId: string, callback: (progress: StreamingProgress) => void) => {
+    const channel = `llm:stream-progress:${requestId}`
+    const handler = (_event: Electron.IpcRendererEvent, progress: StreamingProgress) =>
+      callback(progress)
+    ipcRenderer.on(channel, handler)
+    return () => {
+      ipcRenderer.removeListener(channel, handler)
+    }
+  },
 
   // Conversations
   conversationGetAll: () => ipcRenderer.invoke('conversation:get-all'),

@@ -449,3 +449,171 @@
   background-color: #1e90ff;
   transform: scale(1.05);
 }
+
+/* Streaming Styles */
+.chat-message.ai.streaming .message-content {
+  background-color: #2d2d2d;
+}
+
+.streaming-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.streaming-status span {
+  color: #858585;
+  font-size: 13px;
+}
+
+.streaming-status.receiving {
+  color: #4ec9b0;
+}
+
+.streaming-status.receiving span {
+  color: #4ec9b0;
+}
+
+.streaming-indicator {
+  width: 8px;
+  height: 8px;
+  background-color: #4ec9b0;
+  border-radius: 50%;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+}
+
+.streaming-content {
+  margin-top: 12px;
+}
+
+.streaming-text {
+  background-color: #1e1e1e;
+  padding: 12px;
+  border-radius: 4px;
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 13px;
+  color: #d4d4d4;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 300px;
+  overflow-y: auto;
+  line-height: 1.5;
+}
+
+.streaming-cursor {
+  color: #4ec9b0;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.btn-cancel-stream {
+  margin-top: 12px;
+  padding: 6px 12px;
+  background-color: #f14c4c;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel-stream:hover {
+  background-color: #ff6b6b;
+}
+
+.loading-spinner.small {
+  padding: 4px 0;
+}
+
+.loading-spinner.small span {
+  width: 6px;
+  height: 6px;
+}
+
+/* Streaming Styles */
+.chat-message.streaming .message-content {
+  min-width: 200px;
+}
+
+.streaming-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #858585;
+  font-size: 13px;
+}
+
+.streaming-content {
+  margin-top: 8px;
+}
+
+.streaming-text {
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 13px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #d4d4d4;
+  line-height: 1.5;
+}
+
+.streaming-cursor {
+  animation: blink 1s infinite;
+  color: #4ec9b0;
+}
+
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.btn-cancel-stream {
+  margin-top: 12px;
+  padding: 6px 12px;
+  background-color: #f14c4c;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel-stream:hover {
+  background-color: #ff6b6b;
+}
+
+/* Loading spinner small variant */
+.loading-spinner.small span {
+  width: 6px;
+  height: 6px;
+}

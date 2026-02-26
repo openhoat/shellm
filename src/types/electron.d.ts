@@ -1,4 +1,10 @@
-import type { AICommand, AppConfig, Conversation, ConversationMessage } from '@shared/types'
+import type {
+  AICommand,
+  AppConfig,
+  Conversation,
+  ConversationMessage,
+  StreamingProgress,
+} from '@shared/types'
 
 /**
  * Result of waiting for shell prompt
@@ -80,6 +86,19 @@ export interface ElectronAPI {
   }>
   llmTestConnection: () => Promise<boolean>
   llmListModels: () => Promise<string[]>
+
+  // LLM Streaming
+  llmStreamCommand: (
+    requestId: string,
+    prompt: string,
+    conversationHistory?: ConversationMessage[],
+    language?: string
+  ) => Promise<AICommand>
+  llmCancelStream: (requestId: string) => Promise<boolean>
+  onLlmStreamProgress: (
+    requestId: string,
+    callback: (progress: StreamingProgress) => void
+  ) => () => void
 
   // Conversations
   conversationGetAll: () => Promise<Conversation[]>

@@ -52,12 +52,19 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
   // Auto-scroll to bottom when new messages arrive (only if user is at bottom)
   // We use conversation.length as a trigger to detect new messages
   // Also scroll when interpretation completes (isInterpreting changes to false)
-  // biome-ignore lint/correctness/useExhaustiveDependencies: conversation.length and isInterpreting trigger scroll
+  // Also scroll during streaming to show progress
+  // biome-ignore lint/correctness/useExhaustiveDependencies: conversation.length, isInterpreting, streamingContent trigger scroll
   useEffect(() => {
     if (isAtBottom) {
       scrollToBottom('instant')
     }
-  }, [chat.conversation.length, chat.isInterpreting, isAtBottom, scrollToBottom])
+  }, [
+    chat.conversation.length,
+    chat.isInterpreting,
+    chat.streamingContent,
+    isAtBottom,
+    scrollToBottom,
+  ])
 
   // Handle scroll events to track user position
   useEffect(() => {
@@ -136,11 +143,12 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
   }, [chat.aiCommand, chat.error, setAiCommand, clearAllConversations, chat, executeCurrentCommand])
 
   const submitMessage = useCallback(async () => {
-    if (!chat.userInput.trim() || chat.isLoading) return
+    if (!chat.userInput.trim() || chat.isLoading || chat.isStreaming) return
     const prompt = chat.userInput.trim()
     chat.setUserInput('')
-    await chat.generateAICommand(prompt)
-  }, [chat.userInput, chat.isLoading, chat.setUserInput, chat.generateAICommand])
+    // Use streaming by default for better UX
+    await chat.streamAICommand(prompt)
+  }, [chat.userInput, chat.isLoading, chat.isStreaming, chat.setUserInput, chat.streamAICommand])
 
   const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     // Arrow Up: Navigate to previous input in history
@@ -230,7 +238,7 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
           </button>
         )}
 
-        {chat.isLoading && (
+        {chat.isLoading && !chat.isStreaming && (
           <div className="chat-message ai">
             <div className="message-content">
               <output className="loading-spinner" aria-label="Loading">
@@ -238,6 +246,49 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
                 <span></span>
                 <span></span>
               </output>
+            </div>
+          </div>
+        )}
+
+        {chat.isStreaming && (
+          <div className="chat-message ai streaming">
+            <div className="message-content">
+              {chat.streamingProgress?.type === 'connecting' && (
+                <div className="streaming-status">
+                  <output className="loading-spinner" aria-label="Connecting">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </output>
+                  <span>{t('chat.progress.connecting')}</span>
+                </div>
+              )}
+              {chat.streamingProgress?.type === 'receiving' && (
+                <div className="streaming-content">
+                  <div className="streaming-text">
+                    {chat.streamingContent || ''}
+                    <span className="streaming-cursor">▌</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn-cancel-stream"
+                    onClick={chat.cancelStreaming}
+                    title={t('chat.actions.cancelStream')}
+                  >
+                    {t('chat.actions.cancel')}
+                  </button>
+                </div>
+              )}
+              {chat.streamingProgress?.type === 'processing' && (
+                <div className="streaming-status">
+                  <output className="loading-spinner" aria-label="Processing">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </output>
+                  <span>{t('chat.progress.processing')}</span>
+                </div>
+              )}
             </div>
           </div>
         )}

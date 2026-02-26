@@ -1,9 +1,12 @@
-import type { AICommand, AppConfig } from '@shared/types'
+import type { AICommand, AppConfig, StreamingProgress } from '@shared/types'
 import { type BrowserWindow, ipcMain } from 'electron'
 import type { BaseLLMProvider } from './providers/base-provider'
 import { ClaudeProvider } from './providers/claude-provider'
 import { OllamaProvider } from './providers/ollama-provider'
 import { OpenAIProvider } from './providers/openai-provider'
+
+// Track active streaming requests for cancellation
+const activeStreams = new Map<string, AbortController>()
 
 type WindowGetter = () => BrowserWindow | null
 
@@ -194,5 +197,79 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
       throw new Error('LLM service not initialized')
     }
     return await service.listModels()
+  })
+
+  // Stream command generation with progress updates
+  ipcMain.handle(
+    'llm:stream-command',
+    async (
+      event,
+      requestId: string,
+      prompt: string,
+      conversationHistory?: import('@shared/types').ConversationMessage[],
+      language?: string
+    ) => {
+      // E2E mock: simulate streaming with predefined response
+      if (mockAIResponses && mockAIResponses.length > 0) {
+        const response = mockAIResponses[0]
+        // Simulate streaming progress
+        event.sender.send(`llm:stream-progress:${requestId}`, {
+          type: 'connecting',
+        } as StreamingProgress)
+
+        await new Promise(resolve => setTimeout(resolve, 100))
+
+        event.sender.send(`llm:stream-progress:${requestId}`, {
+          type: 'receiving',
+          content: JSON.stringify(response),
+        } as StreamingProgress)
+
+        await new Promise(resolve => setTimeout(resolve, 100))
+
+        event.sender.send(`llm:stream-progress:${requestId}`, {
+          type: 'complete',
+          partialCommand: response,
+        } as StreamingProgress)
+
+        return response
+      }
+
+      if (!service) {
+        throw new Error('LLM service not initialized')
+      }
+
+      // Create abort controller for this request
+      const abortController = new AbortController()
+      activeStreams.set(requestId, abortController)
+
+      try {
+        const result = await service.streamCommand(
+          prompt,
+          conversationHistory,
+          language || 'en',
+          (progress: StreamingProgress) => {
+            // Send progress update to renderer
+            event.sender.send(`llm:stream-progress:${requestId}`, progress)
+          },
+          abortController.signal
+        )
+
+        return result
+      } finally {
+        // Clean up the abort controller
+        activeStreams.delete(requestId)
+      }
+    }
+  )
+
+  // Cancel a streaming request
+  ipcMain.handle('llm:cancel-stream', (_event, requestId: string) => {
+    const abortController = activeStreams.get(requestId)
+    if (abortController) {
+      abortController.abort()
+      activeStreams.delete(requestId)
+      return true
+    }
+    return false
   })
 }
