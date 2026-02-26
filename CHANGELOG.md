@@ -10,6 +10,8 @@ To view the complete history, use: `git log`
 
 #### 26/02
 
+**[08:56:00] 🔒 [SECURITY]** Disable DevTools in production builds and restrict keyboard shortcut to dev mode only
+
 **[14:30:00] 🔧 [DEVOPS]** Optimize CI by removing double build for e2e-manual jobs
 
 ### 2025

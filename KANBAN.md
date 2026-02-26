@@ -22,10 +22,6 @@
 
 ## 🚧 In Progress
 
-### [25/02/2026 21:57:35] 🟢 P3 🔒 [SECURITY] Use Electron safeStorage for API keys and disable DevTools in production builds
-- [ ] **[25/02/2026 21:57:35] ✨ [FEAT]** Create safeStorage service for encrypting/decrypting API keys
-- [ ] **[25/02/2026 21:57:35] ♻️ [REFACTOR]** Migrate config IPC handlers to use safeStorage for API key fields
-- [ ] **[25/02/2026 21:57:35] 🔒 [SECURITY]** Disable DevTools in production builds and restrict keyboard shortcut
-- [ ] **[25/02/2026 21:57:35] ✅ [TEST]** Add unit tests for safeStorage service and DevTools configuration
-
 ## ✅ Done
+
+- [x] **[26/02/2026 08:56:00] 🔒 [SECURITY]** Disable DevTools in production builds and restrict keyboard shortcut to dev mode only

@@ -129,7 +129,8 @@ const createWindow = (): void => {
     icon: nativeImage.createFromPath(iconPath),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      devTools: true,
+      // Disable DevTools in production for security (prevents users from inspecting sensitive data)
+      devTools: isDev,
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
@@ -164,15 +165,18 @@ const createWindow = (): void => {
   })
 
   // Add keyboard shortcut to open DevTools (Ctrl+Shift+I or Cmd+Option+I)
-  mainWindow.webContents.on('before-input-event', (_event, input) => {
-    if (
-      (input.control || input.meta) &&
-      input.shift &&
-      (input.key.toLowerCase() === 'i' || input.key === 'I')
-    ) {
-      mainWindow?.webContents.toggleDevTools()
-    }
-  })
+  // Only available in development mode for security
+  if (isDev) {
+    mainWindow.webContents.on('before-input-event', (_event, input) => {
+      if (
+        (input.control || input.meta) &&
+        input.shift &&
+        (input.key.toLowerCase() === 'i' || input.key === 'I')
+      ) {
+        mainWindow?.webContents.toggleDevTools()
+      }
+    })
+  }
 
   mainWindow.on('closed', () => {
     mainWindow = null
