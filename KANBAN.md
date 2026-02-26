@@ -23,5 +23,3 @@
 ## 🚧 In Progress
 
 ## ✅ Done
-
-- [x] **[26/02/2026 08:56:00] 🔒 [SECURITY]** Disable DevTools in production builds and restrict keyboard shortcut to dev mode only
