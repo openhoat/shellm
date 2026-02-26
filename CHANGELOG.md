@@ -10,6 +10,8 @@ To view the complete history, use: `git log`
 
 #### 26/02
 
+- **[09:06:30] 🔧 [CHORE]** Clean kanban done section after commit
+- **[09:03:16] 🐛 [FIX]** Correct dates from 2025 to 2026 and sync with git history
 - **[08:59:23] ✨ [FEAT]** Disable devtools in production builds
 - **[08:50:48] ⚡ [PERF]** Remove double build for e2e-manual jobs on windows/mac
 - **[08:24:28] 🔧 [CHORE]** Add inline build for e2e-manual jobs on windows/mac

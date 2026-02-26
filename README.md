@@ -71,10 +71,10 @@ Download the latest release for your platform:
 
 | Platform | Format | Download |
 |----------|--------|----------|
-| **Linux** | AppImage | [Termaid-1.3.1.AppImage](https://github.com/openhoat/termaid/releases/latest/download/Termaid-1.3.1.AppImage) |
-| **Linux** | Debian/Ubuntu | [termaid_1.3.1_amd64.deb](https://github.com/openhoat/termaid/releases/latest/download/termaid_1.3.1_amd64.deb) |
-| **macOS** | DMG (ARM) | [Termaid-1.3.1-arm64.dmg](https://github.com/openhoat/termaid/releases/latest/download/Termaid-1.3.1-arm64.dmg) |
-| **Windows** | Installer | [Termaid.Setup.1.3.1.exe](https://github.com/openhoat/termaid/releases/latest/download/Termaid.Setup.1.3.1.exe) |
+| **Linux** | AppImage | [Termaid-1.3.2.AppImage](https://github.com/openhoat/termaid/releases/latest/download/Termaid-1.3.2.AppImage) |
+| **Linux** | Debian/Ubuntu | [termaid_1.3.2_amd64.deb](https://github.com/openhoat/termaid/releases/latest/download/termaid_1.3.2_amd64.deb) |
+| **macOS** | DMG (ARM) | [Termaid-1.3.2-arm64.dmg](https://github.com/openhoat/termaid/releases/latest/download/Termaid-1.3.2-arm64.dmg) |
+| **Windows** | Installer | [Termaid.Setup.1.3.2.exe](https://github.com/openhoat/termaid/releases/latest/download/Termaid.Setup.1.3.2.exe) |
 
 > See all versions on the [Releases page](https://github.com/openhoat/termaid/releases).
 
