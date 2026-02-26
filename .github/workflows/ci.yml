@@ -176,8 +176,5 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-playwright-
 
-      - name: Build project
-        run: npm run build
-
       - name: Run E2E tests
-        run: npm run test:e2e:headless
+        run: npm run test:e2e:headless:ci

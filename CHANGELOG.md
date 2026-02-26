@@ -8,7 +8,11 @@ To view the complete history, use: `git log`
 
 ### 2026
 
-#### 25/02
+#### 26/02
+
+**[14:30:00] 🔧 [DEVOPS]** Optimize CI by removing double build for e2e-manual jobs
+
+### 2025
 
 - **[21:20:00] ⚡ [PERF]** Batch terminal output processing and add RAF throttling to Resizer
 - **[21:20:00] 🌍 [I18N]** Add i18n keys for Header component strings
