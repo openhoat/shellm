@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 26/02
 
+- **[14:00:00] 📝 [DOCS]** Add 9 feature ideas to KANBAN backlog: proactive security, shortcuts display, LLM streaming, plugin system, stats dashboard, i18n, multi-format export, contextual suggestions, auto-update
 - **[09:06:30] 🔧 [CHORE]** Clean kanban done section after commit
 - **[09:03:16] 🐛 [FIX]** Correct dates from 2025 to 2026 and sync with git history
 - **[08:59:23] ✨ [FEAT]** Disable devtools in production builds
