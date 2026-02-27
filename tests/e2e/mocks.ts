@@ -163,6 +163,11 @@ export function createMockElectronAPI(
   // Store for config persistence
   let storedConfig: AppConfig = { ...config }
 
+  // Store for streaming progress callbacks (per requestId)
+  const progressCallbacksMap = new Map<string, ((progress: unknown) => void)[]>()
+  // Store for pending streaming requests that need progress simulation
+  const pendingStreams = new Map<string, boolean>()
+
   return {
     // Config
     getConfig: async () => ({ ...storedConfig }),
@@ -258,6 +263,69 @@ export function createMockElectronAPI(
     },
     llmListModels: async (): Promise<string[]> => {
       return models
+    },
+
+    // Streaming LLM (for new streaming feature)
+    llmStreamCommand: async (
+      requestId: string,
+      _prompt: string,
+      _conversationHistory?: ConversationMessage[],
+      _language?: string
+    ): Promise<AICommand> => {
+      // Simulate error if configured
+      if (errors.llmGenerate) {
+        // Get callbacks and notify them of the error before throwing
+        const callbacks = progressCallbacksMap.get(requestId) ?? []
+        for (const callback of callbacks) {
+          callback({ type: 'error', error: errors.llmGenerate.message })
+        }
+        progressCallbacksMap.delete(requestId)
+        throw errors.llmGenerate
+      }
+
+      const result = aiCommands[callIndex] ?? aiCommands[aiCommands.length - 1]
+
+      // Get the stored callbacks for this requestId
+      const callbacks = progressCallbacksMap.get(requestId) ?? []
+      console.log('[E2E Mock] llmStreamCommand called, requestId:', requestId, 'callbacks count:', callbacks.length)
+
+      // Always simulate streaming progress (even if no callbacks registered)
+      // This ensures the streaming flow works correctly
+      const content = result.type === 'command'
+        ? `${result.explanation}\n\nCommand: ${result.command}`
+        : result.content
+
+      // Call callbacks with progress updates synchronously
+      for (const callback of callbacks) {
+        callback({ type: 'connecting' })
+      }
+      for (const callback of callbacks) {
+        callback({ type: 'receiving', content })
+      }
+      for (const callback of callbacks) {
+        callback({ type: 'complete', partialCommand: result })
+      }
+
+      // Clean up
+      progressCallbacksMap.delete(requestId)
+
+      callIndex++
+      return result
+    },
+    llmCancelStream: async (_requestId: string): Promise<boolean> => {
+      return true
+    },
+    onLlmStreamProgress: (requestId: string, callback: (progress: unknown) => void) => {
+      // Store the callback for this requestId
+      const progressCallbacks = progressCallbacksMap.get(requestId) ?? []
+      progressCallbacks.push(callback)
+      progressCallbacksMap.set(requestId, progressCallbacks)
+
+      // Return unsubscribe function
+      return () => {
+        const callbacks = progressCallbacksMap.get(requestId) ?? []
+        progressCallbacksMap.set(requestId, callbacks.filter(cb => cb !== callback))
+      }
     },
 
     // Conversations

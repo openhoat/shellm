@@ -1,4 +1,3 @@
-import { detectPrompt } from '@shared/promptDetection'
 import type { AICommand, ConversationMessage, StreamingProgress } from '@shared/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
