@@ -45,7 +45,8 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
   }> | null = null
   let mockInterpretationIndex = 0
 
-  if (process.env.NODE_ENV === 'test') {
+  // E2E mock initialization — only when NODE_ENV === 'test' AND NOT using real LLM
+  if (process.env.NODE_ENV === 'test' && process.env.TERMAID_E2E_REAL_LLM !== 'true') {
     try {
       if (process.env.TERMAID_E2E_MOCK_ERRORS) {
         mockErrors = JSON.parse(process.env.TERMAID_E2E_MOCK_ERRORS)

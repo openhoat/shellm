@@ -4,6 +4,10 @@ import { closeElectronApp, launchElectronApp } from './electron-app'
 /**
  * Custom test fixture for Electron E2E tests
  * Provides app and page fixtures that are automatically managed
+ *
+ * Mock behavior:
+ * - UI mode (UI_MODE=true): Real LLM, no mocks
+ * - Headless/CI mode: Mocks enabled for fast, reliable tests
  */
 export const test = base.extend<{
   app: ElectronApplication
@@ -12,7 +16,10 @@ export const test = base.extend<{
   // Launch the Electron app before each test
   // biome-ignore lint/correctness/noEmptyPattern: Playwright fixture pattern requires empty object
   app: async ({}, use): Promise<void> => {
-    const { app } = await launchElectronApp({ mocks: {} })
+    // In UI mode, don't use mocks (real LLM)
+    // In headless/CI mode, use mocks
+    const useMocks = process.env.UI_MODE !== 'true'
+    const { app } = await launchElectronApp({ mocks: useMocks ? {} : undefined })
     await use(app)
     await closeElectronApp(app)
   },

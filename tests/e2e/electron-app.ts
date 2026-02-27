@@ -25,12 +25,25 @@ import { defaultMockAICommand, getMockInjectionScript, type LaunchOptions } from
  *     TERMAID_OLLAMA_MODEL: '',
  *   }
  * })
+ *
+ * @example
+ * // Launch with real LLM (no mocks) for interactive testing
+ * const { app, page } = await launchElectronApp({
+ *   realLlm: true
+ * })
  */
 export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
   app: ElectronApplication
   page: Page
 }> {
-  const { mocks, env: customEnv, locale } = options
+  const { mocks, env: customEnv, locale, realLlm } = options
+
+  // Determine if we should use real LLM (no mocks)
+  // UI_MODE=true takes precedence, then realLlm option
+  const useRealLlm = process.env.UI_MODE === 'true' || realLlm === true
+
+  // Only inject mocks if NOT using real LLM
+  const effectiveMocks = useRealLlm ? undefined : mocks
 
   // Build the app first if needed
   const projectRoot = path.resolve(__dirname, '..', '..')
@@ -56,8 +69,8 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
     args.push('--disable-dev-shm-usage')
   }
 
-  // Start minimized unless in demo mode (for video recording)
-  if (process.env.DEMO_VIDEO !== '1') {
+  // Start minimized unless in demo mode (for video recording) or UI mode (for visibility)
+  if (process.env.DEMO_VIDEO !== '1' && process.env.UI_MODE !== 'true') {
     args.push('--start-minimized')
   }
 
@@ -66,6 +79,11 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
     ...process.env,
     NODE_ENV: 'test',
     TERMAID_DEVTOOLS: 'false',
+  }
+
+  // Signal to backend to skip mocks when using real LLM
+  if (useRealLlm) {
+    env.TERMAID_E2E_REAL_LLM = 'true'
   }
 
   // Use a clean, generic terminal for demo video recording
@@ -84,15 +102,16 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
   }
 
   // Add E2E mock environment variables based on mock options
-  if (mocks) {
+  // Only set mock env vars if we're NOT using real LLM
+  if (effectiveMocks) {
     // Mock errors
-    if (mocks.errors) {
+    if (effectiveMocks.errors) {
       const mockErrors: Record<string, string> = {}
-      if (mocks.errors.llmGenerate) {
-        mockErrors.llmGenerate = mocks.errors.llmGenerate.message
+      if (effectiveMocks.errors.llmGenerate) {
+        mockErrors.llmGenerate = effectiveMocks.errors.llmGenerate.message
       }
-      if (mocks.errors.terminalWrite) {
-        mockErrors.terminalWrite = mocks.errors.terminalWrite.message
+      if (effectiveMocks.errors.terminalWrite) {
+        mockErrors.terminalWrite = effectiveMocks.errors.terminalWrite.message
       }
       if (Object.keys(mockErrors).length > 0) {
         env.TERMAID_E2E_MOCK_ERRORS = JSON.stringify(mockErrors)
@@ -100,22 +119,24 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
     }
 
     // Mock connection failure
-    if (mocks.errors?.llmConnectionFailed) {
+    if (effectiveMocks.errors?.llmConnectionFailed) {
       env.TERMAID_E2E_MOCK_CONNECTION_FAILED = 'true'
     }
 
     // Mock AI response - always set when mocks are provided, defaulting to defaultMockAICommand
     // The IPC error handler (TERMAID_E2E_MOCK_ERRORS) takes priority over this value
-    env.TERMAID_E2E_MOCK_AI_RESPONSE = JSON.stringify(mocks.aiCommand ?? defaultMockAICommand)
+    env.TERMAID_E2E_MOCK_AI_RESPONSE = JSON.stringify(
+      effectiveMocks.aiCommand ?? defaultMockAICommand
+    )
 
     // Mock interpretation - for llm:interpret-output IPC handler
-    if (mocks.interpretation) {
-      env.TERMAID_E2E_MOCK_INTERPRETATION = JSON.stringify(mocks.interpretation)
+    if (effectiveMocks.interpretation) {
+      env.TERMAID_E2E_MOCK_INTERPRETATION = JSON.stringify(effectiveMocks.interpretation)
     }
 
     // Mock models
-    if (mocks.models) {
-      env.TERMAID_E2E_MOCK_MODELS = JSON.stringify(mocks.models)
+    if (effectiveMocks.models) {
+      env.TERMAID_E2E_MOCK_MODELS = JSON.stringify(effectiveMocks.models)
     }
   }
 
@@ -131,8 +152,9 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
       await context.addInitScript(`localStorage.setItem('i18nextLng', '${locale}')`)
     }
 
-    if (mocks) {
-      const mockScript = getMockInjectionScript(mocks)
+    // Only inject mock scripts if NOT using real LLM
+    if (effectiveMocks) {
+      const mockScript = getMockInjectionScript(effectiveMocks)
       await context.addInitScript(mockScript)
     }
 

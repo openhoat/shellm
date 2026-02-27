@@ -428,4 +428,6 @@ export interface LaunchOptions {
   env?: Record<string, string>
   /** Force a specific locale (e.g. 'en') via localStorage before the app loads */
   locale?: string
+  /** Force real LLM (no mocks) for interactive testing */
+  realLlm?: boolean
 }
