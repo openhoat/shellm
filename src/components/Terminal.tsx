@@ -161,9 +161,18 @@ export const Terminal = () => {
 
       // Handle resize
       handleResize = () => {
-        fitAddon.fit()
-        if (terminalPidRef.current) {
-          window.electronAPI.terminalResize(terminalPidRef.current, xterm.cols, xterm.rows)
+        // Check if terminal is still valid before fitting
+        if (!xtermRef.current || !fitAddonRef.current) {
+          return
+        }
+        try {
+          fitAddon.fit()
+          if (terminalPidRef.current) {
+            window.electronAPI.terminalResize(terminalPidRef.current, xterm.cols, xterm.rows)
+          }
+        } catch (error) {
+          // Ignore resize errors if terminal is being disposed
+          logger.debug('Resize error (terminal may be disposing):', error)
         }
       }
 
@@ -206,9 +215,18 @@ export const Terminal = () => {
   useEffect(() => {
     // Fit terminal when terminalPid changes
     if (fitAddonRef.current) {
-      setTimeout(() => {
-        fitAddonRef.current?.fit()
+      const timeoutId = setTimeout(() => {
+        // Check if terminal is still valid before fitting
+        if (fitAddonRef.current && xtermRef.current) {
+          try {
+            fitAddonRef.current.fit()
+          } catch (error) {
+            // Ignore fit errors if terminal is being disposed
+            logger.debug('Fit error (terminal may be disposing):', error)
+          }
+        }
       }, 100)
+      return () => clearTimeout(timeoutId)
     }
   }, [])
 
