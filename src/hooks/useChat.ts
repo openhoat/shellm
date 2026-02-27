@@ -444,9 +444,9 @@ export function useChat() {
               aiContent = `${response.explanation}\n\nCommand: ${response.command}`
             }
 
-            // Update the message with final content
-            setConversation(prev =>
-              prev.map(msg =>
+            // Update the message with final content and set the command index
+            setConversation(prev => {
+              const updated = prev.map(msg =>
                 msg.id === streamingMessageId
                   ? {
                       ...msg,
@@ -456,7 +456,15 @@ export function useChat() {
                     }
                   : msg
               )
-            )
+              // Set command index to the streaming message's position
+              if (response.type === 'command') {
+                const msgIndex = updated.findIndex(msg => msg.id === streamingMessageId)
+                if (msgIndex !== -1) {
+                  setCurrentCommandIndex(msgIndex)
+                }
+              }
+              return updated
+            })
 
             // Save AI response to persistent storage
             const messageToSave: ConversationMessage = {
@@ -500,8 +508,8 @@ export function useChat() {
             aiContent = `${result.explanation}\n\nCommand: ${result.command}`
           }
 
-          setConversation(prev =>
-            prev.map(msg =>
+          setConversation(prev => {
+            const updated = prev.map(msg =>
               msg.id === streamingMessageId
                 ? {
                     ...msg,
@@ -511,7 +519,15 @@ export function useChat() {
                   }
                 : msg
             )
-          )
+            // Set command index to the streaming message's position
+            if (result.type === 'command') {
+              const msgIndex = updated.findIndex(msg => msg.id === streamingMessageId)
+              if (msgIndex !== -1) {
+                setCurrentCommandIndex(msgIndex)
+              }
+            }
+            return updated
+          })
         }
       } catch (err) {
         let errorMessage: string
