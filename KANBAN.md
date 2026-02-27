@@ -34,5 +34,3 @@
 ## 🚧 In Progress
 
 ## ✅ Done
-
-- [x] **[27/02/2026 16:25:00] ✨ [FEAT]** Add conditional mock bypass for real LLM testing in E2E tests
