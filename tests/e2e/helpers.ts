@@ -82,10 +82,13 @@ export async function waitForCommandExecution(page: Page, timeout = 30000): Prom
     // Progress might have already completed, that's fine
   }
 
-  // Wait for interpretation to complete
-  const interpretingSpinner = page.locator('.chat-message.ai:has-text("Analyse")')
+  // Wait for any loading spinner to disappear (interpretation can take 30s+ with LLM)
+  const loadingSpinner = page.locator('.loading-spinner')
   try {
-    await interpretingSpinner.waitFor({ state: 'hidden', timeout: 5000 })
+    const spinnerVisible = await loadingSpinner.isVisible().catch(() => false)
+    if (spinnerVisible) {
+      await loadingSpinner.waitFor({ state: 'hidden', timeout: 60000 })
+    }
   } catch {
     // Interpretation might have already completed
   }

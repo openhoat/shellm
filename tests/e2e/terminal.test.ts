@@ -5,6 +5,7 @@ import {
   clickExecuteButton,
   getTerminalContent,
   pressTerminalKey,
+  resetAppState,
   sendMessage,
   typeInTerminal,
   waitForAIResponse,
@@ -101,6 +102,13 @@ test.describe('Termaid E2E - Terminal Integration', () => {
   })
 
   test.describe('Command execution', () => {
+    test.describe.configure({ timeout: 120000 })
+
+    test.beforeEach(async () => {
+      // Reset app state to clear messages, spinners and command actions from previous test
+      await resetAppState(page)
+    })
+
     test('should execute command from AI proposal', async () => {
       await waitForTerminalReady(page)
 
