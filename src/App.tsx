@@ -20,14 +20,7 @@ export const App = () => {
   }, [])
 
   useEffect(() => {
-    // Initialize config on app load
     void initConfig()
-
-    // Terminal is created and managed by Terminal component
-    // Listen for terminal exit
-    window.electronAPI.onTerminalExit(_data => {
-      // Terminal PID is cleared in Terminal component
-    })
   }, [initConfig])
 
   return (

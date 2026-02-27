@@ -192,10 +192,14 @@ export const Terminal = () => {
       }
       if (xtermRef.current) {
         xtermRef.current.dispose()
+        xtermRef.current = null
       }
+      fitAddonRef.current = null
       if (terminalPidRef.current) {
         window.electronAPI.terminalDestroy(terminalPidRef.current)
+        terminalPidRef.current = null
       }
+      terminalCreatedRef.current = false
     }
   }, [setTerminalPid, appendTerminalOutput])
 
