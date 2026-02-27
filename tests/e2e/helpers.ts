@@ -55,16 +55,35 @@ export async function clearChatInput(page: Page): Promise<void> {
  * Wait for AI response to appear in chat
  */
 export async function waitForAIResponse(page: Page, timeout = 30000): Promise<void> {
-  // Wait for loading spinner to appear and then disappear
+  // Wait for streaming message or loading spinner
+  const streamingMessage = page.locator('.chat-message.ai.streaming')
   const loadingSpinner = page.locator('.loading-spinner')
-  const isVisible = await loadingSpinner.isVisible().catch(() => false)
 
-  if (isVisible) {
+  // Check which one appears first (streaming or non-streaming mode)
+  const streamingVisible = await streamingMessage.isVisible().catch(() => false)
+  const spinnerVisible = await loadingSpinner.isVisible().catch(() => false)
+
+  if (streamingVisible) {
+    // Streaming mode: wait for streaming to complete (message no longer has .streaming class)
+    // The streaming message will be replaced by a regular AI message
+    await page.waitForFunction(
+      () => {
+        const streamingMsg = document.querySelector('.chat-message.ai.streaming')
+        const aiMsg = document.querySelector('.chat-message.ai:not(.streaming)')
+        // Either streaming is done, or we have a non-streaming AI message
+        return !streamingMsg || aiMsg
+      },
+      { timeout }
+    )
+    // Small delay to ensure the UI is updated
+    await page.waitForTimeout(100)
+  } else if (spinnerVisible) {
+    // Non-streaming mode: wait for spinner to disappear
     await loadingSpinner.waitFor({ state: 'hidden', timeout })
   }
 
-  // Wait for AI message to appear
-  await page.waitForSelector('.chat-message.ai', { timeout })
+  // Wait for AI message to appear (non-streaming)
+  await page.waitForSelector('.chat-message.ai:not(.streaming)', { timeout })
 }
 
 /**
@@ -418,11 +437,21 @@ export async function createNewConversation(page: Page): Promise<void> {
 /**
  * Wait for error message to appear
  */
-export async function waitForError(page: Page, timeout = 10000): Promise<string | null> {
+export async function waitForError(page: Page, timeout = 15000): Promise<string | null> {
   const error = page.locator('.chat-message.ai.error')
+  const errorMessage = page.locator('.chat-message.ai:has-text("Error:")')
+
   try {
-    await error.waitFor({ state: 'visible', timeout })
-    return error.textContent()
+    // Wait for either error class or error message
+    await Promise.race([
+      error.waitFor({ state: 'visible', timeout }),
+      errorMessage.waitFor({ state: 'visible', timeout }),
+    ])
+    // Return the text content of whichever is visible
+    if (await error.isVisible()) {
+      return error.textContent()
+    }
+    return errorMessage.textContent()
   } catch {
     return null
   }
@@ -431,22 +460,19 @@ export async function waitForError(page: Page, timeout = 10000): Promise<string 
 /**
  * Check if error is visible
  */
-export async function isErrorVisible(page: Page, _timeout = 10000): Promise<boolean> {
+export async function isErrorVisible(page: Page, timeout = 10000): Promise<boolean> {
   const error = page.locator('.chat-message.ai.error')
   const errorMessage = page.locator('.chat-message.ai:has-text("Error:")')
 
   try {
-    // Check for error class first
-    await error.waitFor({ state: 'visible', timeout: 5000 })
+    // Wait for either error class or error message
+    await Promise.race([
+      error.waitFor({ state: 'visible', timeout }),
+      errorMessage.waitFor({ state: 'visible', timeout }),
+    ])
     return true
   } catch {
-    // If no error class, check for error message in AI response
-    try {
-      await errorMessage.waitFor({ state: 'visible', timeout: 5000 })
-      return true
-    } catch {
-      return false
-    }
+    return false
   }
 }
 
