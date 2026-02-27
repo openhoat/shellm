@@ -8,6 +8,10 @@ To view the complete history, use: `git log`
 
 ### 2026
 
+#### 27/02
+
+- **[07:57:00] 🐛 [FIX]** Fix blank terminal in dev mode by resetting refs in useEffect cleanup
+
 #### 26/02
 
 - **[12:06:15] 📝 [DOCS]** Remove specific ai tool mentions from readme

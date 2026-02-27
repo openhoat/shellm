@@ -2,18 +2,6 @@ import { describe, expect, test } from 'vitest'
 
 describe('useChat helpers', () => {
   describe('Constants', () => {
-    test('COMMAND_OUTPUT_MIN_WAIT_MS should be 500', () => {
-      expect(500).toBe(500)
-    })
-
-    test('COMMAND_OUTPUT_MAX_WAIT_MS should be 30000', () => {
-      expect(30000).toBe(30000)
-    })
-
-    test('COMMAND_OUTPUT_POLL_INTERVAL_MS should be 100', () => {
-      expect(100).toBe(100)
-    })
-
     test('DEBOUNCE_MS should be 300', () => {
       expect(300).toBe(300)
     })

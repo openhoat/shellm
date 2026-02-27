@@ -1,4 +1,3 @@
-import { detectPrompt } from '@shared/promptDetection'
 import type { AICommand, ConversationMessage } from '@shared/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -11,9 +10,6 @@ import { Logger } from '@/utils/logger'
 const logger = new Logger('useChat')
 
 // Constants
-const COMMAND_OUTPUT_MIN_WAIT_MS = 500 // Minimum wait before checking for prompt
-const COMMAND_OUTPUT_MAX_WAIT_MS = 30000 // Maximum wait time (30 seconds)
-const COMMAND_OUTPUT_POLL_INTERVAL_MS = 100 // Poll interval for prompt detection
 const DEBOUNCE_MS = 300 // Debounce delay for user input
 const INPUT_HISTORY_KEY = 'termaid-chat-input-history'
 const MAX_HISTORY_SIZE = 50
@@ -404,26 +400,14 @@ export function useChat() {
 
         setExecutionProgress(70)
 
-        // Smart wait for command output using prompt detection
-        const startTime = Date.now()
-        let output = ''
-        let promptDetected = false
+        // Wait for command completion using server-side prompt detection
+        // This correctly polls the output buffer without clearing it
+        const result = await window.electronAPI.terminalWaitForPrompt(terminalPid)
+        const output = result.output
 
-        // Minimum wait before checking for prompt
-        await new Promise(resolve => setTimeout(resolve, COMMAND_OUTPUT_MIN_WAIT_MS))
-
-        // Poll for prompt detection
-        while (Date.now() - startTime < COMMAND_OUTPUT_MAX_WAIT_MS) {
-          output = await window.electronAPI.terminalGetCapture(terminalPid)
-          if (detectPrompt(output)) {
-            promptDetected = true
-            logger.debug('Prompt detected, command finished')
-            break
-          }
-          await new Promise(resolve => setTimeout(resolve, COMMAND_OUTPUT_POLL_INTERVAL_MS))
-        }
-
-        if (!promptDetected) {
+        if (result.detected) {
+          logger.debug('Prompt detected, command finished')
+        } else {
           logger.warn('Prompt not detected within timeout, proceeding anyway')
         }
 
