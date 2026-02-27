@@ -209,22 +209,21 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
       conversationHistory?: import('@shared/types').ConversationMessage[],
       language?: string
     ) => {
+      // E2E mock: simulate errors
+      if (mockErrors?.llmGenerate) {
+        throw new Error(mockErrors.llmGenerate)
+      }
+
       // E2E mock: simulate streaming with predefined response
       if (mockAIResponses && mockAIResponses.length > 0) {
         const response = mockAIResponses[0]
-        // Simulate streaming progress
+        // Simulate streaming progress - skip 'receiving' to avoid raw JSON in UI
+        // Go directly to 'complete' which properly sets the command
         event.sender.send(`llm:stream-progress:${requestId}`, {
           type: 'connecting',
         } as StreamingProgress)
 
-        await new Promise(resolve => setTimeout(resolve, 100))
-
-        event.sender.send(`llm:stream-progress:${requestId}`, {
-          type: 'receiving',
-          content: JSON.stringify(response),
-        } as StreamingProgress)
-
-        await new Promise(resolve => setTimeout(resolve, 100))
+        await new Promise(resolve => setTimeout(resolve, 50))
 
         event.sender.send(`llm:stream-progress:${requestId}`, {
           type: 'complete',
