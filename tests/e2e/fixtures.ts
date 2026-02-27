@@ -12,7 +12,7 @@ export const test = base.extend<{
   // Launch the Electron app before each test
   // biome-ignore lint/correctness/noEmptyPattern: Playwright fixture pattern requires empty object
   app: async ({}, use): Promise<void> => {
-    const { app } = await launchElectronApp()
+    const { app } = await launchElectronApp({ mocks: {} })
     await use(app)
     await closeElectronApp(app)
   },
