@@ -1,53 +1,36 @@
-import type { ElectronApplication, Page } from '@playwright/test'
-import { expect, test } from '@playwright/test'
-import { closeElectronApp, launchElectronApp, waitForAppReady } from './electron-app'
-
-let app: ElectronApplication
-let page: Page
+import { expect, test } from './fixtures'
+import { SELECTORS } from './selectors'
+import { TIMEOUTS } from './timeouts'
 
 test.describe('Termaid E2E - Smoke Tests', () => {
-  test.beforeAll(async () => {
-    const result = await launchElectronApp({ mocks: {} })
-    app = result.app
-    page = result.page
-    await waitForAppReady(page)
-  })
-
-  test.afterAll(async () => {
-    await closeElectronApp(app)
-  })
-
-  test('should launch the application successfully', async () => {
+  test('should launch the application successfully', async ({ page }) => {
     // Verify the app window exists
-    expect(app).toBeDefined()
-    expect(page).toBeDefined()
-
     // Verify the main app container is visible
-    const appContainer = page.locator('.app')
+    const appContainer = page.locator(SELECTORS.app)
     await expect(appContainer).toBeVisible()
   })
 
-  test('should display the header component', async () => {
+  test('should display the header component', async ({ page }) => {
     // Verify header is visible
-    const header = page.locator('header')
+    const header = page.locator(SELECTORS.header)
     await expect(header).toBeVisible()
   })
 
-  test('should display the terminal component', async () => {
+  test('should display the terminal component', async ({ page }) => {
     // Verify terminal wrapper is visible
-    const terminalWrapper = page.locator('.terminal-wrapper')
+    const terminalWrapper = page.locator(SELECTORS.terminalWrapper)
     await expect(terminalWrapper).toBeVisible()
   })
 
-  test('should display the chat panel component', async () => {
-    // Verify chat panel is visible (it should have a chat-container or similar)
-    const chatPanel = page.locator('.chat-panel')
+  test('should display the chat panel component', async ({ page }) => {
+    // Verify chat panel is visible
+    const chatPanel = page.locator(SELECTORS.chatPanel)
     await expect(chatPanel).toBeVisible()
   })
 
-  test('should have correct window dimensions', async () => {
+  test('should have correct window dimensions', async ({ page }) => {
     // Get the app container dimensions
-    const appContainer = page.locator('.app')
+    const appContainer = page.locator(SELECTORS.app)
     const boundingBox = await appContainer.boundingBox()
 
     // Verify the app container has reasonable dimensions
@@ -56,12 +39,12 @@ test.describe('Termaid E2E - Smoke Tests', () => {
     expect(boundingBox?.height).toBeGreaterThanOrEqual(600)
   })
 
-  test('should hide config panel by default', async () => {
+  test('should hide config panel by default', async ({ page }) => {
     // Config panel should not be visible by default
-    const configPanel = page.locator('.config-panel')
+    const configPanel = page.locator(SELECTORS.configPanel)
 
     // Wait a bit for the app state to settle
-    await page.waitForTimeout(500)
+    await page.waitForTimeout(TIMEOUTS.shortDelay)
 
     // Config panel should be hidden (not visible in the DOM or hidden)
     const isVisible = await configPanel.isVisible().catch(() => false)

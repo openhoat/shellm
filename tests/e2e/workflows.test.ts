@@ -13,10 +13,13 @@ import {
   sendMessage,
   setReactInputValue,
   waitForAIResponse,
+  waitForAppReady as waitForAppReadyHelper,
   waitForCommandActions,
   waitForCommandExecution,
   waitForTerminalReady,
 } from './helpers'
+import { SELECTORS } from './selectors'
+import { TIMEOUTS } from './timeouts'
 
 let app: ElectronApplication
 let page: Page
@@ -56,7 +59,7 @@ test.describe('Termaid E2E - User Workflows', () => {
       // Step 4: Execute command
       await waitForCommandActions(page)
 
-      const executeButton = page.locator('.command-actions .btn-execute')
+      const executeButton = page.locator(SELECTORS.executeButton)
       const isEnabled = await executeButton.isEnabled()
 
       if (isEnabled) {
@@ -65,7 +68,7 @@ test.describe('Termaid E2E - User Workflows', () => {
 
         // Step 5: View results - command should have executed
         // Terminal should show output
-        await page.waitForTimeout(500)
+        await page.waitForTimeout(TIMEOUTS.shortDelay)
       }
     })
 
@@ -78,8 +81,8 @@ test.describe('Termaid E2E - User Workflows', () => {
       await waitForCommandActions(page)
 
       // Cancel first command
-      await page.locator('.command-actions .btn-cancel').click()
-      await page.waitForSelector('.command-actions', { state: 'hidden' })
+      await page.locator(SELECTORS.cancelButton).click()
+      await page.waitForSelector(SELECTORS.commandActions, { state: 'hidden' })
 
       // Second command
       await sendMessage(page, 'List files')
@@ -104,12 +107,12 @@ test.describe('Termaid E2E - User Workflows', () => {
 
       try {
         // Step 1: Open config
-        await waitForAppReady(envPage)
+        await waitForAppReadyHelper(envPage)
         await openConfigPanel(envPage)
 
         // Step 2: Verify fields are NOT disabled
-        const tempField = envPage.locator('#ollama-temperature')
-        const maxTokensField = envPage.locator('#ollama-max-tokens')
+        const tempField = envPage.locator(SELECTORS.ollamaTemperature)
+        const maxTokensField = envPage.locator(SELECTORS.ollamaMaxTokens)
         const tempDisabled = await tempField.isDisabled()
         const maxTokensDisabled = await maxTokensField.isDisabled()
 
@@ -118,10 +121,10 @@ test.describe('Termaid E2E - User Workflows', () => {
         expect(maxTokensDisabled).toBe(false)
 
         // Step 3: Change temperature using React-aware setter for range input
-        await setReactInputValue(envPage, '#ollama-temperature', '0.5')
+        await setReactInputValue(envPage, SELECTORS.ollamaTemperature, '0.5')
 
         // Step 4: Change max tokens using React-aware setter
-        await setReactInputValue(envPage, '#ollama-max-tokens', '2000')
+        await setReactInputValue(envPage, SELECTORS.ollamaMaxTokens, '2000')
 
         // Step 5: Save
         await saveConfig(envPage)
@@ -143,7 +146,7 @@ test.describe('Termaid E2E - User Workflows', () => {
       await openConfigPanel(page)
 
       // Change some values
-      const tempField = page.locator('#ollama-temperature')
+      const tempField = page.locator(SELECTORS.ollamaTemperature)
 
       // Check if field is disabled
       if (await tempField.isDisabled()) {
@@ -182,7 +185,9 @@ test.describe('Termaid E2E - User Workflows', () => {
         await waitForAIResponse(textPage)
 
         // Wait for input to be re-enabled before second message
-        await textPage.waitForSelector('.chat-input textarea:not([disabled])', { timeout: 5000 })
+        await textPage.waitForSelector(`${SELECTORS.chatInput}:not([disabled])`, {
+          timeout: TIMEOUTS.standard,
+        })
 
         // Step 2: Send multiple messages
         await sendMessage(textPage, 'What can you help me with?')
@@ -190,7 +195,7 @@ test.describe('Termaid E2E - User Workflows', () => {
         // Wait explicitly for 2 AI messages
         await textPage.waitForFunction(
           () => document.querySelectorAll('.chat-message.ai').length >= 2,
-          { timeout: 10000 }
+          { timeout: TIMEOUTS.standard }
         )
 
         // Verify conversation has messages

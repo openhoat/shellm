@@ -19,6 +19,8 @@ import {
   waitForCommandActionsHidden,
   waitForTerminalReady,
 } from './helpers'
+import { SELECTORS } from './selectors'
+import { TIMEOUTS } from './timeouts'
 
 let app: ElectronApplication
 let page: Page
@@ -69,21 +71,23 @@ test.describe('Termaid E2E - Keyboard Shortcuts', () => {
       await cancelActionByShortcut(page)
 
       // Wait for config panel to close
-      await expect(page.locator('.config-panel')).not.toBeVisible({ timeout: 5000 })
+      await expect(page.locator(SELECTORS.configPanel)).not.toBeVisible({
+        timeout: TIMEOUTS.standard,
+      })
     })
 
     test('should close conversation dropdown when Escape is pressed', async () => {
       await openConversationList(page)
 
       // Verify dropdown is visible
-      const dropdown = page.locator('.conversation-dropdown')
+      const dropdown = page.locator(SELECTORS.conversationDropdown)
       await expect(dropdown).toBeVisible()
 
       // Press Escape to close
       await cancelActionByShortcut(page)
 
       // Wait for dropdown to close
-      await expect(dropdown).not.toBeVisible({ timeout: 5000 })
+      await expect(dropdown).not.toBeVisible({ timeout: TIMEOUTS.standard })
     })
   })
 
@@ -111,7 +115,7 @@ test.describe('Termaid E2E - Keyboard Shortcuts', () => {
         () =>
           !!document.querySelector('.chat-welcome') ||
           document.querySelectorAll('.chat-message').length === 0,
-        { timeout: 10000 }
+        { timeout: TIMEOUTS.standard }
       )
 
       // Verify messages are cleared or welcome screen returns
@@ -138,7 +142,7 @@ test.describe('Termaid E2E - Keyboard Shortcuts', () => {
         () =>
           !!document.querySelector('.chat-welcome') ||
           document.querySelectorAll('.chat-message').length === 0,
-        { timeout: 10000 }
+        { timeout: TIMEOUTS.standard }
       )
 
       // Verify cleanup occurred
@@ -159,7 +163,7 @@ test.describe('Termaid E2E - Keyboard Shortcuts', () => {
       await waitForCommandActions(page)
 
       // Check if execute button is enabled
-      const executeButton = page.locator('.command-actions .btn-execute')
+      const executeButton = page.locator(SELECTORS.executeButton)
       const isEnabled = await executeButton.isEnabled()
 
       if (isEnabled) {
@@ -167,7 +171,7 @@ test.describe('Termaid E2E - Keyboard Shortcuts', () => {
         await executeCommandByShortcut(page)
 
         // Command actions should disappear after execution
-        await waitForCommandActionsHidden(page, 5000)
+        await waitForCommandActionsHidden(page, TIMEOUTS.standard)
 
         const actionsVisible = await isCommandActionsVisible(page)
         expect(actionsVisible).toBe(false)
@@ -181,11 +185,14 @@ test.describe('Termaid E2E - Keyboard Shortcuts', () => {
       await typeInChat(page, 'Hello from keyboard test')
 
       // Press Enter to send
-      const input = page.locator('.chat-input textarea')
+      const input = page.locator(SELECTORS.chatInput)
       await input.press('Enter')
 
       // Wait for message to appear in chat
-      await page.waitForSelector('.chat-message.user', { state: 'visible', timeout: 5000 })
+      await page.waitForSelector(SELECTORS.userMessage, {
+        state: 'visible',
+        timeout: TIMEOUTS.standard,
+      })
 
       // Verify the message appears in the chat
       const messages = await getChatMessages(page)
@@ -194,7 +201,7 @@ test.describe('Termaid E2E - Keyboard Shortcuts', () => {
     })
 
     test('should allow focusing chat textarea', async () => {
-      const input = page.locator('.chat-input textarea')
+      const input = page.locator(SELECTORS.chatInput)
 
       // Click on the chat textarea
       await input.click()

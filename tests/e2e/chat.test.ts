@@ -2,12 +2,8 @@ import type { ElectronApplication, Page } from '@playwright/test'
 import { expect, test } from '@playwright/test'
 import { closeElectronApp, launchElectronApp, waitForAppReady } from './electron-app'
 import {
-  cancelActionByShortcut,
-  clearAllConversationsByShortcut,
   clickCancelButton,
   clickModifyButton,
-  executeCommandByShortcut,
-  getChatMessages,
   isCommandActionsVisible,
   resetAppState,
   sendMessage,
@@ -15,6 +11,7 @@ import {
   waitForCommandActions,
   waitForCommandActionsHidden,
 } from './helpers'
+import { SELECTORS } from './selectors'
 
 let app: ElectronApplication
 let page: Page
@@ -50,9 +47,9 @@ test.describe('Termaid E2E - Chat Functionality', () => {
       await waitForAIResponse(page)
 
       // Check for command action buttons
-      const executeButton = page.locator('.command-actions .btn-execute')
-      const modifyButton = page.locator('.command-actions .btn-modify')
-      const cancelButton = page.locator('.command-actions .btn-cancel')
+      const executeButton = page.locator(SELECTORS.executeButton)
+      const modifyButton = page.locator(SELECTORS.modifyButton)
+      const cancelButton = page.locator(SELECTORS.cancelButton)
 
       await expect(executeButton).toBeVisible()
       await expect(modifyButton).toBeVisible()
@@ -70,7 +67,7 @@ test.describe('Termaid E2E - Chat Functionality', () => {
       await clickModifyButton(page)
 
       // Check that command is now in input field
-      const input = page.locator('.chat-input textarea')
+      const input = page.locator(SELECTORS.chatInput)
       const value = await input.inputValue()
       expect(value.length).toBeGreaterThan(0)
 
@@ -100,67 +97,12 @@ test.describe('Termaid E2E - Chat Functionality', () => {
       await waitForAIResponse(page)
 
       // Execute button might be disabled if terminal isn't ready
-      const executeButton = page.locator('.command-actions .btn-execute')
+      const executeButton = page.locator(SELECTORS.executeButton)
       await expect(executeButton).toBeVisible()
 
       // Button should be either disabled (preparing) or enabled (ready)
       const buttonText = await executeButton.textContent()
       expect(buttonText).toBeTruthy()
-    })
-  })
-
-  test.describe('Keyboard shortcuts', () => {
-    test('should cancel command with Escape', async () => {
-      await sendMessage(page, 'List files')
-      await waitForAIResponse(page)
-
-      // Wait for command actions to appear (needed with LLM streaming)
-      await waitForCommandActions(page)
-
-      // Press Escape
-      await cancelActionByShortcut(page)
-
-      // Command actions should be hidden
-      await waitForCommandActionsHidden(page)
-    })
-
-    test('should clear conversation with Ctrl+K', async () => {
-      // Send a message
-      await sendMessage(page, 'List files')
-      await waitForAIResponse(page)
-
-      // Verify message exists
-      const messagesBefore = await getChatMessages(page)
-      expect(messagesBefore.length).toBeGreaterThan(0)
-
-      // Press Ctrl+K to clear
-      await clearAllConversationsByShortcut(page)
-
-      // Brief wait for the clear action to process
-      await page.waitForTimeout(200)
-    })
-
-    test('should execute command with Ctrl+Enter when command is proposed', async () => {
-      // Wait for terminal to be ready using proper helper
-      await page.waitForSelector('.terminal-container', { state: 'visible', timeout: 10000 })
-
-      await sendMessage(page, 'List files')
-      await waitForAIResponse(page)
-
-      // Wait for command actions
-      await waitForCommandActions(page)
-
-      // Check if execute button is enabled
-      const executeButton = page.locator('.command-actions .btn-execute')
-      const isEnabled = await executeButton.isEnabled()
-
-      if (isEnabled) {
-        // Press Ctrl+Enter to execute
-        await executeCommandByShortcut(page)
-
-        // Command actions should disappear after execution
-        await waitForCommandActionsHidden(page, 5000)
-      }
     })
   })
 })

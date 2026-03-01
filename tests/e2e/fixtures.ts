@@ -1,5 +1,7 @@
 import { test as base, type ElectronApplication, type Page } from '@playwright/test'
-import { closeElectronApp, launchElectronApp } from './electron-app'
+import { closeElectronApp, launchElectronApp, waitForAppReady } from './electron-app'
+import { SELECTORS } from './selectors'
+import { TIMEOUTS } from './timeouts'
 
 /**
  * Custom test fixture for Electron E2E tests
@@ -8,6 +10,10 @@ import { closeElectronApp, launchElectronApp } from './electron-app'
  * Mock behavior:
  * - UI mode (UI_MODE=true): Real LLM, no mocks
  * - Headless/CI mode: Mocks enabled for fast, reliable tests
+ */
+
+/**
+ * Test fixtures provided by this module
  */
 export const test = base.extend<{
   app: ElectronApplication
@@ -33,3 +39,41 @@ export const test = base.extend<{
 })
 
 export { expect } from '@playwright/test'
+
+/**
+ * Test options for launching app with custom configuration
+ */
+export interface TestOptions {
+  /** Mock configuration for API responses */
+  mocks?: Parameters<typeof launchElectronApp>[0]['mocks']
+  /** Environment variables to inject */
+  env?: Record<string, string>
+  /** Locale for i18n testing */
+  locale?: string
+  /** Use real LLM instead of mocks */
+  realLlm?: boolean
+}
+
+/**
+ * Launch app with custom options for testing
+ * Use this when you need custom mocks or environment variables
+ */
+export async function launchTestApp(options: TestOptions = {}): Promise<{
+  app: ElectronApplication
+  page: Page
+}> {
+  const result = await launchElectronApp(options)
+  await waitForAppReady(result.page)
+  return result
+}
+
+/**
+ * Close the test app
+ */
+export async function closeTestApp(app: ElectronApplication): Promise<void> {
+  await closeElectronApp(app)
+}
+
+// Re-export everything needed for tests
+export { SELECTORS, TIMEOUTS }
+export * from './helpers'

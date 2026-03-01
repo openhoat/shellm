@@ -14,6 +14,8 @@ import {
   waitForCommandExecution,
   waitForTerminalReady,
 } from './helpers'
+import { SELECTORS } from './selectors'
+import { TIMEOUTS } from './timeouts'
 
 let app: ElectronApplication
 let page: Page
@@ -35,11 +37,11 @@ test.describe('Termaid E2E - Terminal Integration', () => {
       await waitForTerminalReady(page)
 
       // Check that terminal container is visible
-      const terminalContainer = page.locator('.terminal-container')
+      const terminalContainer = page.locator(SELECTORS.terminalContainer)
       await expect(terminalContainer).toBeVisible()
 
       // Check that xterm is initialized (xterm class should be present)
-      const xterm = page.locator('.terminal-content .xterm')
+      const xterm = page.locator(SELECTORS.terminalXterm)
       await expect(xterm).toBeVisible()
     })
 
@@ -47,11 +49,11 @@ test.describe('Termaid E2E - Terminal Integration', () => {
       await waitForTerminalReady(page)
 
       // Check terminal content area exists
-      const terminalContent = page.locator('.terminal-content')
+      const terminalContent = page.locator(SELECTORS.terminalContent)
       await expect(terminalContent).toBeVisible()
 
       // Check xterm is initialized
-      const xterm = page.locator('.xterm')
+      const xterm = page.locator(SELECTORS.terminal)
       await expect(xterm).toBeVisible()
     })
   })
@@ -61,18 +63,18 @@ test.describe('Termaid E2E - Terminal Integration', () => {
       await waitForTerminalReady(page)
 
       // Click on terminal to focus it
-      const terminalContent = page.locator('.terminal-content')
+      const terminalContent = page.locator(SELECTORS.terminalContent)
       await terminalContent.click()
 
       // Type a simple command
       await typeInTerminal(page, 'echo "test"')
 
       // Brief wait for typed text to appear
-      await page.waitForTimeout(200)
+      await page.waitForTimeout(TIMEOUTS.briefDelay)
 
       // Press Enter to execute
       await pressTerminalKey(page, 'Enter')
-      await page.waitForTimeout(500)
+      await page.waitForTimeout(TIMEOUTS.shortDelay)
 
       // Terminal should show some output
       const content = await getTerminalContent(page)
@@ -83,16 +85,16 @@ test.describe('Termaid E2E - Terminal Integration', () => {
       await waitForTerminalReady(page)
 
       // Click on terminal to focus it
-      const terminalContent = page.locator('.terminal-content')
+      const terminalContent = page.locator(SELECTORS.terminalContent)
       await terminalContent.click()
 
       // Wait for shell prompt - reduced delay
-      await page.waitForTimeout(500)
+      await page.waitForTimeout(TIMEOUTS.shortDelay)
 
       // Type a command that produces output
       await typeInTerminal(page, 'pwd')
       await pressTerminalKey(page, 'Enter')
-      await page.waitForTimeout(500)
+      await page.waitForTimeout(TIMEOUTS.shortDelay)
 
       // Terminal should show output (current directory path)
       const content = await getTerminalContent(page)
@@ -117,13 +119,13 @@ test.describe('Termaid E2E - Terminal Integration', () => {
 
       await waitForCommandActions(page)
 
-      const executeButton = page.locator('.command-actions .btn-execute')
+      const executeButton = page.locator(SELECTORS.executeButton)
       const isEnabled = await executeButton.isEnabled()
 
       if (isEnabled) {
         await clickExecuteButton(page)
         await waitForCommandExecution(page)
-        await waitForCommandActionsHidden(page, 10000)
+        await waitForCommandActionsHidden(page, TIMEOUTS.standard)
       }
     })
 
@@ -135,7 +137,7 @@ test.describe('Termaid E2E - Terminal Integration', () => {
 
       await waitForCommandActions(page)
 
-      const executeButton = page.locator('.command-actions .btn-execute')
+      const executeButton = page.locator(SELECTORS.executeButton)
       const isEnabled = await executeButton.isEnabled()
 
       if (isEnabled) {
@@ -155,7 +157,7 @@ test.describe('Termaid E2E - Terminal Integration', () => {
 
       await waitForCommandActions(page)
 
-      const executeButton = page.locator('.command-actions .btn-execute')
+      const executeButton = page.locator(SELECTORS.executeButton)
       const isEnabled = await executeButton.isEnabled()
 
       if (isEnabled) {
@@ -163,11 +165,11 @@ test.describe('Termaid E2E - Terminal Integration', () => {
         await waitForCommandExecution(page)
 
         // Brief wait for interpretation to appear
-        await page.waitForTimeout(1000)
+        await page.waitForTimeout(TIMEOUTS.mediumDelay)
 
         // Check for interpretation content
         const interpretation = page.locator(
-          '.chat-message.ai .command-interpretation, .chat-message.ai .interpretation'
+          `${SELECTORS.aiMessage} .command-interpretation, ${SELECTORS.aiMessage} .interpretation`
         )
         const _hasInterpretation = await interpretation.isVisible().catch(() => false)
 
@@ -183,7 +185,7 @@ test.describe('Termaid E2E - Terminal Integration', () => {
       await waitForCommandActions(page)
 
       // Execute button should be visible
-      const executeButton = page.locator('.command-actions .btn-execute')
+      const executeButton = page.locator(SELECTORS.executeButton)
       await expect(executeButton).toBeVisible()
 
       // Button should be either disabled (preparing) or enabled (ready)

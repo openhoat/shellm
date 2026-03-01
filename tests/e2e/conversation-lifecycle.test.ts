@@ -13,6 +13,8 @@ import {
   waitForAIResponse,
   waitForChatReady,
 } from './helpers'
+import { SELECTORS } from './selectors'
+import { TIMEOUTS } from './timeouts'
 
 // Pre-seeded conversations for tests that need existing data
 const seededConversations: Conversation[] = [
@@ -126,7 +128,10 @@ test.describe('Termaid E2E - Conversation Lifecycle', () => {
 
       // Close the dropdown before creating a new conversation
       await page.keyboard.press('Escape')
-      await page.waitForSelector('.conversation-dropdown', { state: 'hidden', timeout: 5000 })
+      await page.waitForSelector(SELECTORS.conversationDropdown, {
+        state: 'hidden',
+        timeout: TIMEOUTS.standard,
+      })
 
       // Create a new conversation
       await createNewConversation(page)
@@ -176,7 +181,7 @@ test.describe('Termaid E2E - Conversation Lifecycle', () => {
       await deleteConversation(page, 0)
 
       // Wait for the deletion to process
-      await page.waitForTimeout(300)
+      await page.waitForTimeout(TIMEOUTS.briefDelay + TIMEOUTS.minimalDelay)
 
       // Verify the conversation was removed
       const itemsAfter = await getConversationListItems(page)
@@ -222,21 +227,24 @@ test.describe('Termaid E2E - Conversation Lifecycle', () => {
 
       // Verify the export button is accessible and enabled in the dropdown
       await openConversationList(page)
-      const exportButton = page.locator('.export-button')
-      await expect(exportButton).toBeEnabled({ timeout: 5000 })
+      const exportButton = page.locator(SELECTORS.exportButton)
+      await expect(exportButton).toBeEnabled({ timeout: TIMEOUTS.standard })
     })
 
     test('should export all conversations', async () => {
       // Close dropdown if still open from previous test
       if (
         await page
-          .locator('.conversation-dropdown')
+          .locator(SELECTORS.conversationDropdown)
           .isVisible()
           .catch(() => false)
       ) {
         await page.keyboard.press('Escape')
         await page
-          .waitForSelector('.conversation-dropdown', { state: 'hidden', timeout: 5000 })
+          .waitForSelector(SELECTORS.conversationDropdown, {
+            state: 'hidden',
+            timeout: TIMEOUTS.standard,
+          })
           .catch(() => undefined)
       }
 
@@ -248,7 +256,7 @@ test.describe('Termaid E2E - Conversation Lifecycle', () => {
       expect(exportResult.filePath).toBeTruthy()
 
       // Verify the export all button is visible and enabled in the header
-      const exportAllButton = page.locator('[data-testid="export-all-button"]')
+      const exportAllButton = page.locator(SELECTORS.exportAllButton)
       await expect(exportAllButton).toBeVisible()
       await expect(exportAllButton).toBeEnabled()
     })

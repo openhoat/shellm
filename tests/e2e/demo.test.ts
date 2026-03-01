@@ -10,6 +10,8 @@ import {
   waitForCommandActions,
   waitForTerminalReady,
 } from './helpers'
+import { SELECTORS } from './selectors'
+import { TIMEOUTS } from './timeouts'
 
 let app: ElectronApplication
 let page: Page
@@ -142,7 +144,7 @@ test.describe('Termaid Demo', () => {
     await page.waitForTimeout(1500)
 
     // Focus the chat input
-    const chatInput = page.locator('.chat-input textarea')
+    const chatInput = page.locator(SELECTORS.chatInput)
     await chatInput.focus()
     await page.waitForTimeout(600)
 
@@ -154,10 +156,10 @@ test.describe('Termaid Demo', () => {
     await chatInput.press('Enter')
 
     // Wait for AI response
-    await waitForAIResponse(page, 30000)
+    await waitForAIResponse(page, TIMEOUTS.aiResponse)
 
     // Wait for command actions to appear (needed with LLM streaming)
-    await waitForCommandActions(page, 15000)
+    await waitForCommandActions(page, TIMEOUTS.connectionTest)
 
     // Let the viewer read the command proposal
     await page.waitForTimeout(3000)
@@ -166,7 +168,10 @@ test.describe('Termaid Demo', () => {
     await clickExecuteButton(page)
 
     // Wait for the interpretation result to appear
-    await page.waitForSelector('.command-interpretation', { state: 'visible', timeout: 15000 })
+    await page.waitForSelector(SELECTORS.commandInterpretation, {
+      state: 'visible',
+      timeout: TIMEOUTS.connectionTest,
+    })
 
     // Let the viewer read the interpretation result
     await page.waitForTimeout(4000)
@@ -174,7 +179,7 @@ test.describe('Termaid Demo', () => {
     // --- Second command ---
 
     // Focus the chat input again
-    const chatInput2 = page.locator('.chat-input textarea')
+    const chatInput2 = page.locator(SELECTORS.chatInput)
     await chatInput2.focus()
     await page.waitForTimeout(400)
 
@@ -186,7 +191,7 @@ test.describe('Termaid Demo', () => {
     await chatInput2.press('Enter')
 
     // Wait for AI response
-    await waitForAIResponse(page, 30000)
+    await waitForAIResponse(page, TIMEOUTS.aiResponse)
 
     // Let the viewer read the command proposal
     await page.waitForTimeout(3000)
@@ -195,8 +200,8 @@ test.describe('Termaid Demo', () => {
     await clickExecuteButton(page)
 
     // Wait for the second interpretation
-    const interpretations = page.locator('.command-interpretation')
-    await interpretations.nth(1).waitFor({ state: 'visible', timeout: 15000 })
+    const interpretations = page.locator(SELECTORS.commandInterpretation)
+    await interpretations.nth(1).waitFor({ state: 'visible', timeout: TIMEOUTS.connectionTest })
 
     // Let the viewer read the final result
     await page.waitForTimeout(5000)

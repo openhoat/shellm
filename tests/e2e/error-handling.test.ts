@@ -9,6 +9,8 @@ import {
   waitForError,
   waitForTestResult,
 } from './helpers'
+import { SELECTORS } from './selectors'
+import { TIMEOUTS } from './timeouts'
 
 test.describe('Termaid E2E - Error Handling', () => {
   // Each error scenario needs its own app instance since errors are configured at launch time
@@ -44,17 +46,17 @@ test.describe('Termaid E2E - Error Handling', () => {
 
     test('should keep the app functional after LLM error', async () => {
       // Verify the chat input is still usable
-      const input = page.locator('.chat-input textarea')
+      const input = page.locator(SELECTORS.chatInput)
       await expect(input).toBeVisible()
       await expect(input).toBeEnabled()
 
       // Verify the header is still visible
-      const header = page.locator('header')
+      const header = page.locator(SELECTORS.header)
       await expect(header).toBeVisible()
 
       // Verify config panel can still be opened
       await openConfigPanel(page)
-      const configPanel = page.locator('.config-panel')
+      const configPanel = page.locator(SELECTORS.configPanel)
       await expect(configPanel).toBeVisible()
 
       // Close config panel
@@ -86,11 +88,11 @@ test.describe('Termaid E2E - Error Handling', () => {
 
       await testConnection(page)
 
-      const result = await waitForTestResult(page, 15000)
+      const result = await waitForTestResult(page, TIMEOUTS.connectionTest)
       expect(result).toBeTruthy()
 
       // The test result should indicate failure
-      const testResultElement = page.locator('.test-result')
+      const testResultElement = page.locator(SELECTORS.testResult)
       await expect(testResultElement).toBeVisible()
     })
   })
@@ -117,11 +119,11 @@ test.describe('Termaid E2E - Error Handling', () => {
 
       await testConnection(page)
 
-      const result = await waitForTestResult(page, 15000)
+      const result = await waitForTestResult(page, TIMEOUTS.connectionTest)
       expect(result).toBeTruthy()
 
       // The test result should indicate success
-      const testResultElement = page.locator('.test-result')
+      const testResultElement = page.locator(SELECTORS.testResult)
       await expect(testResultElement).toBeVisible()
     })
   })
@@ -154,7 +156,7 @@ test.describe('Termaid E2E - Error Handling', () => {
 
     test('should remain interactive after error', async () => {
       // Verify chat input is still functional
-      const input = page.locator('.chat-input textarea')
+      const input = page.locator(SELECTORS.chatInput)
       await input.fill('Test input')
       const value = await input.inputValue()
       expect(value).toBe('Test input')
@@ -162,14 +164,16 @@ test.describe('Termaid E2E - Error Handling', () => {
 
       // Verify config panel opens and closes correctly
       await openConfigPanel(page)
-      const configPanel = page.locator('.config-panel')
+      const configPanel = page.locator(SELECTORS.configPanel)
       await expect(configPanel).toBeVisible()
 
       await page.keyboard.press('Escape')
-      await expect(page.locator('.config-panel')).not.toBeVisible({ timeout: 5000 })
+      await expect(page.locator(SELECTORS.configPanel)).not.toBeVisible({
+        timeout: TIMEOUTS.standard,
+      })
 
       // Verify terminal section is still present
-      const terminalWrapper = page.locator('.terminal-wrapper')
+      const terminalWrapper = page.locator(SELECTORS.terminalWrapper)
       await expect(terminalWrapper).toBeVisible()
     })
   })
@@ -192,19 +196,19 @@ test.describe('Termaid E2E - Error Handling', () => {
     })
 
     test('should not crash when sending an empty message', async () => {
-      const input = page.locator('.chat-input textarea')
+      const input = page.locator(SELECTORS.chatInput)
       await input.fill('')
       await input.press('Enter')
 
       // Brief wait for any async processing
-      await page.waitForTimeout(500)
+      await page.waitForTimeout(TIMEOUTS.shortDelay)
 
       // Verify the app is still functional
       await expect(input).toBeVisible()
       await expect(input).toBeEnabled()
 
       // Verify no error messages appeared
-      const errorVisible = await isErrorVisible(page, 2000)
+      const errorVisible = await isErrorVisible(page, TIMEOUTS.short)
       expect(errorVisible).toBe(false)
     })
 
@@ -212,8 +216,8 @@ test.describe('Termaid E2E - Error Handling', () => {
       await sendMessage(page, 'List files')
 
       // Wait for the AI response (should work normally)
-      const aiMessage = page.locator('.chat-message.ai')
-      await aiMessage.first().waitFor({ state: 'visible', timeout: 15000 })
+      const aiMessage = page.locator(SELECTORS.aiMessage)
+      await aiMessage.first().waitFor({ state: 'visible', timeout: TIMEOUTS.connectionTest })
 
       // Verify the response appeared
       const count = await aiMessage.count()
