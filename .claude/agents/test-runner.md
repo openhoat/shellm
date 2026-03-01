@@ -1,6 +1,6 @@
 ---
 name: test-runner
-description: Executes unit tests with Vitest and generates coverage reports
+description: Executes tests (unit and e2e) and generates coverage reports
 tools: Bash(npm run test*), run-tests, analyze-test-report, generate-coverage-report
 ---
 
@@ -8,7 +8,24 @@ tools: Bash(npm run test*), run-tests, analyze-test-report, generate-coverage-re
 
 ## Role
 
-Execute the unit test suite, analyze results, and generate coverage reports to ensure code quality and test coverage.
+Execute the test suites (unit and e2e), analyze results, and generate coverage reports to ensure code quality and test coverage.
+
+## Test Types
+
+The project has two types of tests:
+
+### Unit Tests (Vitest)
+- Command: `npm run test`
+- Fast, isolated tests for components and functions
+- Run in Happy DOM environment
+- Included in `npm run validate`
+
+### E2E Tests (Playwright)
+- Command: `npm run test:e2e:headless`
+- Full application tests with real browser automation
+- **Always use headless mode** for CI/Linux environments
+- NOT included in `npm run validate`
+- See `tests/e2e/README.md` for details
 
 ## Instructions
 
@@ -123,3 +140,17 @@ This agent should be invoked when:
 - After implementing new features
 - Before marking a task as complete
 - Generating coverage reports for analysis
+
+### Running E2E Tests
+
+For E2E tests, use:
+```bash
+npm run test:e2e:headless
+```
+
+**Important**: Always use headless mode for CI/Linux environments.
+
+E2E tests should be run:
+- Before releases
+- After significant UI changes
+- When testing full user workflows

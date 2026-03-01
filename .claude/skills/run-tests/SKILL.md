@@ -77,9 +77,39 @@ If tests fail:
 3. Suggest reviewing the failing test files
 4. Indicate if coverage is below threshold
 
+## E2E Tests (Playwright)
+
+The project also has end-to-end tests using Playwright.
+
+### Running E2E Tests
+
+**IMPORTANT**: Always use headless mode for CI/Linux environments:
+
+```bash
+npm run test:e2e:headless
+```
+
+This command runs Playwright tests in headless mode, which is required for:
+- CI/CD pipelines
+- Linux servers without display
+- Automated testing environments
+
+### E2E Test Structure
+
+- E2E tests are located in `tests/e2e/`
+- Test files use `.test.ts` suffix
+- Tests use Playwright fixtures defined in `tests/e2e/fixtures.ts`
+
+For more details, see `tests/e2e/README.md`.
+
 ## Notes
 
+### Unit Tests (Vitest)
 - Tests are configured in `vitest.config.ts`
 - Test files use `.test.ts` or `.spec.ts` suffix
 - Tests run in Happy DOM environment
-- Report test results in a clear, formatted way
+
+### E2E Tests (Playwright)
+- Tests are configured in `playwright.config.ts`
+- Use `npm run test:e2e:headless` for CI/Linux
+- See `tests/e2e/README.md` for detailed documentation

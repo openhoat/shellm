@@ -8,6 +8,10 @@ To view the complete history, use: `git log`
 
 ### 2026
 
+#### 01/03
+
+- **[14:32:00] 📝 [DOCS]** Add e2e test documentation to Claude rules and skills (run-tests, run-validation, test-runner, testing.md)
+
 #### 27/02
 
 - **[07:57:00] 🐛 [FIX]** Fix blank terminal in dev mode by resetting refs in useEffect cleanup

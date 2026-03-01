@@ -147,9 +147,29 @@ This skill integrates with:
 - `create-git-commit` - Run validation before commits
 - `kanban-task-executor` - Validation is part of task completion
 
+## E2E Tests (Not Included in Validation)
+
+**Important**: E2E tests are NOT included in the validation workflow.
+
+To run E2E tests separately:
+```bash
+npm run test:e2e:headless
+```
+
+The validation workflow only includes:
+- Unit tests (Vitest) - fast, isolated component/function tests
+- Quality checks (Biome)
+- Build (TypeScript)
+
+E2E tests (Playwright) should be run:
+- Before releases
+- After significant UI changes
+- In CI pipelines
+
 ## Notes
 
 - All three checks must pass for validation to be considered successful
 - This command runs all checks in parallel using `concurrently`
 - Use this skill after any code modification before marking a task as complete
 - This skill replaces and extends the deprecated `/quality-check` skill
+- E2E tests require separate execution with `npm run test:e2e:headless`
