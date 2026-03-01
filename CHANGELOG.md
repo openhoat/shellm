@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 01/03
 
+- **[20:15:00] ♻️ [REFACTOR]** Rationalize e2e test suite structure and remove duplicates
 - **[18:39:58] ✨ [FEAT]** Implement llm response streaming with progressive display
 - **[18:39:58] 🔧 [CHORE]** Update kanban after streaming feature completion
 - **[18:39:58] 🐛 [FIX]** Improve streaming mock for e2e tests
