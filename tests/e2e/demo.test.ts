@@ -5,9 +5,9 @@ import { test } from '@playwright/test'
 import { closeElectronApp, launchElectronApp, waitForAppReady } from './electron-app'
 import {
   clickExecuteButton,
-  isCommandActionsVisible,
   resetAppState,
   waitForAIResponse,
+  waitForCommandActions,
   waitForTerminalReady,
 } from './helpers'
 
@@ -156,13 +156,8 @@ test.describe('Termaid Demo', () => {
     // Wait for AI response
     await waitForAIResponse(page, 30000)
 
-    // Verify command actions appeared
-    const commandActionsVisible = await isCommandActionsVisible(page)
-    if (!commandActionsVisible) {
-      await stopFrameCapture(page)
-      await page.screenshot({ path: 'dist/test-results/demo-debug.png' })
-      throw new Error('Command actions not visible after AI response')
-    }
+    // Wait for command actions to appear (needed with LLM streaming)
+    await waitForCommandActions(page, 15000)
 
     // Let the viewer read the command proposal
     await page.waitForTimeout(3000)

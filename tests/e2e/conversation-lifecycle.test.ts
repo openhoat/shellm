@@ -45,6 +45,7 @@ test.describe('Termaid E2E - Conversation Lifecycle', () => {
 
     test.beforeAll(async () => {
       const result = await launchElectronApp({
+        locale: 'en',
         mocks: { aiCommand: { type: 'text', content: 'This is a helpful AI response.' } },
       })
       app = result.app
@@ -99,6 +100,7 @@ test.describe('Termaid E2E - Conversation Lifecycle', () => {
 
     test.beforeAll(async () => {
       const result = await launchElectronApp({
+        locale: 'en',
         mocks: { aiCommand: { type: 'text', content: 'AI response for multi-conversation test.' } },
       })
       app = result.app
@@ -148,6 +150,7 @@ test.describe('Termaid E2E - Conversation Lifecycle', () => {
 
     test.beforeAll(async () => {
       const result = await launchElectronApp({
+        locale: 'en',
         mocks: {
           aiCommand: { type: 'text', content: 'Response for delete test.' },
           conversations: seededConversations,
@@ -187,6 +190,7 @@ test.describe('Termaid E2E - Conversation Lifecycle', () => {
 
     test.beforeAll(async () => {
       const result = await launchElectronApp({
+        locale: 'en',
         mocks: {
           aiCommand: { type: 'text', content: 'Response for export test.' },
           conversations: [seededConversations[0]],
@@ -244,7 +248,7 @@ test.describe('Termaid E2E - Conversation Lifecycle', () => {
       expect(exportResult.filePath).toBeTruthy()
 
       // Verify the export all button is visible and enabled in the header
-      const exportAllButton = page.locator('header button[title="Export all conversations"]')
+      const exportAllButton = page.locator('[data-testid="export-all-button"]')
       await expect(exportAllButton).toBeVisible()
       await expect(exportAllButton).toBeEnabled()
     })

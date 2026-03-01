@@ -41,9 +41,8 @@ test.describe('Termaid E2E - Chat Functionality', () => {
       await sendMessage(page, 'List all files')
       await waitForAIResponse(page)
 
-      // Check for command actions
-      const commandActionsVisible = await isCommandActionsVisible(page)
-      expect(commandActionsVisible).toBe(true)
+      // Wait for command actions to appear (needed with LLM streaming)
+      await waitForCommandActions(page)
     })
 
     test('should display Execute, Modify, Cancel buttons for commands', async () => {
@@ -64,6 +63,9 @@ test.describe('Termaid E2E - Chat Functionality', () => {
       await sendMessage(page, 'List files')
       await waitForAIResponse(page)
 
+      // Wait for command actions to appear (needed with LLM streaming)
+      await waitForCommandActions(page)
+
       // Click Modify button
       await clickModifyButton(page)
 
@@ -80,9 +82,8 @@ test.describe('Termaid E2E - Chat Functionality', () => {
       await sendMessage(page, 'List files')
       await waitForAIResponse(page)
 
-      // Verify command actions are visible
-      const beforeCancel = await isCommandActionsVisible(page)
-      expect(beforeCancel).toBe(true)
+      // Wait for command actions to appear (needed with LLM streaming)
+      await waitForCommandActions(page)
 
       // Click Cancel button
       await clickCancelButton(page)
@@ -113,12 +114,8 @@ test.describe('Termaid E2E - Chat Functionality', () => {
       await sendMessage(page, 'List files')
       await waitForAIResponse(page)
 
-      // Wait for command actions to appear (Zustand store update may need an extra render cycle)
+      // Wait for command actions to appear (needed with LLM streaming)
       await waitForCommandActions(page)
-
-      // Verify command actions are visible
-      const beforeCancel = await isCommandActionsVisible(page)
-      expect(beforeCancel).toBe(true)
 
       // Press Escape
       await cancelActionByShortcut(page)
