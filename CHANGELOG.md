@@ -10,14 +10,30 @@ To view the complete history, use: `git log`
 
 #### 01/03
 
-- **[14:32:00] 📝 [DOCS]** Add e2e test documentation to Claude rules and skills (run-tests, run-validation, test-runner, testing.md)
+- **[18:39:58] ✨ [FEAT]** Implement llm response streaming with progressive display
+- **[18:39:58] 🔧 [CHORE]** Update kanban after streaming feature completion
+- **[18:39:58] 🐛 [FIX]** Improve streaming mock for e2e tests
+- **[18:39:58] 🐛 [FIX]** Remove unused variable and debug console.log in mocks
+- **[18:39:58] 🐛 [FIX]** Add mock error handling for llm:stream-command
+- **[18:39:58] 🐛 [FIX]** Prioritize shell commands over text responses
+- **[18:39:58] 🐛 [FIX]** Correct command index calculation and terminal resize safety
+- **[18:39:58] 🐛 [FIX]** Resolve flaky streaming tests by fixing command index calculation
+- **[18:39:58] 🐛 [FIX]** Wait for command actions to appear after llm streaming
+- **[10:50:39] 📝 [DOCS]** Add e2e headless test documentation to rules and skills
 
 #### 27/02
 
-- **[07:57:00] 🐛 [FIX]** Fix blank terminal in dev mode by resetting refs in useEffect cleanup
+- **[16:26:51] 🔧 [CHORE]** Cleanup done section in kanban
+- **[16:25:34] 📝 [DOCS]** Update kanban with completed e2e mock bypass task
+- **[16:23:37] ✨ [FEAT]** Add conditional mock bypass for real llm testing
+- **[14:37:39] 🔧 [CHORE]** Update biome schema to match installed version 2.4.4
+- **[09:45:53] ✅ [TEST]** Ensure e2e fixture uses llm mocks
+- **[09:29:49] ✅ [TEST]** Fix state leaking between command execution tests
+- **[09:10:55] 🐛 [FIX]** Use server-side prompt detection for command output capture
+- **[08:03:46] 🐛 [FIX]** Reset refs in cleanup to fix blank terminal in dev mode
 
 #### 26/02
 
-- **[12:06:15] 📝 [DOCS]** Remove specific ai tool mentions from readme
+- **[12:06:44] 📝 [DOCS]** Remove specific ai tool mentions from readme
 - **[09:30:44] 🔧 [CHORE]** Remove pre-push hook, validation already runs in pre-commit
 - **[09:25:31] 📝 [DOCS]** Add 9 feature ideas to backlog for future development

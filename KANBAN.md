@@ -33,10 +33,3 @@
 ## 🚧 In Progress
 
 ## ✅ Done
-
-- [x] **[26/02/2026 16:40:00] ✨ [FEAT]** Add streaming support to LLM providers (base-provider.ts)
-- [x] **[26/02/2026 16:40:00] ✨ [FEAT]** Add IPC streaming handlers (llm-service.ts)
-- [x] **[26/02/2026 16:40:00] ✨ [FEAT]** Update frontend streaming service (llmService.ts)
-- [x] **[26/02/2026 16:40:00] ✨ [FEAT]** Add progressive display in ChatPanel
-- [x] **[26/02/2026 16:40:00] ✨ [FEAT]** Add cancellation support
-- [x] **[26/02/2026 16:40:00] ✨ [FEAT]** Add progress indicator
