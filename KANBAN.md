@@ -19,9 +19,10 @@
 ## 📝 Backlog
 
 - [ ] **#ux-newchat [27/02/2026 10:30:00] 🔴 P1 🎨 [UX]** Fix bug: unable to create new discussion when clicking the "+" button
-- [ ] **#test-e2e-chain [27/02/2026 10:35:00] 🟡 P2 ✅ [TEST]** Add e2e test with chained requests: "Show me the available memory" followed by "What are all the available commands that end with 'top'?"
 - [ ] **#sec-proactive [26/02/2026 14:00:00] 🔴 P1 🔒 [SECURITY]** Add proactive command validation: heuristic analysis, warning modal for destructive commands, sandbox mode, and audit logging
 - [ ] **#ux-shortcuts [26/02/2026 14:00:00] 🔴 P1 🎨 [UX]** Display keyboard shortcuts in UI: shortcut badges, tooltips on buttons, cheat sheet accessible via Ctrl+/ or ?
+- [ ] **#ux-hscroll [01/03/2026 12:00:00] 🟡 P2 🎨 [UX]** Add horizontal scrollbar to chat panel for cases where content exceeds container width
+- [ ] **#test-e2e-chain [27/02/2026 10:35:00] 🟡 P2 ✅ [TEST]** Add e2e test with chained requests: "Show me the available memory" followed by "What are all the available commands that end with 'top'?"
 - [ ] **#arch-shell [25/02/2026 10:30:00] 🟡 P2 🏗️ [ARCHITECTURE]** Create `termaidsh` meta-shell: interactive shell wrapper with AI command suggestion, pre-filled validation, and output interpretation (reusing shared LLM providers)
 - [ ] **#arch-plugins [26/02/2026 14:00:00] 🟡 P2 🏗️ [ARCHITECTURE]** Create LLM plugin system: standardized plugin interface, dynamic loading, JSON config, support for custom providers (LM Studio, vLLM)
 - [ ] **#perf-stats [26/02/2026 14:00:00] 🟢 P3 🚀 [PERFORMANCE]** Add usage statistics dashboard: commands executed, success/failure rate, response time per provider
