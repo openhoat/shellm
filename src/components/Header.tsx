@@ -168,6 +168,7 @@ export const Header = () => {
             className="icon-button"
             onClick={handleNewConversation}
             title={t('header.newConversation')}
+            data-testid="new-conversation-button"
           >
             <svg
               width="20"
@@ -189,6 +190,7 @@ export const Header = () => {
             title={t('header.conversations')}
             aria-expanded={showConversationList}
             aria-haspopup="listbox"
+            data-testid="conversations-button"
           >
             <svg
               width="20"
@@ -207,6 +209,7 @@ export const Header = () => {
             className="icon-button"
             onClick={e => handleExportAll(e)}
             title={t('header.exportAll')}
+            data-testid="export-all-button"
           >
             <svg
               width="20"
