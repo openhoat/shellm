@@ -475,10 +475,6 @@ export function useChat() {
               messageToSave.command = response.command
             }
             addMessageToConversation(messageToSave)
-
-            if (response.type === 'command') {
-              setCurrentCommandIndex(conversation.length + 1)
-            }
           }
 
           if (progress.type === 'error') {

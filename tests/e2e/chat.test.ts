@@ -113,6 +113,9 @@ test.describe('Termaid E2E - Chat Functionality', () => {
       await sendMessage(page, 'List files')
       await waitForAIResponse(page)
 
+      // Wait for command actions to appear (Zustand store update may need an extra render cycle)
+      await waitForCommandActions(page)
+
       // Verify command actions are visible
       const beforeCancel = await isCommandActionsVisible(page)
       expect(beforeCancel).toBe(true)
