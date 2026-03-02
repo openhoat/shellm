@@ -184,6 +184,15 @@ test.describe('Termaid E2E - User Workflows', () => {
         await sendMessage(textPage, 'Hello, how are you?')
         await waitForAIResponse(textPage)
 
+        // Wait for the first AI message to have content (not just streaming placeholder)
+        await textPage.waitForFunction(
+          () => {
+            const aiMessages = document.querySelectorAll('.chat-message.ai:not(.streaming)')
+            return aiMessages.length >= 1 && aiMessages[0].textContent?.trim().length > 0
+          },
+          { timeout: TIMEOUTS.standard }
+        )
+
         // Wait for input to be re-enabled before second message
         await textPage.waitForSelector(`${SELECTORS.chatInput}:not([disabled])`, {
           timeout: TIMEOUTS.standard,
@@ -192,9 +201,19 @@ test.describe('Termaid E2E - User Workflows', () => {
         // Step 2: Send multiple messages
         await sendMessage(textPage, 'What can you help me with?')
 
-        // Wait explicitly for 2 AI messages
+        // Wait for streaming to complete and for 2 AI messages with actual content
         await textPage.waitForFunction(
-          () => document.querySelectorAll('.chat-message.ai').length >= 2,
+          () => {
+            // Only count non-streaming AI messages that have content
+            const aiMessages = document.querySelectorAll('.chat-message.ai:not(.streaming)')
+            let validCount = 0
+            aiMessages.forEach(msg => {
+              if (msg.textContent && msg.textContent.trim().length > 0) {
+                validCount++
+              }
+            })
+            return validCount >= 2
+          },
           { timeout: TIMEOUTS.standard }
         )
 
