@@ -18,7 +18,6 @@
 
 ## 📝 Backlog
 
-- [ ] **#sec-proactive [26/02/2026 14:00:00] 🔴 P1 🔒 [SECURITY]** Add proactive command validation: heuristic analysis, warning modal for destructive commands, sandbox mode, and audit logging
 - [ ] **#ux-shortcuts [26/02/2026 14:00:00] 🔴 P1 🎨 [UX]** Display keyboard shortcuts in UI: shortcut badges, tooltips on buttons, cheat sheet accessible via Ctrl+/ or ?
 - [ ] **#test-e2e-chain [27/02/2026 10:35:00] 🟡 P2 ✅ [TEST]** Add e2e test with chained requests: "Show me the available memory" followed by "What are all the available commands that end with 'top'?"
 - [ ] **#arch-shell [25/02/2026 10:30:00] 🟡 P2 🏗️ [ARCHITECTURE]** Create `termaidsh` meta-shell: interactive shell wrapper with AI command suggestion, pre-filled validation, and output interpretation (reusing shared LLM providers)
@@ -30,5 +29,7 @@
 - [ ] **#devops-autoupdate [26/02/2026 14:00:00] 🟢 P3 🔧 [DEVOPS]** Implement auto-update: version check at startup, background download, changelog notification, rollback support
 
 ## 🚧 In Progress
+
+- [ ] **#sec-proactive [26/02/2026 14:00:00] 🔴 P1 🔒 [SECURITY]** Add proactive command validation: heuristic analysis, warning modal for destructive commands, sandbox mode, and audit logging (PR #14)
 
 ## ✅ Done
