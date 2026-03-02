@@ -38,6 +38,9 @@ build/
 out/
 tsconfig.tsbuildinfo
 
+# Demo output (legacy directory)
+demo-output/
+
 # Wireit cache
 .wireit/
 
@@ -59,6 +62,9 @@ playwright/.cache/
 # VitePress
 docs/.vitepress/dist/
 docs/.vitepress/cache/
+
+# Demo output (legacy directory - accidentally committed)
+demo-output/
 
 # Misc
 .cache/
