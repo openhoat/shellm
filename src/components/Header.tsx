@@ -12,6 +12,7 @@ export const Header = () => {
     currentConversationId,
     loadConversation,
     deleteConversation,
+    startNewConversation,
     incrementChatResetKey,
   } = useStore()
   const { t } = useTranslation()
@@ -40,8 +41,9 @@ export const Header = () => {
   }, [])
 
   const handleNewConversation = () => {
-    // This will be handled by ChatPanel when the user sends a message
+    startNewConversation()
     setShowConversationList(false)
+    incrementChatResetKey()
   }
 
   const handleLoadConversation = (id: string) => {

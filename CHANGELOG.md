@@ -10,6 +10,9 @@ To view the complete history, use: `git log`
 
 #### 01/03
 
+- **[21:30:00] 🐛 [FIX]** Fix e2e test isolation with unique user data directories per test
+- **[20:45:00] 🐛 [FIX]** Fix new discussion button to properly clear conversation state
+- **[20:45:00] 🎨 [STYLE]** Add horizontal scrollbar support to chat panel
 - **[20:15:00] ♻️ [REFACTOR]** Rationalize e2e test suite structure and remove duplicates
 - **[18:39:58] ✨ [FEAT]** Implement llm response streaming with progressive display
 - **[18:39:58] 🔧 [CHORE]** Update kanban after streaming feature completion

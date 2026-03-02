@@ -69,6 +69,7 @@ interface AppState {
   ) => Promise<void>
   deleteConversation: (id: string) => Promise<void>
   clearAllConversations: () => Promise<void>
+  startNewConversation: () => void
 
   // Chat reset
   chatResetKey: number
@@ -251,6 +252,12 @@ export const useStore = create<AppState>((set, _get) => ({
     } catch (error) {
       logger.error('Failed to clear all conversations:', error)
     }
+  },
+  startNewConversation: () => {
+    set({
+      currentConversationId: null,
+      currentConversation: null,
+    })
   },
 
   // Chat reset

@@ -1,7 +1,11 @@
 import { execSync } from 'node:child_process'
+import fs from 'node:fs'
 import path from 'node:path'
 import { type ElectronApplication, _electron as electron, type Page } from '@playwright/test'
 import { defaultMockAICommand, getMockInjectionScript, type LaunchOptions } from './mocks'
+
+// Track user data directories for cleanup
+const userDataDirs = new Map<ElectronApplication, string>()
 
 /**
  * Helper to launch the Electron application for E2E testing
@@ -58,6 +62,11 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
 
   // Build args for Electron
   const args = [path.join(projectRoot, 'dist', 'electron', 'main.js')]
+
+  // Use a unique user data directory for each test to isolate data
+  // This prevents conversations and other data from leaking between tests
+  const userDataDir = path.join(projectRoot, 'dist', 'test-user-data', `test-${Date.now()}-${Math.random().toString(36).slice(2)}`)
+  args.push(`--user-data-dir=${userDataDir}`)
 
   // Add X11 and headless flags when running in headless mode (via xvfb-run)
   // This forces Electron to use X11 instead of Wayland, allowing xvfb to capture the display
@@ -164,6 +173,9 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
     // Wait for the page to load (with timeout)
     await page.waitForLoadState('domcontentloaded', { timeout: 15000 })
 
+    // Track the user data directory for cleanup
+    userDataDirs.set(app, userDataDir)
+
     return { app, page }
   } catch (err) {
     // Ensure the app is closed if launch setup fails, so the process doesn't linger
@@ -177,9 +189,23 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
 /**
  * Helper to close the Electron application
  * Includes a small delay after close to let OS/X11 resources be released
+ * Also cleans up the temporary user data directory
  */
 export async function closeElectronApp(app: ElectronApplication): Promise<void> {
+  const userDataDir = userDataDirs.get(app)
+
   await app.close()
+
+  // Clean up the temporary user data directory
+  if (userDataDir) {
+    userDataDirs.delete(app)
+    try {
+      await fs.promises.rm(userDataDir, { recursive: true, force: true })
+    } catch {
+      // Ignore cleanup errors - the directory will be cleaned up later
+    }
+  }
+
   // Brief pause to let X11/system resources be released before the next test
   // Reduced from 500ms to 200ms - sufficient in headless mode with xvfb
   await new Promise(resolve => setTimeout(resolve, 200))

@@ -158,7 +158,6 @@ test.describe('Termaid E2E - Conversation Lifecycle', () => {
         locale: 'en',
         mocks: {
           aiCommand: { type: 'text', content: 'Response for delete test.' },
-          conversations: seededConversations,
         },
       })
       app = result.app
@@ -171,9 +170,20 @@ test.describe('Termaid E2E - Conversation Lifecycle', () => {
     })
 
     test('should delete a conversation from the list', async () => {
-      // Open conversation list to see pre-seeded conversations
-      await openConversationList(page)
+      // Create first conversation by sending a message
+      await waitForChatReady(page)
+      await sendMessage(page, 'First conversation for delete test')
+      await waitForAIResponse(page)
 
+      // Close the dropdown if open, then create second conversation
+      await page.keyboard.press('Escape')
+      await createNewConversation(page)
+      await waitForChatReady(page)
+      await sendMessage(page, 'Second conversation for delete test')
+      await waitForAIResponse(page)
+
+      // Open conversation list and verify we have 2 conversations
+      await openConversationList(page)
       const itemsBefore = await getConversationListItems(page)
       expect(itemsBefore.length).toBe(2)
 

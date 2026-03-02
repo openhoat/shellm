@@ -20,6 +20,7 @@
 .chat-messages {
   flex: 1;
   overflow-y: auto;
+  overflow-x: auto;
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -106,6 +107,8 @@
   border-radius: 12px 12px 0 12px;
   max-width: 80%;
   padding: 10px 14px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .chat-message.ai .message-content {
@@ -114,6 +117,8 @@
   border-radius: 12px 12px 12px 0;
   max-width: 90%;
   padding: 10px 14px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .chat-message.ai.error .message-content {
@@ -155,6 +160,8 @@
   margin-bottom: 8px;
   color: #d4d4d4;
   line-height: 1.5;
+  overflow-x: auto;
+  word-break: break-word;
 }
 
 .interpretation-section {
