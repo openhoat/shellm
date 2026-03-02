@@ -65,7 +65,12 @@ export async function launchElectronApp(options: LaunchOptions = {}): Promise<{
 
   // Use a unique user data directory for each test to isolate data
   // This prevents conversations and other data from leaking between tests
-  const userDataDir = path.join(projectRoot, 'dist', 'test-user-data', `test-${Date.now()}-${Math.random().toString(36).slice(2)}`)
+  const userDataDir = path.join(
+    projectRoot,
+    'dist',
+    'test-user-data',
+    `test-${Date.now()}-${Math.random().toString(36).slice(2)}`
+  )
   args.push(`--user-data-dir=${userDataDir}`)
 
   // Add X11 and headless flags when running in headless mode (via xvfb-run)

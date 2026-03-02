@@ -207,11 +207,11 @@ test.describe('Termaid E2E - User Workflows', () => {
             // Only count non-streaming AI messages that have content
             const aiMessages = document.querySelectorAll('.chat-message.ai:not(.streaming)')
             let validCount = 0
-            aiMessages.forEach(msg => {
+            for (const msg of aiMessages) {
               if (msg.textContent && msg.textContent.trim().length > 0) {
                 validCount++
               }
-            })
+            }
             return validCount >= 2
           },
           { timeout: TIMEOUTS.standard }

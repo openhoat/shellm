@@ -8,12 +8,18 @@ To view the complete history, use: `git log`
 
 ### 2026
 
+#### 02/03
+
+- **[09:54:06] 🐛 [FIX]** Resolve biome linting issues in e2e tests
+- **[09:45:37] 🐛 [FIX]** Wait for streaming to complete before counting messages
+- **[08:31:44] 🐛 [FIX]** Resolve new discussion button and add horizontal scrollbar
+
 #### 01/03
 
-- **[21:30:00] 🐛 [FIX]** Fix e2e test isolation with unique user data directories per test
-- **[20:45:00] 🐛 [FIX]** Fix new discussion button to properly clear conversation state
-- **[20:45:00] 🎨 [STYLE]** Add horizontal scrollbar support to chat panel
-- **[20:15:00] ♻️ [REFACTOR]** Rationalize e2e test suite structure and remove duplicates
+- **[20:21:58] 🔧 [CHORE]** Update changelog for e2e test rationalization
+- **[19:56:54] ♻️ [REFACTOR]** Rationalize test suite structure and remove duplicates
+- **[18:55:45] 📝 [DOCS]** Add horizontal scrollbar idea to backlog
+- **[18:49:04] 🔧 [CHORE]** Update changelog and cleanup kanban done section
 - **[18:39:58] ✨ [FEAT]** Implement llm response streaming with progressive display
 - **[18:39:58] 🔧 [CHORE]** Update kanban after streaming feature completion
 - **[18:39:58] 🐛 [FIX]** Improve streaming mock for e2e tests
