@@ -100,6 +100,20 @@ contextBridge.exposeInMainWorld('electronAPI', {
   conversationExport: (id: string) => ipcRenderer.invoke('conversation:export', id),
   conversationExportAll: () => ipcRenderer.invoke('conversation:export-all'),
 
+  // Audit Logs
+  auditGetLogs: (query?: {
+    result?: 'success' | 'blocked' | 'cancelled' | 'error' | 'sandboxed'
+    riskLevel?: 'safe' | 'warning' | 'dangerous'
+    fromDate?: string
+    toDate?: string
+    limit?: number
+    commandPattern?: string
+  }) => ipcRenderer.invoke('audit:get-logs', query),
+  auditGetStatistics: () => ipcRenderer.invoke('audit:get-statistics'),
+  auditClearLogs: () => ipcRenderer.invoke('audit:clear-logs'),
+  auditExportLogs: () => ipcRenderer.invoke('audit:export-logs'),
+  auditExportLogsCsv: () => ipcRenderer.invoke('audit:export-logs-csv'),
+
   // Desktop capturer for demo video recording
   desktopCapturer: {
     getSources: (options: { types: Array<'screen' | 'window'> }) =>
