@@ -157,6 +157,20 @@
       "terminalNotReady": "The terminal is not ready. Wait a few seconds for the terminal to initialize or restart the application.",
       "unknownError": "An unexpected error occurred. If the problem persists, please restart the application."
     },
+    "commandWarning": {
+      "title": "Command Warning",
+      "riskLevel": {
+        "safe": "Safe",
+        "warning": "Warning",
+        "dangerous": "Dangerous"
+      },
+      "categories": "Categories",
+      "suggestions": "Suggestions",
+      "sandboxHint": "Consider using sandbox mode for safer execution.",
+      "cancel": "Cancel",
+      "proceedAnyway": "Proceed Anyway",
+      "blocked": "Blocked"
+    },
     "test": {
       "connection": "Test connection",
       "connectionTooltip": "Test connection to LLM provider"
