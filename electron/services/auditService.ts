@@ -1,5 +1,5 @@
-import fs from 'node:fs/promises'
 import fsSync from 'node:fs'
+import fs from 'node:fs/promises'
 import path from 'node:path'
 import { app } from 'electron'
 import type { ValidationResult } from '../../shared/commandValidation'
@@ -147,11 +147,12 @@ class AuditService {
     try {
       const data = await fs.readFile(this.filePath, 'utf-8')
       const parsed = JSON.parse(data)
-      this.cache = parsed.logs || []
-      return this.cache
+      const logs = Array.isArray(parsed.logs) ? parsed.logs : []
+      this.cache = logs
+      return logs
     } catch {
       this.cache = []
-      return this.cache
+      return []
     }
   }
 

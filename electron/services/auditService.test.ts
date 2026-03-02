@@ -1,7 +1,7 @@
-import { describe, expect, test, beforeEach, afterEach } from 'vitest'
 import fs from 'node:fs'
-import path from 'node:path'
 import os from 'node:os'
+import path from 'node:path'
+import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import type { ValidationResult } from '../../shared/commandValidation'
 import { AuditService } from './auditService'
 
@@ -134,7 +134,11 @@ describe('AuditService', () => {
       const safeValidation = createMockValidation('safe')
       const dangerousValidation = createMockValidation('dangerous')
 
-      await auditService.logCommand({ command: 'ls', result: 'success', validation: safeValidation })
+      await auditService.logCommand({
+        command: 'ls',
+        result: 'success',
+        validation: safeValidation,
+      })
       await auditService.logCommand({
         command: 'rm -rf /',
         result: 'blocked',
