@@ -10,7 +10,9 @@ To view the complete history, use: `git log`
 
 #### 02/03
 
-- **[09:54:06] 🐛 [FIX]** Resolve biome linting issues in e2e tests
+- **[11:18:34] 🔧 [CHORE]** Remove accidentally committed demo-output directory
+- **[10:38:01] 🐛 [FIX]** Add deps and ci types for dependabot compatibility
+- **[09:54:25] 🐛 [FIX]** Resolve biome linting issues in e2e tests
 - **[09:45:37] 🐛 [FIX]** Wait for streaming to complete before counting messages
 - **[08:31:44] 🐛 [FIX]** Resolve new discussion button and add horizontal scrollbar
 
