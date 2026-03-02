@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 02/03
 
+- **[15:43:00] 🐛 [FIX]** Hide raw JSON during streaming with "Thinking..." placeholder
 - **[11:18:34] 🔧 [CHORE]** Remove accidentally committed demo-output directory
 - **[10:38:01] 🐛 [FIX]** Add deps and ci types for dependabot compatibility
 - **[09:54:25] 🐛 [FIX]** Resolve biome linting issues in e2e tests

@@ -45,7 +45,8 @@
         "interpreting": "Analyse des résultats en cours...",
         "connecting": "Connexion à l'IA...",
         "receiving": "Réception de la réponse...",
-        "processing": "Traitement en cours..."
+        "processing": "Traitement en cours...",
+        "thinking": "Réflexion..."
       },
       "command": {
         "proposed": "Commande proposée :",

@@ -46,7 +46,8 @@
         "interpreting": "Analyzing results...",
         "connecting": "Connecting to AI...",
         "receiving": "Receiving response...",
-        "processing": "Processing response..."
+        "processing": "Processing response...",
+        "thinking": "Thinking..."
       },
       "command": {
         "proposed": "Proposed command:",
