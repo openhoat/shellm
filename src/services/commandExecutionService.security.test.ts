@@ -7,9 +7,9 @@ import {
 
 describe('isCommandDangerous', () => {
   test('should return false for safe commands', () => {
-    expect(isCommandDangerous('ls -la')).toEqual({ dangerous: false })
-    expect(isCommandDangerous('cat file.txt')).toEqual({ dangerous: false })
-    expect(isCommandDangerous('echo "hello"')).toEqual({ dangerous: false })
+    expect(isCommandDangerous('ls -la').dangerous).toBe(false)
+    expect(isCommandDangerous('cat file.txt').dangerous).toBe(false)
+    expect(isCommandDangerous('echo "hello"').dangerous).toBe(false)
   })
 
   test('should detect rm -rf / command', () => {
@@ -73,8 +73,15 @@ describe('isCommandDangerous', () => {
   })
 
   test('should allow sudo with safe commands', () => {
-    expect(isCommandDangerous('sudo ls -la')).toEqual({ dangerous: false })
-    expect(isCommandDangerous('sudo cat file.txt')).toEqual({ dangerous: false })
+    // Note: sudo commands now return dangerous: false but with a reason
+    // because sudo is considered a privilege escalation (warning level)
+    const result1 = isCommandDangerous('sudo ls -la')
+    expect(result1.dangerous).toBe(false)
+    expect(result1.reason).toBeDefined()
+
+    const result2 = isCommandDangerous('sudo cat file.txt')
+    expect(result2.dangerous).toBe(false)
+    expect(result2.reason).toBeDefined()
   })
 
   test('should handle case insensitive for some patterns', () => {
