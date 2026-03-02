@@ -14,6 +14,8 @@ export default {
         'test', // Tests
         'chore', // Maintenance/Configuration
         'revert', // Revert commit
+        'deps', // Dependency updates (dependabot)
+        'ci', // CI/CD configuration and GitHub Actions
       ],
     ],
     'type-case': [2, 'always', 'lower-case'],
