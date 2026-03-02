@@ -1,6 +1,9 @@
+import type { ValidationResult } from '@shared/commandValidation'
+import { validateCommand } from '@shared/commandValidation'
 import type { CSSProperties } from 'react'
 import { type FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { CommandWarningModal } from '@/components/CommandWarningModal'
 import { useChat } from '@/hooks/useChat'
 import { useStore } from '@/store/useStore'
 import { Logger } from '@/utils/logger'
@@ -24,6 +27,12 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
 
   // Use setAiCommand from store directly for the cancel button
   const { setAiCommand, clearAllConversations } = useStore()
+
+  // State for command warning modal
+  const [_pendingCommand, _setPendingCommand] = useState<{
+    command: string
+    validation: ValidationResult
+  } | null>(null)
 
   // Check if user is at the bottom of the chat
   const checkIsAtBottom = useCallback(() => {
@@ -88,14 +97,66 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
     }
   }, [chat.isLoading])
 
+  // State for command validation warning modal
+  const [pendingValidation, setPendingValidation] = useState<{
+    command: string
+    validation: ValidationResult
+    messageIndex?: number
+  } | null>(null)
+
+  /**
+   * Validate a command and show warning modal if needed
+   * Returns true if command should proceed, false if blocked or waiting for confirmation
+   */
+  const validateAndExecuteCommand = useCallback(
+    async (command: string, messageIndex?: number): Promise<boolean> => {
+      const validation = validateCommand(command)
+
+      // If command is safe, proceed directly
+      if (validation.riskLevel === 'safe') {
+        await chat.executeCommand(command, messageIndex)
+        return true
+      }
+
+      // If command is blocked, show error
+      if (validation.blocked) {
+        setPendingValidation({ command, validation, messageIndex })
+        return false
+      }
+
+      // If command is warning or dangerous, show modal for confirmation
+      setPendingValidation({ command, validation, messageIndex })
+      return false
+    },
+    [chat]
+  )
+
+  /**
+   * Handle confirmation from warning modal
+   */
+  const handleConfirmWarning = useCallback(async () => {
+    if (pendingValidation) {
+      const { command, messageIndex } = pendingValidation
+      setPendingValidation(null)
+      await chat.executeCommand(command, messageIndex)
+    }
+  }, [pendingValidation, chat])
+
+  /**
+   * Handle cancellation from warning modal
+   */
+  const handleCancelWarning = useCallback(() => {
+    setPendingValidation(null)
+  }, [])
+
   const executeCurrentCommand = useCallback(async () => {
     logger.debug('Execute command triggered')
     logger.debug('Button terminalPid check:', chat.terminalPid)
     logger.debug('Using currentCommandIndex:', chat.currentCommandIndex)
     if (chat.aiCommand?.type === 'command') {
-      await chat.executeCommand(chat.aiCommand.command, chat.currentCommandIndex ?? undefined)
+      await validateAndExecuteCommand(chat.aiCommand.command, chat.currentCommandIndex ?? undefined)
     }
-  }, [chat.aiCommand, chat.terminalPid, chat.currentCommandIndex, chat.executeCommand])
+  }, [chat.aiCommand, chat.terminalPid, chat.currentCommandIndex, validateAndExecuteCommand])
 
   const handleExecuteCommand = useCallback(
     (e: React.MouseEvent) => {
@@ -409,6 +470,17 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
           </svg>
         </button>
       </form>
+
+      {/* Command warning modal */}
+      {pendingValidation && (
+        <CommandWarningModal
+          command={pendingValidation.command}
+          validation={pendingValidation.validation}
+          onConfirm={handleConfirmWarning}
+          onCancel={handleCancelWarning}
+          isVisible={!!pendingValidation}
+        />
+      )}
     </div>
   )
 }

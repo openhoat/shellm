@@ -75,6 +75,20 @@ interface AppState {
   chatResetKey: number
   incrementChatResetKey: () => void
 
+  // Command validation warning
+  pendingCommandValidation: {
+    command: string
+    validation: ValidationResult
+    onConfirm: () => void
+  } | null
+  setPendingCommandValidation: (
+    pending: {
+      command: string
+      validation: ValidationResult
+      onConfirm: () => void
+    } | null
+  ) => void
+
   // UI
   showConfigPanel: boolean
   toggleConfigPanel: () => void

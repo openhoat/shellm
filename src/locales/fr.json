@@ -157,6 +157,20 @@
       "unknownError": "Une erreur inattendue s'est produite. Si le problème persiste, veuillez redémarrer l'application.",
       "injectionWarning": "Attention: caractères d'injection détectés et supprimés pour la sécurité: {{patterns}}"
     },
+    "commandWarning": {
+      "title": "Avertissement de commande",
+      "riskLevel": {
+        "safe": "Sûr",
+        "warning": "Avertissement",
+        "dangerous": "Dangereux"
+      },
+      "categories": "Catégories",
+      "suggestions": "Suggestions",
+      "sandboxHint": "Envisagez d'utiliser le mode bac à sable pour une exécution plus sûre.",
+      "cancel": "Annuler",
+      "proceedAnyway": "Exécuter quand même",
+      "blocked": "Bloqué"
+    },
     "test": {
       "connection": "Tester la connexion",
       "connectionTooltip": "Tester la connexion au fournisseur LLM"
