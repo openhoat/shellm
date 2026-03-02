@@ -1,6 +1,16 @@
 /**
- * Dangerous command blacklist patterns
- * These patterns match commands that could be destructive or harmful
+ * Dangerous command detection - deprecated in favor of commandValidation
+ * This file re-exports the new validation service for backward compatibility
+ */
+
+import { validateCommand } from './commandValidation.js'
+
+// Re-export from commandValidation for backward compatibility
+export { type RiskLevel, type ValidationResult, validateCommand } from './commandValidation.js'
+
+/**
+ * Legacy patterns - kept for reference
+ * @deprecated Use validateCommand from commandValidation instead
  */
 export const DANGEROUS_COMMAND_PATTERNS = [
   // File deletion
@@ -24,34 +34,16 @@ export const DANGEROUS_COMMAND_PATTERNS = [
 ]
 
 /**
- * Checks if a command is dangerous based on the blacklist patterns
+ * Checks if a command is dangerous
+ * @deprecated Use validateCommand from commandValidation for detailed risk assessment
  * @param command - The command string to check
  * @returns An object indicating if the command is dangerous and the reason
  */
 export function isCommandDangerous(command: string): { dangerous: boolean; reason?: string } {
-  const trimmedCommand = command.trim()
+  const result = validateCommand(command)
 
-  for (const pattern of DANGEROUS_COMMAND_PATTERNS) {
-    if (pattern.test(trimmedCommand)) {
-      return {
-        dangerous: true,
-        reason: 'Command matches dangerous pattern',
-      }
-    }
+  return {
+    dangerous: result.blocked || result.riskLevel === 'dangerous',
+    reason: result.reason,
   }
-
-  // Check for sudo with destructive commands
-  if (/^sudo\s+/i.test(trimmedCommand)) {
-    const sudoCommand = trimmedCommand.substring(5).trim()
-    for (const pattern of DANGEROUS_COMMAND_PATTERNS) {
-      if (pattern.test(sudoCommand)) {
-        return {
-          dangerous: true,
-          reason: 'Sudo command with destructive pattern',
-        }
-      }
-    }
-  }
-
-  return { dangerous: false }
 }

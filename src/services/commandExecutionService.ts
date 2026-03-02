@@ -1,8 +1,9 @@
-import { isCommandDangerous } from '@shared/dangerousCommands'
+import { type RiskLevel, type ValidationResult, validateCommand } from '@shared/commandValidation'
 import type { ConversationHistory } from '@shared/types'
 import { chatService } from './chatService'
 
-export { isCommandDangerous }
+export { validateCommand }
+export type { ValidationResult, RiskLevel }
 
 export interface ExecuteCommandOptions {
   command: string
@@ -89,13 +90,13 @@ export async function executeCommand({
   maxRetries = 20,
   retryDelay = 500,
 }: ExecuteCommandOptions): Promise<ExecuteCommandResult> {
-  // Check if command is dangerous before executing
-  const dangerCheck = isCommandDangerous(command)
-  if (dangerCheck.dangerous) {
+  // Validate command using the new validation service
+  const validation = validateCommand(command)
+  if (validation.blocked) {
     return {
       success: false,
       blocked: true,
-      error: `Commande bloquée pour sécurité: ${dangerCheck.reason}`,
+      error: `Commande bloquée pour sécurité: ${validation.reason}`,
     }
   }
 
@@ -206,6 +207,20 @@ export function formatConfidence(confidence: number): string {
   return chatService.formatConfidence(confidence)
 }
 
+/**
+ * Checks if a command is dangerous (backward compatibility wrapper)
+ * @deprecated Use validateCommand for detailed risk assessment
+ * @param command - The command string to check
+ * @returns An object indicating if the command is dangerous and the reason
+ */
+export function isCommandDangerous(command: string): { dangerous: boolean; reason?: string } {
+  const result = validateCommand(command)
+  return {
+    dangerous: result.blocked || result.riskLevel === 'dangerous',
+    reason: result.reason,
+  }
+}
+
 export const commandExecutionService = {
   executeCommand,
   canExecuteCommand,
@@ -214,6 +229,7 @@ export const commandExecutionService = {
   extractRecentCommands,
   createHistoryEntryFromConversation,
   formatConfidence,
+  validateCommand,
   isCommandDangerous,
   sanitizeUserInput,
   hasInjectionPatterns,
