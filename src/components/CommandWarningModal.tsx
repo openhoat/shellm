@@ -103,7 +103,7 @@ export const CommandWarningModal = ({
         className="modal-content command-warning-modal"
         onClick={e => e.stopPropagation()}
         onKeyDown={e => e.stopPropagation()}
-        role="presentation"
+        role="document"
       >
         <div className={`modal-header ${riskClass}`}>
           <span className="risk-icon">{riskIcon}</span>

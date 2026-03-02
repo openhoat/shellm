@@ -26,6 +26,23 @@ export interface OpenAIConfig {
 // LLM provider name
 export type LLMProviderName = 'ollama' | 'claude' | 'openai'
 
+// Sandbox mode type
+export type SandboxMode = 'none' | 'restricted' | 'docker' | 'system'
+
+// Sandbox configuration
+export interface SandboxConfig {
+  /** Whether sandbox mode is enabled */
+  enabled: boolean
+  /** Sandbox mode to use */
+  mode: SandboxMode
+  /** Timeout in milliseconds */
+  timeout: number
+  /** Docker image to use (for docker mode) */
+  dockerImage: string
+  /** Whether to mount current directory as read-only */
+  readOnlyMount: boolean
+}
+
 // Configuration application
 export interface AppConfig {
   llmProvider: LLMProviderName
@@ -36,6 +53,7 @@ export interface AppConfig {
   fontSize: number
   shell: string
   chatLanguage: string // Language for AI responses (e.g., 'en', 'fr', 'auto')
+  sandbox: SandboxConfig
 }
 
 // Messages IPC

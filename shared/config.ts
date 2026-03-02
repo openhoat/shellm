@@ -1,4 +1,4 @@
-import type { AppConfig, ClaudeConfig, OllamaConfig, OpenAIConfig } from './types'
+import type { AppConfig, ClaudeConfig, OllamaConfig, OpenAIConfig, SandboxConfig } from './types'
 
 // Environment variable names
 export const ENV_VAR_LLM_PROVIDER = 'TERMAID_LLM_PROVIDER'
@@ -38,6 +38,15 @@ export const DEFAULT_OPENAI_CONFIG: OpenAIConfig = {
   maxTokens: 1000,
 }
 
+// Default sandbox configuration
+export const DEFAULT_SANDBOX_CONFIG: SandboxConfig = {
+  enabled: false,
+  mode: 'restricted',
+  timeout: 30000,
+  dockerImage: 'alpine:latest',
+  readOnlyMount: true,
+}
+
 // Default application configuration
 export const DEFAULT_CONFIG: AppConfig = {
   llmProvider: 'ollama',
@@ -48,6 +57,7 @@ export const DEFAULT_CONFIG: AppConfig = {
   fontSize: 14,
   shell: 'auto',
   chatLanguage: 'auto', // Auto-detect from UI language
+  sandbox: DEFAULT_SANDBOX_CONFIG,
 }
 
 interface EnvOllamaConfig {
