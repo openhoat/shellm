@@ -361,7 +361,7 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
             title={
               !chat.terminalPid
                 ? t('chat.actions.terminalNotReady')
-                : t('chat.actions.executeCommand')
+                : `${t('chat.actions.executeCommand')} (Ctrl+Enter)`
             }
           >
             {!chat.terminalPid ? t('chat.actions.preparing') : t('chat.actions.execute')}
@@ -378,7 +378,7 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
             type="button"
             className="btn btn-cancel"
             onClick={() => setAiCommand(null)}
-            title={t('chat.actions.cancelCommand')}
+            title={`${t('chat.actions.cancelCommand')} (Esc)`}
           >
             {t('chat.actions.cancel')}
           </button>

@@ -160,6 +160,28 @@
     "test": {
       "connection": "Test connection",
       "connectionTooltip": "Test connection to LLM provider"
+    },
+    "shortcuts": {
+      "title": "Keyboard Shortcuts",
+      "openCheatSheet": "Keyboard shortcuts (Ctrl+/)",
+      "groups": {
+        "chat": "Chat",
+        "navigation": "Navigation",
+        "panels": "Panels",
+        "help": "Help"
+      },
+      "actions": {
+        "sendMessage": "Send message",
+        "newLine": "New line",
+        "executeCommand": "Execute command",
+        "clearChat": "Clear chat",
+        "cancelAction": "Cancel action",
+        "historyPrevious": "Previous in history",
+        "historyNext": "Next in history",
+        "navigateConversations": "Navigate conversations",
+        "resizePanel": "Resize panel",
+        "showShortcuts": "Show keyboard shortcuts"
+      }
     }
   }
 }
