@@ -8,17 +8,13 @@ To view the complete history, use: `git log`
 
 ### 2026
 
+#### 04/03
+
+- **[08:58:44] 🔧 [CHORE]** Update kanban and changelog for ux-shortcuts feature
+- **[08:57:57] ✨ [FEAT]** Add keyboard shortcuts cheat sheet with ctrl+/ trigger
+
 #### 03/03
 
-- **[10:30:00] ✅ [TEST]** Add e2e test for chained requests with context verification
-- **[10:30:00] ✅ [TEST]** Add unit tests for KeyboardShortcutsModal component
-- **[10:25:00] ✨ [FEAT]** Integrate KeyboardShortcutsModal in App.tsx with global Ctrl+/ keyboard handler
-- **[10:20:00] ✨ [FEAT]** Add i18n translations for shortcuts feature in en.json and fr.json
-- **[10:15:00] ✨ [FEAT]** Add shortcut badge display to main UI buttons in Header and ChatPanel
-- **[10:10:00] ✨ [FEAT]** Create KeyboardShortcutsModal component with cheat sheet UI
-- **[10:05:00] ✨ [FEAT]** Create centralized keyboard shortcuts configuration (src/constants/shortcuts.ts)
-
-#### 02/03
-
-- **[17:03:51] 🔧 [CHORE]** Update kanban for security pr #14
-- **[16:49:03] 🐛 [FIX]** Hide raw json during streaming with "thinking..." placeholder
+- **[10:46:33] 🔧 [CHORE]** Run full validation in pre-commit hook
+- **[10:45:03] 🎨 [STYLE]** Fix missing newline in chained-requests test
+- **[10:42:01] ✅ [TEST]** Add chained requests test with context verification
