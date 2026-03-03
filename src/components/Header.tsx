@@ -4,7 +4,11 @@ import logoSvg from '/logo.svg'
 import { useStore } from '../store/useStore'
 import './Header.css'
 
-export const Header = () => {
+interface HeaderProps {
+  onShowShortcuts?: () => void
+}
+
+export const Header = ({ onShowShortcuts }: HeaderProps) => {
   const {
     config,
     toggleConfigPanel,
@@ -322,6 +326,28 @@ export const Header = () => {
             </div>
           )}
         </div>
+        {onShowShortcuts && (
+          <button
+            type="button"
+            className="icon-button"
+            onClick={onShowShortcuts}
+            title={t('shortcuts.openCheatSheet')}
+            data-testid="shortcuts-button"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <title>{t('shortcuts.openCheatSheet')}</title>
+              <rect x="2" y="6" width="20" height="12" rx="2" />
+              <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8" />
+            </svg>
+          </button>
+        )}
         <button
           type="button"
           className="icon-button"

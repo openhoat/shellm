@@ -11,6 +11,12 @@ To view the complete history, use: `git log`
 #### 03/03
 
 - **[10:30:00] ✅ [TEST]** Add e2e test for chained requests with context verification
+- **[10:30:00] ✅ [TEST]** Add unit tests for KeyboardShortcutsModal component
+- **[10:25:00] ✨ [FEAT]** Integrate KeyboardShortcutsModal in App.tsx with global Ctrl+/ keyboard handler
+- **[10:20:00] ✨ [FEAT]** Add i18n translations for shortcuts feature in en.json and fr.json
+- **[10:15:00] ✨ [FEAT]** Add shortcut badge display to main UI buttons in Header and ChatPanel
+- **[10:10:00] ✨ [FEAT]** Create KeyboardShortcutsModal component with cheat sheet UI
+- **[10:05:00] ✨ [FEAT]** Create centralized keyboard shortcuts configuration (src/constants/shortcuts.ts)
 
 #### 02/03
 

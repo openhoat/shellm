@@ -160,6 +160,28 @@
     "test": {
       "connection": "Tester la connexion",
       "connectionTooltip": "Tester la connexion au fournisseur LLM"
+    },
+    "shortcuts": {
+      "title": "Raccourcis clavier",
+      "openCheatSheet": "Raccourcis clavier (Ctrl+/)",
+      "groups": {
+        "chat": "Chat",
+        "navigation": "Navigation",
+        "panels": "Panneaux",
+        "help": "Aide"
+      },
+      "actions": {
+        "sendMessage": "Envoyer le message",
+        "newLine": "Nouvelle ligne",
+        "executeCommand": "Exécuter la commande",
+        "clearChat": "Vider le chat",
+        "cancelAction": "Annuler l'action",
+        "historyPrevious": "Précédent dans l'historique",
+        "historyNext": "Suivant dans l'historique",
+        "navigateConversations": "Naviguer dans les conversations",
+        "resizePanel": "Redimensionner le panneau",
+        "showShortcuts": "Afficher les raccourcis clavier"
+      }
     }
   }
 }

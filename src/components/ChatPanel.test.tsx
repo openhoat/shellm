@@ -714,7 +714,7 @@ describe('ChatPanel', () => {
       render(<ChatPanel />)
 
       const executeButton = screen.getByRole('button', { name: /chat\.actions\.execute/i })
-      expect(executeButton).toHaveAttribute('title', 'chat.actions.executeCommand')
+      expect(executeButton).toHaveAttribute('title', 'chat.actions.executeCommand (Ctrl+Enter)')
     })
 
     test('should have tooltip on modify button', () => {
@@ -752,7 +752,7 @@ describe('ChatPanel', () => {
       render(<ChatPanel />)
 
       const cancelButton = screen.getByRole('button', { name: /chat\.actions\.cancel/i })
-      expect(cancelButton).toHaveAttribute('title', 'chat.actions.cancelCommand')
+      expect(cancelButton).toHaveAttribute('title', 'chat.actions.cancelCommand (Esc)')
     })
   })
 })
