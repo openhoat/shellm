@@ -18,8 +18,6 @@
 
 ## 📝 Backlog
 
-- [ ] **#ux-shortcuts [26/02/2026 14:00:00] 🔴 P1 🎨 [UX]** Display keyboard shortcuts in UI: shortcut badges, tooltips on buttons, cheat sheet accessible via Ctrl+/ or ?
-- [ ] **#test-e2e-chain [27/02/2026 10:35:00] 🟡 P2 ✅ [TEST]** Add e2e test with chained requests: "Show me the available memory" followed by "What are all the available commands that end with 'top'?"
 - [ ] **#arch-shell [25/02/2026 10:30:00] 🟡 P2 🏗️ [ARCHITECTURE]** Create `termaidsh` meta-shell: interactive shell wrapper with AI command suggestion, pre-filled validation, and output interpretation (reusing shared LLM providers)
 - [ ] **#arch-plugins [26/02/2026 14:00:00] 🟡 P2 🏗️ [ARCHITECTURE]** Create LLM plugin system: standardized plugin interface, dynamic loading, JSON config, support for custom providers (LM Studio, vLLM)
 - [ ] **#perf-stats [26/02/2026 14:00:00] 🟢 P3 🚀 [PERFORMANCE]** Add usage statistics dashboard: commands executed, success/failure rate, response time per provider
@@ -30,6 +28,17 @@
 
 ## 🚧 In Progress
 
+### [03/03/2026 10:00:00] 🔴 P1 🎨 [UX] Display keyboard shortcuts in UI: shortcut badges, tooltips on buttons, cheat sheet accessible via Ctrl+/ or ?
+
+- [ ] **[03/03/2026 10:00:00] ✨ [FEAT]** Create centralized keyboard shortcuts configuration (`src/constants/shortcuts.ts`)
+- [ ] **[03/03/2026 10:00:00] ✨ [FEAT]** Create `KeyboardShortcutsModal` component — cheat sheet modal accessible via Ctrl+/ or ?
+- [ ] **[03/03/2026 10:00:00] ✨ [FEAT]** Add shortcut badge display to main UI buttons (Header + ChatPanel)
+- [ ] **[03/03/2026 10:00:00] ✨ [FEAT]** Add i18n translations for shortcuts feature in en.json and fr.json
+- [ ] **[03/03/2026 10:00:00] ✨ [FEAT]** Integrate modal in App.tsx and wire up global Ctrl+/ keyboard handler
+- [ ] **[03/03/2026 10:00:00] ✅ [TEST]** Add unit tests for the KeyboardShortcutsModal component
+
 - [ ] **#sec-proactive [26/02/2026 14:00:00] 🔴 P1 🔒 [SECURITY]** Add proactive command validation: heuristic analysis, warning modal for destructive commands, sandbox mode, and audit logging (PR #14)
 
 ## ✅ Done
+
+- [x] **#test-e2e-chain [03/03/2026 10:30:00] ✅ [TEST]** Add e2e test with chained requests verifying conversation history is passed to LLM
