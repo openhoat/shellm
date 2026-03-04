@@ -177,17 +177,39 @@ test.describe('Termaid E2E - Configuration', () => {
 
       const providerSelect = page.locator('#llm-provider')
 
+      // Wait for select to be ready and verify initial provider is ollama (default)
+      await providerSelect.waitFor({ state: 'visible' })
+      await expect(providerSelect).toHaveValue('ollama')
+
+      // Verify initial ollama section is visible
+      await expect(page.locator('#ollama-url')).toBeVisible({ timeout: TIMEOUTS.standard })
+
       // Switch to Claude provider
       await providerSelect.selectOption('claude')
-      await expect(page.locator('#claude-api-key')).toBeVisible({ timeout: TIMEOUTS.standard })
+
+      // Wait for the claude section to appear in DOM and be visible
+      await page.waitForSelector('#claude-api-key', { state: 'visible', timeout: TIMEOUTS.standard })
+
+      // Verify we're on claude provider
+      await expect(providerSelect).toHaveValue('claude')
 
       // Switch to OpenAI provider
       await providerSelect.selectOption('openai')
-      await expect(page.locator('#openai-api-key')).toBeVisible({ timeout: TIMEOUTS.standard })
+
+      // Wait for the openai section to appear in DOM and be visible
+      await page.waitForSelector('#openai-api-key', { state: 'visible', timeout: TIMEOUTS.standard })
+
+      // Verify we're on openai provider
+      await expect(providerSelect).toHaveValue('openai')
 
       // Switch back to Ollama provider
       await providerSelect.selectOption('ollama')
-      await expect(page.locator('#ollama-url')).toBeVisible({ timeout: TIMEOUTS.standard })
+
+      // Wait for the ollama section to appear in DOM and be visible
+      await page.waitForSelector('#ollama-url', { state: 'visible', timeout: TIMEOUTS.standard })
+
+      // Verify we're back to ollama provider
+      await expect(providerSelect).toHaveValue('ollama')
     })
   })
 
