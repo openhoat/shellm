@@ -273,9 +273,11 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
           </div>
         )}
 
-        {chat.conversation.map(msg => (
-          <ChatMessage key={msg.id} id={msg.id} message={msg} />
-        ))}
+        {chat.conversation
+          .filter(msg => !msg.isStreaming)
+          .map(msg => (
+            <ChatMessage key={msg.id} id={msg.id} message={msg} />
+          ))}
 
         {!isAtBottom && (
           <button

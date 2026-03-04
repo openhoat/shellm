@@ -10,6 +10,8 @@ To view the complete history, use: `git log`
 
 #### 04/03
 
+- **[14:42:00] 🐛 [FIX]** Fix JSON displayed during chat streaming by filtering streaming messages
+- **[14:42:00] 🐛 [FIX]** Fix accent rendering in terminal by setting UTF-8 locale environment variables
 - **[11:22:56] ✅ [TEST]** Add unit tests for provider registry
 - **[11:18:34] ✨ [FEAT]** Integrate registry into llm-service and ui
 - **[10:45:35] ✨ [FEAT]** Add llm provider plugin system foundation

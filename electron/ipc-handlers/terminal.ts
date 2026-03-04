@@ -91,6 +91,9 @@ export function createTerminalHandlers(getWindow: WindowGetter): void {
         'di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40:31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32'
       env.GREP_COLORS = 'ms=01;31:mc=01;31:sl=:cx=:fn=:ln=:bn=:se='
       env.GREP_OPTIONS = '--color=auto'
+      // Ensure UTF-8 encoding for proper accent and special character handling
+      env.LANG = 'en_US.UTF-8'
+      env.LC_ALL = 'en_US.UTF-8'
     }
 
     // Get appropriate arguments for the shell

@@ -17,6 +17,8 @@ export interface ChatMessageData {
   command?: AICommand
   /** Optional command interpretation (for ai messages) */
   interpretation?: CommandInterpretation
+  /** Whether the message is currently streaming (content not finalized) */
+  isStreaming?: boolean
 }
 
 /**
