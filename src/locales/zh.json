@@ -1,0 +1,206 @@
+{
+  "translation": {
+    "app": {
+      "title": "Termaid",
+      "subtitle": "智能AI终端"
+    },
+    "header": {
+      "models": "模型",
+      "config": "配置",
+      "settings": "设置",
+      "newConversation": "新对话",
+      "conversations": "对话",
+      "conversationsTitle": "对话",
+      "noConversations": "暂无对话",
+      "exportAll": "导出所有对话",
+      "exportCurrent": "导出当前对话",
+      "exportCurrentButton": "导出",
+      "deleteConversation": "删除对话",
+      "closeConversations": "关闭对话列表",
+      "confirmDelete": "确定要删除此对话吗？",
+      "noConversationToExport": "没有活跃的对话可导出",
+      "exportedTo": "已导出到 {{filePath}}",
+      "exportedAll": "所有对话已导出到 {{filePath}}",
+      "exportFailed": "导出失败"
+    },
+    "chat": {
+      "title": "AI聊天",
+      "placeholder": "描述您想要做什么...",
+      "send": "发送",
+      "clear": "清空",
+      "empty": "暂无消息",
+      "scrollToBottom": "滚动到底部",
+      "welcome": {
+        "title": "欢迎使用Termaid！",
+        "description": "用自然语言描述您想做什么，AI将建议适当的命令。",
+        "examples": "示例：",
+        "example1": "\"列出所有大于10MB的文件\"",
+        "example2": "\"在当前目录查找所有Python文件\"",
+        "example3": "\"显示磁盘使用情况\""
+      },
+      "progress": {
+        "initializing": "初始化中...",
+        "executing": "执行命令中...",
+        "retrieving": "获取结果中...",
+        "finalizing": "完成中...",
+        "interpreting": "分析结果中...",
+        "connecting": "连接AI中...",
+        "receiving": "接收响应中...",
+        "processing": "处理中...",
+        "thinking": "思考中..."
+      },
+      "command": {
+        "proposed": "建议命令：",
+        "confidence": "置信度："
+      },
+      "interpretation": {
+        "result": "结果：",
+        "keyFindings": "关键发现：",
+        "warnings": "警告：",
+        "errors": "错误：",
+        "recommendations": "建议："
+      },
+      "actions": {
+        "execute": "执行",
+        "preparing": "准备中...",
+        "terminalNotReady": "终端尚未就绪",
+        "executeCommand": "执行命令",
+        "modify": "修改",
+        "modifyCommand": "修改建议的命令",
+        "cancel": "取消",
+        "cancelCommand": "取消建议的命令",
+        "cancelStream": "取消正在进行的响应"
+      }
+    },
+    "terminal": {
+      "title": "终端",
+      "clear": "清空终端"
+    },
+    "config": {
+      "title": "配置",
+      "llm": {
+        "title": "LLM配置",
+        "provider": "LLM提供商",
+        "providers": {
+          "ollama": "Ollama（本地/云端）",
+          "claude": "Claude（Anthropic）",
+          "openai": "OpenAI（GPT-4o、GPT-4）"
+        }
+      },
+      "ollama": {
+        "title": "Ollama配置",
+        "url": "Ollama服务器URL",
+        "model": "默认模型",
+        "save": "保存"
+      },
+      "claude": {
+        "title": "Claude配置",
+        "apiKey": "Anthropic API密钥",
+        "model": "Claude模型"
+      },
+      "openai": {
+        "title": "OpenAI配置",
+        "apiKey": "OpenAI API密钥",
+        "model": "OpenAI模型"
+      },
+      "language": {
+        "title": "语言"
+      },
+      "chatLanguage": {
+        "title": "AI响应语言",
+        "auto": "自动（与界面相同）",
+        "en": "英语",
+        "fr": "法语",
+        "es": "西班牙语",
+        "de": "德语",
+        "pt": "葡萄牙语",
+        "zh": "中文",
+        "ja": "日语"
+      },
+      "interface": {
+        "title": "界面",
+        "theme": "主题",
+        "themeDark": "深色",
+        "themeLight": "浅色",
+        "fontSize": "字体大小"
+      },
+      "terminal": {
+        "title": "终端",
+        "shell": "Shell"
+      },
+      "common": {
+        "apiKeyOptional": "API密钥（可选）",
+        "maxTokens": "最大Token数",
+        "temperature": "温度",
+        "reset": "重置",
+        "resetTooltip": "重置为默认配置",
+        "save": "保存",
+        "saveTooltip": "保存配置",
+        "close": "关闭"
+      }
+    },
+    "models": {
+      "title": "模型选择",
+      "select": "选择",
+      "current": "当前模型",
+      "refresh": "刷新模型列表",
+      "loading": "加载模型中...",
+      "available_one": "{{count}}个模型可用",
+      "available_other": "{{count}}个模型可用",
+      "emptyHint": "输入模型名称或点击 ⟳ 加载"
+    },
+    "errors": {
+      "connection": "连接错误",
+      "connectionSuccess": "连接成功",
+      "loadModels": "加载模型错误",
+      "saveConfig": "保存配置错误",
+      "aiGenerationFailed": "无法生成命令。请检查您的LLM服务连接并重试。",
+      "aiGenerationFailedOffline": "无法连接到LLM服务。请检查服务器是否正在运行。",
+      "commandExecutionFailed": "命令无法执行。请检查终端是否正常工作。",
+      "injectionWarning": "警告：检测到注入字符并已出于安全原因删除：{{patterns}}",
+      "outputInterpretationFailed": "无法分析命令输出。输出将在没有分析的情况下显示。",
+      "terminalNotReady": "终端未就绪。请等待几秒钟让终端初始化或重启应用程序。",
+      "unknownError": "发生意外错误。如果问题持续存在，请重启应用程序。"
+    },
+    "commandWarning": {
+      "title": "命令警告",
+      "riskLevel": {
+        "safe": "安全",
+        "warning": "警告",
+        "dangerous": "危险"
+      },
+      "categories": "类别",
+      "suggestions": "建议",
+      "sandboxHint": "考虑使用沙盒模式以更安全地执行。",
+      "cancel": "取消",
+      "proceedAnyway": "仍然继续",
+      "blocked": "已阻止"
+    },
+    "test": {
+      "connection": "测试连接",
+      "connectionTooltip": "测试与LLM提供商的连接"
+    },
+    "shortcuts": {
+      "title": "键盘快捷键",
+      "openCheatSheet": "键盘快捷键（Ctrl+/）",
+      "groups": {
+        "chat": "聊天",
+        "navigation": "导航",
+        "panels": "面板",
+        "help": "帮助"
+      },
+      "actions": {
+        "sendMessage": "发送消息",
+        "newLine": "换行",
+        "executeCommand": "执行命令",
+        "clearChat": "清空聊天",
+        "cancelAction": "取消操作",
+        "historyPrevious": "历史记录上一个",
+        "historyNext": "历史记录下一个",
+        "navigateConversations": "浏览对话",
+        "resizePanel": "调整面板大小",
+        "showShortcuts": "显示键盘快捷键"
+      }
+    }
+  }
+}

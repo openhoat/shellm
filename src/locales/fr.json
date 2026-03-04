@@ -110,7 +110,12 @@
         "title": "Langue de réponse de l'IA",
         "auto": "Auto (même que l'interface)",
         "en": "Anglais",
-        "fr": "Français"
+        "fr": "Français",
+        "es": "Espagnol",
+        "de": "Allemand",
+        "pt": "Portugais",
+        "zh": "Chinois",
+        "ja": "Japonais"
       },
       "interface": {
         "title": "Interface",

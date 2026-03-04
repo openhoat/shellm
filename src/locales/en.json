@@ -110,7 +110,12 @@
         "title": "AI Response Language",
         "auto": "Auto (same as UI)",
         "en": "English",
-        "fr": "French"
+        "fr": "French",
+        "es": "Spanish",
+        "de": "German",
+        "pt": "Portuguese",
+        "zh": "Chinese",
+        "ja": "Japanese"
       },
       "interface": {
         "title": "Interface",
