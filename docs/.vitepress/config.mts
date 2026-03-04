@@ -4,6 +4,11 @@ export default defineConfig({
   title: 'Termaid',
   description: 'AI-Powered Terminal — Generate shell commands from natural language',
   base: '/termaid/',
+  vite: {
+    server: {
+      port: 5174,
+    },
+  },
   head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/termaid/logo.svg' }]],
   themeConfig: {
     logo: '/logo.svg',
