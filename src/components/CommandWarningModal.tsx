@@ -142,8 +142,8 @@ export const CommandWarningModal = ({
             <div className="warning-suggestions">
               <h4>{t('commandWarning.suggestions', 'Suggestions')}</h4>
               <ul>
-                {validation.suggestions.map((suggestion, index) => (
-                  <li key={index}>{suggestion}</li>
+                {validation.suggestions.map(suggestion => (
+                  <li key={suggestion}>{suggestion}</li>
                 ))}
               </ul>
             </div>
