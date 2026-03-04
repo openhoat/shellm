@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 04/03
 
+- **[15:44:53] 📝 [DOCS]** Regenerate changelog from git history
 - **[15:42:58] 🐛 [FIX]** Hide raw json during streaming and fix accent rendering in terminal
 - **[14:19:00] ✨ [FEAT]** Add spanish, german, portuguese, chinese, and japanese translations
 - **[14:19:00] 📝 [DOCS]** Update changelog and kanban for i18n translations
