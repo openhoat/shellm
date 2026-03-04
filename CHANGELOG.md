@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 04/03
 
+- **[18:00:00] ✨ [FEAT]** Add sandbox configuration UI in ConfigPanel with translations for all 7 languages
 - **[17:50:00] 🐛 [FIX]** Fix stale closure bug causing output/interpretation to attach to wrong message
 - **[16:52:00] 📝 [DOCS]** Update documentation with security, keyboard shortcuts, i18n, and Mermaid architecture diagram
 - **[16:40:00] 🐛 [FIX]** Fix assistant responses not persisted in conversation exports (add await and invoke response path)

@@ -128,6 +128,18 @@
         "title": "Terminal",
         "shell": "Shell"
       },
+      "sandbox": {
+        "title": "Security Sandbox",
+        "enabled": "Enable sandbox mode",
+        "enabledHint": "Execute AI-generated commands in an isolated environment for enhanced security",
+        "mode": "Sandbox mode",
+        "modeNone": "None (direct execution)",
+        "modeRestricted": "Restricted (limited environment)",
+        "modeDocker": "Docker (container isolation)",
+        "modeSystem": "System (OS sandbox)",
+        "timeout": "Command timeout",
+        "dockerImage": "Docker image"
+      },
       "common": {
         "apiKeyOptional": "API Key (optional)",
         "maxTokens": "Max Tokens",

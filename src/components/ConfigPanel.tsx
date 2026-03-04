@@ -736,6 +736,107 @@ export const ConfigPanel = () => {
               )}
             </div>
           </div>
+
+          <div className="config-section">
+            <h3>{t('config.sandbox.title')}</h3>
+
+            <div className="config-field">
+              <label htmlFor="sandbox-enabled">
+                <input
+                  id="sandbox-enabled"
+                  type="checkbox"
+                  checked={localConfig.sandbox?.enabled ?? false}
+                  onChange={e =>
+                    setLocalConfig({
+                      ...localConfig,
+                      sandbox: {
+                        ...localConfig.sandbox,
+                        enabled: e.target.checked,
+                        mode: localConfig.sandbox?.mode ?? 'restricted',
+                        timeout: localConfig.sandbox?.timeout ?? 30000,
+                      },
+                    })
+                  }
+                />
+                {t('config.sandbox.enabled')}
+              </label>
+              <p className="config-hint">{t('config.sandbox.enabledHint')}</p>
+            </div>
+
+            {(localConfig.sandbox?.enabled ?? false) && (
+              <>
+                <div className="config-field">
+                  <label htmlFor="sandbox-mode">{t('config.sandbox.mode')}</label>
+                  <select
+                    id="sandbox-mode"
+                    value={localConfig.sandbox?.mode ?? 'restricted'}
+                    onChange={e =>
+                      setLocalConfig({
+                        ...localConfig,
+                        sandbox: {
+                          ...localConfig.sandbox,
+                          enabled: true,
+                          mode: e.target.value as 'none' | 'restricted' | 'docker' | 'system',
+                        },
+                      })
+                    }
+                  >
+                    <option value="none">{t('config.sandbox.modeNone')}</option>
+                    <option value="restricted">{t('config.sandbox.modeRestricted')}</option>
+                    <option value="docker">{t('config.sandbox.modeDocker')}</option>
+                    <option value="system">{t('config.sandbox.modeSystem')}</option>
+                  </select>
+                </div>
+
+                <div className="config-field">
+                  <label htmlFor="sandbox-timeout">
+                    {t('config.sandbox.timeout')}:{' '}
+                    {((localConfig.sandbox?.timeout ?? 30000) / 1000).toFixed(0)}s
+                  </label>
+                  <input
+                    id="sandbox-timeout"
+                    type="range"
+                    min="5000"
+                    max="120000"
+                    step="5000"
+                    value={localConfig.sandbox?.timeout ?? 30000}
+                    onChange={e =>
+                      setLocalConfig({
+                        ...localConfig,
+                        sandbox: {
+                          ...localConfig.sandbox,
+                          enabled: true,
+                          timeout: parseInt(e.target.value, 10),
+                        },
+                      })
+                    }
+                  />
+                </div>
+
+                {localConfig.sandbox?.mode === 'docker' && (
+                  <div className="config-field">
+                    <label htmlFor="sandbox-docker-image">{t('config.sandbox.dockerImage')}</label>
+                    <input
+                      id="sandbox-docker-image"
+                      type="text"
+                      value={localConfig.sandbox?.dockerImage ?? 'alpine:latest'}
+                      onChange={e =>
+                        setLocalConfig({
+                          ...localConfig,
+                          sandbox: {
+                            ...localConfig.sandbox,
+                            enabled: true,
+                            dockerImage: e.target.value,
+                          },
+                        })
+                      }
+                      placeholder="alpine:latest"
+                    />
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
 
         <div className="config-footer">

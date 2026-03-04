@@ -128,6 +128,18 @@
         "title": "Terminal",
         "shell": "Shell"
       },
+      "sandbox": {
+        "title": "Bac à sable de sécurité",
+        "enabled": "Activer le mode bac à sable",
+        "enabledHint": "Exécuter les commandes générées par l'IA dans un environnement isolé pour une sécurité renforcée",
+        "mode": "Mode du bac à sable",
+        "modeNone": "Aucun (exécution directe)",
+        "modeRestricted": "Restreint (environnement limité)",
+        "modeDocker": "Docker (isolation conteneur)",
+        "modeSystem": "Système (bac à sable OS)",
+        "timeout": "Délai d'expiration des commandes",
+        "dockerImage": "Image Docker"
+      },
       "common": {
         "apiKeyOptional": "Clé API (optionnelle)",
         "maxTokens": "Tokens maximum",
