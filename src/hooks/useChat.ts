@@ -297,7 +297,10 @@ export function useChat() {
 
         // Save AI response to persistent storage
         // Track the index in the persisted conversation for command responses
-        const persistedIndex = currentConversation ? currentConversation.messages.length : 0
+        // NOTE: Calculate the index BEFORE adding, but account for the message we just added
+        // The user message was added at index N, so the assistant message will be at index N+1
+        const userMessageIndex = currentConversation ? currentConversation.messages.length : 0
+        const persistedIndex = userMessageIndex + 1 // Assistant message comes after user message
         // Include command info for command-type responses
         const messageToSave: ConversationMessage = {
           role: 'assistant',
@@ -418,7 +421,7 @@ export function useChat() {
 
       try {
         // Set up progress listener
-        const unsubscribe = window.electronAPI.onLlmStreamProgress(requestId, progress => {
+        const unsubscribe = window.electronAPI.onLlmStreamProgress(requestId, async progress => {
           setStreamingProgress(progress)
 
           if (progress.type === 'receiving' && progress.content) {
@@ -468,7 +471,10 @@ export function useChat() {
 
             // Save AI response to persistent storage
             // Track the index in the persisted conversation for command responses
-            const persistedIndex = currentConversation ? currentConversation.messages.length : 0
+            // NOTE: Calculate the index BEFORE adding, but account for the message we just added
+            // The user message was added at index N, so the assistant message will be at index N+1
+            const userMessageIndex = currentConversation ? currentConversation.messages.length : 0
+            const persistedIndex = userMessageIndex + 1 // Assistant message comes after user message
             const messageToSave: ConversationMessage = {
               role: 'assistant',
               content: aiContent,
@@ -476,7 +482,7 @@ export function useChat() {
             if (response.type === 'command') {
               messageToSave.command = response.command
             }
-            addMessageToConversation(messageToSave)
+            await addMessageToConversation(messageToSave)
 
             // Store the persisted message index for command responses
             // This will be used later to update the message with command output and interpretation
@@ -532,6 +538,24 @@ export function useChat() {
             }
             return updated
           })
+
+          // Persist the assistant message to storage
+          // NOTE: The user message was added at index N, so assistant message will be at index N+1
+          const userMessageIndex = currentConversation ? currentConversation.messages.length : 0
+          const persistedIndex = userMessageIndex + 1 // Assistant message comes after user message
+          const messageToSave: ConversationMessage = {
+            role: 'assistant',
+            content: aiContent,
+          }
+          if (result.type === 'command') {
+            messageToSave.command = result.command
+          }
+          await addMessageToConversation(messageToSave)
+
+          // Store the persisted message index for command responses
+          if (result.type === 'command') {
+            setPersistedCommandIndex(persistedIndex)
+          }
         }
       } catch (err) {
         let errorMessage: string

@@ -10,6 +10,12 @@ To view the complete history, use: `git log`
 
 #### 04/03
 
+- **[17:50:00] 🐛 [FIX]** Fix stale closure bug causing output/interpretation to attach to wrong message
+- **[16:52:00] 📝 [DOCS]** Update documentation with security, keyboard shortcuts, i18n, and Mermaid architecture diagram
+- **[16:40:00] 🐛 [FIX]** Fix assistant responses not persisted in conversation exports (add await and invoke response path)
+- **[17:30:00] 📝 [DOCS]** Update README.md with internationalization, security, keyboard shortcuts, and advanced configuration sections
+- **[16:05:04] 🐛 [FIX]** Improve command interpretation and fix conversation export
+- **[16:04:36] 🐛 [FIX]** Improve command interpretation and fix conversation export
 - **[15:44:53] 📝 [DOCS]** Regenerate changelog from git history
 - **[15:42:58] 🐛 [FIX]** Hide raw json during streaming and fix accent rendering in terminal
 - **[14:19:00] ✨ [FEAT]** Add spanish, german, portuguese, chinese, and japanese translations
