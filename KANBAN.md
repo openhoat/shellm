@@ -35,7 +35,7 @@
 - [x] **#plugin-service [04/03/2026 10:55:00] ✨ [FEAT]** Refactor `llm-service.ts` to use the registry pattern instead of hardcoded factory
 - [x] **#plugin-ipc [04/03/2026 11:10:00] ✨ [FEAT]** Add IPC handlers for provider management (`llm:list-providers`, `llm:get-provider-infos`, `llm:get-provider-defaults`, `llm:test-provider-connection`, `llm:list-provider-models`)
 - [x] **#plugin-ui [04/03/2026 11:15:00] ✨ [FEAT]** Update ConfigPanel to dynamically display available providers from registry
-- [ ] **#plugin-tests [04/03/2026 10:05:00] ✅ [TEST]** Add unit tests for `ProviderRegistry` and provider factories
+- [x] **#plugin-tests [04/03/2026 11:20:00] ✅ [TEST]** Add unit tests for `ProviderRegistry` and provider factories
 
 ## ✅ Done
 
