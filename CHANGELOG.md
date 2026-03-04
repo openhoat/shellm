@@ -10,20 +10,16 @@ To view the complete history, use: `git log`
 
 #### 04/03
 
-- **[14:42:00] 🐛 [FIX]** Fix JSON displayed during chat streaming by filtering streaming messages
-- **[14:42:00] 🐛 [FIX]** Fix accent rendering in terminal by setting UTF-8 locale environment variables
-- **[11:22:56] ✅ [TEST]** Add unit tests for provider registry
-- **[11:18:34] ✨ [FEAT]** Integrate registry into llm-service and ui
-- **[10:45:35] ✨ [FEAT]** Add llm provider plugin system foundation
-- **[10:10:11] ✨ [FEAT]** Add proactive command validation service
-- **[10:10:11] ✨ [FEAT]** Add warning modal for destructive commands
-- **[10:10:11] ✨ [FEAT]** Implement sandbox mode for safe command execution
-- **[10:10:11] ✨ [FEAT]** Add audit logging for command execution
-- **[10:10:11] 🐛 [FIX]** Fix audit service for testability
-- **[10:09:31] 🐛 [FIX]** Always show thinking message during streaming phase
-- **[09:07:30] ✨ [FEAT]** Add keyboard shortcuts cheat sheet with ctrl+/ trigger
-- **[09:07:30] 🔧 [CHORE]** Update kanban and changelog for ux-shortcuts feature
-- **[12:13:55] ✨ [FEAT]** Add spanish, german, portuguese, chinese, and japanese translations
+- **[15:42:58] 🐛 [FIX]** Hide raw json during streaming and fix accent rendering in terminal
+- **[14:19:00] ✨ [FEAT]** Add spanish, german, portuguese, chinese, and japanese translations
+- **[14:19:00] 📝 [DOCS]** Update changelog and kanban for i18n translations
+- **[12:33:52] ✨ [FEAT]** Add llm provider plugin system foundation
+- **[12:33:52] ✨ [FEAT]** Integrate registry into llm-service and ui
+- **[12:33:52] ✅ [TEST]** Add unit tests for provider registry
+- **[12:33:52] 🔧 [CHORE]** Update kanban and changelog for llm-plugin-system feature
+- **[12:33:52] 🐛 [FIX]** Improve E2E provider switching test with proper DOM wait handling
+- **[12:33:52] 🐛 [FIX]** Improve E2E provider switching test and fix ConfigPanel activeProvider
+- **[12:33:52] 🐛 [FIX]** Use suggestion text as key instead of index in CommandWarningModal
 - **[10:10:11] ✨ [FEAT]** Add proactive command validation service
 - **[10:10:11] ✨ [FEAT]** Add warning modal for destructive commands
 - **[10:10:11] ✨ [FEAT]** Implement sandbox mode for safe command execution
