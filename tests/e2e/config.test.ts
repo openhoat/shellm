@@ -188,7 +188,10 @@ test.describe('Termaid E2E - Configuration', () => {
       await providerSelect.selectOption('claude')
 
       // Wait for the claude section to appear in DOM and be visible
-      await page.waitForSelector('#claude-api-key', { state: 'visible', timeout: TIMEOUTS.standard })
+      await page.waitForSelector('#claude-api-key', {
+        state: 'visible',
+        timeout: TIMEOUTS.standard,
+      })
 
       // Verify we're on claude provider
       await expect(providerSelect).toHaveValue('claude')
@@ -197,7 +200,10 @@ test.describe('Termaid E2E - Configuration', () => {
       await providerSelect.selectOption('openai')
 
       // Wait for the openai section to appear in DOM and be visible
-      await page.waitForSelector('#openai-api-key', { state: 'visible', timeout: TIMEOUTS.standard })
+      await page.waitForSelector('#openai-api-key', {
+        state: 'visible',
+        timeout: TIMEOUTS.standard,
+      })
 
       // Verify we're on openai provider
       await expect(providerSelect).toHaveValue('openai')
@@ -206,7 +212,10 @@ test.describe('Termaid E2E - Configuration', () => {
       await providerSelect.selectOption('ollama')
 
       // Wait for the ollama section to appear in DOM and be visible
-      await page.waitForSelector('#ollama-url', { state: 'visible', timeout: TIMEOUTS.standard })
+      await page.waitForSelector('#ollama-url', {
+        state: 'visible',
+        timeout: TIMEOUTS.standard,
+      })
 
       // Verify we're back to ollama provider
       await expect(providerSelect).toHaveValue('ollama')

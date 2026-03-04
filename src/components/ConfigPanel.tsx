@@ -243,9 +243,10 @@ export const ConfigPanel = () => {
                 value={getActiveProvider(localConfig)}
                 onChange={e => {
                   const value = e.target.value
+                  // Use activeProvider to be consistent with getActiveProvider
                   const updatedConfig = {
                     ...localConfig,
-                    llmProvider: value as 'ollama' | 'claude' | 'openai',
+                    activeProvider: value,
                   }
                   setLocalConfig(updatedConfig)
                   if (value === 'claude') {
