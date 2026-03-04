@@ -1,5 +1,6 @@
 import { CLAUDE_MODELS, OPENAI_MODELS } from '@shared/models'
-import type { AppConfig } from '@shared/types'
+import type { AppConfig, LLMProviderMetadata } from '@shared/types'
+import { getActiveProvider } from '@shared/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useStore } from '../store/useStore'
@@ -15,6 +16,7 @@ export const ConfigPanel = () => {
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null)
   const [availableModels, setAvailableModels] = useState<string[]>([])
   const [isLoadingModels, setIsLoadingModels] = useState(false)
+  const [providers, setProviders] = useState<LLMProviderMetadata[]>([])
   const [envSources, setEnvSources] = useState<{
     url: boolean
     apiKey: boolean
@@ -51,6 +53,22 @@ export const ConfigPanel = () => {
     }
   }, [])
 
+  const loadProviders = useCallback(async () => {
+    try {
+      const providerList = await window.electronAPI.llmListProviders()
+      setProviders(providerList)
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for provider loading errors
+      console.warn('[ConfigPanel] Failed to load providers:', error)
+      // Fall back to default providers
+      setProviders([
+        { name: 'ollama', displayName: 'Ollama', requiresApiKey: false, supportsStreaming: true },
+        { name: 'claude', displayName: 'Claude', requiresApiKey: true, supportsStreaming: true },
+        { name: 'openai', displayName: 'OpenAI', requiresApiKey: true, supportsStreaming: true },
+      ])
+    }
+  }, [])
+
   const loadModels = useCallback(async () => {
     setIsLoadingModels(true)
     try {
@@ -73,7 +91,8 @@ export const ConfigPanel = () => {
   // Load env sources once on mount
   useEffect(() => {
     loadEnvSources()
-  }, [loadEnvSources])
+    loadProviders()
+  }, [loadEnvSources, loadProviders])
 
   // Close on Escape key
   useEffect(() => {
@@ -123,7 +142,8 @@ export const ConfigPanel = () => {
 
   // Initialize model list when store config changes (uses config, not localConfig)
   useEffect(() => {
-    if (config.llmProvider === 'ollama' && config.ollama.url) {
+    const activeProvider = getActiveProvider(config)
+    if (activeProvider === 'ollama' && config.ollama.url) {
       setIsLoadingModels(true)
       window.electronAPI
         .llmInit(config)
@@ -134,9 +154,9 @@ export const ConfigPanel = () => {
           console.warn('[ConfigPanel] Failed to initialize or load models:', error)
         })
         .finally(() => setIsLoadingModels(false))
-    } else if (config.llmProvider === 'claude') {
+    } else if (activeProvider === 'claude') {
       setAvailableModels(CLAUDE_MODELS)
-    } else if (config.llmProvider === 'openai') {
+    } else if (activeProvider === 'openai') {
       setAvailableModels(OPENAI_MODELS)
     }
   }, [config])
@@ -220,30 +240,33 @@ export const ConfigPanel = () => {
               </label>
               <select
                 id="llm-provider"
-                value={localConfig.llmProvider}
+                value={getActiveProvider(localConfig)}
                 onChange={e => {
                   const value = e.target.value
-                  if (value === 'ollama' || value === 'claude' || value === 'openai') {
-                    const updatedConfig = { ...localConfig, llmProvider: value }
-                    setLocalConfig(updatedConfig)
-                    if (value === 'claude') {
-                      setAvailableModels(CLAUDE_MODELS)
-                    } else if (value === 'openai') {
-                      setAvailableModels(OPENAI_MODELS)
-                    }
+                  const updatedConfig = {
+                    ...localConfig,
+                    llmProvider: value as 'ollama' | 'claude' | 'openai',
+                  }
+                  setLocalConfig(updatedConfig)
+                  if (value === 'claude') {
+                    setAvailableModels(CLAUDE_MODELS)
+                  } else if (value === 'openai') {
+                    setAvailableModels(OPENAI_MODELS)
                   }
                 }}
                 disabled={envSources.llmProvider}
                 className={envSources.llmProvider ? 'env-readonly' : ''}
               >
-                <option value="ollama">{t('config.llm.providers.ollama')}</option>
-                <option value="claude">{t('config.llm.providers.claude')}</option>
-                <option value="openai">{t('config.llm.providers.openai')}</option>
+                {providers.map(provider => (
+                  <option key={provider.name} value={provider.name}>
+                    {provider.displayName}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
 
-          {localConfig.llmProvider === 'ollama' && (
+          {getActiveProvider(localConfig) === 'ollama' && (
             <div className="config-section">
               <h3>{t('config.ollama.title')}</h3>
 
@@ -385,7 +408,7 @@ export const ConfigPanel = () => {
             </div>
           )}
 
-          {localConfig.llmProvider === 'claude' && (
+          {getActiveProvider(localConfig) === 'claude' && (
             <div className="config-section">
               <h3>{t('config.claude.title')}</h3>
 
@@ -486,7 +509,7 @@ export const ConfigPanel = () => {
             </div>
           )}
 
-          {localConfig.llmProvider === 'openai' && (
+          {getActiveProvider(localConfig) === 'openai' && (
             <div className="config-section">
               <h3>{t('config.openai.title')}</h3>
 

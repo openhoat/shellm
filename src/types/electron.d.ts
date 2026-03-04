@@ -3,6 +3,8 @@ import type {
   AppConfig,
   Conversation,
   ConversationMessage,
+  LLMProviderMetadata,
+  ProviderInfo,
   StreamingProgress,
 } from '@shared/types'
 
@@ -99,6 +101,13 @@ export interface ElectronAPI {
     requestId: string,
     callback: (progress: StreamingProgress) => void
   ) => () => void
+
+  // LLM Provider Management
+  llmListProviders: () => Promise<LLMProviderMetadata[]>
+  llmGetProviderInfos: (configs?: Record<string, unknown>) => Promise<ProviderInfo[]>
+  llmGetProviderDefaults: (providerName: string) => Promise<Record<string, unknown> | undefined>
+  llmTestProviderConnection: (providerName: string, config: unknown) => Promise<boolean>
+  llmListProviderModels: (providerName: string, config: unknown) => Promise<string[]>
 
   // Conversations
   conversationGetAll: () => Promise<Conversation[]>

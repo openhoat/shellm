@@ -70,6 +70,11 @@ const mockResetConfig = vi.fn().mockResolvedValue(defaultConfig)
 const mockLlmInit = vi.fn().mockResolvedValue(undefined)
 const mockLlmListModels = vi.fn().mockResolvedValue(['llama2', 'mistral'])
 const mockLlmTestConnection = vi.fn().mockResolvedValue(true)
+const mockLlmListProviders = vi.fn().mockResolvedValue([
+  { name: 'ollama', displayName: 'Ollama', requiresApiKey: false, supportsStreaming: true },
+  { name: 'claude', displayName: 'Claude', requiresApiKey: true, supportsStreaming: true },
+  { name: 'openai', displayName: 'OpenAI', requiresApiKey: true, supportsStreaming: true },
+])
 
 Object.defineProperty(window, 'electronAPI', {
   value: {
@@ -79,6 +84,7 @@ Object.defineProperty(window, 'electronAPI', {
     llmInit: mockLlmInit,
     llmListModels: mockLlmListModels,
     llmTestConnection: mockLlmTestConnection,
+    llmListProviders: mockLlmListProviders,
   },
   writable: true,
 })
@@ -370,6 +376,9 @@ describe('ConfigPanel', () => {
     const user = userEvent.setup()
     render(<ConfigPanel />)
 
+    // Wait for providers to load
+    await screen.findByRole('combobox', { name: /config.llm.provider/ })
+
     const providerSelect = screen.getByRole('combobox', { name: /config.llm.provider/ })
     await user.selectOptions(providerSelect, 'claude')
 
@@ -380,6 +389,9 @@ describe('ConfigPanel', () => {
   test('should update provider selection to openai', async () => {
     const user = userEvent.setup()
     render(<ConfigPanel />)
+
+    // Wait for providers to load
+    await screen.findByRole('combobox', { name: /config.llm.provider/ })
 
     const providerSelect = screen.getByRole('combobox', { name: /config.llm.provider/ })
     await user.selectOptions(providerSelect, 'openai')
