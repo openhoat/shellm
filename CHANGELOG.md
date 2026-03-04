@@ -21,6 +21,15 @@ To view the complete history, use: `git log`
 - **[10:09:31] 🐛 [FIX]** Always show thinking message during streaming phase
 - **[09:07:30] ✨ [FEAT]** Add keyboard shortcuts cheat sheet with ctrl+/ trigger
 - **[09:07:30] 🔧 [CHORE]** Update kanban and changelog for ux-shortcuts feature
+- **[12:13:55] ✨ [FEAT]** Add spanish, german, portuguese, chinese, and japanese translations
+- **[10:10:11] ✨ [FEAT]** Add proactive command validation service
+- **[10:10:11] ✨ [FEAT]** Add warning modal for destructive commands
+- **[10:10:11] ✨ [FEAT]** Implement sandbox mode for safe command execution
+- **[10:10:11] ✨ [FEAT]** Add audit logging for command execution
+- **[10:10:11] 🐛 [FIX]** Fix audit service for testability
+- **[10:09:31] 🐛 [FIX]** Always show thinking message during streaming phase
+- **[09:07:30] ✨ [FEAT]** Add keyboard shortcuts cheat sheet with ctrl+/ trigger
+- **[09:07:30] 🔧 [CHORE]** Update kanban and changelog for ux-shortcuts feature
 
 #### 03/03
 
