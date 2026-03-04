@@ -1,0 +1,206 @@
+{
+  "translation": {
+    "app": {
+      "title": "Termaid",
+      "subtitle": "Terminal inteligente com IA"
+    },
+    "header": {
+      "models": "Modelos",
+      "config": "Configuração",
+      "settings": "Definições",
+      "newConversation": "Nova conversa",
+      "conversations": "Conversas",
+      "conversationsTitle": "Conversas",
+      "noConversations": "Sem conversas",
+      "exportAll": "Exportar todas as conversas",
+      "exportCurrent": "Exportar conversa atual",
+      "exportCurrentButton": "Exportar",
+      "deleteConversation": "Eliminar conversa",
+      "closeConversations": "Fechar lista de conversas",
+      "confirmDelete": "Tem certeza de que deseja eliminar esta conversa?",
+      "noConversationToExport": "Nenhuma conversa ativa para exportar",
+      "exportedTo": "Exportado para {{filePath}}",
+      "exportedAll": "Todas as conversas exportadas para {{filePath}}",
+      "exportFailed": "Falha na exportação"
+    },
+    "chat": {
+      "title": "Chat IA",
+      "placeholder": "Descreva o que deseja fazer...",
+      "send": "Enviar",
+      "clear": "Limpar",
+      "empty": "Sem mensagens",
+      "scrollToBottom": "Rolar para baixo",
+      "welcome": {
+        "title": "Bem-vindo ao Termaid!",
+        "description": "Descreva o que deseja fazer em linguagem natural e a IA sugerirá o comando apropriado.",
+        "examples": "Exemplos:",
+        "example1": "\"Liste todos os arquivos maiores que 10MB\"",
+        "example2": "\"Encontre todos os arquivos Python no diretório atual\"",
+        "example3": "\"Mostre o uso do disco\""
+      },
+      "progress": {
+        "initializing": "Inicializando...",
+        "executing": "Executando comando...",
+        "retrieving": "Recuperando resultados...",
+        "finalizing": "Finalizando...",
+        "interpreting": "Analisando resultados...",
+        "connecting": "Conectando à IA...",
+        "receiving": "Recebendo resposta...",
+        "processing": "Processando...",
+        "thinking": "Pensando..."
+      },
+      "command": {
+        "proposed": "Comando proposto:",
+        "confidence": "Confiança:"
+      },
+      "interpretation": {
+        "result": "Resultado:",
+        "keyFindings": "Descobertas principais:",
+        "warnings": "Avisos:",
+        "errors": "Erros:",
+        "recommendations": "Recomendações:"
+      },
+      "actions": {
+        "execute": "Executar",
+        "preparing": "Preparando...",
+        "terminalNotReady": "O terminal ainda não está pronto",
+        "executeCommand": "Executar o comando",
+        "modify": "Modificar",
+        "modifyCommand": "Modificar o comando proposto",
+        "cancel": "Cancelar",
+        "cancelCommand": "Cancelar o comando proposto",
+        "cancelStream": "Cancelar resposta em curso"
+      }
+    },
+    "terminal": {
+      "title": "Terminal",
+      "clear": "Limpar terminal"
+    },
+    "config": {
+      "title": "Configuração",
+      "llm": {
+        "title": "Configuração LLM",
+        "provider": "Fornecedor LLM",
+        "providers": {
+          "ollama": "Ollama (local/cloud)",
+          "claude": "Claude (Anthropic)",
+          "openai": "OpenAI (GPT-4o, GPT-4)"
+        }
+      },
+      "ollama": {
+        "title": "Configuração Ollama",
+        "url": "URL do servidor Ollama",
+        "model": "Modelo padrão",
+        "save": "Guardar"
+      },
+      "claude": {
+        "title": "Configuração Claude",
+        "apiKey": "Chave API Anthropic",
+        "model": "Modelo Claude"
+      },
+      "openai": {
+        "title": "Configuração OpenAI",
+        "apiKey": "Chave API OpenAI",
+        "model": "Modelo OpenAI"
+      },
+      "language": {
+        "title": "Idioma"
+      },
+      "chatLanguage": {
+        "title": "Idioma de resposta da IA",
+        "auto": "Auto (igual à interface)",
+        "en": "Inglês",
+        "fr": "Francês",
+        "es": "Espanhol",
+        "de": "Alemão",
+        "pt": "Português",
+        "zh": "Chinês",
+        "ja": "Japonês"
+      },
+      "interface": {
+        "title": "Interface",
+        "theme": "Tema",
+        "themeDark": "Escuro",
+        "themeLight": "Claro",
+        "fontSize": "Tamanho da fonte"
+      },
+      "terminal": {
+        "title": "Terminal",
+        "shell": "Shell"
+      },
+      "common": {
+        "apiKeyOptional": "Chave API (opcional)",
+        "maxTokens": "Tokens máximos",
+        "temperature": "Temperatura",
+        "reset": "Repor",
+        "resetTooltip": "Repor configuração padrão",
+        "save": "Guardar",
+        "saveTooltip": "Guardar configuração",
+        "close": "Fechar"
+      }
+    },
+    "models": {
+      "title": "Seleção de modelo",
+      "select": "Selecionar",
+      "current": "Modelo atual",
+      "refresh": "Atualizar lista de modelos",
+      "loading": "A carregar modelos...",
+      "available_one": "{{count}} modelo disponível",
+      "available_other": "{{count}} modelos disponíveis",
+      "emptyHint": "Digite um nome de modelo ou clique em ⟳ para carregar"
+    },
+    "errors": {
+      "connection": "Erro de conexão",
+      "connectionSuccess": "Conexão bem-sucedida",
+      "loadModels": "Erro ao carregar modelos",
+      "saveConfig": "Erro ao guardar configuração",
+      "aiGenerationFailed": "Não foi possível gerar o comando. Verifique a sua conexão ao serviço LLM e tente novamente.",
+      "aiGenerationFailedOffline": "Não foi possível conectar ao serviço LLM. Verifique se o servidor está em execução.",
+      "commandExecutionFailed": "O comando não pôde ser executado. Verifique se o terminal está funcionando corretamente.",
+      "injectionWarning": "Aviso: caracteres de injeção detetados e removidos por segurança: {{patterns}}",
+      "outputInterpretationFailed": "Não foi possível analisar a saída do comando. A saída será exibida sem análise.",
+      "terminalNotReady": "O terminal não está pronto. Aguarde alguns segundos para que o terminal inicialize ou reinicie a aplicação.",
+      "unknownError": "Ocorreu um erro inesperado. Se o problema persistir, por favor reinicie a aplicação."
+    },
+    "commandWarning": {
+      "title": "Aviso de comando",
+      "riskLevel": {
+        "safe": "Seguro",
+        "warning": "Aviso",
+        "dangerous": "Perigoso"
+      },
+      "categories": "Categorias",
+      "suggestions": "Sugestões",
+      "sandboxHint": "Considere usar o modo sandbox para uma execução mais segura.",
+      "cancel": "Cancelar",
+      "proceedAnyway": "Prosseguir mesmo assim",
+      "blocked": "Bloqueado"
+    },
+    "test": {
+      "connection": "Testar conexão",
+      "connectionTooltip": "Testar conexão ao fornecedor LLM"
+    },
+    "shortcuts": {
+      "title": "Atalhos de teclado",
+      "openCheatSheet": "Atalhos de teclado (Ctrl+/)",
+      "groups": {
+        "chat": "Chat",
+        "navigation": "Navegação",
+        "panels": "Painéis",
+        "help": "Ajuda"
+      },
+      "actions": {
+        "sendMessage": "Enviar mensagem",
+        "newLine": "Nova linha",
+        "executeCommand": "Executar comando",
+        "clearChat": "Limpar chat",
+        "cancelAction": "Cancelar ação",
+        "historyPrevious": "Anterior no histórico",
+        "historyNext": "Próximo no histórico",
+        "navigateConversations": "Navegar conversas",
+        "resizePanel": "Redimensionar painel",
+        "showShortcuts": "Mostrar atalhos de teclado"
+      }
+    }
+  }
+}

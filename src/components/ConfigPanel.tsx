@@ -672,6 +672,11 @@ export const ConfigPanel = () => {
                 <option value="auto">{t('config.chatLanguage.auto')}</option>
                 <option value="en">{t('config.chatLanguage.en')}</option>
                 <option value="fr">{t('config.chatLanguage.fr')}</option>
+                <option value="es">{t('config.chatLanguage.es')}</option>
+                <option value="de">{t('config.chatLanguage.de')}</option>
+                <option value="pt">{t('config.chatLanguage.pt')}</option>
+                <option value="zh">{t('config.chatLanguage.zh')}</option>
+                <option value="ja">{t('config.chatLanguage.ja')}</option>
               </select>
             </div>
 
