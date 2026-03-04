@@ -10,9 +10,17 @@ To view the complete history, use: `git log`
 
 #### 04/03
 
-- **[09:55:00] 🐛 [FIX]** Hide raw JSON during streaming by always showing "Thinking..." in receiving phase
-- **[08:58:44] 🔧 [CHORE]** Update kanban and changelog for ux-shortcuts feature
-- **[08:57:57] ✨ [FEAT]** Add keyboard shortcuts cheat sheet with ctrl+/ trigger
+- **[11:22:56] ✅ [TEST]** Add unit tests for provider registry
+- **[11:18:34] ✨ [FEAT]** Integrate registry into llm-service and ui
+- **[10:45:35] ✨ [FEAT]** Add llm provider plugin system foundation
+- **[10:10:11] ✨ [FEAT]** Add proactive command validation service
+- **[10:10:11] ✨ [FEAT]** Add warning modal for destructive commands
+- **[10:10:11] ✨ [FEAT]** Implement sandbox mode for safe command execution
+- **[10:10:11] ✨ [FEAT]** Add audit logging for command execution
+- **[10:10:11] 🐛 [FIX]** Fix audit service for testability
+- **[10:09:31] 🐛 [FIX]** Always show thinking message during streaming phase
+- **[09:07:30] ✨ [FEAT]** Add keyboard shortcuts cheat sheet with ctrl+/ trigger
+- **[09:07:30] 🔧 [CHORE]** Update kanban and changelog for ux-shortcuts feature
 
 #### 03/03
 

@@ -27,26 +27,4 @@
 
 ## 🚧 In Progress
 
-### [04/03/2026 10:00:00] 🟡 P2 🏗️ [ARCHITECTURE] Create LLM plugin system: standardized plugin interface, dynamic loading, JSON config, support for custom providers (LM Studio, vLLM)
-
-- [x] **#plugin-interface [04/03/2026 10:05:00] ✨ [FEAT]** Create `LLMProviderFactory` interface and `ProviderRegistry` class (`shared/types.ts`, `electron/ipc-handlers/providers/registry.ts`)
-- [x] **#plugin-factories [04/03/2026 10:05:00] ♻️ [REFACTOR]** Convert existing providers (Ollama, Claude, OpenAI) to factory pattern with metadata
-- [x] **#plugin-config [04/03/2026 10:05:00] ✨ [FEAT]** Update `AppConfig` type to support dynamic provider configuration (`shared/types.ts`, `shared/config.ts`)
-- [x] **#plugin-service [04/03/2026 10:55:00] ✨ [FEAT]** Refactor `llm-service.ts` to use the registry pattern instead of hardcoded factory
-- [x] **#plugin-ipc [04/03/2026 11:10:00] ✨ [FEAT]** Add IPC handlers for provider management (`llm:list-providers`, `llm:get-provider-infos`, `llm:get-provider-defaults`, `llm:test-provider-connection`, `llm:list-provider-models`)
-- [x] **#plugin-ui [04/03/2026 11:15:00] ✨ [FEAT]** Update ConfigPanel to dynamically display available providers from registry
-- [x] **#plugin-tests [04/03/2026 11:20:00] ✅ [TEST]** Add unit tests for `ProviderRegistry` and provider factories
-
 ## ✅ Done
-
-- [x] **#test-e2e-chain [03/03/2026 10:30:00] ✅ [TEST]** Add e2e test with chained requests verifying conversation history is passed to LLM
-- [x] **[03/03/2026 10:00:00] ✨ [FEAT]** Create centralized keyboard shortcuts configuration (`src/constants/shortcuts.ts`)
-- [x] **[03/03/2026 10:00:00] ✨ [FEAT]** Create `KeyboardShortcutsModal` component — cheat sheet modal accessible via Ctrl+/ or ?
-- [x] **[03/03/2026 10:00:00] ✨ [FEAT]** Add shortcut badge display to main UI buttons (Header + ChatPanel)
-- [x] **[03/03/2026 10:00:00] ✨ [FEAT]** Add i18n translations for shortcuts feature in en.json and fr.json
-- [x] **[03/03/2026 10:00:00] ✨ [FEAT]** Integrate modal in App.tsx and wire up global Ctrl+/ keyboard handler
-- [x] **[03/03/2026 10:00:00] ✅ [TEST]** Add unit tests for the KeyboardShortcutsModal component
-- [x] **[02/03/2026 09:15:00] ✨ [FEAT]** Create command validation service with heuristic analysis and risk levels
-- [x] **[02/03/2026 09:15:00] ✨ [FEAT]** Add warning modal for destructive commands
-- [x] **[02/03/2026 09:15:00] ✨ [FEAT]** Implement sandbox mode for safe command execution
-- [x] **[02/03/2026 09:15:00] ✨ [FEAT]** Add audit logging for command execution
