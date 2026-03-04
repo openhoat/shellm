@@ -467,6 +467,8 @@ export function useChat() {
             })
 
             // Save AI response to persistent storage
+            // Track the index in the persisted conversation for command responses
+            const persistedIndex = currentConversation ? currentConversation.messages.length : 0
             const messageToSave: ConversationMessage = {
               role: 'assistant',
               content: aiContent,
@@ -475,6 +477,12 @@ export function useChat() {
               messageToSave.command = response.command
             }
             addMessageToConversation(messageToSave)
+
+            // Store the persisted message index for command responses
+            // This will be used later to update the message with command output and interpretation
+            if (response.type === 'command') {
+              setPersistedCommandIndex(persistedIndex)
+            }
           }
 
           if (progress.type === 'error') {

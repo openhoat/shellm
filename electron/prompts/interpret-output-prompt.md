@@ -22,6 +22,7 @@ IMPORTANT:
 - ONLY analyze the actual command output
 - EXTRACT meaningful data from the output (numbers, sizes, counts, percentages)
 - If you see only ANSI codes and shell prompts, report that no command output was found
+- For simple commands like date, whoami, pwd, echo - ALWAYS extract and report the output content
 
 Example 1 (free -h command):
 {{"summary":"Memory usage shows 8GB total RAM with 3.2GB used (40%) and 4.8GB available","key_findings":["Total memory: 8.0GB","Used: 3.2GB (40%)","Available: 4.8GB (60%)","Swap: 2.0GB total, 0GB used"],"Buffers/Cache: 1.5GB"],"warnings":[],"errors":[],"recommendations":["Memory usage is healthy - plenty available"],"successful":true}}
@@ -32,13 +33,16 @@ Example 2 (ls -lh command):
 Example 3 (permission error):
 {{"summary":"Command failed due to permission denied error","key_findings":[],"warnings":[],"errors":["Permission denied: cannot open file.txt"],"recommendations":["Try running with sudo","Check file permissions","Verify you are the file owner"],"successful":false}}
 
-Example 4 (no real output, only shell prompts):
-{{"summary":"No command output found - only shell prompts and control sequences","key_findings":[],"warnings":[],"errors":["No actual command output detected"],"recommendations":["Execute a command to generate output"],"successful":false}}
+Example 4 (simple single-line output like date, whoami, pwd):
+{{"summary":"Current date and time: Tue Mar 4 16:45:00 CET 2026","key_findings":["System date: Tue Mar 4 2026","Current time: 16:45:00","Timezone: CET"],"warnings":[],"errors":[],"recommendations":[],"successful":true}}
 
-Example 5 (silent command - mkdir, touch, cp, mv, etc. - successful with no output):
+Example 5 (no real output, only shell prompts - EMPTY output):
+{{"summary":"No command output found - only shell prompts and control sequences","key_findings":[],"warnings":[],"errors":["No actual command output detected"],"recommendations":["Verify the command was executed","Check if the command produces output"],"successful":false}}
+
+Example 6 (silent command - mkdir, touch, cp, mv, etc. - successful with no output):
 {{"summary":"Command executed successfully with no output - typical for mkdir, touch, cp, mv, and similar commands","key_findings":["No error messages detected","Command appears to have completed"],"warnings":[],"errors":[],"recommendations":["Verify the result if needed (e.g., ls to list files)"],"successful":true}}
 
-Example 6 (silent command - chmod, chown, etc. - successful):
+Example 7 (silent command - chmod, chown, etc. - successful):
 {{"summary":"Permission operation completed successfully","key_findings":["No error output","Command executed without errors"],"warnings":[],"errors":[],"recommendations":[],"successful":true}}
 
 Command output to analyze (may contain ANSI codes and shell prompts - IGNORE THEM):
