@@ -1,4 +1,11 @@
-import type { AppConfig, ClaudeConfig, OllamaConfig, OpenAIConfig, SandboxConfig } from './types'
+import type {
+  AppConfig,
+  ClaudeConfig,
+  OllamaConfig,
+  OpenAIConfig,
+  ProviderConfig,
+  SandboxConfig,
+} from './types'
 
 // Environment variable names
 export const ENV_VAR_LLM_PROVIDER = 'TERMAID_LLM_PROVIDER'
@@ -47,8 +54,17 @@ export const DEFAULT_SANDBOX_CONFIG: SandboxConfig = {
   readOnlyMount: true,
 }
 
+// Default provider configurations (for the new plugin system)
+export const DEFAULT_PROVIDER_CONFIGS: Record<string, ProviderConfig> = {
+  ollama: DEFAULT_OLLAMA_CONFIG as unknown as ProviderConfig,
+  claude: DEFAULT_CLAUDE_CONFIG as unknown as ProviderConfig,
+  openai: DEFAULT_OPENAI_CONFIG as unknown as ProviderConfig,
+}
+
 // Default application configuration
 export const DEFAULT_CONFIG: AppConfig = {
+  activeProvider: 'ollama',
+  providers: DEFAULT_PROVIDER_CONFIGS,
   llmProvider: 'ollama',
   ollama: DEFAULT_OLLAMA_CONFIG,
   claude: DEFAULT_CLAUDE_CONFIG,
