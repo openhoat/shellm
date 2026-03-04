@@ -1,18 +1,24 @@
 import type { LLMProviderFactory, LLMProviderMetadata, ProviderInfo } from '@shared/types'
 
 /**
+ * Type alias for any provider factory regardless of config type
+ * Using unknown allows us to store factories with different config types
+ */
+type AnyProviderFactory = LLMProviderFactory<unknown>
+
+/**
  * Registry for LLM providers
  * Manages provider registration, discovery, and instantiation
  */
 export class ProviderRegistry {
-  private providers = new Map<string, LLMProviderFactory>()
+  private providers = new Map<string, AnyProviderFactory>()
 
   /**
    * Register a new provider factory
    * @param factory - The provider factory to register
    * @throws Error if a provider with the same name is already registered
    */
-  register(factory: LLMProviderFactory): void {
+  register(factory: AnyProviderFactory): void {
     if (this.providers.has(factory.name)) {
       throw new Error(`Provider "${factory.name}" is already registered`)
     }
@@ -33,7 +39,7 @@ export class ProviderRegistry {
    * @param name - The provider name
    * @returns The provider factory, or undefined if not found
    */
-  get(name: string): LLMProviderFactory | undefined {
+  get(name: string): AnyProviderFactory | undefined {
     return this.providers.get(name)
   }
 
@@ -89,7 +95,7 @@ export class ProviderRegistry {
         metadata: factory.metadata,
         isAvailable,
         models,
-        defaultConfig: factory.getDefaultConfig(),
+        defaultConfig: factory.getDefaultConfig() as Record<string, unknown>,
       })
     }
 

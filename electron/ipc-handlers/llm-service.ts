@@ -1,9 +1,9 @@
 import type { AICommand, AppConfig, StreamingProgress } from '@shared/types'
+import { getActiveProvider, getProviderConfig } from '@shared/types'
 import { type BrowserWindow, ipcMain } from 'electron'
+import { claudeProviderFactory, ollamaProviderFactory, openaiProviderFactory } from './providers'
 import type { BaseLLMProvider } from './providers/base-provider'
-import { ClaudeProvider } from './providers/claude-provider'
-import { OllamaProvider } from './providers/ollama-provider'
-import { OpenAIProvider } from './providers/openai-provider'
+import { providerRegistry } from './providers/registry'
 
 // Track active streaming requests for cancellation
 const activeStreams = new Map<string, AbortController>()
@@ -12,16 +12,41 @@ type WindowGetter = () => BrowserWindow | null
 
 /**
  * Create the appropriate LLM provider based on configuration
+ * Uses the provider registry for dynamic provider instantiation
  */
 function createProvider(config: AppConfig): BaseLLMProvider {
-  if (config.llmProvider === 'claude') {
-    return new ClaudeProvider(config.claude)
+  // Get the active provider name (supports both new and legacy config formats)
+  const providerName = getActiveProvider(config)
+
+  // Get the provider configuration (supports both new and legacy config formats)
+  const providerConfig = getProviderConfig(config, providerName)
+
+  if (!providerConfig) {
+    throw new Error(`No configuration found for provider: ${providerName}`)
   }
-  if (config.llmProvider === 'openai') {
-    return new OpenAIProvider(config.openai)
-  }
-  return new OllamaProvider(config.ollama)
+
+  // Use the registry to create the provider instance
+  return providerRegistry.createProvider(providerName, providerConfig) as BaseLLMProvider
 }
+
+/**
+ * Initialize the provider registry with default providers
+ * Should be called once at application startup
+ */
+function initializeProviderRegistry(): void {
+  if (!providerRegistry.has('ollama')) {
+    providerRegistry.register(ollamaProviderFactory)
+  }
+  if (!providerRegistry.has('claude')) {
+    providerRegistry.register(claudeProviderFactory)
+  }
+  if (!providerRegistry.has('openai')) {
+    providerRegistry.register(openaiProviderFactory)
+  }
+}
+
+// Initialize registry at module load
+initializeProviderRegistry()
 
 /**
  * Create LLM service handlers for IPC
@@ -92,11 +117,15 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
   }
 
   if (initialConfig) {
-    const canInit =
-      (initialConfig.llmProvider === 'ollama' && !!initialConfig.ollama?.url) ||
-      (initialConfig.llmProvider === 'claude' && !!initialConfig.claude?.apiKey) ||
-      (initialConfig.llmProvider === 'openai' && !!initialConfig.openai?.apiKey)
-    if (canInit) {
+    const providerName = getActiveProvider(initialConfig)
+    const providerConfig = getProviderConfig(initialConfig, providerName)
+
+    // Check if the provider can be initialized (has valid config)
+    const canInit = providerConfig
+      ? providerRegistry.validateConfig(providerName, providerConfig)
+      : false
+
+    if (canInit && providerConfig) {
       try {
         service = createProvider(initialConfig)
       } catch (error) {
@@ -271,4 +300,51 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
     }
     return false
   })
+
+  // ============================================================
+  // Provider Management IPC Handlers
+  // ============================================================
+
+  // List all available providers with their metadata
+  ipcMain.handle('llm:list-providers', async () => {
+    return providerRegistry.listMetadata()
+  })
+
+  // Get detailed information about all providers (including availability)
+  ipcMain.handle('llm:get-provider-infos', async (_event, configs?: Record<string, unknown>) => {
+    return providerRegistry.getProviderInfos(configs ?? {})
+  })
+
+  // Get default configuration for a specific provider
+  ipcMain.handle('llm:get-provider-defaults', async (_event, providerName: string) => {
+    return providerRegistry.getDefaultConfig(providerName)
+  })
+
+  // Test connection to a provider with given config
+  ipcMain.handle(
+    'llm:test-provider-connection',
+    async (_event, providerName: string, config: unknown) => {
+      try {
+        return await providerRegistry.testConnection(providerName, config)
+      } catch (error) {
+        // biome-ignore lint/suspicious/noConsole: Debug logging for connection test errors
+        console.error(`[LLMService] Provider connection test failed for ${providerName}:`, error)
+        return false
+      }
+    }
+  )
+
+  // List models for a specific provider
+  ipcMain.handle(
+    'llm:list-provider-models',
+    async (_event, providerName: string, config: unknown) => {
+      try {
+        return await providerRegistry.listModels(providerName, config)
+      } catch (error) {
+        // biome-ignore lint/suspicious/noConsole: Debug logging for model listing errors
+        console.error(`[LLMService] Failed to list models for ${providerName}:`, error)
+        return []
+      }
+    }
+  )
 }

@@ -1,4 +1,11 @@
-import type { AppConfig, Conversation, ConversationMessage, StreamingProgress } from '@shared/types'
+import type {
+  AppConfig,
+  Conversation,
+  ConversationMessage,
+  LLMProviderMetadata,
+  ProviderInfo,
+  StreamingProgress,
+} from '@shared/types'
 import { contextBridge, desktopCapturer, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld('electronAPI', {
@@ -80,6 +87,20 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.removeListener(channel, handler)
     }
   },
+
+  // LLM Provider Management
+  llmListProviders: () =>
+    ipcRenderer.invoke('llm:list-providers') as Promise<LLMProviderMetadata[]>,
+  llmGetProviderInfos: (configs?: Record<string, unknown>) =>
+    ipcRenderer.invoke('llm:get-provider-infos', configs) as Promise<ProviderInfo[]>,
+  llmGetProviderDefaults: (providerName: string) =>
+    ipcRenderer.invoke('llm:get-provider-defaults', providerName) as Promise<
+      Record<string, unknown> | undefined
+    >,
+  llmTestProviderConnection: (providerName: string, config: unknown) =>
+    ipcRenderer.invoke('llm:test-provider-connection', providerName, config) as Promise<boolean>,
+  llmListProviderModels: (providerName: string, config: unknown) =>
+    ipcRenderer.invoke('llm:list-provider-models', providerName, config) as Promise<string[]>,
 
   // Conversations
   conversationGetAll: () => ipcRenderer.invoke('conversation:get-all'),

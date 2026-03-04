@@ -32,9 +32,9 @@
 - [x] **#plugin-interface [04/03/2026 10:05:00] ✨ [FEAT]** Create `LLMProviderFactory` interface and `ProviderRegistry` class (`shared/types.ts`, `electron/ipc-handlers/providers/registry.ts`)
 - [x] **#plugin-factories [04/03/2026 10:05:00] ♻️ [REFACTOR]** Convert existing providers (Ollama, Claude, OpenAI) to factory pattern with metadata
 - [x] **#plugin-config [04/03/2026 10:05:00] ✨ [FEAT]** Update `AppConfig` type to support dynamic provider configuration (`shared/types.ts`, `shared/config.ts`)
-- [ ] **#plugin-service [04/03/2026 10:05:00] ✨ [FEAT]** Refactor `llm-service.ts` to use the registry pattern instead of hardcoded factory
-- [ ] **#plugin-ipc [04/03/2026 10:05:00] ✨ [FEAT]** Add IPC handlers for provider management (`llm:list-providers`, `llm:get-provider-config`)
-- [ ] **#plugin-ui [04/03/2026 10:05:00] ✨ [FEAT]** Update ConfigPanel to dynamically display available providers from registry
+- [x] **#plugin-service [04/03/2026 10:55:00] ✨ [FEAT]** Refactor `llm-service.ts` to use the registry pattern instead of hardcoded factory
+- [x] **#plugin-ipc [04/03/2026 11:10:00] ✨ [FEAT]** Add IPC handlers for provider management (`llm:list-providers`, `llm:get-provider-infos`, `llm:get-provider-defaults`, `llm:test-provider-connection`, `llm:list-provider-models`)
+- [x] **#plugin-ui [04/03/2026 11:15:00] ✨ [FEAT]** Update ConfigPanel to dynamically display available providers from registry
 - [ ] **#plugin-tests [04/03/2026 10:05:00] ✅ [TEST]** Add unit tests for `ProviderRegistry` and provider factories
 
 ## ✅ Done
