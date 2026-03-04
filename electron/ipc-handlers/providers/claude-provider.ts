@@ -1,7 +1,7 @@
 import { ChatAnthropic } from '@langchain/anthropic'
 import { ChatPromptTemplate } from '@langchain/core/prompts'
 import { CLAUDE_MODELS } from '@shared/models'
-import type { ClaudeConfig } from '@shared/types'
+import type { ClaudeConfig, LLMProviderFactory, LLMProviderMetadata } from '@shared/types'
 import { BaseLLMProvider } from './base-provider'
 
 /**
@@ -40,4 +40,65 @@ export class ClaudeProvider extends BaseLLMProvider {
   async listModels(): Promise<string[]> {
     return CLAUDE_MODELS
   }
+}
+
+/**
+ * Claude provider metadata
+ */
+export const claudeProviderMetadata: LLMProviderMetadata = {
+  name: 'claude',
+  displayName: 'Claude (Anthropic)',
+  description: 'Anthropic Claude API - powerful AI assistant with excellent reasoning capabilities',
+  version: '1.0.0',
+  requiresApiKey: true,
+  supportsStreaming: true,
+  websiteUrl: 'https://anthropic.com',
+  icon: 'brain',
+}
+
+/**
+ * Default configuration for Claude provider
+ */
+const DEFAULT_CLAUDE_CONFIG: ClaudeConfig = {
+  apiKey: '',
+  model: 'claude-haiku-4-5-20251001',
+  temperature: 0.7,
+  maxTokens: 1000,
+}
+
+/**
+ * Claude provider factory
+ */
+export const claudeProviderFactory: LLMProviderFactory<ClaudeConfig> = {
+  name: 'claude',
+  metadata: claudeProviderMetadata,
+
+  create(config: ClaudeConfig): ClaudeProvider {
+    return new ClaudeProvider(config)
+  },
+
+  validateConfig(config: unknown): config is ClaudeConfig {
+    if (typeof config !== 'object' || config === null) {
+      return false
+    }
+    const cfg = config as Record<string, unknown>
+    return typeof cfg.apiKey === 'string' && cfg.apiKey.length > 0 && typeof cfg.model === 'string'
+  },
+
+  getDefaultConfig(): ClaudeConfig {
+    return { ...DEFAULT_CLAUDE_CONFIG }
+  },
+
+  async listModels(): Promise<string[]> {
+    return CLAUDE_MODELS
+  },
+
+  async testConnection(config: ClaudeConfig): Promise<boolean> {
+    try {
+      const provider = new ClaudeProvider(config)
+      return await provider.testConnection()
+    } catch {
+      return false
+    }
+  },
 }

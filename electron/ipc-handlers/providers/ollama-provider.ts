@@ -1,6 +1,6 @@
 import { ChatPromptTemplate } from '@langchain/core/prompts'
 import { ChatOllama } from '@langchain/ollama'
-import type { OllamaConfig } from '@shared/types'
+import type { LLMProviderFactory, LLMProviderMetadata, OllamaConfig } from '@shared/types'
 import { BaseLLMProvider } from './base-provider'
 
 /**
@@ -81,4 +81,76 @@ export class OllamaProvider extends BaseLLMProvider {
       return []
     }
   }
+}
+
+/**
+ * Ollama provider metadata
+ */
+export const ollamaProviderMetadata: LLMProviderMetadata = {
+  name: 'ollama',
+  displayName: 'Ollama',
+  description: 'Local LLM inference with Ollama - run models on your own machine',
+  version: '1.0.0',
+  requiresApiKey: false,
+  supportsStreaming: true,
+  websiteUrl: 'https://ollama.ai',
+  icon: 'server',
+}
+
+/**
+ * Default configuration for Ollama provider
+ */
+const DEFAULT_OLLAMA_CONFIG: OllamaConfig = {
+  url: 'http://localhost:11434',
+  model: 'llama3.2:3b',
+  temperature: 0.7,
+  maxTokens: 1000,
+}
+
+/**
+ * Ollama provider factory
+ */
+export const ollamaProviderFactory: LLMProviderFactory<OllamaConfig> = {
+  name: 'ollama',
+  metadata: ollamaProviderMetadata,
+
+  create(config: OllamaConfig): OllamaProvider {
+    return new OllamaProvider(config)
+  },
+
+  validateConfig(config: unknown): config is OllamaConfig {
+    if (typeof config !== 'object' || config === null) {
+      return false
+    }
+    const cfg = config as Record<string, unknown>
+    return typeof cfg.url === 'string' && typeof cfg.model === 'string'
+  },
+
+  getDefaultConfig(): OllamaConfig {
+    return { ...DEFAULT_OLLAMA_CONFIG }
+  },
+
+  async listModels(config: OllamaConfig): Promise<string[]> {
+    try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000)
+      const response = await fetch(`${config.url}/api/tags`, { signal: controller.signal })
+      clearTimeout(timeoutId)
+      const data = (await response.json()) as { models: { name: string }[] }
+      return data.models.map(model => model.name)
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for model listing errors
+      console.error('[OllamaFactory] Failed to list models:', error)
+      return []
+    }
+  },
+
+  async testConnection(config: OllamaConfig): Promise<boolean> {
+    try {
+      const provider = new OllamaProvider(config)
+      return await provider.testConnection()
+    } catch {
+      return false
+    }
+  },
 }

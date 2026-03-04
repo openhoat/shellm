@@ -19,7 +19,6 @@
 ## 📝 Backlog
 
 - [ ] **#arch-shell [25/02/2026 10:30:00] 🟡 P2 🏗️ [ARCHITECTURE]** Create `termaidsh` meta-shell: interactive shell wrapper with AI command suggestion, pre-filled validation, and output interpretation (reusing shared LLM providers)
-- [ ] **#arch-plugins [26/02/2026 14:00:00] 🟡 P2 🏗️ [ARCHITECTURE]** Create LLM plugin system: standardized plugin interface, dynamic loading, JSON config, support for custom providers (LM Studio, vLLM)
 - [ ] **#perf-stats [26/02/2026 14:00:00] 🟢 P3 🚀 [PERFORMANCE]** Add usage statistics dashboard: commands executed, success/failure rate, response time per provider
 - [ ] **#i18n-languages [26/02/2026 14:00:00] 🟢 P3 🌍 [I18N]** Add more translations: Spanish, German, Portuguese, Chinese, Japanese with community contribution support
 - [ ] **#arch-export [26/02/2026 14:00:00] 🟢 P3 🏗️ [ARCHITECTURE]** Multi-format export: Markdown, PDF, HTML with syntax highlighting
@@ -28,21 +27,15 @@
 
 ## 🚧 In Progress
 
-### [03/03/2026 10:00:00] 🔴 P1 🎨 [UX] Display keyboard shortcuts in UI: shortcut badges, tooltips on buttons, cheat sheet accessible via Ctrl+/ or ?
+### [04/03/2026 10:00:00] 🟡 P2 🏗️ [ARCHITECTURE] Create LLM plugin system: standardized plugin interface, dynamic loading, JSON config, support for custom providers (LM Studio, vLLM)
 
-- [ ] **[03/03/2026 10:00:00] ✨ [FEAT]** Create centralized keyboard shortcuts configuration (`src/constants/shortcuts.ts`)
-- [ ] **[03/03/2026 10:00:00] ✨ [FEAT]** Create `KeyboardShortcutsModal` component — cheat sheet modal accessible via Ctrl+/ or ?
-- [ ] **[03/03/2026 10:00:00] ✨ [FEAT]** Add shortcut badge display to main UI buttons (Header + ChatPanel)
-- [ ] **[03/03/2026 10:00:00] ✨ [FEAT]** Add i18n translations for shortcuts feature in en.json and fr.json
-- [ ] **[03/03/2026 10:00:00] ✨ [FEAT]** Integrate modal in App.tsx and wire up global Ctrl+/ keyboard handler
-- [ ] **[03/03/2026 10:00:00] ✅ [TEST]** Add unit tests for the KeyboardShortcutsModal component
-
-### [02/03/2026 09:15:00] 🔴 P1 🔒 [SECURITY] Add proactive command validation
-- 
-- [x] **[02/03/2026 09:15:00] ✨ [FEAT]** Create command validation service with heuristic analysis and risk levels
-- [x] **[02/03/2026 09:15:00] ✨ [FEAT]** Add warning modal for destructive commands
-- [x] **[02/03/2026 09:15:00] ✨ [FEAT]** Implement sandbox mode for safe command execution
-- [x] **[02/03/2026 09:15:00] ✨ [FEAT]** Add audit logging for command execution
+- [x] **#plugin-interface [04/03/2026 10:05:00] ✨ [FEAT]** Create `LLMProviderFactory` interface and `ProviderRegistry` class (`shared/types.ts`, `electron/ipc-handlers/providers/registry.ts`)
+- [x] **#plugin-factories [04/03/2026 10:05:00] ♻️ [REFACTOR]** Convert existing providers (Ollama, Claude, OpenAI) to factory pattern with metadata
+- [x] **#plugin-config [04/03/2026 10:05:00] ✨ [FEAT]** Update `AppConfig` type to support dynamic provider configuration (`shared/types.ts`, `shared/config.ts`)
+- [ ] **#plugin-service [04/03/2026 10:05:00] ✨ [FEAT]** Refactor `llm-service.ts` to use the registry pattern instead of hardcoded factory
+- [ ] **#plugin-ipc [04/03/2026 10:05:00] ✨ [FEAT]** Add IPC handlers for provider management (`llm:list-providers`, `llm:get-provider-config`)
+- [ ] **#plugin-ui [04/03/2026 10:05:00] ✨ [FEAT]** Update ConfigPanel to dynamically display available providers from registry
+- [ ] **#plugin-tests [04/03/2026 10:05:00] ✅ [TEST]** Add unit tests for `ProviderRegistry` and provider factories
 
 ## ✅ Done
 
@@ -53,11 +46,7 @@
 - [x] **[03/03/2026 10:00:00] ✨ [FEAT]** Add i18n translations for shortcuts feature in en.json and fr.json
 - [x] **[03/03/2026 10:00:00] ✨ [FEAT]** Integrate modal in App.tsx and wire up global Ctrl+/ keyboard handler
 - [x] **[03/03/2026 10:00:00] ✅ [TEST]** Add unit tests for the KeyboardShortcutsModal component
-
-
-### [02/03/2026 09:15:00] 🔴 P1 🔒 [SECURITY] Add proactive command validation
-**All tasks completed!** Command validation service with:
-- Risk level detection (safe, warning, dangerous)
-- Warning modal for destructive commands
-- Sandbox mode for safe execution
-- Audit logging for all command executions
+- [x] **[02/03/2026 09:15:00] ✨ [FEAT]** Create command validation service with heuristic analysis and risk levels
+- [x] **[02/03/2026 09:15:00] ✨ [FEAT]** Add warning modal for destructive commands
+- [x] **[02/03/2026 09:15:00] ✨ [FEAT]** Implement sandbox mode for safe command execution
+- [x] **[02/03/2026 09:15:00] ✨ [FEAT]** Add audit logging for command execution
