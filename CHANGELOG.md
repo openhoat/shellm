@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 04/03
 
+- **[09:55:00] 🐛 [FIX]** Hide raw JSON during streaming by always showing "Thinking..." in receiving phase
 - **[08:58:44] 🔧 [CHORE]** Update kanban and changelog for ux-shortcuts feature
 - **[08:57:57] ✨ [FEAT]** Add keyboard shortcuts cheat sheet with ctrl+/ trigger
 

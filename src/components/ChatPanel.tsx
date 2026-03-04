@@ -266,13 +266,7 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
               {chat.streamingProgress?.type === 'receiving' && (
                 <div className="streaming-content">
                   <div className="streaming-text">
-                    {/* Hide raw JSON during streaming - show placeholder instead */}
-                    {chat.streamingContent?.trim().startsWith('{') ||
-                    chat.streamingContent?.trim().startsWith('[') ? (
-                      <span className="thinking">{t('chat.progress.thinking')}</span>
-                    ) : (
-                      chat.streamingContent || ''
-                    )}
+                    <span className="thinking">{t('chat.progress.thinking')}</span>
                     <span className="streaming-cursor">▌</span>
                   </div>
                   <button
