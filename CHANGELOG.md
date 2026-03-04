@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 04/03
 
+- **[18:30:00] 📝 [DOCS]** Replace ASCII diagrams with Mermaid in architecture documentation
 - **[17:44:53] ✨ [FEAT]** Add sandbox configuration ui and update documentation
 - **[17:22:31] 🐛 [FIX]** Use different port for vitepress to avoid conflict
 - **[17:22:25] 🐛 [FIX]** Correct stale closure bug in message output handling

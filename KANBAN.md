@@ -26,7 +26,6 @@
     - [ ] Keyboard shortcuts in usage.md: add Ctrl+/ for cheat sheet
     - [ ] New page for Internationalization: 7 languages, dual settings (UI/AI), auto-detection
     - [ ] Architecture page: add sandbox service, audit service, provider registry
-- [ ] **#doc-diagram [04/03/2026 10:15:00] 🟡 P2 📝 [DOCS]** Improve architecture diagram rendering - replace ASCII diagram with Mermaid for better readability
 - [ ] **#arch-shell [25/02/2026 10:30:00] 🟡 P2 🏗️ [ARCHITECTURE]** Create `termaidsh` meta-shell: interactive shell wrapper with AI command suggestion, pre-filled validation, and output interpretation (reusing shared LLM providers)
 - [ ] **#perf-stats [26/02/2026 14:00:00] 🟢 P3 🚀 [PERFORMANCE]** Add usage statistics dashboard: commands executed, success/failure rate, response time per provider
 - [ ] **#arch-export [26/02/2026 14:00:00] 🟢 P3 🏗️ [ARCHITECTURE]** Multi-format export: Markdown, PDF, HTML with syntax highlighting
@@ -37,4 +36,5 @@
 
 ## ✅ Done
 
+- [x] **#doc-diagram [04/03/2026 18:30:00] 📝 [DOCS]** Improve architecture diagram rendering - replace ASCII diagrams with Mermaid for better readability
 - [x] **#doc-readme-update [04/03/2026 17:15:00] 📝 [DOCS]** Update README.md to document latest features (simplified to avoid duplication with docs)

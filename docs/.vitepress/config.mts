@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitepress'
+import { withMermaid } from 'vitepress-plugin-mermaid'
 
-export default defineConfig({
+export default withMermaid(defineConfig({
   title: 'Termaid',
   description: 'AI-Powered Terminal — Generate shell commands from natural language',
   base: '/termaid/',
@@ -62,4 +63,4 @@ export default defineConfig({
       text: 'Edit this page on GitHub',
     },
   },
-})
+}))

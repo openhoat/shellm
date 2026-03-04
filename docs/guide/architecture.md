@@ -4,37 +4,39 @@ Termaid is an Electron desktop application with a React frontend. This page desc
 
 ## Overview
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Electron Shell                       │
-│  ┌───────────────────────┐  ┌────────────────────────┐  │
-│  │   Renderer (React)    │  │   Main Process         │  │
-│  │                       │  │                        │  │
-│  │  ┌─────┐ ┌─────────┐ │  │  ┌──────────────────┐  │  │
-│  │  │ UI  │ │ Services│ │  │  │  IPC Handlers    │  │  │
-│  │  └──┬──┘ └────┬────┘ │  │  │  ┌────────────┐  │  │  │
-│  │     │         │      │  │  │  │ LLM Service│  │  │  │
-│  │  ┌──┴─────────┴──┐   │  │  │  │ Terminal   │  │  │  │
-│  │  │  Zustand Store │   │  │  │  │ Config     │  │  │  │
-│  │  └───────┬───────┘   │  │  │  │ Convo      │  │  │  │
-│  │          │           │  │  │  └────────────┘  │  │  │
-│  │    ┌─────┴─────┐     │  │  └──────────────────┘  │  │
-│  │    │  Preload   │◄───┼──┼──►  IPC Bridge         │  │
-│  │    └───────────┘     │  │                        │  │
-│  └───────────────────────┘  └────────────────────────┘  │
-│                                                         │
-│  ┌─────────────────────────────────────────────────────┐│
-│  │              Shared Module (types, config)          ││
-│  └─────────────────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────────┘
-         │                          │
-         ▼                          ▼
-    ┌─────────┐              ┌────────────┐
-    │ xterm.js│              │ LLM APIs   │
-    │ (PTY)   │              │ Ollama     │
-    └─────────┘              │ Claude     │
-                             │ OpenAI     │
-                             └────────────┘
+```mermaid
+graph TB
+    subgraph Electron["Electron Shell"]
+        subgraph Renderer["Renderer Process (React)"]
+            UI["UI Components"]
+            Services["Frontend Services"]
+            Store["Zustand Store"]
+            Preload["Preload Script"]
+        end
+        subgraph Main["Main Process"]
+            IPC["IPC Handlers"]
+            LLM["LLM Service"]
+            Terminal["Terminal"]
+            Config["Config"]
+            Convo["Conversation"]
+        end
+        Shared["Shared Module (types, config)"]
+    end
+    PTY["xterm.js (PTY)"]
+    APIs["LLM APIs (Ollama, Claude, OpenAI)"]
+
+    UI --> Services
+    Services --> Store
+    Store --> Preload
+    Preload <--> IPC
+    IPC --> LLM
+    IPC --> Terminal
+    IPC --> Config
+    IPC --> Convo
+    Shared -.-> Renderer
+    Shared -.-> Main
+    Terminal --> PTY
+    LLM --> APIs
 ```
 
 ## Project Structure
@@ -128,11 +130,29 @@ Each handler module registers `ipcMain.handle()` listeners:
 
 LLM providers follow a **strategy pattern** with a shared base class:
 
-```
-BaseLLMProvider (abstract)
-├── OllamaProvider    → @langchain/ollama
-├── ClaudeProvider    → @langchain/anthropic
-└── OpenAIProvider    → @langchain/openai
+```mermaid
+classDiagram
+    class BaseLLMProvider {
+        <<abstract>>
+        +generateCommand()
+        +explainCommand()
+        +interpretOutput()
+    }
+    class OllamaProvider {
+        +testConnection()
+        +listModels()
+    }
+    class ClaudeProvider {
+        +testConnection()
+        +listModels()
+    }
+    class OpenAIProvider {
+        +testConnection()
+        +listModels()
+    }
+    BaseLLMProvider <|-- OllamaProvider : @langchain/ollama
+    BaseLLMProvider <|-- ClaudeProvider : @langchain/anthropic
+    BaseLLMProvider <|-- OpenAIProvider : @langchain/openai
 ```
 
 `BaseLLMProvider` (`electron/ipc-handlers/providers/base-provider.ts`) implements:
@@ -161,57 +181,62 @@ The `shared/` directory contains code used by both processes:
 
 ### Command Generation
 
-```
-User types prompt in ChatPanel
-        │
-        ▼
-chatService.sendMessage()
-        │
-        ▼
-llmService.generateCommand()  ──► check cache
-        │                              │
-        │ (cache miss)                 │ (cache hit)
-        ▼                              ▼
-window.electronAPI.llmGenerateCommand()  return cached
-        │
-        ▼ (IPC invoke)
-llm-service handler
-        │
-        ▼
-BaseLLMProvider.generateCommand()
-        │
-        ▼ (LangChain)
-External LLM API (Ollama/Claude/OpenAI)
-        │
-        ▼
-Structured AICommand response
-        │
-        ▼ (IPC return)
-Zustand store update → UI re-render
+```mermaid
+sequenceDiagram
+    participant User
+    participant ChatPanel
+    participant chatService
+    participant llmService
+    participant Cache
+    participant IPC
+    participant LLMHandler
+    participant Provider
+    participant API
+    participant Store
+
+    User->>ChatPanel: types prompt
+    ChatPanel->>chatService: sendMessage()
+    chatService->>llmService: generateCommand()
+    llmService->>Cache: check cache
+
+    alt cache hit
+        Cache-->>llmService: return cached
+    else cache miss
+        llmService->>IPC: electronAPI.llmGenerateCommand()
+        IPC->>LLMHandler: invoke
+        LLMHandler->>Provider: generateCommand()
+        Provider->>API: LangChain request
+        API-->>Provider: response
+        Provider-->>LLMHandler: AICommand
+        LLMHandler-->>IPC: return
+        IPC-->>llmService: result
+    end
+
+    llmService-->>Store: update state
+    Store-->>ChatPanel: re-render
 ```
 
 ### Command Execution
 
-```
-User clicks "Execute" on AICommand
-        │
-        ▼
-commandExecutionService.executeCommand()
-        │
-        ▼
-window.electronAPI.terminalWrite()
-        │
-        ▼ (IPC invoke)
-PTY process receives command
-        │
-        ▼
-Output streamed back via terminal:data event
-        │
-        ▼
-Output captured → llm:interpret-output
-        │
-        ▼
-CommandInterpretation rendered in ChatPanel
+```mermaid
+sequenceDiagram
+    participant User
+    participant AICommand
+    participant ExecService
+    participant IPC
+    participant PTY
+    participant Terminal
+    participant InterpretService
+    participant ChatPanel
+
+    User->>AICommand: clicks Execute
+    AICommand->>ExecService: executeCommand()
+    ExecService->>IPC: electronAPI.terminalWrite()
+    IPC->>PTY: write command
+    PTY-->>Terminal: stream output
+    Terminal->>IPC: terminal:data event
+    IPC->>InterpretService: llm:interpret-output
+    InterpretService-->>ChatPanel: CommandInterpretation
 ```
 
 ## Technology Stack
