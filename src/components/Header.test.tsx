@@ -656,6 +656,131 @@ describe('Header', () => {
     })
   })
 
+  describe('long title handling', () => {
+    test('should render conversation with very long title', async () => {
+      const veryLongTitle =
+        'This is a very long conversation title that should be truncated with ellipsis when displayed in the dropdown list to prevent layout issues'
+      vi.mocked(useStore).mockReturnValue(
+        createMockStore({
+          conversations: [{ id: '1', title: veryLongTitle }],
+          currentConversationId: '1',
+        })
+      )
+
+      const user = userEvent.setup()
+      render(<Header />)
+
+      const buttons = screen.getAllByRole('button')
+      const conversationsButton = buttons.find(
+        btn => btn.getAttribute('aria-haspopup') === 'listbox'
+      )
+      await user.click(conversationsButton!)
+
+      // The title should be rendered (even if truncated visually)
+      expect(screen.getByText(veryLongTitle)).toBeInTheDocument()
+    })
+
+    test('should show delete button for conversation with long title', async () => {
+      const veryLongTitle =
+        'Another extremely long conversation title that demonstrates the delete button should remain visible and clickable regardless of title length'
+      vi.mocked(useStore).mockReturnValue(
+        createMockStore({
+          conversations: [{ id: '1', title: veryLongTitle }],
+          currentConversationId: '1',
+        })
+      )
+
+      const user = userEvent.setup()
+      render(<Header />)
+
+      const buttons = screen.getAllByRole('button')
+      const conversationsButton = buttons.find(
+        btn => btn.getAttribute('aria-haspopup') === 'listbox'
+      )
+      await user.click(conversationsButton!)
+
+      // Delete button should be present and have proper aria-label
+      const deleteButtons = screen.getAllByRole('button', {
+        name: 'header.deleteConversation',
+      })
+      expect(deleteButtons).toHaveLength(1)
+      expect(deleteButtons[0]).toBeVisible()
+    })
+
+    test('should delete conversation with long title when clicking delete button', async () => {
+      const veryLongTitle =
+        'Long title conversation to test delete functionality works correctly with extended text that would normally cause layout problems'
+      vi.mocked(useStore).mockReturnValue(
+        createMockStore({
+          conversations: [{ id: 'long-id', title: veryLongTitle }],
+          currentConversationId: 'long-id',
+        })
+      )
+
+      const user = userEvent.setup()
+      render(<Header />)
+
+      const buttons = screen.getAllByRole('button')
+      const conversationsButton = buttons.find(
+        btn => btn.getAttribute('aria-haspopup') === 'listbox'
+      )
+      await user.click(conversationsButton!)
+
+      const deleteButton = screen.getByRole('button', {
+        name: 'header.deleteConversation',
+      })
+      await user.click(deleteButton)
+
+      expect(mockDeleteConversation).toHaveBeenCalledWith('long-id')
+    })
+
+    test('should handle multiple conversations with varying title lengths', async () => {
+      vi.mocked(useStore).mockReturnValue(
+        createMockStore({
+          conversations: [
+            { id: '1', title: 'Short' },
+            {
+              id: '2',
+              title: 'Medium length title that is longer but not extremely long',
+            },
+            {
+              id: '3',
+              title:
+                'This is an extremely long conversation title that demonstrates the UI should handle all title lengths gracefully without breaking the layout or hiding the delete button',
+            },
+          ],
+          currentConversationId: '1',
+        })
+      )
+
+      const user = userEvent.setup()
+      render(<Header />)
+
+      const buttons = screen.getAllByRole('button')
+      const conversationsButton = buttons.find(
+        btn => btn.getAttribute('aria-haspopup') === 'listbox'
+      )
+      await user.click(conversationsButton!)
+
+      // All conversations should be visible
+      expect(screen.getByText('Short')).toBeInTheDocument()
+      expect(
+        screen.getByText('Medium length title that is longer but not extremely long')
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText(
+          'This is an extremely long conversation title that demonstrates the UI should handle all title lengths gracefully without breaking the layout or hiding the delete button'
+        )
+      ).toBeInTheDocument()
+
+      // All delete buttons should be present
+      const deleteButtons = screen.getAllByRole('button', {
+        name: 'header.deleteConversation',
+      })
+      expect(deleteButtons).toHaveLength(3)
+    })
+  })
+
   describe('tooltips', () => {
     test('should have tooltip on new conversation button', () => {
       render(<Header />)
