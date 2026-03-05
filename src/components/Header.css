@@ -270,6 +270,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   margin-right: 8px;
+  min-width: 0;
 }
 
 .conversation-delete {
@@ -279,12 +280,27 @@
   cursor: pointer;
   font-size: 14px;
   padding: 4px;
+  width: 24px;
+  height: 24px;
   border-radius: 3px;
   transition: all 0.2s;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
 }
 
 .conversation-delete:hover {
   background-color: #4c4c4c;
   color: #d4d4d4;
+  opacity: 1;
+}
+
+.conversation-item:hover .conversation-delete {
+  opacity: 1;
+}
+
+.conversation-item.active .conversation-delete {
+  color: #ffffff;
 }

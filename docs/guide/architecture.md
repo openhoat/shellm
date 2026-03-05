@@ -265,3 +265,51 @@ sequenceDiagram
 - **No automatic execution**: AI-generated commands require explicit user validation before execution
 - **Local-first**: Ollama support allows fully offline, privacy-preserving usage
 - **API keys stored locally**: Configuration persisted via `electron-store` on the user's machine
+
+## Security Services
+
+### Command Validation Service
+
+**File:** `shared/commandValidation.ts`
+
+Validates AI-generated commands with risk assessment:
+
+| Risk Level | Description |
+|------------|-------------|
+| ✅ `safe` | Read-only commands |
+| ⚠️ `warning` | Requires attention |
+| 🚫 `dangerous` | Blocked by default |
+
+**Risk Categories:** File deletion, System modification, Network operations, Privilege escalation, Disk operations, Process control, Data destruction, Configuration changes.
+
+### Sandbox Service
+
+**File:** `shared/sandbox.ts`
+
+Multiple isolation levels for command execution:
+
+| Mode | Description | Timeout |
+|------|-------------|---------|
+| `none` | Direct execution | 60s |
+| `restricted` | Limited environment | 30s |
+| `docker` | Container isolation | 60s |
+| `system` | Linux sandbox (firejail) | 60s |
+
+### Audit Service
+
+**File:** `electron/services/auditService.ts`
+
+Comprehensive audit logging: command, result, risk level, execution time, sandbox mode, export to JSON/CSV.
+
+### Provider Registry
+
+**File:** `electron/ipc-handlers/providers/registry.ts`
+
+Centralized LLM provider management using Factory pattern:
+
+| Method | Purpose |
+|--------|---------|
+| `register()` | Register provider factory |
+| `list()` | List all providers |
+| `createProvider()` | Instantiate with config |
+| `testConnection()` | Test provider connection |

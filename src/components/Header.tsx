@@ -276,8 +276,10 @@ export const Header = ({ onShowShortcuts }: HeaderProps) => {
                   <ul className="conversation-list" role="listbox" aria-label="Conversations">
                     {conversations.map(conv => (
                       <li key={conv.id}>
-                        <button
-                          type="button"
+                        {/* biome-ignore lint/a11y/useSemanticElements: Cannot use <button> because it contains another <button> for delete */}
+                        <div
+                          role="button"
+                          tabIndex={0}
                           className={`conversation-item ${conv.id === currentConversationId ? 'active' : ''}`}
                           aria-current={conv.id === currentConversationId ? 'true' : undefined}
                           onClick={() => handleLoadConversation(conv.id)}
@@ -290,7 +292,7 @@ export const Header = ({ onShowShortcuts }: HeaderProps) => {
                               e.preventDefault()
                               const next = e.currentTarget.parentElement?.nextElementSibling
                               const btn = next?.querySelector(
-                                'button.conversation-item'
+                                'div.conversation-item'
                               ) as HTMLElement
                               btn?.focus()
                             }
@@ -298,7 +300,7 @@ export const Header = ({ onShowShortcuts }: HeaderProps) => {
                               e.preventDefault()
                               const prev = e.currentTarget.parentElement?.previousElementSibling
                               const btn = prev?.querySelector(
-                                'button.conversation-item'
+                                'div.conversation-item'
                               ) as HTMLElement
                               btn?.focus()
                             }
@@ -317,7 +319,7 @@ export const Header = ({ onShowShortcuts }: HeaderProps) => {
                           >
                             ✕
                           </button>
-                        </button>
+                        </div>
                       </li>
                     ))}
                   </ul>

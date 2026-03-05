@@ -8,6 +8,11 @@ To view the complete history, use: `git log`
 
 ### 2026
 
+#### 05/03
+
+- **[10:15:00] 📝 [DOCS]** Add security services documentation (sandbox, audit, provider registry) to architecture.md
+- **[10:15:00] 🐛 [FIX]** Fix conversations panel UI - correct nested buttons HTML structure and improve delete button visibility
+
 #### 04/03
 
 - **[18:30:00] 📝 [DOCS]** Replace ASCII diagrams with Mermaid in architecture documentation

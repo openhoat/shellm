@@ -284,7 +284,7 @@ describe('Header', () => {
 
       // Find the conversation item button by its text content
       const conversationItems = screen.getAllByText('First conversation')
-      const conversationButton = conversationItems[0].closest('button.conversation-item')
+      const conversationButton = conversationItems[0].closest('div.conversation-item')
       await user.type(conversationButton!, '{Enter}')
 
       expect(mockLoadConversation).toHaveBeenCalledWith('1')
@@ -303,7 +303,7 @@ describe('Header', () => {
 
       // Find the conversation item button by its text content
       const conversationItems = screen.getAllByText('First conversation')
-      const conversationButton = conversationItems[0].closest('button.conversation-item')
+      const conversationButton = conversationItems[0].closest('div.conversation-item')
       await user.type(conversationButton!, ' ')
 
       expect(mockLoadConversation).toHaveBeenCalledWith('1')
@@ -568,12 +568,10 @@ describe('Header', () => {
         .find(btn => btn.getAttribute('aria-haspopup') === 'listbox')
       await user.click(conversationsButton!)
 
-      const activeItem = screen.getByText('First conversation').closest('button.conversation-item')
+      const activeItem = screen.getByText('First conversation').closest('div.conversation-item')
       expect(activeItem).toHaveAttribute('aria-current', 'true')
 
-      const inactiveItem = screen
-        .getByText('Second conversation')
-        .closest('button.conversation-item')
+      const inactiveItem = screen.getByText('Second conversation').closest('div.conversation-item')
       expect(inactiveItem).not.toHaveAttribute('aria-current')
     })
 
@@ -586,13 +584,13 @@ describe('Header', () => {
         .find(btn => btn.getAttribute('aria-haspopup') === 'listbox')
       await user.click(conversationsButton!)
 
-      const firstItem = screen.getByText('First conversation').closest('button.conversation-item')
+      const firstItem = screen.getByText('First conversation').closest('div.conversation-item')
       firstItem?.focus()
 
       // ArrowDown should move focus to next item
       fireEvent.keyDown(firstItem!, { key: 'ArrowDown' })
 
-      const secondItem = screen.getByText('Second conversation').closest('button.conversation-item')
+      const secondItem = screen.getByText('Second conversation').closest('div.conversation-item')
       expect(document.activeElement).toBe(secondItem)
     })
 
@@ -605,12 +603,12 @@ describe('Header', () => {
         .find(btn => btn.getAttribute('aria-haspopup') === 'listbox')
       await user.click(conversationsButton!)
 
-      const secondItem = screen.getByText('Second conversation').closest('button.conversation-item')
+      const secondItem = screen.getByText('Second conversation').closest('div.conversation-item')
       secondItem?.focus()
 
       fireEvent.keyDown(secondItem!, { key: 'ArrowUp' })
 
-      const firstItem = screen.getByText('First conversation').closest('button.conversation-item')
+      const firstItem = screen.getByText('First conversation').closest('div.conversation-item')
       expect(document.activeElement).toBe(firstItem)
     })
 
@@ -625,7 +623,7 @@ describe('Header', () => {
 
       expect(screen.getByText('First conversation')).toBeInTheDocument()
 
-      const firstItem = screen.getByText('First conversation').closest('button.conversation-item')
+      const firstItem = screen.getByText('First conversation').closest('div.conversation-item')
       fireEvent.keyDown(firstItem!, { key: 'Escape' })
 
       expect(screen.queryByText('First conversation')).not.toBeInTheDocument()
