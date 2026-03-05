@@ -14,8 +14,3 @@
 ## 🚧 In Progress
 
 ## ✅ Done
-
-- [x] **[05/03/2026 10:15:00] 🎨 [STYLE]** Analyze and verify the current CSS flexbox behavior for conversation items
-- [x] **[05/03/2026 10:15:00] ✨ [FEAT]** Fix the `.conversation-item` and `.conversation-title` styles to ensure delete button always remains visible and clickable with fixed width
-- [x] **[05/03/2026 10:15:00] ✅ [TEST]** Add test cases for conversation dropdown with long titles
-- [x] **[05/03/2026 10:15:00] 🔧 [CHORE]** Run validation (npm run validate) and verify UI behavior manually
