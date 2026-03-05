@@ -6,9 +6,54 @@ disable-model-invocation: false
 
 # Skill: Execute Kanban Ideas
 
+⚠️ **DEPRECATED**: This skill is deprecated. Use the worktree workflow instead:
+- Use `/start-task` to start a task with proper worktree isolation
+- Use `/complete-task` to complete work in a feature worktree
+
+This skill remains available for quick fixes and emergency use only.
+
+---
+
 Select ideas from the backlog and execute them interactively.
 
-## Execution Steps
+## Deprecated - Use Worktree Workflow Instead
+
+**This skill is deprecated.** For proper task isolation and PR workflow, use:
+
+```
+# From main worktree
+/start-task
+
+# Switch to worktree
+cd ../termaid-<name>
+
+# In feature worktree
+/complete-task
+
+# After merge, return to main
+cd ../termaid
+/cleanup-worktree <name>
+```
+
+### Why Worktrees Are Required
+
+- **Isolation**: Each task gets its own clean environment
+- **PR Workflow**: All changes go through proper review process
+- **KANBAN Management**: KANBAN.md updates are tracked on main branch only
+- **Clean History**: No conflicts between parallel tasks
+
+### When to Use Each Skill
+
+| Skill | Location | Status |
+|-------|----------|--------|
+| `/start-task` | Main worktree | **Recommended** - Start task with worktree |
+| `/complete-task` | Feature worktree | **Recommended** - Complete work |
+| `/kanban-execute` | Any worktree | **Deprecated** - Use `/start-task` instead |
+| `/cleanup-worktree` | Main worktree | **Required** - Clean up after PR merge |
+
+---
+
+## Execution Steps (For Reference Only)
 
 ### 1. Read KANBAN.md
 
@@ -108,30 +153,6 @@ Display summary:
 
 Total: N ideas completed, N tasks executed, N commits created
 ```
-
-## Integration with Worktrees
-
-For a complete workflow with git worktrees, use `/start-task` instead of this skill.
-
-The `/start-task` skill:
-1. Selects an idea from backlog
-2. Updates KANBAN.md on main branch
-3. Creates a worktree for the task
-4. Provides instructions to continue in the worktree
-
-After completing work in the worktree, use `/complete-task` to:
-1. Validate code
-2. Commit changes
-3. Push and create PR
-
-### When to Use Each Skill
-
-| Skill | Location | Purpose |
-|-------|----------|---------|
-| `/start-task` | Main worktree | Start Kanban task with worktree creation |
-| `/kanban-execute` | Any worktree | Execute tasks without worktree management |
-| `/complete-task` | Feature worktree | Complete work: validate, commit, push, PR |
-| `/cleanup-worktree` | Main worktree | Remove worktree after PR merge |
 
 ## Important Rules
 

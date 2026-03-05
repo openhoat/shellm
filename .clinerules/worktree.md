@@ -4,12 +4,15 @@
 
 This workflow defines how to use native git worktrees to work on multiple branches simultaneously with Claude Code.
 
+**This workflow is MANDATORY for all task-based work.** Direct commits to main branch are not permitted.
+
 ## When to Use Worktrees
 
 Use worktrees when:
 - The user requests a new feature or fix that requires a Pull Request
 - You need to switch between multiple branches without losing local changes
 - You are working on isolated changes that should be reviewed separately
+- **ALL task-based work must use worktrees** (no exceptions)
 
 ## Worktree Directory Structure
 
@@ -28,48 +31,55 @@ Use worktrees when:
   - `feat/add-dark-mode` → `termaid-add-dark-mode`
   - `fix/login-bug` → `termaid-login-bug`
 
-## Workflow Steps
+## MANDATORY Workflow Steps
 
 ### 1. Start a New Task
 
-When the user requests a new feature or fix:
-
-1. Determine the branch name (kebab-case from task description)
-2. Create a new branch from main
-3. Create a worktree for that branch
-4. Switch to the new worktree
+**ALWAYS use `/start-task` from main worktree:**
 
 ```bash
-# Example: Starting a new feature
-git branch feat/my-new-feature main
-git worktree add ../termaid-my-new-feature feat/my-new-feature
-cd ../termaid-my-new-feature
+# From main worktree
+/start-task
 ```
+
+This will:
+1. Select idea from backlog
+2. Update KANBAN.md on main branch
+3. Commit KANBAN.md on main
+4. Create branch and worktree
+5. Display instructions to switch
 
 ### 2. Work in the Worktree
 
 ```bash
 cd ../termaid-<feature>
 # Make changes, commit, test
+npm run validate
 ```
 
-### 3. Create a Pull Request
+### 3. Complete the Task
 
-When changes are ready:
+**ALWAYS use `/complete-task` from feature worktree:**
 
 ```bash
-cd ../termaid-<feature>
-git push -u origin feat/my-new-feature
-gh pr create --title "feat: description" --body "..."
+# From feature worktree
+/complete-task
 ```
+
+This will:
+1. Validate code
+2. Commit changes
+3. Push to origin
+4. Create Pull Request
 
 ### 4. Cleanup After Merge
 
-After the PR is merged:
+After PR merge:
 
 ```bash
-git worktree remove ../termaid-<feature>
-git branch -d feat/my-new-feature
+# From main worktree
+git pull origin main
+/cleanup-worktree <name>
 ```
 
 ## Worktree Management Commands
@@ -101,6 +111,7 @@ git worktree prune
 2. **Main worktree stays clean**: Only use main worktree for looking at code, not for making changes
 3. **Always create a PR**: Never commit directly to main
 4. **Clean up after merge**: Remove worktrees after PRs are merged
+5. **KANBAN.md on main only**: Never modify KANBAN.md in a feature worktree
 
 ## Kanban Integration
 
@@ -111,41 +122,28 @@ The KANBAN.md file must always be modified on the `main` branch before creating 
 ```
 ┌─────────────────────────────────────┐
 │  STEP 1: On main worktree           │
+│  - Run /start-task                  │
 │  - Select idea from backlog         │
 │  - Update KANBAN.md                 │
 │  - Commit KANBAN.md on main         │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│  STEP 2: On main worktree           │
-│  - Create branch: git branch        │
-│  - Create worktree: git worktree    │
+│  - Create branch & worktree          │
 └──────────────┬──────────────────────┘
                │
                │ Switch to worktree
                ▼
 ┌─────────────────────────────────────┐
-│  STEP 3: In feature worktree        │
+│  STEP 2: In feature worktree        │
 │  - Implement changes                │
-│  - Validate: npm run validate       │
-│  - Commit: /workflow-commit         │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│  STEP 4: In feature worktree        │
-│  - Push: git push -u origin         │
-│  - Create PR: gh pr create          │
+│  - Run /complete-task               │
+│  - (validates, commits, pushes, PR) │
 └──────────────┬──────────────────────┘
                │
                │ PR merged
                ▼
 ┌─────────────────────────────────────┐
-│  STEP 5: On main worktree           │
+│  STEP 3: On main worktree           │
 │  - Pull: git pull origin main       │
-│  - Cleanup worktree                 │
-│  - Delete branch                    │
+│  - Run /cleanup-worktree            │
 └─────────────────────────────────────┘
 ```
 
@@ -153,37 +151,25 @@ The KANBAN.md file must always be modified on the `main` branch before creating 
 
 | Skill | Location | Purpose |
 |-------|----------|---------|
-| `/start-task` | Main worktree | Start Kanban task: update KANBAN.md, create worktree |
-| `/complete-task` | Feature worktree | Complete work: validate, commit, push, create PR |
-| `/push-and-pr` | Feature worktree | Push branch and create PR only |
-| `/cleanup-worktree` | Main worktree | Remove worktree and branch after PR merge |
+| `/start-task` | **Main worktree only** | Start Kanban task: update KANBAN.md, create worktree |
+| `/complete-task` | **Feature worktree only** | Complete work: validate, commit, push, PR |
+| `/push-and-pr` | **Feature worktree only** | Push branch and create PR only |
+| `/cleanup-worktree` | **Main worktree only** | Remove worktree and branch after PR merge |
 
 ### Workflow Commands
 
 #### Start a new task (from main worktree)
 
 ```bash
-# Use the skill
+# Use the skill (RECOMMENDED)
 /start-task
-
-# Or manually:
-# 1. Update KANBAN.md (move idea to In Progress)
-# 2. Commit KANBAN.md on main
-# 3. Create branch and worktree
-git branch feat/my-feature main
-git worktree add ../termaid-my-feature feat/my-feature
 ```
 
 #### Complete work (from feature worktree)
 
 ```bash
-# Use the skill (includes validation, commit, push, PR)
+# Use the skill (REQUIRED)
 /complete-task
-
-# Or step by step:
-npm run validate
-/workflow-commit
-/push-and-pr
 ```
 
 #### After PR merge (from main worktree)
@@ -191,11 +177,6 @@ npm run validate
 ```bash
 # Use the skill
 /cleanup-worktree <name>
-
-# Or manually:
-git pull origin main
-git worktree remove ../termaid-<name>
-git branch -d <branch-name>
 ```
 
 ### Important Rules
@@ -204,38 +185,40 @@ git branch -d <branch-name>
 2. **Commit before worktree**: Always commit KANBAN.md changes before creating worktree
 3. **One idea per worktree**: Each worktree corresponds to exactly one Kanban task
 4. **Clean separation**: Task tracking happens on main, implementation in worktree
+5. **No direct commits to main**: All changes must go through PR workflow
 
 ## Example Workflow
 
 User asks: "Add dark mode support"
 
-1. Create branch and worktree:
+1. From main worktree:
    ```bash
-   git branch feat/add-dark-mode main
-   git worktree add ../termaid-add-dark-mode feat/add-dark-mode
+   /start-task
+   # Select the idea from backlog
+   # This creates worktree automatically
    ```
 
 2. Work in the new worktree:
    ```bash
-   cd ../termaid-add-dark-mode
+   cd ../termaid-dark-mode
    # Make changes...
    ```
 
-3. Create PR when ready:
+3. Complete from feature worktree:
    ```bash
-   git push -u origin feat/add-dark-mode
-   gh pr create --title "feat: add dark mode support" --body "..."
+   /complete-task
    ```
 
-4. After merge:
+4. After merge, from main worktree:
    ```bash
-   git worktree remove ../termaid-add-dark-mode
-   git branch -d feat/add-dark-mode
+   cd ../termaid
+   git pull origin main
+   /cleanup-worktree dark-mode
    ```
 
 ## Ready-to-Use Commands
 
-### Create a New Worktree
+### Create a New Worktree (manually, rarely needed)
 
 ```bash
 git branch <branch-name> main
@@ -248,9 +231,17 @@ git worktree add ../termaid-<branch-name> <branch-name>
 git worktree list
 ```
 
-### Remove a Worktree
+### Remove a Worktree (manually, rarely needed)
 
 ```bash
 git worktree remove ../termaid-<name>
 git branch -d <branch-name>
 ```
+
+## Deprecated Workflows
+
+**The following workflows are deprecated and should NOT be used:**
+
+- `/kanban-execute` - Use `/start-task` instead
+- Direct commits to main branch - Always use PR workflow
+- Modifying KANBAN.md from feature worktree - Update from main only

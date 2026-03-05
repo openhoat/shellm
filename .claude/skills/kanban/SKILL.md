@@ -52,6 +52,32 @@ Done (N tasks):
 
 Update KANBAN.md by modifying task statuses, adding, or removing tasks.
 
+### Important: Worktree Context
+
+**KANBAN.md must only be modified on the main branch.**
+
+Before updating KANBAN.md, verify you are on main branch:
+```bash
+git branch --show-current
+```
+
+If NOT on main branch:
+```
+⚠️ Warning: KANBAN.md should only be modified on main branch
+   Current branch: feat/my-feature
+
+   To update KANBAN.md:
+   1. Switch to main worktree: cd ../termaid
+   2. Run /kanban update
+   3. Commit KANBAN.md changes on main
+   4. Return to feature worktree to continue work
+```
+
+If on main branch:
+```
+✅ Running from main branch - safe to update KANBAN.md
+```
+
 ### Operations
 
 **Mark task completed:**
@@ -84,3 +110,4 @@ Common tags: `✨ [FEAT]`, `🐛 [FIX]`, `♻️ [REFACTOR]`, `⚡ [PERF]`, `�
 - KANBAN.md is at project root
 - Use `read` to understand current state
 - Use `update` after task execution
+- **Only modify KANBAN.md from main branch**

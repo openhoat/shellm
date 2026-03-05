@@ -22,7 +22,43 @@ This skill automates the full commit workflow, ensuring all quality checks pass 
 
 Invoke this skill when you have completed code changes and want to commit with full workflow automation.
 
+## Prerequisites
+
+- **Must be in a feature worktree**: This skill cannot be run from main worktree
+- Code changes must be ready to commit
+- All tests should pass locally
+
 ## Execution Steps
+
+### 0. Verify worktree context
+
+**IMPORTANT**: This skill must be run from a feature worktree, NOT from main.
+
+Check current worktree:
+```bash
+git branch --show-current
+git worktree list
+```
+
+If in main worktree (branch: main):
+```
+❌ Error: Cannot run workflow-commit from main worktree
+   This skill must be run from a feature worktree.
+
+   To start a new task:
+   1. Run /start-task from main worktree
+   2. Switch to the created worktree
+   3. Run /workflow-commit from the feature worktree
+
+   Current location: /path/to/termaid (main)
+```
+
+If in feature worktree (branch: feat/*, fix/*, etc.):
+```
+✅ Running from feature worktree: feat/my-feature
+```
+
+**Do NOT proceed if in main worktree. Abort and instruct user.**
 
 ### 1. Validate code
 
@@ -144,11 +180,19 @@ This skill is used by:
 ## When to Use
 
 Use this skill when:
-- You have completed code changes
+- You have completed code changes **in a feature worktree**
 - You want full workflow automation
 - You want to ensure quality before committing
 - You want changelog updated automatically
 - You want kanban synchronized
+
+## Alternative for Main Worktree
+
+If you need to make changes from main worktree:
+1. Use `/start-task` to create a feature worktree
+2. Switch to the worktree: `cd ../termaid-<name>`
+3. Make changes in the worktree
+4. Use `/workflow-commit` from the worktree
 
 ## Alternative Skills
 

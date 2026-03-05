@@ -4,8 +4,11 @@
 
 Defines the workflow for using git native worktrees to work on multiple branches simultaneously.
 
+**This workflow is MANDATORY for all task-based work.** Direct commits to main branch are not permitted.
+
 ## When to Use Worktrees
 
+**ALWAYS use worktrees for task-based work:**
 - Starting a new feature/fix that will require a Pull Request
 - Needing to switch between branches without losing local changes
 - Working on isolated changes for separate review
@@ -23,15 +26,22 @@ Defines the workflow for using git native worktrees to work on multiple branches
 - Format: `termaid-<branch-name>` (kebab-case)
 - Examples: `feat/dark-mode` → `termaid-dark-mode`
 
-## Workflow
+## Mandatory Workflow
 
 ### 1. Start New Task (main worktree)
 
+**ALWAYS use `/start-task` from main worktree:**
+
 ```bash
-# Update KANBAN.md first, then:
-git branch feat/my-feature main
-git worktree add ../termaid-my-feature feat/my-feature
+# From main worktree
+/start-task
 ```
+
+This will:
+- Select idea from backlog
+- Update KANBAN.md on main
+- Commit KANBAN.md on main
+- Create branch and worktree
 
 ### 2. Work in Feature Worktree
 
@@ -39,22 +49,29 @@ git worktree add ../termaid-my-feature feat/my-feature
 cd ../termaid-my-feature
 # Implement, validate, commit
 npm run validate
-/workflow-commit
 ```
 
-### 3. Create Pull Request
+### 3. Complete Task (feature worktree)
+
+**ALWAYS use `/complete-task` from feature worktree:**
 
 ```bash
-git push -u origin feat/my-feature
-gh pr create --title "feat: description" --body "..."
+# From feature worktree
+/complete-task
 ```
+
+This will:
+- Validate code
+- Commit changes
+- Push to origin
+- Create Pull Request
 
 ### 4. Cleanup After Merge (main worktree)
 
 ```bash
+cd ../termaid
 git pull origin main
-git worktree remove ../termaid-my-feature
-git branch -d feat/my-feature
+/cleanup-worktree <name>
 ```
 
 ## Management Commands
@@ -70,10 +87,10 @@ git worktree prune             # Clean stale references
 
 | Skill | Location | Purpose |
 |-------|----------|---------|
-| `/start-task` | Main worktree | Update KANBAN.md, create worktree |
-| `/complete-task` | Feature worktree | Validate, commit, push, create PR |
-| `/push-and-pr` | Feature worktree | Push and create PR only |
-| `/cleanup-worktree` | Main worktree | Remove worktree after merge |
+| `/start-task` | **Main worktree only** | Start Kanban task: update KANBAN.md, create worktree |
+| `/complete-task` | **Feature worktree only** | Complete work: validate, commit, push, PR |
+| `/push-and-pr` | **Feature worktree only** | Push and create PR only |
+| `/cleanup-worktree` | **Main worktree only** | Remove worktree after merge |
 
 ## Key Principles
 
@@ -81,13 +98,32 @@ git worktree prune             # Clean stale references
 2. **Main worktree stays clean**: Only view code, never commit
 3. **Always create PR**: Never commit directly to main
 4. **KANBAN.md on main only**: Never modify in feature worktree
+5. **No direct commits to main**: All changes must go through PR workflow
 
 ## Workflow Diagram
 
 ```
-STEP 1 (main): Update KANBAN.md → Commit KANBAN.md
-STEP 2 (main): Create branch → Create worktree
-STEP 3 (feature): Implement → Validate → Commit
-STEP 4 (feature): Push → Create PR
-STEP 5 (main): Pull → Remove worktree → Delete branch
+STEP 1 (main): Run /start-task → Update KANBAN.md → Commit → Create worktree
+STEP 2 (feature): Implement → Validate → Run /complete-task
+STEP 3 (main): Pull → Run /cleanup-worktree
 ```
+
+## Deprecated Workflows
+
+**The following approaches are deprecated:**
+
+- `/kanban-execute` - Use `/start-task` instead
+- Direct commits to main branch - Always use PR workflow
+- Modifying KANBAN.md from feature worktree - Update from main only
+
+## Enforcement
+
+Before running any commit-related skill:
+1. Check current worktree: `git branch --show-current`
+2. If on `main`, abort and instruct user to use `/start-task`
+3. If on feature branch, proceed normally
+
+This enforcement is implemented in:
+- `/workflow-commit` - Aborts if in main worktree
+- `/complete-task` - Aborts if in main worktree
+- `/kanban update` - Warns if not on main branch

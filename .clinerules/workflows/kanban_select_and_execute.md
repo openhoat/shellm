@@ -1,10 +1,32 @@
 # Cline Workflow for Selecting and Executing Backlog Ideas
 
-## Objective
+## ⚠️ DEPRECATED
 
-This workflow allows the user to select ideas from the backlog and have the AI execute them interactively. It combines idea conversion and task execution into a single streamlined process.
+**This workflow is deprecated. Use the worktree workflow instead:**
 
-## Format rules
+### Recommended Workflow
+
+| Step | Command | Location |
+|------|---------|----------|
+| Start task | `/start-task` | Main worktree |
+| Complete task | `/complete-task` | Feature worktree |
+| After merge | `/cleanup-worktree` | Main worktree |
+
+### Why Use Worktrees
+
+Worktrees provide:
+- Isolated development environment for each task
+- Clean git history with proper PR workflow
+- No conflicts between parallel tasks
+- Proper separation of KANBAN.md management
+
+---
+
+## Original Workflow (Deprecated)
+
+The following workflow remains available for reference but is **not recommended**.
+
+### Format rules
 
 See `.clinerules/task_format.md` for detailed format rules.
 
@@ -14,13 +36,13 @@ Summary:
 - Idea format: `- [ ] **[DD/MM/YYYY HH:mm:ss] Priority CategoryEmoji [CATEGORY]** Description`
 - Task format: `- [ ] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
 
-## Execution instructions
+### Execution instructions
 
-### 1. Read KANBAN.md
+#### 1. Read KANBAN.md
 
 Use the `read_file` tool to read the content of the `/KANBAN.md` file at the project root.
 
-### 2. List backlog ideas
+#### 2. List backlog ideas
 
 Identify all ideas in the "## 📝 Backlog" section:
 - Search for lines with format `- [ ] **[...]] Priority CategoryEmoji [CATEGORY]**`
@@ -40,7 +62,7 @@ Display the list to the user with a number for each idea:
 Type the number(s) of the idea(s) you want me to execute (e.g., "1" or "1,3" or "all"):
 ```
 
-### 3. Ask user for selection
+#### 3. Ask user for selection
 
 Use `ask_followup_question` to let the user select which ideas to execute.
 
@@ -50,9 +72,9 @@ Use `ask_followup_question` to let the user select which ideas to execute.
 - Range: `1-3`
 - All: `all` or `*`
 
-### 4. For each selected idea, execute the following steps
+#### 4. For each selected idea, execute the following steps
 
-#### 4a. Display the idea and ask for task breakdown
+##### 4a. Display the idea and ask for task breakdown
 
 Show the selected idea and ask the user how to proceed:
 
@@ -68,7 +90,7 @@ How would you like to break this down into tasks?
 
 Use `ask_followup_question` to get the user's preference.
 
-#### 4b. Create the "In Progress" section
+##### 4b. Create the "In Progress" section
 
 Based on the user's response:
 
@@ -91,13 +113,13 @@ Create the section in "## 🚧 In Progress":
 - [ ] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Task 2
 ```
 
-#### 4c. Delete idea from Backlog
+##### 4c. Delete idea from Backlog
 
 Use `replace_in_file` to remove the idea line from "## 📝 Backlog".
 
 **Important:** Delete the line completely, do not leave a checked trace.
 
-#### 4d. Execute tasks interactively
+##### 4d. Execute tasks interactively
 
 For each task in the section:
 
@@ -122,50 +144,14 @@ For each task in the section:
 
 5. **Repeat** for each task
 
-#### 4d-bis. Create worktree (Optional)
-
-**For worktree workflow integration:**
-
-For better task isolation, use the worktree workflow:
-
-1. Generate branch name from idea (kebab-case)
-2. Create branch: `git branch <name> main`
-3. Create worktree: `git worktree add ../termaid-<name> <name>`
-4. Display instructions to switch to worktree
-5. User must continue the CLine session in the new worktree
-
-**Alternative workflow with skills:**
-
-| Skill | Location | Purpose |
-|-------|----------|---------|
-| `/start-task` | Main worktree | Start task with worktree creation |
-| `/complete-task` | Feature worktree | Complete: validate, commit, push, PR |
-| `/cleanup-worktree` | Main worktree | Remove worktree after merge |
-
-To use this workflow:
-```
-# From main worktree
-/start-task
-
-# Switch to worktree
-cd ../termaid-<name>
-
-# In feature worktree
-/complete-task
-
-# After merge, return to main
-cd ../termaid
-/cleanup-worktree <name>
-```
-
-#### 4e. Move completed tasks to Done
+##### 4e. Move completed tasks to Done
 
 After all tasks of an idea are completed:
 
 1. **Add each completed task** as `- [x]` entry at the top of the "## ✅ Done" section
 2. **Delete the idea section from In Progress** using `replace_in_file`
 
-#### 4f. Create Git commit
+##### 4f. Create Git commit
 
 When all tasks are moved to Done:
 
@@ -187,13 +173,13 @@ When all tasks are moved to Done:
    git commit -m "Commit message"
    ```
 
-#### 4g. Clean up Done section
+##### 4g. Clean up Done section
 
 After a successful commit:
 1. **Delete all committed tasks** from the "## ✅ Done" section
 2. The Done section should be empty after cleanup (completed tasks are tracked in git history and CHANGELOG.md)
 
-#### 4h. Move to next idea
+##### 4h. Move to next idea
 
 Continue with the next selected idea until all are completed.
 
@@ -248,7 +234,7 @@ Use `ask_followup_question` for these interactions:
    ```
    How should I break down this idea into tasks?
    - Describe tasks yourself
-   - Let me suggest tasks  
+   - Let me suggest tasks
    - Execute as single task
    ```
 
@@ -264,42 +250,6 @@ Use `ask_followup_question` for these interactions:
    Continue with next task? (yes/no)
    ```
 
-## Example complete flow
-
-```
-1. Read KANBAN.md → found 3 ideas in Backlog
-
-2. Display ideas:
-   📋 **Backlog Ideas:**
-   **#1** [P1] 🐛 [FIX] Fix language change not applying
-   **#2** [P2] 🌍 [I18N] Create GitHub Pages documentation
-   **#3** [P2] ⚙️ [CONFIG] Build application executables
-
-3. User selects: "1,2"
-
-4. Process Idea #1:
-   - Ask for task breakdown → user chooses "single task"
-   - Create In Progress section
-   - Delete from Backlog
-   - Ask confirmation: "Ready to execute? yes"
-   - Execute task → success
-   - Create commit → abc1234
-   - Delete from In Progress
-
-5. Process Idea #2:
-   - Ask for task breakdown → user describes 2 tasks
-   - Create In Progress section with 2 tasks
-   - Delete from Backlog
-   - Task 1: "Create docs structure" → confirm → execute → success
-   - Task 2: "Deploy to GitHub Pages" → confirm → execute → success
-   - Create commit → def5678
-   - Delete from In Progress
-
-6. npm run changelog
-
-7. Report: 2 ideas completed, 3 tasks executed, 2 commits created
-```
-
 ## Error handling
 
 - **User cancels selection**: Abort workflow, no changes made
@@ -307,10 +257,23 @@ Use `ask_followup_question` for these interactions:
 - **Git commit fails**: Do not delete from In Progress, inform user
 - **Multiple ideas selected**: Continue with remaining ideas if one fails
 
-## Workflow replacement
+## Worktree Integration (Recommended Alternative)
 
-This workflow replaces:
-- `kanban_convert_idea_to_task.md` (conversion is now integrated)
-- `kanban_execute_task.md` (execution is now interactive)
+For proper task isolation, use the worktree workflow instead:
 
-These files should be deleted after this workflow is created.
+```
+# From main worktree
+/start-task
+
+# Switch to worktree
+cd ../termaid-<name>
+
+# In feature worktree
+/complete-task
+
+# After merge, return to main
+cd ../termaid
+/cleanup-worktree <name>
+```
+
+See `.clinerules/worktree.md` for the complete mandatory workflow.

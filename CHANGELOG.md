@@ -10,6 +10,9 @@ To view the complete history, use: `git log`
 
 #### 05/03
 
+- **[16:37:11] 🔧 [CHORE]** Enforce worktree workflow for task-based work
+- **[16:24:59] 🔧 [CHORE]** Clean done section and update changelog
+- **[16:24:50] 🔧 [CHORE]** Clean up done section after task completion
 - **[16:23:49] 🐛 [FIX]** Ensure delete button remains visible with long conversation titles
 - **[14:14:33] 🔧 [CHORE]** Optimize rules and consolidate skills
 - **[11:10:19] 🔧 [CHORE]** Consolidate configuration files and add agent skills
