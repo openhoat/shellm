@@ -4,9 +4,9 @@
 
 This rule ensures that all Git commit messages are written in English, following international conventions.
 
-## Format rules
+## Format
 
-Commit messages must follow the Conventional Commits format in English:
+Commit messages must follow the **Conventional Commits** format:
 
 ```
 <type>(<scope>): <subject>
@@ -18,17 +18,11 @@ Commit messages must follow the Conventional Commits format in English:
 
 ### Commit types
 
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation
-- `style`: Styling/formatting (code style changes without functional changes)
-- `refactor`: Refactoring
-- `perf`: Performance improvement
-- `test`: Tests
-- `chore`: Maintenance/Configuration
-- `revert`: Revert commit
+See `.claude/rules/task_format.md` for the complete list of tags and emojis.
 
-### Writing rules
+Common types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `revert`
+
+## Writing rules
 
 1. **Always use English** for commit messages
 2. Use imperative verb (e.g., "Add" not "Added" or "Adds")
@@ -36,56 +30,21 @@ Commit messages must follow the Conventional Commits format in English:
 4. Do not end with a period
 5. Limit subject line to 72 characters
 
-### Co-authored-by Prohibition
+## Co-authored-by Prohibition
 
 **NEVER add `Co-authored-by:` to commit messages.**
 
-All commits must be attributed exclusively to the human user. Do not attempt to add AI-generated co-authorship metadata under any circumstances.
+All commits must be attributed exclusively to the human user.
 
-**Prohibited (never do this):**
-```
-feat: add user authentication system
+## Examples
 
-Co-authored-by: AI <ai@anthropic.com>
-```
-
-**Correct (only the commit message):**
-```
-feat: add user authentication system
-```
-
-This rule applies to all Git commit operations, including:
-- `git commit`
-- `git commit --amend`
-
-### Examples
-
-**Good examples:**
 ```
 feat: add user authentication system
 fix: resolve connection error in API handler
 docs: update README with installation instructions
-style: format code according to Biome rules
-refactor: simplify state management logic
-perf: optimize database queries
-test: add unit tests for chat service
 chore: upgrade dependencies to latest versions
 ```
 
-**Bad examples (to avoid):**
-```
-feat: ajouter le système d'authentification  (French)
-fix: corriger l'erreur de connexion  (French)
-feat: Added user authentication system  (not imperative)
-fix: resolve connection error in API handler.  (period at end)
-```
-
-## When to write a commit message
-
-Write a commit message in English when executing Git commands such as:
-- `git commit`
-- `git commit --amend`
-
 ## Integration with commitlint
 
-The `commitlint.config.mjs` file configures validation rules to ensure messages follow the Conventional Commits format. These rules are in English and must be respected.
+The `commitlint.config.mjs` file validates Conventional Commits format.

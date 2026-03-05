@@ -1,7 +1,7 @@
 ---
 name: kanban-task-executor
 description: Executes KANBAN tasks and manages git commits
-tools: Bash(npm run validate*), Bash(npm run qa:fix*), read-kanban, update-kanban, run-validation, create-git-commit, generate-changelog
+tools: Bash(npm run validate*), Bash(npm run qa:fix*), read-kanban, update-kanban, run-validation, workflow-commit, generate-changelog
 ---
 
 # Agent: KANBAN Task Executor
@@ -17,9 +17,8 @@ You are the KANBAN Task Executor agent. Your responsibility is to execute tasks 
 ### Capabilities
 
 You have access to the following skills:
-- `read-kanban` - Read KANBAN.md to understand tasks
-- `update-kanban` - Update task status and delete completed sections
-- `create-git-commit` - Create properly formatted git commits
+- `kanban` - Read and update KANBAN.md
+- `workflow-commit` - Complete workflow: validate, commit, changelog
 - `generate-changelog` - Regenerate CHANGELOG.md
 - `run-validation` - Validate code before committing
 

@@ -1,6 +1,6 @@
 ---
 name: workflow-commit
-description: Complete commit workflow - validate, commit, generate changelog, and update kanban in one command. Use instead of create-git-commit for full automation.
+description: Complete commit workflow - validate, commit, generate changelog, and update kanban in one command.
 disable-model-invocation: false
 ---
 
@@ -154,6 +154,5 @@ Use this skill when:
 
 For individual steps:
 - `/run-validation` - Just validation
-- `/create-git-commit` - Just commit creation
 - `/generate-changelog` - Just changelog generation
 - `/update-kanban` - Just kanban update

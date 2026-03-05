@@ -10,6 +10,13 @@ To view the complete history, use: `git log`
 
 #### 05/03
 
+- **[14:14:13] 🔧 [CHORE]** Optimize rules and consolidate skills
+- **[11:10:19] 🔧 [CHORE]** Consolidate configuration files and add agent skills
+- **[10:13:35] 🔧 [CHORE]** Add config optimization ideas and clean done section
+- **[10:09:54] 🔧 [CHORE]** Add config optimization ideas and clean done section
+- **[09:54:42] ✨ [FEAT]** Add kanban-worktree integration skills
+- **[09:30:44] 📝 [DOCS]** Document sandbox, audit, and provider registry services
+- **[09:23:41] 📝 [DOCS]** Regenerate changelog from git history
 - **[09:22:41] 📝 [DOCS]** Mark documentation tasks as completed
 - **[09:21:58] 🐛 [FIX]** Correct nested buttons html in conversations panel and update docs
 - **[08:50:40] 🎨 [STYLE]** Format vitepress config with biome

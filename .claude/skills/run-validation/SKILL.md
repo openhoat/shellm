@@ -144,7 +144,7 @@ For detailed analysis, use related skills:
 This skill integrates with:
 - `analyze-quality-report` - For detailed Biome analysis
 - `analyze-test-report` - For test failure analysis
-- `create-git-commit` - Run validation before commits
+- `workflow-commit` - Run validation before commits
 - `kanban-task-executor` - Validation is part of task completion
 
 ## E2E Tests (Not Included in Validation)

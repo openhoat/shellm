@@ -28,7 +28,7 @@ Agents are specialized subagents with specific roles and tool access.
 | `test-runner` | Executes unit tests and generates coverage reports | `Bash(npm run test*)`, `run-tests`, `analyze-test-report`, `generate-coverage-report` |
 | `code-reviewer` | Code review for quality, security and best practices | `Bash(npm run validate*)`, `read-kanban`, `run-validation`, `analyze-quality-report`, `Read`, `Glob`, `Grep` |
 | `documentation-generator` | Generates and maintains project documentation | `Bash(npm run validate*)`, `read-kanban`, `run-validation`, `Read`, `Write`, `Edit`, `Glob`, `Grep` |
-| `kanban-task-executor` | Executes KANBAN tasks and manages git commits | `Bash(npm run validate*)`, `Bash(npm run qa:fix*)`, `read-kanban`, `update-kanban`, `run-validation`, `create-git-commit`, `generate-changelog` |
+| `kanban-task-executor` | Executes KANBAN tasks and manages git commits | `Bash(npm run validate*)`, `Bash(npm run qa:fix*)`, `kanban`, `run-validation`, `workflow-commit`, `generate-changelog` |
 | `security-auditor` | Security audit for vulnerability detection | `Bash(npm audit*)`, `Read`, `Glob`, `Grep` |
 | `performance-analyzer` | Performance optimization and bottleneck detection | `Bash(npm run*)`, `Read`, `Glob`, `Grep` |
 | `dependency-manager` | Manage package dependencies and updates | `Bash(npm*)`, `Read`, `Edit`, `Glob`, `Grep` |
@@ -58,8 +58,7 @@ Skills are located in `.claude/skills/` and can be invoked with `/skill-name`.
 
 | Command | Description |
 |---------|-------------|
-| `/read-kanban` | Read and parse KANBAN.md |
-| `/update-kanban` | Update KANBAN.md task statuses |
+| `/kanban` | Manage KANBAN.md (read/update tasks and ideas) |
 | `/kanban-add-idea` | Add idea to backlog interactively |
 | `/kanban-execute` | Select and execute backlog ideas |
 | `/start-task` | Start Kanban task: update KANBAN.md, create worktree |
@@ -73,7 +72,6 @@ Skills are located in `.claude/skills/` and can be invoked with `/skill-name`.
 | `/list-worktrees` | List all git worktrees and branches |
 | `/push-and-pr` | Push branch and create Pull Request |
 | `/cleanup-worktree` | Remove worktree and branch after PR merge |
-| `/create-git-commit` | Create commit with Conventional Commits format |
 | `/generate-changelog` | Regenerate CHANGELOG.md from Git history |
 | `/release` | Automate versioning (bump, changelog, commit, tag, push) |
 | `/workflow-commit` | Complete workflow: validate, commit, changelog, kanban |
