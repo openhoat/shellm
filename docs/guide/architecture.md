@@ -258,10 +258,75 @@ sequenceDiagram
 | i18n | react-i18next |
 | Config storage | electron-store |
 
+## Security Services
+
+### Sandbox Service
+
+The sandbox service (`shared/sandbox.ts`) provides multiple levels of isolation for command execution:
+
+**Sandbox Modes:**
+
+| Mode | Description | Use Case |
+|------|-------------|----------|
+| `none` | Direct execution, no isolation | Trusted commands only |
+| `restricted` | Limited environment with blocked commands | Most commands, safe default |
+| `docker` | Container isolation with Docker | Untrusted commands, testing |
+| `system` | OS sandbox (firejail on Linux) | Maximum isolation |
+
+**Features:**
+- Command whitelisting and blacklisting
+- Timeout enforcement
+- Environment variable restriction
+- Read-only mount options (Docker)
+- Automatic container cleanup (Docker `--rm` flag)
+
+### Audit Service
+
+The audit service (`electron/services/auditService.ts`) logs all command executions for security and compliance:
+
+**Logged Data:**
+- Command string and execution result (success/blocked/cancelled/error)
+- Risk level (safe/warning/dangerous)
+- User approval status and action
+- Execution time and output length
+- Sandbox mode used
+
+**Features:**
+- Query logs by date, result, or risk level
+- Export to JSON or CSV
+- Statistics API (success rate, top commands, averages)
+- Automatic log rotation (configurable max entries)
+
+### Provider Registry
+
+The provider registry (`electron/ipc-handlers/providers/registry.ts`) manages LLM provider registration and discovery:
+
+**Responsibilities:**
+- Register/unregister providers (Ollama, Claude, OpenAI)
+- Validate provider configurations
+- Create provider instances
+- Test connections and list available models
+- Expose provider metadata (name, icon, features)
+
+**Usage:**
+```typescript
+// Register a provider
+providerRegistry.register(ollamaFactory)
+
+// Get provider info
+const infos = await providerRegistry.getProviderInfos(configs)
+
+// Create provider instance
+const provider = providerRegistry.createProvider('ollama', config)
+```
+
 ## Security Model
 
 - **Context isolation**: The renderer has no direct access to Node.js APIs
 - **Sandbox enabled**: The renderer runs in a sandboxed Chromium process
+- **Command validation**: All AI-generated commands are validated before execution
+- **Sandbox execution**: Commands can run in isolated environments (restricted, Docker, system)
+- **Audit logging**: All command executions are logged with detailed metadata
 - **No automatic execution**: AI-generated commands require explicit user validation before execution
 - **Local-first**: Ollama support allows fully offline, privacy-preserving usage
 - **API keys stored locally**: Configuration persisted via `electron-store` on the user's machine
