@@ -62,6 +62,8 @@ Skills are located in `.claude/skills/` and can be invoked with `/skill-name`.
 | `/update-kanban` | Update KANBAN.md task statuses |
 | `/kanban-add-idea` | Add idea to backlog interactively |
 | `/kanban-execute` | Select and execute backlog ideas |
+| `/start-task` | Start Kanban task: update KANBAN.md, create worktree |
+| `/complete-task` | Complete work in worktree: validate, commit, push, PR |
 
 ### Git & Release
 
@@ -69,6 +71,8 @@ Skills are located in `.claude/skills/` and can be invoked with `/skill-name`.
 |---------|-------------|
 | `/create-worktree` | Create a new git worktree for a feature branch |
 | `/list-worktrees` | List all git worktrees and branches |
+| `/push-and-pr` | Push branch and create Pull Request |
+| `/cleanup-worktree` | Remove worktree and branch after PR merge |
 | `/create-git-commit` | Create commit with Conventional Commits format |
 | `/generate-changelog` | Regenerate CHANGELOG.md from Git history |
 | `/release` | Automate versioning (bump, changelog, commit, tag, push) |
@@ -107,13 +111,16 @@ Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`
 Tags: `[FEAT]`, `[FIX]`, `[REFACTOR]`, `[PERF]`, `[DOCS]`, `[STYLE]`, `[TEST]`, `[CHORE]`
 
 ### Kanban Workflow Summary
-1. `/create-worktree` - Create a new worktree for the feature
-2. Start Claude Code in the new worktree directory
-3. Work on the feature and commit changes
-4. Create PR with `/workflow-commit` or manually
-5. After merge, remove worktree with `/cleanup-worktree`
 
-### Worktree Workflow
+#### Integrated Kanban + Worktree Workflow
+1. `/start-task` - On main: select backlog idea, update KANBAN.md, create worktree
+2. `cd ../termaid-<name>` - Switch to feature worktree
+3. Work on the feature in worktree
+4. `/complete-task` - In worktree: validate, commit, push, create PR
+5. After PR merge: `cd ../termaid` - Return to main worktree
+6. `/cleanup-worktree <name>` - On main: remove worktree and branch
+
+#### Traditional Worktree Workflow (without Kanban)
 1. `/create-worktree <name>` - Create new worktree for feature
 2. `cd ../termaid-<name>` - Switch to worktree
 3. Make changes, run validation

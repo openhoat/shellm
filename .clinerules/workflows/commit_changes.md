@@ -1,149 +1,149 @@
-# Workflow Cline pour créer les commits Git depuis CHANGELOG.md
+# Cline Workflow for Creating Git Commits from CHANGELOG.md
 
-## Objectif
+## Objective
 
-Ce workflow automatise la création des commits Git en utilisant les entrées de `/CHANGELOG.md` comme source de messages de commit.
+This workflow automates Git commit creation using entries from `/CHANGELOG.md` as the source for commit messages.
 
-## Instructions d'exécution
+## Execution Instructions
 
-### 1. Analyser l'état Git
+### 1. Analyze Git Status
 
-Exécutez `git status` pour identifier :
-- Les fichiers modifiés (modifié : ...)
-- Les nouveaux fichiers (Fichiers non suivis : ...)
-- Les fichiers supprimés (supprimé : ...)
+Execute `git status` to identify:
+- Modified files (modified: ...)
+- New files (untracked files: ...)
+- Deleted files (deleted: ...)
 
-### 2. Lire CHANGELOG.md
+### 2. Read CHANGELOG.md
 
-Utilisez `read_file` pour lire le contenu de `/CHANGELOG.md`.
+Use `read_file` to read the content of `/CHANGELOG.md`.
 
-### 3. Analyser et extraire les entrées de modifications
+### 3. Analyze and Extract Change Entries
 
-Identifiez toutes les entrées de modification dans le format :
+Identify all change entries in the format:
 ```
 **[HH:MM:SS] Emoji [TAG]** Description
 ```
 
-Extrayez pour chaque entrée :
-- Le tag (ex: [FEAT], [FIX], [REFACTOR], etc.)
-- L'emoji
-- La description principale
-- Les détails (les puces après la description)
+Extract for each entry:
+- The tag (e.g., [FEAT], [FIX], [REFACTOR], etc.)
+- The emoji
+- The main description
+- Details (bullet points after the description)
 
-### 4. Déterminer les fichiers à inclure pour chaque entrée
+### 4. Determine Files to Include for Each Entry
 
-Pour chaque entrée du CHANGELOG, analysez les détails pour identifier les fichiers mentionnés :
-- Cherchez les noms de fichiers dans les descriptions (ex: "dans src/components/Header.tsx")
-- Utilisez les patterns de chemins pour identifier les fichiers concernés
-- Associez les fichiers modifiés/non suivis de `git status` aux entrées correspondantes
+For each CHANGELOG entry, analyze details to identify mentioned files:
+- Look for file names in descriptions (e.g., "in src/components/Header.tsx")
+- Use path patterns to identify related files
+- Associate modified/untracked files from `git status` with corresponding entries
 
-**Règles d'association :**
-- Si une entrée mentionne explicitement des fichiers, utilisez-les
-- Si plusieurs entrées partagent des fichiers communs, incluez ces fichiers dans chaque commit pertinent
-- Les fichiers de configuration (.clinerules/, CHANGELOG.md, etc.) doivent être inclus dans le commit correspondant à la modification
+**Association Rules:**
+- If an entry explicitly mentions files, use them
+- If multiple entries share common files, include these files in each relevant commit
+- Configuration files (.clinerules/, CHANGELOG.md, etc.) should be included in the commit corresponding to the modification
 
-### 5. Générer le message de commit
+### 5. Generate Commit Message
 
-Pour chaque entrée, créez un message de commit en format conventionnel :
+For each entry, create a commit message in conventional format:
 
-**Format :**
+**Format:**
 ```
-[TAG]: Description principale
+[TAG]: Main description
 
-Détails de la modification...
-```
-
-**Exemples :**
-```
-[FEAT]: Ajouter le composant UserDashboard pour l'interface utilisateur
-
-Créer src/components/UserDashboard.tsx avec la configuration de base
-Ajouter les styles dans src/components/UserDashboard.css
+Details of the modification...
 ```
 
+**Examples:**
 ```
-[REFACTOR]: Restructurer l'architecture de gestion des tâches et idées
+[FEAT]: Add UserDashboard component for user interface
 
-Créer le fichier KANBAN.md avec les sections Backlog, In Progress
-Mettre à jour .clinerules/task_format.md avec les règles pour KANBAN.md
-Créer les workflows .clinerules/workflows/kanban_*.md
+Create src/components/UserDashboard.tsx with base configuration
+Add styles in src/components/UserDashboard.css
 ```
 
-### 6. Exécuter les commits
+```
+[REFACTOR]: Restructure task and idea management architecture
 
-Pour chaque entrée identifiée :
+Create KANBAN.md file with Backlog, In Progress sections
+Update .clinerules/task_format.md with rules for KANBAN.md
+Create .clinerules/workflows/kanban_*.md workflows
+```
 
-#### 6.1. Ajouter les fichiers concernés
+### 6. Execute Commits
+
+For each identified entry:
+
+#### 6.1. Stage Related Files
 ```bash
-git add fichier1 fichier2 fichier3 ...
+git add file1 file2 file3 ...
 ```
 
-#### 6.2. Créer le commit avec le message généré
+#### 6.2. Create Commit with Generated Message
 ```bash
-git commit -m "Message du commit"
+git commit -m "Commit message"
 ```
 
-**Important :** Utilisez toujours des guillemets doubles autour du message de commit pour gérer les retours à la ligne et les caractères spéciaux.
+**Important:** Always use double quotes around commit messages to handle newlines and special characters.
 
-#### 6.3. Vérifier le commit
-Exécutez `git log -1` pour confirmer que le commit a été créé correctement.
+#### 6.3. Verify Commit
+Execute `git log -1` to confirm the commit was created correctly.
 
-### 7. Rapport d'exécution
+### 7. Execution Report
 
-Une fois tous les commits créés :
-- Informez l'utilisateur du nombre de commits créés
-- Résumez les commits avec leur hash et leur message
-- Confirmer qu'il n'y a plus de modifications non commitées (vérifier avec `git status`)
+Once all commits are created:
+- Inform the user of the number of commits created
+- Summarize commits with their hash and message
+- Confirm there are no uncommitted changes (verify with `git status`)
 
-## Règles importantes
+## Important Rules
 
-- **Toujours inclure CHANGELOG.md** dans chaque commit (car il contient l'entrée correspondante)
-- **Un commit par entrée** du CHANGELOG, pas de commits groupés
-- **Préserver l'ordre** des entrées (du plus récent au plus ancien)
-- **Ne pas modifier** le message généré automatiquement à partir du CHANGELOG
-- **Gérer les erreurs** : si un commit échoue, informez l'utilisateur et continuez avec les entrées suivantes
+- **Always include CHANGELOG.md** in each commit (as it contains the corresponding entry)
+- **One commit per CHANGELOG entry**, no grouped commits
+- **Preserve order** of entries (from most recent to oldest)
+- **Do not modify** the message automatically generated from CHANGELOG
+- **Handle errors**: if a commit fails, inform the user and continue with remaining entries
 
-## Exemple de flux complet
+## Complete Flow Example
 
 ```
-1. git status → 25 fichiers modifiés, 8 fichiers non suivis
-2. Lire CHANGELOG.md → 3 entrées identifiées
-3. Entrée 1 : "[18:03:15] ♻️ [REFACTOR]** Restructurer l'architecture..."
-   - Fichiers identifiés : KANBAN.md, .clinerules/workflows/kanban_*.md, .clinerules/task_format.md, etc.
+1. git status → 25 modified files, 8 untracked files
+2. Read CHANGELOG.md → 3 entries identified
+3. Entry 1: "[18:03:15] ♻️ [REFACTOR]** Restructure architecture..."
+   - Identified files: KANBAN.md, .clinerules/workflows/kanban_*.md, .clinerules/task_format.md, etc.
    - git add KANBAN.md .clinerules/workflows/kanban_*.md .clinerules/task_format.md ...
-   - git commit -m "[REFACTOR]: Restructurer l'architecture de gestion des tâches et idées
-   -
-   - Créer le fichier KANBAN.md avec les sections Backlog, In Progress
-   - Mettre à jour .clinerules/task_format.md avec les règles pour KANBAN.md
+   - git commit -m "[REFACTOR]: Restructure task and idea management architecture
+
+   - Create KANBAN.md file with Backlog, In Progress sections
+   - Update .clinerules/task_format.md with rules for KANBAN.md
    - ..."
-4. Entrée 3 : "[15:42:30] ✅ [TEST]** Standardiser les tests..."
-   - Fichiers identifiés : src/services/commandExecutionService.ts, src/services/commandExecutionService.test.ts, etc.
+4. Entry 3: "[15:42:30] ✅ [TEST]** Standardize tests..."
+   - Identified files: src/services/commandExecutionService.ts, src/services/commandExecutionService.test.ts, etc.
    - git add src/services/commandExecutionService.ts src/services/commandExecutionService.test.ts ...
-   - git commit -m "[TEST]: Standardiser les tests avec `test` au lieu de `it`..."
-5. Vérification finale : git status → "nothing to commit, working tree clean"
-6. Rapport : 3 commits créés avec succès
+   - git commit -m "[TEST]: Standardize tests with `test` instead of `it`..."
+5. Final verification: git status → "nothing to commit, working tree clean"
+6. Report: 3 commits created successfully
 ```
 
-## Cas particuliers
+## Edge Cases
 
-### Fichiers modifiés non documentés dans CHANGELOG.md
+### Modified Files Not Documented in CHANGELOG.md
 
-Si git status montre des fichiers modifiés qui ne correspondent à aucune entrée du CHANGELOG :
-1. Informez l'utilisateur de ces fichiers orphelins
-2. Demandez à l'utilisateur s'il souhaite :
-   - Créer une entrée dans CHANGELOG.md pour ces fichiers
-   - Les inclure dans le commit existant le plus pertinent
-   - Les laisser non commités
+If git status shows modified files that don't correspond to any CHANGELOG entry:
+1. Inform the user about these orphan files
+2. Ask the user if they want to:
+   - Create a CHANGELOG entry for these files
+   - Include them in the most relevant existing commit
+   - Leave them uncommitted
 
-### Conflits dans les fichiers
+### File Conflicts
 
-Si un fichier modifié est mentionné dans plusieurs entrées du CHANGELOG :
-1. Informez l'utilisateur du conflit
-2. Demandez dans quel commit inclure ce fichier
-3. N'incluez le fichier que dans un seul commit
+If a modified file is mentioned in multiple CHANGELOG entries:
+1. Inform the user of the conflict
+2. Ask which commit should include this file
+3. Only include the file in one commit
 
-### Fichiers supprimés
+### Deleted Files
 
-Pour les fichiers supprimés mentionnés dans le CHANGELOG :
-- Utilisez `git add fichier_supprimé` pour préparer la suppression
-- Le commit inclura automatiquement la suppression du fichier
+For deleted files mentioned in CHANGELOG:
+- Use `git add deleted_file` to stage the deletion
+- The commit will automatically include the file deletion

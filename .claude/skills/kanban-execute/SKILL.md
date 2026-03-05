@@ -109,6 +109,30 @@ Display summary:
 Total: N ideas completed, N tasks executed, N commits created
 ```
 
+## Integration with Worktrees
+
+For a complete workflow with git worktrees, use `/start-task` instead of this skill.
+
+The `/start-task` skill:
+1. Selects an idea from backlog
+2. Updates KANBAN.md on main branch
+3. Creates a worktree for the task
+4. Provides instructions to continue in the worktree
+
+After completing work in the worktree, use `/complete-task` to:
+1. Validate code
+2. Commit changes
+3. Push and create PR
+
+### When to Use Each Skill
+
+| Skill | Location | Purpose |
+|-------|----------|---------|
+| `/start-task` | Main worktree | Start Kanban task with worktree creation |
+| `/kanban-execute` | Any worktree | Execute tasks without worktree management |
+| `/complete-task` | Feature worktree | Complete work: validate, commit, push, PR |
+| `/cleanup-worktree` | Main worktree | Remove worktree after PR merge |
+
 ## Important Rules
 
 - Always ask for confirmation before executing each task

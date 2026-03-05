@@ -105,7 +105,7 @@ For each task in the section:
    ```
    🔧 **Executing Task 1/3:**
    [CHORE] Install necessary dependencies
-   
+
    Proceed? (yes/no/skip)
    ```
 
@@ -121,6 +121,42 @@ For each task in the section:
    - If failed: Inform user and ask whether to continue or abort
 
 5. **Repeat** for each task
+
+#### 4d-bis. Create worktree (Optional)
+
+**For worktree workflow integration:**
+
+For better task isolation, use the worktree workflow:
+
+1. Generate branch name from idea (kebab-case)
+2. Create branch: `git branch <name> main`
+3. Create worktree: `git worktree add ../termaid-<name> <name>`
+4. Display instructions to switch to worktree
+5. User must continue the CLine session in the new worktree
+
+**Alternative workflow with skills:**
+
+| Skill | Location | Purpose |
+|-------|----------|---------|
+| `/start-task` | Main worktree | Start task with worktree creation |
+| `/complete-task` | Feature worktree | Complete: validate, commit, push, PR |
+| `/cleanup-worktree` | Main worktree | Remove worktree after merge |
+
+To use this workflow:
+```
+# From main worktree
+/start-task
+
+# Switch to worktree
+cd ../termaid-<name>
+
+# In feature worktree
+/complete-task
+
+# After merge, return to main
+cd ../termaid
+/cleanup-worktree <name>
+```
 
 #### 4e. Move completed tasks to Done
 

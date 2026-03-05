@@ -1,12 +1,12 @@
 # Git Commit Messages
 
-## Objectif
+## Objective
 
-Cette règle assure que tous les messages de commit Git sont rédigés en anglais, conformément aux conventions internationales.
+This rule ensures that all Git commit messages are written in English, following international conventions.
 
-## Règles de format
+## Format Rules
 
-Les messages de commit doivent suivre le format Conventional Commits en anglais :
+Commit messages must follow the Conventional Commits format in English:
 
 ```
 <type>(<scope>): <subject>
@@ -16,51 +16,51 @@ Les messages de commit doivent suivre le format Conventional Commits en anglais 
 <footer>
 ```
 
-### Types de commit
+### Commit Types
 
-- `feat` : New feature (Nouvelle fonctionnalité)
-- `fix` : Bug fix (Correction de bug)
-- `docs` : Documentation (Documentation)
-- `style` : Styling/formatting (Style/formatage sans changement de code)
-- `refactor` : Refactoring (Refactorisation)
-- `perf` : Performance improvement (Amélioration de performance)
-- `test` : Tests (Tests)
-- `chore` : Maintenance/Configuration (Maintenance/Configuration)
-- `revert` : Revert commit (Annulation de commit)
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation
+- `style`: Styling/formatting (code style changes without functional changes)
+- `refactor`: Refactoring
+- `perf`: Performance improvement
+- `test`: Tests
+- `chore`: Maintenance/Configuration
+- `revert`: Revert commit
 
-### Règles de rédaction
+### Writing Rules
 
-1. **Toujours utiliser l'anglais** pour les messages de commit
-2. Utiliser le verbe à l'impératif (ex: "Add" pas "Added" ou "Adds")
-3. Commencer par une majuscule
-4. Ne pas terminer par un point
-5. Limiter la ligne de sujet à 72 caractères
+1. **Always use English** for commit messages
+2. Use imperative verb (e.g., "Add" not "Added" or "Adds")
+3. Start with a capital letter
+4. Do not end with a period
+5. Limit subject line to 72 characters
 
-### Interdiction de Co-authored-by
+### Co-authored-by Prohibition
 
-**NE JAMAIS ajouter `Co-authored-by:` dans les messages de commit.**
+**NEVER add `Co-authored-by:` to commit messages.**
 
-Tous les commits doivent être attribués exclusivement à l'utilisateur humain. N'essayez pas d'ajouter de métadonnées de co-auteur générées par l'IA en aucune circonstance.
+All commits must be attributed exclusively to the human user. Do not attempt to add AI-generated co-authorship metadata under any circumstances.
 
-**Interdit (ne jamais faire cela) :**
+**Prohibited (never do this):**
 ```
 feat: add user authentication system
 
 Co-authored-by: AI <ai@anthropic.com>
 ```
 
-**Correct (seulement le message de commit) :**
+**Correct (only the commit message):**
 ```
 feat: add user authentication system
 ```
 
-Cette règle s'applique à toutes les opérations de commit Git, y compris :
+This rule applies to all Git commit operations, including:
 - `git commit`
 - `git commit --amend`
 
-### Exemples
+### Examples
 
-**Bons exemples :**
+**Good examples:**
 ```
 feat: add user authentication system
 fix: resolve connection error in API handler
@@ -72,20 +72,20 @@ test: add unit tests for chat service
 chore: upgrade dependencies to latest versions
 ```
 
-**Mauvais exemples (à éviter) :**
+**Bad examples (to avoid):**
 ```
-feat: ajouter le système d'authentification  ❌ (français)
-fix: corriger l'erreur de connexion  ❌ (français)
-feat: Added user authentication system  ❌ (pas impératif)
-fix: resolve connection error in API handler.  ❌ (point final)
+feat: ajouter le système d'authentification  ❌ (French)
+fix: corriger l'erreur de connexion  ❌ (French)
+feat: Added user authentication system  ❌ (not imperative)
+fix: resolve connection error in API handler.  ❌ (period at end)
 ```
 
-## Quand rédiger un message de commit
+## When to Write a Commit Message
 
-Cline doit rédiger un message de commit en anglais lors de l'exécution de commandes Git comme :
+Cline should write a commit message in English when executing Git commands such as:
 - `git commit`
 - `git commit --amend`
 
-## Integration avec commitlint
+## Integration with commitlint
 
-Le fichier `commitlint.config.mjs` configure les règles de validation pour s'assurer que les messages respectent le format Conventional Commits. Ces règles sont en anglais et doivent être respectées.
+The `commitlint.config.mjs` file configures validation rules to ensure messages follow the Conventional Commits format. These rules are in English and must be followed.

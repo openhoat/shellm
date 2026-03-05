@@ -1,153 +1,256 @@
-# Workflow CLine pour utiliser les Worktrees Git Natifs
+# Native Git Worktree Workflow
 
-## Objectif
+## Objective
 
-Ce workflow définit comment utiliser les worktrees git natifs pour travailler sur plusieurs branches simultanément avec Claude Code.
+This workflow defines how to use native git worktrees to work on multiple branches simultaneously with Claude Code.
 
-## Quand Utiliser les Worktrees
+## When to Use Worktrees
 
-Utilisez les worktrees quand :
-- L'utilisateur demande une nouvelle fonctionnalité ou correction qui nécessite une Pull Request
-- Vous avez besoin de basculer entre plusieurs branches sans perdre les modifications locales
-- Vous travaillez sur des changements isolés qui doivent être examinés séparément
+Use worktrees when:
+- The user requests a new feature or fix that requires a Pull Request
+- You need to switch between multiple branches without losing local changes
+- You are working on isolated changes that should be reviewed separately
 
-## Structure des Répertoires de Worktree
+## Worktree Directory Structure
 
 ```
 /home/openhoat/work/
-├── termaid/              # Worktree principal (branche main)
-├── termaid-<feature>/    # Worktrees de fonctionnalité
+├── termaid/              # Main worktree (main branch)
+├── termaid-<feature>/    # Feature worktrees
 ```
 
-## Convention de Nommage des Worktrees
+## Worktree Naming Convention
 
-- Format : `termaid-<nom-branche>`
-- Les noms de branches doivent être en kebab-case
-- Exemples :
+- Format: `termaid-<branch-name>`
+- Branch names should be in kebab-case
+- Examples:
   - `feat/dependabot-config` → `termaid-dependabot`
   - `feat/add-dark-mode` → `termaid-add-dark-mode`
   - `fix/login-bug` → `termaid-login-bug`
 
-## Étapes du Workflow
+## Workflow Steps
 
-### 1. Démarrer une Nouvelle Tâche
+### 1. Start a New Task
 
-Quand l'utilisateur demande une nouvelle fonctionnalité ou correction :
+When the user requests a new feature or fix:
 
-1. Déterminer le nom de la branche (kebab-case à partir de la description)
-2. Créer une nouvelle branche depuis main
-3. Créer un worktree pour cette branche
-4. Basculer vers le nouveau worktree
+1. Determine the branch name (kebab-case from task description)
+2. Create a new branch from main
+3. Create a worktree for that branch
+4. Switch to the new worktree
 
 ```bash
-# Exemple : Démarrer une nouvelle fonctionnalité
-git branch feat/ma-nouvelle-fonctionnalite main
-git worktree add ../termaid-ma-nouvelle-fonctionnalite feat/ma-nouvelle-fonctionnalite
-cd ../termaid-ma-nouvelle-fonctionnalite
+# Example: Starting a new feature
+git branch feat/my-new-feature main
+git worktree add ../termaid-my-new-feature feat/my-new-feature
+cd ../termaid-my-new-feature
 ```
 
-### 2. Travailler dans le Worktree
+### 2. Work in the Worktree
 
 ```bash
 cd ../termaid-<feature>
-# Faire les modifications, commiter, tester
+# Make changes, commit, test
 ```
 
-### 3. Créer une Pull Request
+### 3. Create a Pull Request
 
-Quand les modifications sont prêtes :
+When changes are ready:
 
 ```bash
 cd ../termaid-<feature>
-git push -u origin feat/ma-nouvelle-fonctionnalite
+git push -u origin feat/my-new-feature
 gh pr create --title "feat: description" --body "..."
 ```
 
-### 4. Nettoyage Après Fusion
+### 4. Cleanup After Merge
 
-Après que la PR est fusionnée :
+After the PR is merged:
 
 ```bash
 git worktree remove ../termaid-<feature>
-git branch -d feat/ma-nouvelle-fonctionnalite
+git branch -d feat/my-new-feature
 ```
 
-## Commandes de Gestion des Worktrees
+## Worktree Management Commands
 
 ```bash
-# Lister tous les worktrees
+# List all worktrees
 git worktree list
 
-# Créer un nouveau worktree
-git worktree add ../termaid-<nom> <nom-branche>
+# Create a new worktree
+git worktree add ../termaid-<name> <branch-name>
 
-# Supprimer un worktree (conserve la branche)
-git worktree remove ../termaid-<nom>
+# Remove a worktree (preserves branch)
+git worktree remove ../termaid-<name>
 
-# Nettoyer les références de worktree obsolètes
+# Prune stale worktree references
 git worktree prune
 ```
 
-## Intégration avec les Autres Règles
+## Integration with Other Rules
 
-- Suivre **Language Rule** : Tous les commits et PRs en anglais
-- Suivre **Commit Messages Rule** : Format Conventional Commits
-- Suivre **Quality Check Rule** : Exécuter la validation avant de commiter
-- Suivre **Log Changes Rule** : Mettre à jour CHANGELOG.md après les modifications
+- Follow **Language Rule**: All commits and PRs in English
+- Follow **Commit Messages Rule**: Conventional Commits format
+- Follow **Quality Check Rule**: Run validation before committing
+- Follow **Log Changes Rule**: Update CHANGELOG.md after changes
 
-## Principes Clés
+## Key Principles
 
-1. **Un worktree par feature/PR** : Chaque worktree correspond à une branche et une PR
-2. **Le worktree principal reste propre** : Utiliser uniquement le worktree main pour examiner le code, pas pour faire des modifications
-3. **Toujours créer une PR** : Ne jamais commiter directement sur main
-4. **Nettoyer après fusion** : Supprimer les worktrees après que les PRs sont fusionnées
+1. **One worktree per feature/PR**: Each worktree corresponds to one branch and one PR
+2. **Main worktree stays clean**: Only use main worktree for looking at code, not for making changes
+3. **Always create a PR**: Never commit directly to main
+4. **Clean up after merge**: Remove worktrees after PRs are merged
 
-## Exemple de Workflow
+## Kanban Integration
 
-L'utilisateur demande : "Ajouter le support du mode sombre"
+The KANBAN.md file must always be modified on the `main` branch before creating a worktree. This ensures that task tracking is consistent across all worktrees.
 
-1. Créer la branche et le worktree :
+### Mandatory Workflow Sequence
+
+```
+┌─────────────────────────────────────┐
+│  STEP 1: On main worktree           │
+│  - Select idea from backlog         │
+│  - Update KANBAN.md                 │
+│  - Commit KANBAN.md on main         │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│  STEP 2: On main worktree           │
+│  - Create branch: git branch        │
+│  - Create worktree: git worktree    │
+└──────────────┬──────────────────────┘
+               │
+               │ Switch to worktree
+               ▼
+┌─────────────────────────────────────┐
+│  STEP 3: In feature worktree        │
+│  - Implement changes                │
+│  - Validate: npm run validate       │
+│  - Commit: /workflow-commit         │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│  STEP 4: In feature worktree        │
+│  - Push: git push -u origin         │
+│  - Create PR: gh pr create          │
+└──────────────┬──────────────────────┘
+               │
+               │ PR merged
+               ▼
+┌─────────────────────────────────────┐
+│  STEP 5: On main worktree           │
+│  - Pull: git pull origin main       │
+│  - Cleanup worktree                 │
+│  - Delete branch                    │
+└─────────────────────────────────────┘
+```
+
+### Skills Integration
+
+| Skill | Location | Purpose |
+|-------|----------|---------|
+| `/start-task` | Main worktree | Start Kanban task: update KANBAN.md, create worktree |
+| `/complete-task` | Feature worktree | Complete work: validate, commit, push, create PR |
+| `/push-and-pr` | Feature worktree | Push branch and create PR only |
+| `/cleanup-worktree` | Main worktree | Remove worktree and branch after PR merge |
+
+### Workflow Commands
+
+#### Start a new task (from main worktree)
+
+```bash
+# Use the skill
+/start-task
+
+# Or manually:
+# 1. Update KANBAN.md (move idea to In Progress)
+# 2. Commit KANBAN.md on main
+# 3. Create branch and worktree
+git branch feat/my-feature main
+git worktree add ../termaid-my-feature feat/my-feature
+```
+
+#### Complete work (from feature worktree)
+
+```bash
+# Use the skill (includes validation, commit, push, PR)
+/complete-task
+
+# Or step by step:
+npm run validate
+/workflow-commit
+/push-and-pr
+```
+
+#### After PR merge (from main worktree)
+
+```bash
+# Use the skill
+/cleanup-worktree <name>
+
+# Or manually:
+git pull origin main
+git worktree remove ../termaid-<name>
+git branch -d <branch-name>
+```
+
+### Important Rules
+
+1. **KANBAN.md on main only**: Never modify KANBAN.md in a feature worktree
+2. **Commit before worktree**: Always commit KANBAN.md changes before creating worktree
+3. **One idea per worktree**: Each worktree corresponds to exactly one Kanban task
+4. **Clean separation**: Task tracking happens on main, implementation in worktree
+
+## Example Workflow
+
+User asks: "Add dark mode support"
+
+1. Create branch and worktree:
    ```bash
    git branch feat/add-dark-mode main
    git worktree add ../termaid-add-dark-mode feat/add-dark-mode
    ```
 
-2. Travailler dans le nouveau worktree :
+2. Work in the new worktree:
    ```bash
    cd ../termaid-add-dark-mode
-   # Faire les modifications...
+   # Make changes...
    ```
 
-3. Créer la PR quand prêt :
+3. Create PR when ready:
    ```bash
    git push -u origin feat/add-dark-mode
    gh pr create --title "feat: add dark mode support" --body "..."
    ```
 
-4. Après la fusion :
+4. After merge:
    ```bash
    git worktree remove ../termaid-add-dark-mode
    git branch -d feat/add-dark-mode
    ```
 
-## Commandes Prêtes à Utiliser
+## Ready-to-Use Commands
 
-### Créer un Nouveau Worktree
+### Create a New Worktree
 
 ```bash
-git branch <nom-branche> main
-git worktree add ../termaid-<nom-branche> <nom-branche>
+git branch <branch-name> main
+git worktree add ../termaid-<branch-name> <branch-name>
 ```
 
-### Vérifier les Worktrees Existants
+### Check Existing Worktrees
 
 ```bash
 git worktree list
 ```
 
-### Supprimer un Worktree
+### Remove a Worktree
 
 ```bash
-git worktree remove ../termaid-<nom>
-git branch -d <nom-branche>
+git worktree remove ../termaid-<name>
+git branch -d <branch-name>
 ```

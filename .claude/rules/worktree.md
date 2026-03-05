@@ -102,6 +102,109 @@ git worktree prune
 3. **Always create PR**: Never commit directly to main
 4. **Clean up after merge**: Remove worktrees after PRs are merged
 
+## Kanban Integration
+
+The KANBAN.md file must always be modified on the `main` branch before creating a worktree. This ensures task tracking is consistent across all worktrees.
+
+### Mandatory Workflow Sequence
+
+```
+┌─────────────────────────────────────┐
+│  STEP 1: On main worktree           │
+│  - Select idea from backlog         │
+│  - Update KANBAN.md                 │
+│  - Commit KANBAN.md on main         │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│  STEP 2: On main worktree           │
+│  - Create branch: git branch        │
+│  - Create worktree: git worktree    │
+└──────────────┬──────────────────────┘
+               │
+               │ Switch to worktree
+               ▼
+┌─────────────────────────────────────┐
+│  STEP 3: In feature worktree        │
+│  - Implement changes                │
+│  - Validate: npm run validate       │
+│  - Commit: /workflow-commit         │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│  STEP 4: In feature worktree        │
+│  - Push: git push -u origin         │
+│  - Create PR: gh pr create          │
+└──────────────┬──────────────────────┘
+               │
+               │ PR merged
+               ▼
+┌─────────────────────────────────────┐
+│  STEP 5: On main worktree           │
+│  - Pull: git pull origin main       │
+│  - Cleanup worktree                 │
+│  - Delete branch                    │
+└─────────────────────────────────────┘
+```
+
+### Skills Integration
+
+| Skill | Location | Purpose |
+|-------|----------|---------|
+| `/start-task` | Main worktree | Start Kanban task: update KANBAN.md, create worktree |
+| `/complete-task` | Feature worktree | Complete work: validate, commit, push, create PR |
+| `/push-and-pr` | Feature worktree | Push branch and create PR only |
+| `/cleanup-worktree` | Main worktree | Remove worktree and branch after PR merge |
+
+### Workflow Commands
+
+#### Start a new task (from main worktree)
+
+```bash
+# Use the skill
+/start-task
+
+# Or manually:
+# 1. Update KANBAN.md (move idea to In Progress)
+# 2. Commit KANBAN.md on main
+# 3. Create branch and worktree
+git branch feat/my-feature main
+git worktree add ../termaid-my-feature feat/my-feature
+```
+
+#### Complete work (from feature worktree)
+
+```bash
+# Use the skill (includes validation, commit, push, PR)
+/complete-task
+
+# Or step by step:
+npm run validate
+/workflow-commit
+/push-and-pr
+```
+
+#### After PR merge (from main worktree)
+
+```bash
+# Use the skill
+/cleanup-worktree <name>
+
+# Or manually:
+git pull origin main
+git worktree remove ../termaid-<name>
+git branch -d <branch-name>
+```
+
+### Important Rules
+
+1. **KANBAN.md on main only**: Never modify KANBAN.md in a feature worktree
+2. **Commit before worktree**: Always commit KANBAN.md changes before creating worktree
+3. **One idea per worktree**: Each worktree corresponds to exactly one Kanban task
+4. **Clean separation**: Task tracking happens on main, implementation in worktree
+
 ## Example Workflow
 
 User asks: "Add dark mode support"
