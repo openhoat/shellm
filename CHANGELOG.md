@@ -10,7 +10,8 @@ To view the complete history, use: `git log`
 
 #### 05/03
 
-- **[14:14:13] 🔧 [CHORE]** Optimize rules and consolidate skills
+- **[16:23:49] 🐛 [FIX]** Ensure delete button remains visible with long conversation titles
+- **[14:14:33] 🔧 [CHORE]** Optimize rules and consolidate skills
 - **[11:10:19] 🔧 [CHORE]** Consolidate configuration files and add agent skills
 - **[10:13:35] 🔧 [CHORE]** Add config optimization ideas and clean done section
 - **[10:09:54] 🔧 [CHORE]** Add config optimization ideas and clean done section
