@@ -19,6 +19,7 @@
 
 ## 📝 Backlog
 
+- [ ] **#config-kanban-slim [05/03/2026 11:30:00] 🟡 P2 ⚙️ [CONFIG]** Remove legend sections from KANBAN.md (Priority Legend, Category Icons) - definitions already exist in task_format.md, keeps Kanban focused on tasks
 - [ ] **#arch-import [04/03/2026 17:55:00] 🟡 P2 🏗️ [ARCHITECTURE]** Implement conversation import feature: parse exported JSON, validate schema, restore conversations with messages, handle version compatibility
 - [ ] **#ux-conversations [04/03/2026 10:20:00] 🟡 P2 🎨 [UX]** Improve conversations panel UI - ensure delete button ('x') remains visible when conversation titles are long
 - [ ] **#arch-shell [25/02/2026 10:30:00] 🟡 P2 🏗️ [ARCHITECTURE]** Create `termaidsh` meta-shell: interactive shell wrapper with AI command suggestion, pre-filled validation, and output interpretation (reusing shared LLM providers)
