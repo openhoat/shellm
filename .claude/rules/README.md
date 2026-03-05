@@ -60,7 +60,7 @@ Skills are located in `.claude/skills/` and can be invoked with `/skill-name`.
 |---------|-------------|
 | `/kanban` | Manage KANBAN.md (read/update tasks and ideas) |
 | `/kanban-add-idea` | Add idea to backlog interactively |
-| `/start-task` | Start Kanban task: update KANBAN.md, create worktree |
+| `/start-task` | Start Kanban task: update KANBAN.md, create branch and worktree (stays on main) |
 | `/complete-task` | Complete work in worktree: validate, commit, push, PR |
 
 ### Git & Release

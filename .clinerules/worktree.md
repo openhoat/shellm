@@ -19,13 +19,15 @@ Use worktrees when:
 ```
 /home/openhoat/work/
 ├── termaid/              # Main worktree (main branch)
-├── termaid-<feature>/    # Feature worktrees
+├── termaid-<feature>/    # Feature worktrees (e.g., termaid-conversation-import)
 ```
+
+**Important**: Worktrees are created at `/home/openhoat/work/termaid-<name>`, NOT in `.claude/worktrees/`.
 
 ## Worktree Naming Convention
 
-- Format: `termaid-<branch-name>`
-- Branch names should be in kebab-case
+- Format: `termaid-<branch-name>` (kebab-case)
+- Branch prefix: `feat/` for features, `fix/` for bugfixes
 - Examples:
   - `feat/dependabot-config` → `termaid-dependabot`
   - `feat/add-dark-mode` → `termaid-add-dark-mode`
@@ -46,13 +48,21 @@ This will:
 1. Select idea from backlog
 2. Update KANBAN.md on main branch
 3. Commit KANBAN.md on main
-4. Create branch and worktree
-5. Display instructions to switch
+4. Create branch (e.g., `feat/conversation-import`)
+5. Create worktree at `../termaid-<name>`
+6. Return to main branch
+
+**Then manually switch to the worktree:**
+```bash
+cd ../termaid-<name>
+```
 
 ### 2. Work in the Worktree
 
+After manually switching to the feature worktree:
+
 ```bash
-cd ../termaid-<feature>
+# Already in the worktree
 # Make changes, commit, test
 npm run validate
 ```
@@ -112,6 +122,7 @@ git worktree prune
 3. **Always create a PR**: Never commit directly to main
 4. **Clean up after merge**: Remove worktrees after PRs are merged
 5. **KANBAN.md on main only**: Never modify KANBAN.md in a feature worktree
+6. **Manual worktree switch**: After `/start-task`, manually switch with `cd`
 
 ## Kanban Integration
 
@@ -124,17 +135,20 @@ The KANBAN.md file must always be modified on the `main` branch before creating 
 │  STEP 1: On main worktree           │
 │  - Run /start-task                  │
 │  - Select idea from backlog         │
-│  - Update KANBAN.md                 │
-│  - Commit KANBAN.md on main         │
-│  - Create branch & worktree          │
+│  - Update KANBAN.md                  │
+│  - Commit KANBAN.md on main          │
+│  - Create branch                     │
+│  - Create worktree                   │
+│  - Return to main                    │
 └──────────────┬──────────────────────┘
                │
-               │ Switch to worktree
+               │ Manual switch
                ▼
 ┌─────────────────────────────────────┐
 │  STEP 2: In feature worktree        │
-│  - Implement changes                │
-│  - Run /complete-task               │
+│  - cd ../termaid-<name>              │
+│  - Implement changes                 │
+│  - Run /complete-task                │
 │  - (validates, commits, pushes, PR) │
 └──────────────┬──────────────────────┘
                │
@@ -151,7 +165,7 @@ The KANBAN.md file must always be modified on the `main` branch before creating 
 
 | Skill | Location | Purpose |
 |-------|----------|---------|
-| `/start-task` | **Main worktree only** | Start Kanban task: update KANBAN.md, create worktree |
+| `/start-task` | **Main worktree only** | Start Kanban task: update KANBAN.md, create branch and worktree, stay on main |
 | `/complete-task` | **Feature worktree only** | Complete work: validate, commit, push, PR |
 | `/push-and-pr` | **Feature worktree only** | Push branch and create PR only |
 | `/cleanup-worktree` | **Main worktree only** | Remove worktree and branch after PR merge |
@@ -163,6 +177,8 @@ The KANBAN.md file must always be modified on the `main` branch before creating 
 ```bash
 # Use the skill (RECOMMENDED)
 /start-task
+# Stays on main - manually switch to worktree
+cd ../termaid-<name>
 ```
 
 #### Complete work (from feature worktree)
@@ -186,6 +202,7 @@ The KANBAN.md file must always be modified on the `main` branch before creating 
 3. **One idea per worktree**: Each worktree corresponds to exactly one Kanban task
 4. **Clean separation**: Task tracking happens on main, implementation in worktree
 5. **No direct commits to main**: All changes must go through PR workflow
+6. **Manual switch required**: After `/start-task`, manually switch with `cd`
 
 ## Example Workflow
 
@@ -195,12 +212,13 @@ User asks: "Add dark mode support"
    ```bash
    /start-task
    # Select the idea from backlog
-   # This creates worktree automatically
+   # Creates worktree, returns to main
+   cd ../termaid-dark-mode  # Manual switch
    ```
 
-2. Work in the new worktree:
+2. Work in the worktree:
    ```bash
-   cd ../termaid-dark-mode
+   # Already in termaid-dark-mode worktree
    # Make changes...
    ```
 
@@ -216,32 +234,42 @@ User asks: "Add dark mode support"
    /cleanup-worktree dark-mode
    ```
 
-## Ready-to-Use Commands
+## Creating Worktrees Manually
 
-### Create a New Worktree (manually, rarely needed)
+If you need to create a worktree manually (without `/start-task`):
 
 ```bash
-git branch <branch-name> main
-git worktree add ../termaid-<branch-name> <branch-name>
+# 1. Create the branch
+git checkout -b feat/<feature-name>
+
+# 2. Create the worktree
+git worktree add ../termaid-<feature-name> feat/<feature-name>
+
+# 3. Return to main
+git checkout main
+
+# 4. Switch to worktree
+cd ../termaid-<feature-name>
 ```
 
-### Check Existing Worktrees
+## Removing Worktrees Manually
 
 ```bash
-git worktree list
-```
+# 1. Switch to main worktree
+cd /home/openhoat/work/termaid
 
-### Remove a Worktree (manually, rarely needed)
-
-```bash
+# 2. Remove the worktree
 git worktree remove ../termaid-<name>
+
+# 3. Delete the branch (optional, if merged)
 git branch -d <branch-name>
+
+# 4. Clean up stale references
+git worktree prune
 ```
 
-## Deprecated Workflows
+## Prohibited Actions
 
-**The following workflows are deprecated and should NOT be used:**
-
-- `/kanban-execute` - Use `/start-task` instead
-- Direct commits to main branch - Always use PR workflow
-- Modifying KANBAN.md from feature worktree - Update from main only
+- **Direct commits to main branch**: Always use PR workflow
+- **Modifying KANBAN.md from feature worktree**: Update from main only
+- **Using EnterWorktree tool**: Creates worktrees in wrong location, use `git worktree add` instead

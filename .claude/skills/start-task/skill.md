@@ -1,9 +1,3 @@
----
-name: start-task
-description: Start a kanban task by creating a worktree. Selects idea from backlog, updates KANBAN.md on main, creates branch and worktree. Use to begin work on a backlog item.
-disable-model-invocation: false
----
-
 # Skill: Start Task
 
 Start a Kanban task by selecting an idea from the backlog, updating KANBAN.md on main branch, and creating a worktree for isolated work.
@@ -15,7 +9,6 @@ This skill integrates the Kanban workflow with git worktrees to provide:
 - KANBAN.md updates committed on main branch
 - Isolated worktrees for each feature/fix
 - Clean separation between task tracking and implementation
-- **Automatic continuation in the worktree**
 
 ## Prerequisites
 
@@ -32,7 +25,7 @@ This skill integrates the Kanban workflow with git worktrees to provide:
 
 ## Arguments
 
-- `idea-number` (optional): The number of the idea to start. If not provided, shows the backlog for selection.
+- `idea-number` (optional): The number of the idea to start. If not provided, prompts user to select via AskUserQuestion.
 
 ## Execution Steps
 
@@ -54,26 +47,24 @@ If not in main worktree, display error:
 
 Read the KANBAN.md file at project root and parse ideas from "## 📝 Backlog" section.
 
-### 3. Display backlog ideas
-
-If no idea number provided, display numbered list:
-
-```
-📋 **Backlog Ideas:**
-
-**#1** 🔴 P1 🏗️ [ARCHITECTURE] Refactor conversation import feature
-**#2** 🟡 P2 🎨 [UX] Add keyboard shortcuts for quick actions
-**#3** 🟢 P3 ✅ [TEST] Add unit tests for chat service
-
-Enter the number of the idea to start (or 'cancel' to abort):
-```
-
-### 4. Get idea selection
+### 3. Get idea selection
 
 If idea number provided as argument, use it directly.
-Otherwise, use AskUserQuestion to get the selection.
 
-### 5. Parse selected idea
+Otherwise, use AskUserQuestion to select from backlog ideas:
+
+```
+AskUserQuestion with:
+- header: "Task"
+- question: "Quelle idée souhaitez-vous démarrer ?"
+- options: formatted backlog ideas (max 4, with priority and category)
+```
+
+**Important**: Do NOT display the list separately before using AskUserQuestion - the tool already presents options interactively. Use AskUserQuestion directly.
+
+If the backlog has more than 4 ideas, show the first 4 and include an "Other" option for the user to specify by number.
+
+### 4. Parse selected idea
 
 Extract from the idea line:
 - Priority (P1/P2/P3)
@@ -81,18 +72,17 @@ Extract from the idea line:
 - Description
 - Task ID (hash like `#arch-import`)
 
-### 6. Generate worktree name
+### 5. Generate worktree name
 
 Convert idea description to kebab-case worktree name:
 - Remove task ID and priority
 - Extract key words from description
-- Prefix with `termaid-`
 - Examples:
-  - "Add keyboard shortcuts" → `termaid-keyboard-shortcuts`
-  - "Fix login bug" → `termaid-login-bug`
-  - "Implement conversation import" → `termaid-conversation-import`
+  - "Add keyboard shortcuts" → `keyboard-shortcuts`
+  - "Fix login bug" → `login-bug`
+  - "Implement conversation import" → `conversation-import`
 
-### 7. Update KANBAN.md
+### 6. Update KANBAN.md
 
 Move idea from Backlog to In Progress:
 
@@ -115,42 +105,47 @@ Use Edit tool to:
 1. Remove the idea line from "## 📝 Backlog" section
 2. Add the idea as a section under "## 🚧 In Progress"
 
-### 8. Commit KANBAN.md on main
+### 7. Commit KANBAN.md on main
 
 ```bash
 git add KANBAN.md
 git commit -m "chore(kanban): start task #<task-id> - <description>"
 ```
 
-### 9. Enter worktree automatically
+### 8. Create branch and worktree
 
-Use the `EnterWorktree` tool to create branch and worktree in one step:
+Create the branch and worktree using git native commands:
+
+```bash
+# Create the branch
+git checkout -b feat/<worktree-name>
+
+# Create the worktree at the correct location
+git worktree add ../termaid-<worktree-name> feat/<worktree-name>
+
+# Return to main branch
+git checkout main
+```
+
+**Important**:
+- Worktrees are created at `/home/openhoat/work/termaid-<name>` (NOT in `.claude/worktrees/`)
+- This follows the project's native worktree workflow defined in `.claude/rules/worktree.md`
+- Do NOT use `EnterWorktree` tool as it creates worktrees in the wrong location
+
+### 9. Display success message
 
 ```
-EnterWorktree with name: termaid-<worktree-name>
-```
-
-This will:
-- Create the worktree directory at `.claude/worktrees/<name>`
-- Create a new branch automatically
-- Switch the current session into the new worktree
-- Continue working directly in the isolated environment
-
-**Note**: Do NOT create the branch manually before EnterWorktree. The tool creates its own branch.
-
-### 10. Display success message
-
-```
-✅ Task Started: #arch-import
-   📋 Implement conversation import feature
+✅ Task Started: #<task-id>
+   📋 <description>
 
 📋 Kanban Updated:
    - Moved idea from Backlog to In Progress
-   - Commit: abc123
+   - Commit: <commit-hash>
 
-📁 Worktree Entered: .claude/worktrees/termaid-conversation-import
+📁 Worktree Created: ../termaid-<worktree-name>
 
-✅ Ready to work! You are now in the feature worktree.
+⚠️ Next Step: Switch to the worktree to start working:
+   cd ../termaid-<worktree-name>
 ```
 
 ## Error Handling
@@ -158,10 +153,11 @@ This will:
 - **Not in main worktree**: Abort and instruct user to switch to main
 - **No ideas in backlog**: Inform user and suggest `/kanban-add-idea`
 - **Worktree directory exists**: Abort and suggest cleanup
+- **Branch already exists**: Abort and suggest different name or cleanup
 
 ## Integration with Other Skills
 
-- **After this**: Continue working directly in the worktree (automatic switch)
+- **After this**: Switch to worktree manually with `cd ../termaid-<name>`
 - **To complete**: Use `/complete-task` in the feature worktree
 - **To push and create PR**: Use `/push-and-pr` in the feature worktree
 - **After PR merge**: Use `/cleanup-worktree` in the main worktree
@@ -189,32 +185,47 @@ This will:
                │
                ▼
 ┌─────────────────────────────────────┐
-│  EnterWorktree                      │
-│  - Create worktree                  │
-│  - Create branch automatically      │
-│  - Switch session to worktree       │
+│  Create branch and worktree         │
+│  - git checkout -b feat/<name>      │
+│  - git worktree add ../termaid-<n>  │
+│  - git checkout main                │
 └──────────────┬──────────────────────┘
                │
                ▼
 ┌─────────────────────────────────────┐
-│  END: Ready to work in worktree     │
-│  Continue implementation            │
+│  END: Worktree ready                │
+│  User switches: cd ../termaid-<name>│
 └─────────────────────────────────────┘
 ```
 
+## Important Rules
+
+- **Always on main**: KANBAN.md modifications must be committed on main branch
+- **One idea per worktree**: Each worktree corresponds to one task/PR
+- **Create branch first**: Always create branch before creating worktree
+- **Commit before worktree**: Always commit KANBAN.md before creating worktree
+- **Native git worktrees**: Use `git worktree add` (NOT EnterWorktree tool)
+- **Return to main**: After creating worktree, return to main branch
+- **Manual switch**: User must manually switch to worktree with `cd`
+
 ## Example
 
+User runs `/start-task` without argument. AskUserQuestion displays options interactively:
+
 ```
-User: /start-task
+AskUserQuestion:
+  header: "Task"
+  question: "Quelle idée souhaitez-vous démarrer ?"
+  options:
+    - "#1 - Conversation import (P2)"
+    - "#2 - Keyboard shortcuts (P2)"
+    - "#3 - Unit tests (P3)"
+    - "Other..."
+```
 
-📋 **Backlog Ideas:**
+User selects option #1.
 
-**#1** 🔴 P1 🏗️ [ARCHITECTURE] Refactor conversation import feature
-**#2** 🟡 P2 🎨 [UX] Add keyboard shortcuts for quick actions
-**#3** 🟢 P3 ✅ [TEST] Add unit tests for chat service
-
-Enter the number of the idea to start: 1
-
+```
 ✅ Task Started: #arch-import
    📋 Implement conversation import feature
 
@@ -222,15 +233,8 @@ Enter the number of the idea to start: 1
    - Moved idea from Backlog to In Progress
    - Commit: abc123
 
-📁 Worktree Entered: .claude/worktrees/termaid-conversation-import
+📁 Worktree Created: ../termaid-conversation-import
 
-✅ Ready to work! You are now in the feature worktree.
+⚠️ Next Step: Switch to the worktree to start working:
+   cd ../termaid-conversation-import
 ```
-
-## Important Rules
-
-- **Always on main**: KANBAN.md modifications must be committed on main branch
-- **One idea per worktree**: Each worktree corresponds to one task/PR
-- **No manual branch creation**: EnterWorktree creates the branch automatically
-- **Commit before worktree**: Always commit KANBAN.md before calling EnterWorktree
-- **Automatic continuation**: After worktree creation, continue working immediately in the new worktree
