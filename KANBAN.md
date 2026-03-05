@@ -26,14 +26,17 @@
 - [ ] **#arch-export [26/02/2026 14:00:00] 🟢 P3 🏗️ [ARCHITECTURE]** Multi-format export: Markdown, PDF, HTML with syntax highlighting
 - [ ] **#ux-context [26/02/2026 14:00:00] 🟢 P3 🎨 [UX]** Contextual AI suggestions based on current directory, project type detection, and recent commands
 - [ ] **#devops-autoupdate [26/02/2026 14:00:00] 🟢 P3 🔧 [DEVOPS]** Implement auto-update: version check at startup, background download, changelog notification, rollback support
+- [ ] **#config-lang-merge [05/03/2026 10:04:00] 🟡 P2 ⚙️ [CONFIG]** Merge `language.md` and `language_preference.md` into a single rule file in both `.claude/rules/` and `.clinerules/`
+- [ ] **#config-format-dedup [05/03/2026 10:04:00] 🟡 P2 ⚙️ [CONFIG]** Deduplicate tags/emojis/format definitions: make `task_format.md` the single source of truth, remove duplicates from `log_changes.md`, `commit_messages.md`, and agent files
+- [ ] **#config-rules-condense [05/03/2026 10:04:00] 🟡 P2 ⚙️ [CONFIG]** Condense verbose rules: reduce `subagents.md` (-40%), `mcp_intellij.md` (-50%), `worktree.md` (-35%), `log_changes.md` (-40%) to minimize context window usage
+- [ ] **#config-readme-slim [05/03/2026 10:04:00] 🟢 P3 ⚙️ [CONFIG]** Slim down `.claude/rules/README.md`: remove quick reference section (redundant with individual rules), keep only the file index
+- [ ] **#config-skill-commit [05/03/2026 10:04:00] 🟡 P2 ⚙️ [CONFIG]** Remove `create-git-commit` skill (subset of `workflow-commit`) and update all references
+- [ ] **#config-skill-kanban [05/03/2026 10:04:00] 🟢 P3 ⚙️ [CONFIG]** Merge `read-kanban` and `update-kanban` skills into a single `/kanban` skill with action parameter
+- [ ] **#config-sync-clinerules [05/03/2026 10:04:00] 🟡 P2 ⚙️ [CONFIG]** Synchronize `.clinerules/` with `.claude/rules/` changes: port E2E Playwright section to `.claude/rules/testing.md`, align diverged content, keep tool-name adaptations (Edit vs replace_in_file)
+- [ ] **#config-skill-agents [05/03/2026 10:04:00] 🟢 P3 ⚙️ [CONFIG]** Add missing entry-point skills for agents: `/code-review`, `/security-audit`, `/deps-update` to invoke corresponding agents
+- [ ] **#config-error-recovery [05/03/2026 10:04:00] 🟢 P3 ⚙️ [CONFIG]** Document error recovery workflows: what to do when `/complete-task` fails mid-way, how to resume abandoned worktrees, how to resolve Kanban conflicts
+- [ ] **#config-clinerules-wf [05/03/2026 10:04:00] 🟢 P3 ⚙️ [CONFIG]** Align `.clinerules/workflows/` with `.claude/skills/` additions: add missing Cline equivalents for new skills (worktree management, complete-task, start-task)
 
 ## 🚧 In Progress
 
 ## ✅ Done
-
-- [x] **[05/03/2026 15:30:00] 📝 [DOCS]** Architecture page: add sandbox service, audit service, provider registry documentation
-- [x] **[05/03/2026 15:30:00] 📝 [DOCS]** New page for Internationalization: 7 languages, dual settings (UI/AI), auto-detection
-- [x] **[05/03/2026 15:30:00] 📝 [DOCS]** Keyboard shortcuts in usage.md: add Ctrl+/ for cheat sheet
-- [x] **[05/03/2026 15:30:00] 📝 [DOCS]** Security section in usage.md: add command validation (risk levels), sandbox modes, audit logging
-- [x] **#doc-diagram [04/03/2026 18:30:00] 📝 [DOCS]** Improve architecture diagram rendering - replace ASCII diagrams with Mermaid for better readability
-- [x] **#doc-readme-update [04/03/2026 17:15:00] 📝 [DOCS]** Update README.md to document latest features (simplified to avoid duplication with docs)
