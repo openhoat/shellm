@@ -16,9 +16,6 @@ Use MCP IntelliJ when you need to:
 - **Get IDE diagnostics, errors, warnings, and code inspections**
 
 ## Available MCP IntelliJ Tools
-- **Identify and fix code errors detected by the IDE** (TypeScript errors, warnings, inspections)
-
-## Available MCP IntelliJ Tools
 
 ### `navigate_to_symbol`
 
@@ -91,14 +88,6 @@ Get available quick fixes for a diagnostic issue.
 **Use when**: The IDE provides automatic fixes for detected issues.
 
 **Example**: Get quick fixes for a TypeScript error to apply suggested corrections.
-
-### `get_diagnostics`
-
-Get diagnostics (errors, warnings, info) from the IDE for a file or the entire project.
-
-**Use when**: You need to identify TypeScript errors, linting issues, code inspections detected by IntelliJ/WebStorm.
-
-**Example**: Get all diagnostics for `src/components/ChatPanel.tsx` to fix type errors.
 
 ### `get_file_errors`
 
@@ -193,25 +182,6 @@ Use `find_code_pattern` to discover:
 4. Apply quick fix for 3 warnings (unused variables)
 5. Re-check: 0 errors, 9 warnings remaining
 ```
-
-### Workflow 4: Fixing IDE-Detected Errors
-
-**Goal**: Fix TypeScript and code quality issues detected by IntelliJ.
-
-**Steps**:
-1. Use `get_diagnostics` for a file or the entire project
-2. Analyze reported errors, warnings, and inspections
-3. Use `navigate_to_file` with line numbers to jump to issue locations
-4. Use `get_quick_fixes` to see available automatic fixes
-5. Apply fixes using Edit tool or suggested quick fixes
-6. Re-run `get_diagnostics` to verify all issues are resolved
-
-**Example**: Fix TypeScript errors in `src/components/ChatPanel.tsx`:
-1. Get diagnostics for the file
-2. See error: "Type 'string' is not assignable to type 'AICommand | Message'"
-3. Navigate to line 42 where error occurs
-4. Get quick fixes - suggests adding type guard or changing type
-5. Apply the fix using Edit tool
 
 ## Integration with Other Rules
 

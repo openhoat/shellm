@@ -122,3 +122,45 @@ This rule applies to:
 - All existing test files (refactor to use `test` instead of `it`)
 - Test files in `src/**/*.test.{ts,tsx}`
 - Test files in `electron/**/*.test.{ts,tsx}`
+
+## E2E Tests (Playwright)
+
+The project also includes end-to-end tests using Playwright.
+
+### Test Framework
+
+E2E tests use **Playwright** with:
+- Test fixtures in `tests/e2e/fixtures.ts`
+- Mock capabilities for LLM responses
+- Electron application testing support
+
+### Running E2E Tests
+
+**IMPORTANT**: Always use headless mode for CI/Linux environments:
+
+```bash
+npm run test:e2e:headless
+```
+
+This command:
+- Runs tests without a visible browser window
+- Works on servers without display
+- Is required for CI/CD pipelines
+
+### E2E Test Location
+
+- E2E tests are in `tests/e2e/`
+- Test files use `.test.ts` suffix
+- Fixtures are defined in `tests/e2e/fixtures.ts`
+
+### Difference from Unit Tests
+
+| Aspect | Unit Tests (Vitest) | E2E Tests (Playwright) |
+|--------|---------------------|------------------------|
+| Command | `npm run test` | `npm run test:e2e:headless` |
+| Speed | Fast (ms) | Slower (seconds) |
+| Scope | Isolated components | Full application |
+| Environment | Happy DOM | Real browser |
+| Included in validate | Yes | No |
+
+For detailed E2E testing documentation, see `tests/e2e/README.md`.

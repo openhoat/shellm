@@ -14,15 +14,6 @@ See `.clinerules/task_format.md` for detailed format rules.
 
 Summary for CHANGELOG.md:
 - Format: `**[HH:MM:SS] Emoji [TAG]** Description`
-- Tags and emojis:
-  - `✨ [FEAT]` - New feature
-  - `🐛 [FIX]` - Bug fix
-  - `♻️ [REFACTOR]` - Refactoring
-  - `⚡ [PERF]` - Performance
-  - `📝 [DOCS]` - Documentation
-  - `🎨 [STYLE]` - Style/Cosmetic
-  - `✅ [TEST]` - Tests
-  - `🔧 [CHORE]` - Configuration/Maintenance
 - Sorted in reverse chronological order (most recent at top)
 - Organized by year/month/day (full date in sections)
 

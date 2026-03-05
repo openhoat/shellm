@@ -7,8 +7,7 @@ This directory contains project rules adapted for Claude Code.
 | File | Description |
 |------|-------------|
 | `commit_messages.md` | Git commit messages in Conventional Commits (English) |
-| `language.md` | All content must be in English (except src/locales/fr.json) |
-| `language_preference.md` | Respond in French to user unless specified otherwise |
+| `language.md` | All content in English + respond in French to user |
 | `log_changes.md` | Log modifications in CHANGELOG.md |
 | `markdown_formatting.md` | Standard markdown formatting (no consecutive blank lines) |
 | `mcp_intellij.md` | MCP IntelliJ integration for code analysis and navigation |
@@ -17,6 +16,7 @@ This directory contains project rules adapted for Claude Code.
 | `task_format.md` | Task format for KANBAN.md and CHANGELOG.md |
 | `testing.md` | Testing standards (use `test` instead of `it`) |
 | `worktree.md` | Native git worktrees workflow for multi-branch development |
+| `error_recovery.md` | Error recovery workflows for task failures |
 
 ## Agents
 
@@ -77,65 +77,3 @@ Skills are located in `.claude/skills/` and can be invoked with `/skill-name`.
 | `/generate-changelog` | Regenerate CHANGELOG.md from Git history |
 | `/release` | Automate versioning (bump, changelog, commit, tag, push) |
 | `/workflow-commit` | Complete workflow: validate, commit, changelog, kanban |
-
-## Workflow
-
-When working on this project with Claude Code:
-
-1. **Read and understand** the rules before starting work
-2. **Use native worktrees** for each feature/PR (see `worktree.md`)
-3. **Use English** for all code, comments, documentation, and commit messages
-4. **Follow Kanban workflow** when working on tasks:
-   - Use `/kanban-execute` to select and execute backlog ideas
-   - Use `/kanban-add-idea` to add new ideas to backlog
-   - Use `/read-kanban` to check current state
-5. **Run quality checks** (`/run-validation` or `/workflow-commit`) after each code modification
-6. **Log changes** in CHANGELOG.md after successful modifications
-7. **Follow Conventional Commits** for all git commits
-8. **Create Pull Request** for each worktree when changes are ready
-
-## Quick Reference
-
-### Commit Message Format
-```
-<type>(<scope>): <subject>
-```
-
-Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`
-
-### CHANGELOG Entry Format
-```
-**[HH:MM:SS] ✨ [FEAT]** Description
-```
-
-Tags: `[FEAT]`, `[FIX]`, `[REFACTOR]`, `[PERF]`, `[DOCS]`, `[STYLE]`, `[TEST]`, `[CHORE]`
-
-### Kanban Workflow Summary
-
-#### Integrated Kanban + Worktree Workflow
-1. `/start-task` - On main: select backlog idea, update KANBAN.md, create worktree
-2. `cd ../termaid-<name>` - Switch to feature worktree
-3. Work on the feature in worktree
-4. `/complete-task` - In worktree: validate, commit, push, create PR
-5. After PR merge: `cd ../termaid` - Return to main worktree
-6. `/cleanup-worktree <name>` - On main: remove worktree and branch
-
-#### Traditional Worktree Workflow (without Kanban)
-1. `/create-worktree <name>` - Create new worktree for feature
-2. `cd ../termaid-<name>` - Switch to worktree
-3. Make changes, run validation
-4. `git push -u origin <branch>` - Push and create PR
-5. After PR merge: `git worktree remove ../termaid-<name> && git branch -d <branch>`
-
-### Recommended Agent Usage
-
-| Task | Agent to Use |
-|------|--------------|
-| Code quality validation | `quality-validator` |
-| Test execution | `test-runner` |
-| Code review | `code-reviewer` |
-| Documentation | `documentation-generator` |
-| KANBAN tasks | `kanban-task-executor` |
-| Security audit | `security-auditor` |
-| Performance analysis | `performance-analyzer` |
-| Dependency management | `dependency-manager` |

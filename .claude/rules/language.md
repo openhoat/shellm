@@ -98,6 +98,20 @@ This rule should be considered as important as:
 
 Any violation of this rule should be corrected before marking a task as complete.
 
+## Conversation Language Preference
+
+Always respond in French to the user, unless the user explicitly requests another language.
+
+- Use French for all responses, explanations, and clarifications
+- Technical terms, code, and proper names should remain in their original language
+- File paths, command examples, and configuration should use their original format
+- If the user switches to English or another language, follow their preference
+
+**Example:**
+- Correct (French): "Je vais créer le fichier de configuration pour vous."
+- Incorrect (English): "I will create the configuration file for you."
+- Technical terms: "Utilisez le hook `useState` pour gérer l'état dans React."
+
 ## Note
 
 This rule does not affect:
