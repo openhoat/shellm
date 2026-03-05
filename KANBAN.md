@@ -21,11 +21,6 @@
 
 - [ ] **#arch-import [04/03/2026 17:55:00] 🟡 P2 🏗️ [ARCHITECTURE]** Implement conversation import feature: parse exported JSON, validate schema, restore conversations with messages, handle version compatibility
 - [ ] **#ux-conversations [04/03/2026 10:20:00] 🟡 P2 🎨 [UX]** Improve conversations panel UI - ensure delete button ('x') remains visible when conversation titles are long
-- [ ] **#doc-features [04/03/2026 10:15:00] 🟡 P2 📝 [DOCS]** Update documentation to include latest features:
-    - [ ] Security section in usage.md: add command validation (risk levels), sandbox modes, audit logging
-    - [ ] Keyboard shortcuts in usage.md: add Ctrl+/ for cheat sheet
-    - [ ] New page for Internationalization: 7 languages, dual settings (UI/AI), auto-detection
-    - [ ] Architecture page: add sandbox service, audit service, provider registry
 - [ ] **#arch-shell [25/02/2026 10:30:00] 🟡 P2 🏗️ [ARCHITECTURE]** Create `termaidsh` meta-shell: interactive shell wrapper with AI command suggestion, pre-filled validation, and output interpretation (reusing shared LLM providers)
 - [ ] **#perf-stats [26/02/2026 14:00:00] 🟢 P3 🚀 [PERFORMANCE]** Add usage statistics dashboard: commands executed, success/failure rate, response time per provider
 - [ ] **#arch-export [26/02/2026 14:00:00] 🟢 P3 🏗️ [ARCHITECTURE]** Multi-format export: Markdown, PDF, HTML with syntax highlighting
@@ -36,5 +31,9 @@
 
 ## ✅ Done
 
+- [x] **[05/03/2026 15:30:00] 📝 [DOCS]** Architecture page: add sandbox service, audit service, provider registry documentation
+- [x] **[05/03/2026 15:30:00] 📝 [DOCS]** New page for Internationalization: 7 languages, dual settings (UI/AI), auto-detection
+- [x] **[05/03/2026 15:30:00] 📝 [DOCS]** Keyboard shortcuts in usage.md: add Ctrl+/ for cheat sheet
+- [x] **[05/03/2026 15:30:00] 📝 [DOCS]** Security section in usage.md: add command validation (risk levels), sandbox modes, audit logging
 - [x] **#doc-diagram [04/03/2026 18:30:00] 📝 [DOCS]** Improve architecture diagram rendering - replace ASCII diagrams with Mermaid for better readability
 - [x] **#doc-readme-update [04/03/2026 17:15:00] 📝 [DOCS]** Update README.md to document latest features (simplified to avoid duplication with docs)
