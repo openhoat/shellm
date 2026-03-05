@@ -10,12 +10,14 @@ To view the complete history, use: `git log`
 
 #### 05/03
 
-- **[10:15:00] 📝 [DOCS]** Add security services documentation (sandbox, audit, provider registry) to architecture.md
-- **[10:15:00] 🐛 [FIX]** Fix conversations panel UI - correct nested buttons HTML structure and improve delete button visibility
+- **[09:22:41] 📝 [DOCS]** Mark documentation tasks as completed
+- **[09:21:58] 🐛 [FIX]** Correct nested buttons html in conversations panel and update docs
+- **[08:50:40] 🎨 [STYLE]** Format vitepress config with biome
 
 #### 04/03
 
-- **[18:30:00] 📝 [DOCS]** Replace ASCII diagrams with Mermaid in architecture documentation
+- **[17:54:55] 📝 [DOCS]** Replace ascii diagrams with mermaid in architecture documentation
+- **[17:47:32] 📝 [DOCS]** Regenerate changelog from git history
 - **[17:44:53] ✨ [FEAT]** Add sandbox configuration ui and update documentation
 - **[17:22:31] 🐛 [FIX]** Use different port for vitepress to avoid conflict
 - **[17:22:25] 🐛 [FIX]** Correct stale closure bug in message output handling
