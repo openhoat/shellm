@@ -108,13 +108,10 @@ STEP 2 (feature): Implement → Validate → Run /complete-task
 STEP 3 (main): Pull → Run /cleanup-worktree
 ```
 
-## Deprecated Workflows
+## Prohibited Actions
 
-**The following approaches are deprecated:**
-
-- `/kanban-execute` - Use `/start-task` instead
-- Direct commits to main branch - Always use PR workflow
-- Modifying KANBAN.md from feature worktree - Update from main only
+- **Direct commits to main branch**: Always use PR workflow
+- **Modifying KANBAN.md from feature worktree**: Update from main only
 
 ## Enforcement
 
