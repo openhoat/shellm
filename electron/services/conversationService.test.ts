@@ -105,6 +105,71 @@ describe('ConversationService types', () => {
     })
   })
 
+  describe('Import format validation', () => {
+    test('should reject invalid JSON', () => {
+      const invalidJson = 'not a json'
+      expect(() => JSON.parse(invalidJson)).toThrow()
+    })
+
+    test('should reject data without conversations array', () => {
+      const data = { version: '1.0.0' }
+      expect(Array.isArray(data.conversations)).toBe(false)
+    })
+
+    test('should validate conversation structure', () => {
+      const validConv = {
+        id: '1',
+        title: 'Test',
+        createdAt: 1000,
+        updatedAt: 2000,
+        messages: [{ role: 'user', content: 'Hello' }],
+      }
+      expect(typeof validConv.title).toBe('string')
+      expect(typeof validConv.createdAt).toBe('number')
+      expect(typeof validConv.updatedAt).toBe('number')
+      expect(Array.isArray(validConv.messages)).toBe(true)
+    })
+
+    test('should skip conversations with missing required fields', () => {
+      const invalidConv = { id: '1', title: 'Test' }
+      const hasMessages = Array.isArray((invalidConv as Record<string, unknown>).messages)
+      expect(hasMessages).toBe(false)
+    })
+
+    test('should filter invalid messages during import', () => {
+      const messages = [
+        { role: 'user', content: 'Hello' },
+        { role: 'assistant', content: 'Hi' },
+        { role: 123, content: 'Invalid' },
+        { role: 'user' },
+      ]
+      const valid = messages.filter(
+        m => m && typeof m.role === 'string' && typeof m.content === 'string'
+      )
+      expect(valid.length).toBe(2)
+    })
+
+    test('should accept valid export format', () => {
+      const exportData = {
+        $schema: 'https://github.com/openhoat/termaid/schemas/conversation-export.schema.json',
+        exportDate: new Date().toISOString(),
+        version: '1.0.0',
+        conversations: [
+          {
+            id: '1',
+            title: 'Test Conv',
+            createdAt: 1000,
+            updatedAt: 2000,
+            messages: [{ role: 'user', content: 'Hello' }],
+          },
+        ],
+      }
+      expect(Array.isArray(exportData.conversations)).toBe(true)
+      expect(exportData.conversations.length).toBe(1)
+      expect(exportData.version).toBe('1.0.0')
+    })
+  })
+
   describe('ID generation', () => {
     test('should generate unique IDs', () => {
       const id1 = `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`

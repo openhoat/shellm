@@ -137,6 +137,13 @@ export interface ElectronAPI {
     filePath?: string
     error?: string
   }>
+  conversationImport: () => Promise<{
+    success: boolean
+    cancelled?: boolean
+    imported?: number
+    skipped?: number
+    error?: string
+  }>
 }
 
 declare global {

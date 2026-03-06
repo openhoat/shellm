@@ -272,6 +272,68 @@ class ConversationService {
   }
 
   /**
+   * Import conversations from exported JSON data
+   * Generates new IDs to avoid conflicts with existing conversations
+   */
+  async importConversations(jsonData: string): Promise<{ imported: number; skipped: number }> {
+    let parsed: unknown
+    try {
+      parsed = JSON.parse(jsonData)
+    } catch {
+      throw new Error('Invalid JSON format')
+    }
+
+    const exportData = parsed as {
+      version?: string
+      conversations?: unknown[]
+    }
+
+    if (!exportData || typeof exportData !== 'object' || !Array.isArray(exportData.conversations)) {
+      throw new Error('Invalid export format: missing conversations array')
+    }
+
+    const data = await this.read()
+    let imported = 0
+    let skipped = 0
+
+    for (const conv of exportData.conversations) {
+      const c = conv as Record<string, unknown>
+      if (
+        !c ||
+        typeof c !== 'object' ||
+        typeof c.title !== 'string' ||
+        typeof c.createdAt !== 'number' ||
+        typeof c.updatedAt !== 'number' ||
+        !Array.isArray(c.messages)
+      ) {
+        skipped++
+        continue
+      }
+
+      const now = Date.now()
+      const newConversation: Conversation = {
+        id: `${now}-${Math.random().toString(36).slice(2, 11)}-import-${imported}`,
+        title: c.title,
+        createdAt: c.createdAt,
+        updatedAt: c.updatedAt,
+        messages: (c.messages as ConversationMessage[]).filter(
+          m => m && typeof m.role === 'string' && typeof m.content === 'string'
+        ),
+      }
+
+      data.conversations.push(newConversation)
+      imported++
+    }
+
+    if (imported > 0) {
+      await this.save(data)
+      this.invalidateCache()
+    }
+
+    return { imported, skipped }
+  }
+
+  /**
    * Export all conversations to JSON format
    */
   async exportAllConversations(): Promise<string> {

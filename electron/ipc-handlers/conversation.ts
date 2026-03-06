@@ -63,6 +63,57 @@ export function createConversationHandlers(): void {
     return true
   })
 
+  // Import conversations from a JSON file
+  ipcMain.handle('conversation:import', async () => {
+    try {
+      const fs = await import('node:fs')
+      const path = await import('node:path')
+
+      let filePath: string | undefined
+
+      // In test mode, read from a predefined temp file
+      if (process.env.NODE_ENV === 'test') {
+        const tempDir = app.getPath('temp')
+        filePath = path.join(tempDir, 'test_import.json')
+        if (!fs.existsSync(filePath)) {
+          return { success: false, error: 'Test import file not found' }
+        }
+      } else {
+        const result = await dialog.showOpenDialog({
+          title: 'Import Conversations',
+          filters: [
+            { name: 'JSON Files', extensions: ['json'] },
+            { name: 'All Files', extensions: ['*'] },
+          ],
+          properties: ['openFile'],
+        })
+
+        if (result.canceled || result.filePaths.length === 0) {
+          return { success: false, cancelled: true }
+        }
+
+        filePath = result.filePaths[0]
+      }
+
+      const jsonData = fs.readFileSync(filePath, 'utf-8')
+      const importResult = await conversationService.importConversations(jsonData)
+
+      return {
+        success: true,
+        imported: importResult.imported,
+        skipped: importResult.skipped,
+      }
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for import errors
+      console.error('[Conversation] Failed to import conversations:', error)
+      return {
+        success: false,
+        cancelled: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      }
+    }
+  })
+
   // Export a single conversation to JSON file
   ipcMain.handle('conversation:export', async (_event, id: string) => {
     try {

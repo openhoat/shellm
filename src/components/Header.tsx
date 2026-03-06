@@ -16,6 +16,7 @@ export const Header = ({ onShowShortcuts }: HeaderProps) => {
     currentConversationId,
     loadConversation,
     deleteConversation,
+    importConversations,
     startNewConversation,
     incrementChatResetKey,
   } = useStore()
@@ -88,6 +89,24 @@ export const Header = ({ onShowShortcuts }: HeaderProps) => {
       // biome-ignore lint/suspicious/noConsole: Debug logging for export errors
       console.error('[Header] Failed to export conversation:', error)
       setTemporaryExportStatus(error instanceof Error ? error.message : t('header.exportFailed'))
+    }
+  }
+
+  const handleImport = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    try {
+      const result = await importConversations()
+      if (result.success) {
+        setTemporaryExportStatus(t('header.importSuccess', { count: result.imported ?? 0 }))
+      } else if (result.error) {
+        setTemporaryExportStatus(result.error)
+      }
+    } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: Debug logging for import errors
+      console.error('[Header] Failed to import conversations:', error)
+      setTemporaryExportStatus(error instanceof Error ? error.message : t('header.importFailed'))
     }
   }
 
@@ -208,6 +227,27 @@ export const Header = ({ onShowShortcuts }: HeaderProps) => {
             >
               <title>{t('header.conversations')}</title>
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </button>
+          <button
+            type="button"
+            className="icon-button"
+            onClick={e => handleImport(e)}
+            title={t('header.importConversations')}
+            data-testid="import-button"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <title>{t('header.importConversations')}</title>
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
             </svg>
           </button>
           <button
