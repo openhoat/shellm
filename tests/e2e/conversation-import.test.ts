@@ -1,6 +1,8 @@
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
 import type { ElectronApplication, Page } from '@playwright/test'
 import { expect, test } from '@playwright/test'
-import type { Conversation } from '@shared/types'
 import { closeElectronApp, launchElectronApp, waitForAppReady } from './electron-app'
 import {
   getChatMessages,
@@ -8,24 +10,12 @@ import {
   isWelcomeMessageVisible,
   loadConversation,
   openConversationList,
+  sendMessage,
+  waitForAIResponse,
   waitForChatReady,
 } from './helpers'
 import { SELECTORS } from './selectors'
 import { TIMEOUTS } from './timeouts'
-
-// Pre-seeded conversations to simulate previously saved data
-const seededConversations: Conversation[] = [
-  {
-    id: 'conv-seeded-1',
-    title: 'Seeded conversation for load test',
-    createdAt: Date.now() - 20000,
-    updatedAt: Date.now() - 10000,
-    messages: [
-      { role: 'user', content: 'Hello from seeded conversation' },
-      { role: 'assistant', content: 'AI response from seeded conversation' },
-    ],
-  },
-]
 
 test.describe('Termaid E2E - Conversation Import & Load', () => {
   test.describe('Load saved conversation', () => {
@@ -37,7 +27,6 @@ test.describe('Termaid E2E - Conversation Import & Load', () => {
         locale: 'en',
         mocks: {
           aiCommand: { type: 'text', content: 'Mock AI response.' },
-          conversations: seededConversations,
         },
       })
       app = result.app
@@ -52,17 +41,32 @@ test.describe('Termaid E2E - Conversation Import & Load', () => {
     test('should display messages when loading a saved conversation', async () => {
       await waitForChatReady(page)
 
-      // Welcome screen should be visible initially
+      // Create a conversation by sending a message
+      await sendMessage(page, 'Hello from test conversation')
+      await waitForAIResponse(page)
+
+      // Verify messages exist before switching
+      const messagesBeforeSwitch = await getChatMessages(page)
+      expect(messagesBeforeSwitch.length).toBeGreaterThanOrEqual(2)
+
+      // Start a new conversation to go back to welcome screen
+      const newButton = page.locator(SELECTORS.newConversationButton)
+      await newButton.click()
+
+      // Wait for welcome screen to appear
+      await page.waitForSelector(SELECTORS.chatWelcome, {
+        state: 'visible',
+        timeout: TIMEOUTS.standard,
+      })
       const welcomeVisible = await isWelcomeMessageVisible(page)
       expect(welcomeVisible).toBe(true)
 
-      // Open conversation list and verify seeded conversation appears
+      // Open conversation list and verify our conversation appears
       await openConversationList(page)
       const items = await getConversationListItems(page)
       expect(items.length).toBeGreaterThanOrEqual(1)
-      expect(items[0]).toContain('Seeded conversation')
 
-      // Click on the seeded conversation to load it
+      // Click on the saved conversation to load it
       await loadConversation(page, 0)
 
       // Wait for messages to appear
@@ -86,6 +90,28 @@ test.describe('Termaid E2E - Conversation Import & Load', () => {
     let page: Page
 
     test.beforeAll(async () => {
+      // Write test import file to temp directory before launching the app
+      // The real IPC handler reads from this file in test mode (NODE_ENV=test)
+      const tempDir = os.tmpdir()
+      const importData = JSON.stringify({
+        $schema: 'termaid-export',
+        exportDate: new Date().toISOString(),
+        version: '1.0',
+        conversations: [
+          {
+            id: 'imported-conv-1',
+            title: 'Imported conversation',
+            createdAt: Date.now() - 50000,
+            updatedAt: Date.now() - 40000,
+            messages: [
+              { role: 'user', content: 'Hello from imported conversation' },
+              { role: 'assistant', content: 'Response from imported conversation' },
+            ],
+          },
+        ],
+      })
+      fs.writeFileSync(path.join(tempDir, 'test_import.json'), importData, 'utf-8')
+
       const result = await launchElectronApp({
         locale: 'en',
         mocks: {
@@ -99,6 +125,13 @@ test.describe('Termaid E2E - Conversation Import & Load', () => {
 
     test.afterAll(async () => {
       await closeElectronApp(app)
+
+      // Clean up the test import file
+      try {
+        fs.unlinkSync(path.join(os.tmpdir(), 'test_import.json'))
+      } catch {
+        // Ignore cleanup errors
+      }
     })
 
     test('should import conversations and display them in the list', async () => {
@@ -108,18 +141,13 @@ test.describe('Termaid E2E - Conversation Import & Load', () => {
       const importButton = page.locator(SELECTORS.importButton)
       await expect(importButton).toBeVisible()
 
-      // Import conversations via the API (simulates the import flow)
-      const importResult = await page.evaluate(async () => {
-        return window.electronAPI.conversationImport()
-      })
-      expect(importResult.success).toBe(true)
-      expect(importResult.imported).toBeGreaterThan(0)
+      // Click the import button (triggers store action -> real IPC handler -> reads temp file)
+      await importButton.click()
 
-      // Refresh the conversation list in the store
-      await page.evaluate(async () => {
-        // Trigger a re-load of conversations
-        const conversations = await window.electronAPI.conversationGetAll()
-        return conversations.length
+      // Wait for the import to complete (status message appears)
+      await page.waitForSelector('.export-status', {
+        state: 'visible',
+        timeout: TIMEOUTS.standard,
       })
 
       // Open conversation list and verify imported conversation appears
