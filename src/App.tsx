@@ -4,12 +4,13 @@ import { ConfigPanel } from './components/ConfigPanel'
 import { Header } from './components/Header'
 import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal'
 import { Resizer } from './components/Resizer'
+import { StatsPanel } from './components/StatsPanel'
 import { Terminal } from './components/Terminal'
 import { useStore } from './store/useStore'
 import './App.css'
 
 export const App = () => {
-  const { initConfig, showConfigPanel } = useStore()
+  const { initConfig, showConfigPanel, showStatsPanel, toggleStatsPanel } = useStore()
   const [splitPosition, setSplitPosition] = useState(600) // Initial split position in pixels
   const [showShortcutsModal, setShowShortcutsModal] = useState(false)
 
@@ -70,6 +71,7 @@ export const App = () => {
         <ChatPanel style={{ flex: 1, minWidth: '300px' }} />
       </div>
       {showConfigPanel && <ConfigPanel />}
+      {showStatsPanel && <StatsPanel onClose={toggleStatsPanel} />}
       {showShortcutsModal && (
         <KeyboardShortcutsModal onClose={() => setShowShortcutsModal(false)} />
       )}

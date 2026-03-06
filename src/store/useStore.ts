@@ -17,6 +17,8 @@ const selectConversations = (state: AppState) => state.conversations
 const selectCurrentConversationId = (state: AppState) => state.currentConversationId
 const selectShowConfigPanel = (state: AppState) => state.showConfigPanel
 const selectToggleConfigPanel = (state: AppState) => state.toggleConfigPanel
+const selectShowStatsPanel = (state: AppState) => state.showStatsPanel
+const selectToggleStatsPanel = (state: AppState) => state.toggleStatsPanel
 const selectClearAllConversations = (state: AppState) => state.clearAllConversations
 
 // Optimized hooks - available for future use
@@ -31,6 +33,8 @@ export const useConversations = () => useStore(selectConversations, useShallow)
 export const useCurrentConversationId = () => useStore(selectCurrentConversationId)
 export const useShowConfigPanel = () => useStore(selectShowConfigPanel)
 export const useToggleConfigPanel = () => useStore(selectToggleConfigPanel)
+export const useShowStatsPanel = () => useStore(selectShowStatsPanel)
+export const useToggleStatsPanel = () => useStore(selectToggleStatsPanel)
 export const useClearAllConversations = () => useStore(selectClearAllConversations)
 
 interface AppState {
@@ -98,6 +102,8 @@ interface AppState {
   // UI
   showConfigPanel: boolean
   toggleConfigPanel: () => void
+  showStatsPanel: boolean
+  toggleStatsPanel: () => void
   selectedCommand: string | null
   setSelectedCommand: (command: string | null) => void
 }
@@ -303,6 +309,8 @@ export const useStore = create<AppState>((set, _get) => ({
   // UI
   showConfigPanel: false,
   toggleConfigPanel: () => set(state => ({ showConfigPanel: !state.showConfigPanel })),
+  showStatsPanel: false,
+  toggleStatsPanel: () => set(state => ({ showStatsPanel: !state.showStatsPanel })),
   selectedCommand: null,
   setSelectedCommand: command => set({ selectedCommand: command }),
 }))

@@ -8,6 +8,7 @@
       "models": "Modèles",
       "config": "Configuration",
       "settings": "Paramètres",
+      "statistics": "Statistiques d'utilisation",
       "newConversation": "Nouvelle conversation",
       "conversations": "Conversations",
       "conversationsTitle": "Conversations",
@@ -25,6 +26,31 @@
       "importConversations": "Importer des conversations",
       "importSuccess": "{{count}} conversation(s) importée(s) avec succès",
       "importFailed": "Échec de l'import"
+    },
+    "stats": {
+      "title": "Statistiques d'utilisation",
+      "confirmClear": "Êtes-vous sûr de vouloir effacer toutes les statistiques ?",
+      "period": {
+        "all": "Tout",
+        "24h": "Dernières 24h",
+        "7d": "7 derniers jours",
+        "30d": "30 derniers jours"
+      },
+      "overall": "Statistiques globales",
+      "totalCommands": "Total de commandes",
+      "successful": "Réussies",
+      "failed": "Échouées",
+      "successRate": "Taux de réussite",
+      "byProvider": "Statistiques par provider",
+      "commands": "Commandes",
+      "avgResponseTime": "Temps moy.",
+      "minResponseTime": "Temps min.",
+      "maxResponseTime": "Temps max.",
+      "timeline": "Chronologie d'utilisation",
+      "firstUsage": "Première utilisation",
+      "lastUsage": "Dernière utilisation",
+      "export": "Exporter les statistiques",
+      "clear": "Effacer les statistiques"
     },
     "chat": {
       "title": "Chat IA",
