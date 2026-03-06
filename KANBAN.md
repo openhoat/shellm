@@ -12,10 +12,10 @@
 
 ## 🚧 In Progress
 
-### [06/03/2026 10:45:00] 💡 [IDEA] #bug-terminal-resize Fix terminal resize refresh
-- [ ] **[06/03/2026 10:45:00] 🐛 [FIX]** Use ResizeObserver to detect container size changes instead of only window resize events
-
 ### [04/03/2026 17:55:00] 💡 [IDEA] #arch-import Implement conversation import feature
 - [ ] **[06/03/2026 17:55:00] ✨ [FEAT]** Implement conversation import feature: parse exported JSON, validate schema, restore conversations with messages, handle version compatibility
 
 ## ✅ Done
+
+### [06/03/2026 10:45:00] 💡 [IDEA] #bug-terminal-resize Fix terminal resize refresh
+- [x] **[06/03/2026 10:45:00] 🐛 [FIX]** Use ResizeObserver to detect container size changes instead of only window resize events
