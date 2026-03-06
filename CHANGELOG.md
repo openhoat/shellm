@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 06/03
 
+- **[15:32:30] 📝 [DOCS]** Update demo GIF in documentation
 - **[11:09:47] 🔧 [CHORE]** Start task #arch-import - implement conversation import feature
 - **[11:09:47] ✨ [FEAT]** Add conversation import feature
 - **[11:09:47] 🐛 [FIX]** Restore messages when loading a saved conversation
