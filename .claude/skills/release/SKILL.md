@@ -83,14 +83,25 @@ node -e "console.log(require('./package.json').version)"
 Store this value as `NEW_VERSION` and use it for all subsequent steps (commit message, tag name).
 If the version does not match the expected bump, abort and investigate.
 
-### 6. Regenerate CHANGELOG
+### 6. Coherence Check
+
+Ensure no residual references to the old version remain in the project.
+Search for `OLD_VERSION` and replace with `NEW_VERSION` in:
+- `README.md`
+- `CHANGELOG.md`
+- `docs/.vitepress/config.mts`
+- `docs/guide/getting-started.md`
+- Test files (e.g., `src/components/Header.test.tsx`)
+- Script examples
+
+### 7. Regenerate CHANGELOG
 
 Run the changelog generation script:
 ```bash
 npm run changelog
 ```
 
-### 7. Run validation
+### 8. Run validation
 
 Run the project validation to ensure everything is clean:
 ```bash
@@ -99,22 +110,22 @@ npm run validate
 
 If validation fails, fix the issues before proceeding.
 
-### 8. Create git commit
+### 9. Create git commit
 
 Stage all modified files and create the release commit using `NEW_VERSION` from step 5:
 ```bash
-git add package.json package-lock.json README.md CHANGELOG.md
+git add package.json package-lock.json README.md CHANGELOG.md docs/ src/ scripts/
 git commit -m "chore(release): bump version to v${NEW_VERSION}"
 ```
 
-### 9. Create git tag
+### 10. Create git tag
 
 Create an annotated git tag using `NEW_VERSION` from step 5:
 ```bash
 git tag -a v${NEW_VERSION} -m "Release v${NEW_VERSION}"
 ```
 
-### 10. Ask about pushing
+### 11. Ask about pushing
 
 Ask the user if they want to push the commit and tag to trigger the CI release pipeline:
 
@@ -131,7 +142,7 @@ If yes:
 git push && git push --tags
 ```
 
-### 11. Summary
+### 12. Summary
 
 Display a release summary:
 ```
@@ -154,7 +165,7 @@ Next steps:
 
 ### Validation fails
 - Fix issues reported by `npm run validate`
-- Re-run the skill from step 6
+- Re-run the skill from step 7
 
 ### Git commit fails
 - Check for uncommitted changes that need to be staged

@@ -18,8 +18,8 @@ export default withMermaid(
         { text: 'Guide', link: '/guide/getting-started' },
         { text: 'Configuration', link: '/guide/configuration' },
         {
-          text: 'v1.2.3',
-          link: 'https://github.com/openhoat/termaid/releases/tag/v1.2.3',
+          text: 'v1.3.5',
+          link: 'https://github.com/openhoat/termaid/releases/tag/v1.3.5',
         },
       ],
       sidebar: [
