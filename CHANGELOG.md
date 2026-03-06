@@ -10,5 +10,6 @@ To view the complete history, use: `git log`
 
 #### 06/03
 
+- **[17:05:00] 🐛 [FIX]** Use ResizeObserver for terminal container resize detection (src/components/Terminal.tsx)
 - **[16:32:14] 📝 [DOCS]** Add terminal resize fix idea to backlog
 - **[16:17:22] 🐛 [FIX]** Clean appimage environment variables for shell
