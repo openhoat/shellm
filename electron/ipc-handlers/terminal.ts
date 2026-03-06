@@ -85,12 +85,40 @@ export function createTerminalHandlers(getWindow: WindowGetter): void {
       env[key] = value
     }
 
+    // AppImage environment cleanup
+    // When running from an AppImage, we need to restore original environment variables
+    // to avoid polluting the terminal shell with internal AppImage paths.
+    if (env.APPIMAGE || env.APPDIR) {
+      // Restore original PATH if available (AppImage usually saves it)
+      if (env.PATH_ORIG) {
+        env.PATH = env.PATH_ORIG
+        delete env.PATH_ORIG
+      }
+      // Restore original LD_LIBRARY_PATH
+      if (env.LD_LIBRARY_PATH_ORIG) {
+        env.LD_LIBRARY_PATH = env.LD_LIBRARY_PATH_ORIG
+        delete env.LD_LIBRARY_PATH_ORIG
+      } else {
+        // If no original is saved, it's safer to remove it to use system default
+        delete env.LD_LIBRARY_PATH
+      }
+      // Remove other AppImage specific variables that might confuse scripts
+      delete env.APPIMAGE
+      delete env.APPDIR
+      delete env.ARGV0
+      delete env.XDG_DATA_DIRS_ORIG
+      delete env.PYTHONPATH
+      delete env.NODE_PATH
+      delete env.GSETTINGS_SCHEMA_DIR
+      delete env.QT_PLUGIN_PATH
+    }
+
     // Enable color support for ls, grep, and other commands (Unix only)
     if (process.platform !== 'win32') {
       env.LS_COLORS =
-        'di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40:31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32'
+        'di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32'
       env.GREP_COLORS = 'ms=01;31:mc=01;31:sl=:cx=:fn=:ln=:bn=:se='
-      env.GREP_OPTIONS = '--color=auto'
+      // GREP_OPTIONS is deprecated and can cause issues with system scripts
       // Ensure UTF-8 encoding for proper accent and special character handling
       env.LANG = 'en_US.UTF-8'
       env.LC_ALL = 'en_US.UTF-8'
