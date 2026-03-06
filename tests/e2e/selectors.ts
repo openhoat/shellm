@@ -68,6 +68,7 @@ export const SELECTORS = {
   newConversationButton: '[data-testid="new-conversation-button"]',
   exportButton: '.export-button',
   exportAllButton: '[data-testid="export-all-button"]',
+  importButton: '[data-testid="import-button"]',
 
   // Error states
   error: '.chat-message.ai.error',

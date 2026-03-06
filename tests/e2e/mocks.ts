@@ -409,6 +409,29 @@ export function createMockElectronAPI(
     }> => {
       return { success: true, filePath: '/tmp/all-conversations.json' }
     },
+    conversationImport: async (): Promise<{
+      success: boolean
+      imported?: number
+      skipped?: number
+      error?: string
+      cancelled?: boolean
+    }> => {
+      // Simulate importing conversations from a file
+      const importedConversations: Conversation[] = [
+        {
+          id: `conv-import-${Date.now()}`,
+          title: 'Imported conversation',
+          createdAt: Date.now() - 50000,
+          updatedAt: Date.now() - 40000,
+          messages: [
+            { role: 'user', content: 'Hello from imported conversation' },
+            { role: 'assistant', content: 'Response from imported conversation' },
+          ],
+        },
+      ]
+      storedConversations.push(...importedConversations)
+      return { success: true, imported: importedConversations.length, skipped: 0 }
+    },
   }
 }
 

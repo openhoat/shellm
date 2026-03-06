@@ -66,6 +66,7 @@ export {
   createNewConversation,
   deleteConversation,
   getConversationListItems,
+  loadConversation,
   openConversationList,
 } from './conversation'
 // Error helpers
