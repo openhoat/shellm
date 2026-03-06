@@ -120,6 +120,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   conversationClearAll: () => ipcRenderer.invoke('conversation:clear-all'),
   conversationExport: (id: string) => ipcRenderer.invoke('conversation:export', id),
   conversationExportAll: () => ipcRenderer.invoke('conversation:export-all'),
+  conversationImport: () => ipcRenderer.invoke('conversation:import'),
 
   // Audit Logs
   auditGetLogs: (query?: {

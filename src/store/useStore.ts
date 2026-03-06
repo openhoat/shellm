@@ -69,6 +69,12 @@ interface AppState {
   ) => Promise<void>
   deleteConversation: (id: string) => Promise<void>
   clearAllConversations: () => Promise<void>
+  importConversations: () => Promise<{
+    success: boolean
+    imported?: number
+    skipped?: number
+    error?: string
+  }>
   startNewConversation: () => void
 
   // Chat reset
@@ -265,6 +271,22 @@ export const useStore = create<AppState>((set, _get) => ({
       })
     } catch (error) {
       logger.error('Failed to clear all conversations:', error)
+    }
+  },
+  importConversations: async () => {
+    try {
+      const result = await window.electronAPI.conversationImport()
+      if (result.success) {
+        const conversations = await window.electronAPI.conversationGetAll()
+        set({ conversations })
+      }
+      return result
+    } catch (error) {
+      logger.error('Failed to import conversations:', error)
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      }
     }
   },
   startNewConversation: () => {

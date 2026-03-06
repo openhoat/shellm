@@ -54,6 +54,7 @@ describe('Conversation IPC Handlers', () => {
       expect(handlerNames).toContain('conversation:clear-all')
       expect(handlerNames).toContain('conversation:export')
       expect(handlerNames).toContain('conversation:export-all')
+      expect(handlerNames).toContain('conversation:import')
     })
   })
 
@@ -162,6 +163,18 @@ describe('Conversation IPC Handlers', () => {
       )?.[1]
 
       expect(typeof exportAllHandler).toBe('function')
+    })
+  })
+
+  describe('conversation:import', () => {
+    test('should have import handler registered', () => {
+      createConversationHandlers(getWindow as any)
+
+      const importHandler = ipcMain.handle.mock.calls.find(
+        (call: unknown[]) => call[0] === 'conversation:import'
+      )?.[1]
+
+      expect(typeof importHandler).toBe('function')
     })
   })
 })

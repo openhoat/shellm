@@ -21,7 +21,10 @@
       "noConversationToExport": "Aucune conversation active à exporter",
       "exportedTo": "Exporté vers {{filePath}}",
       "exportedAll": "Toutes les conversations exportées vers {{filePath}}",
-      "exportFailed": "Échec de l'export"
+      "exportFailed": "Échec de l'export",
+      "importConversations": "Importer des conversations",
+      "importSuccess": "{{count}} conversation(s) importée(s) avec succès",
+      "importFailed": "Échec de l'import"
     },
     "chat": {
       "title": "Chat IA",

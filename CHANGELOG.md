@@ -8,6 +8,10 @@ To view the complete history, use: `git log`
 
 ### 2026
 
+#### 06/03
+
+- **[10:14:00] ✨ [FEAT]** Add conversation import feature with JSON validation, schema compatibility, and UI integration
+
 #### 05/03
 
 - **[16:37:11] 🔧 [CHORE]** Enforce worktree workflow for task-based work
