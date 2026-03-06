@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 06/03
 
+- **[16:32:00] 📝 [DOCS]** Add terminal resize fix idea to backlog in KANBAN.md
 - **[16:03:15] 🐛 [FIX]** Clean AppImage environment variables to fix system initialization errors in terminal
 - **[15:32:30] 📝 [DOCS]** Update demo GIF in documentation
 - **[11:09:47] 🔧 [CHORE]** Start task #arch-import - implement conversation import feature

@@ -4,6 +4,7 @@
 
 ## 📝 Backlog
 
+- [ ] **#bug-terminal-resize [06/03/2026 10:45:00] 🔴 P1 🐛 [BUG]** Fix terminal resize refresh - use ResizeObserver to detect container size changes instead of only window resize events
 - [ ] **#arch-shell [25/02/2026 10:30:00] 🟡 P2 🏗️ [ARCHITECTURE]** Create `termaidsh` meta-shell: interactive shell wrapper with AI command suggestion, pre-filled validation, and output interpretation (reusing shared LLM providers)
 - [ ] **#perf-stats [26/02/2026 14:00:00] 🟢 P3 🚀 [PERFORMANCE]** Add usage statistics dashboard: commands executed, success/failure rate, response time per provider
 - [ ] **#arch-export [26/02/2026 14:00:00] 🟢 P3 🏗️ [ARCHITECTURE]** Multi-format export: Markdown, PDF, HTML with syntax highlighting
