@@ -92,6 +92,25 @@ Object.defineProperty(window, 'electronAPI', {
 describe('ConfigPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    // Re-setup mocks after clearing
+    mockGetConfigEnvSources.mockResolvedValue({
+      url: false,
+      apiKey: false,
+      model: false,
+      temperature: false,
+      maxTokens: false,
+      shell: false,
+      llmProvider: false,
+      claudeApiKey: false,
+      claudeModel: false,
+      openaiApiKey: false,
+      openaiModel: false,
+    })
+    mockLlmListProviders.mockResolvedValue([
+      { name: 'ollama', displayName: 'Ollama', requiresApiKey: false, supportsStreaming: true },
+      { name: 'claude', displayName: 'Claude', requiresApiKey: true, supportsStreaming: true },
+      { name: 'openai', displayName: 'OpenAI', requiresApiKey: true, supportsStreaming: true },
+    ])
     vi.mocked(useStore).mockReturnValue({
       config: defaultConfig,
       setConfig: mockSetConfig,
@@ -99,117 +118,108 @@ describe('ConfigPanel', () => {
     } as ReturnType<typeof useStore>)
   })
 
-  test('should render the config dialog', () => {
+  // Helper to render and wait for async effects
+  const renderAndWait = async () => {
     render(<ConfigPanel />)
+    // Use findBy to wait for async effects to complete and state to update
+    // findBy queries wait for elements to appear and wrap them in act()
+    await screen.findByRole('dialog')
+  }
 
+  test('should render the config dialog', async () => {
+    await renderAndWait()
     const dialog = screen.getByRole('dialog')
     expect(dialog).toBeInTheDocument()
   })
 
-  test('should render the config title', () => {
-    render(<ConfigPanel />)
-
+  test('should render the config title', async () => {
+    await renderAndWait()
     expect(screen.getByText('config.title')).toBeInTheDocument()
   })
 
-  test('should render the LLM provider section', () => {
-    render(<ConfigPanel />)
-
+  test('should render the LLM provider section', async () => {
+    await renderAndWait()
     expect(screen.getByText('config.llm.title')).toBeInTheDocument()
   })
 
-  test('should render the provider selector', () => {
-    render(<ConfigPanel />)
-
+  test('should render the provider selector', async () => {
+    await renderAndWait()
     const providerSelect = screen.getByRole('combobox', { name: /config.llm.provider/i })
     expect(providerSelect).toBeInTheDocument()
   })
 
-  test('should show ollama section by default', () => {
-    render(<ConfigPanel />)
-
+  test('should show ollama section by default', async () => {
+    await renderAndWait()
     expect(screen.getByText('config.ollama.title')).toBeInTheDocument()
   })
 
-  test('should show Ollama URL input', () => {
-    render(<ConfigPanel />)
-
+  test('should show Ollama URL input', async () => {
+    await renderAndWait()
     const urlInput = screen.getByDisplayValue('http://localhost:11434')
     expect(urlInput).toBeInTheDocument()
   })
 
-  test('should render the interface section', () => {
-    render(<ConfigPanel />)
-
+  test('should render the interface section', async () => {
+    await renderAndWait()
     expect(screen.getByText('config.interface.title')).toBeInTheDocument()
   })
 
-  test('should render the terminal section', () => {
-    render(<ConfigPanel />)
-
+  test('should render the terminal section', async () => {
+    await renderAndWait()
     expect(screen.getByText('config.terminal.title')).toBeInTheDocument()
   })
 
-  test('should render save and reset buttons', () => {
-    render(<ConfigPanel />)
-
+  test('should render save and reset buttons', async () => {
+    await renderAndWait()
     expect(screen.getByRole('button', { name: /config.common.save/ })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /config.common.reset/ })).toBeInTheDocument()
   })
 
-  test('should render close button', () => {
-    render(<ConfigPanel />)
-
+  test('should render close button', async () => {
+    await renderAndWait()
     const closeButton = screen.getByRole('button', { name: /config\.common\.close/ })
     expect(closeButton).toBeInTheDocument()
   })
 
   test('should call toggleConfigPanel when close button is clicked', async () => {
     const user = userEvent.setup()
-    render(<ConfigPanel />)
-
+    await renderAndWait()
     await user.click(screen.getByRole('button', { name: /config\.common\.close/ }))
-
     expect(mockToggleConfigPanel).toHaveBeenCalled()
   })
 
-  test('should render the test connection button', () => {
-    render(<ConfigPanel />)
-
+  test('should render the test connection button', async () => {
+    await renderAndWait()
     expect(screen.getByRole('button', { name: /test.connection/ })).toBeInTheDocument()
   })
 
-  test('should show claude section when provider is claude', () => {
+  test('should show claude section when provider is claude', async () => {
     vi.mocked(useStore).mockReturnValue({
       config: { ...defaultConfig, llmProvider: 'claude' },
       setConfig: mockSetConfig,
       toggleConfigPanel: mockToggleConfigPanel,
     } as ReturnType<typeof useStore>)
-    render(<ConfigPanel />)
-
+    await renderAndWait()
     expect(screen.getByText('config.claude.title')).toBeInTheDocument()
   })
 
-  test('should show openai section when provider is openai', () => {
+  test('should show openai section when provider is openai', async () => {
     vi.mocked(useStore).mockReturnValue({
       config: { ...defaultConfig, llmProvider: 'openai' },
       setConfig: mockSetConfig,
       toggleConfigPanel: mockToggleConfigPanel,
     } as ReturnType<typeof useStore>)
-    render(<ConfigPanel />)
-
+    await renderAndWait()
     expect(screen.getByText('config.openai.title')).toBeInTheDocument()
   })
 
-  test('should render the language selector', () => {
-    render(<ConfigPanel />)
-
+  test('should render the language selector', async () => {
+    await renderAndWait()
     expect(screen.getByTestId('language-selector')).toBeInTheDocument()
   })
 
-  test('should render theme selector', () => {
-    render(<ConfigPanel />)
-
+  test('should render theme selector', async () => {
+    await renderAndWait()
     const themeSelect = screen.getByRole('combobox', { name: /config.interface.theme/ })
     expect(themeSelect).toBeInTheDocument()
   })
@@ -217,11 +227,9 @@ describe('ConfigPanel', () => {
   // handleSave tests
   test('should call setConfig and toggleConfigPanel when save button is clicked', async () => {
     const user = userEvent.setup()
-    render(<ConfigPanel />)
-
+    await renderAndWait()
     const saveButton = screen.getByRole('button', { name: /config.common.save/ })
     await user.click(saveButton)
-
     expect(mockSetConfig_electron).toHaveBeenCalledWith(defaultConfig)
     expect(mockSetConfig).toHaveBeenCalledWith(defaultConfig)
     expect(mockToggleConfigPanel).toHaveBeenCalled()
@@ -229,12 +237,10 @@ describe('ConfigPanel', () => {
 
   test('should save modified configuration when save button is clicked', async () => {
     const user = userEvent.setup()
-    render(<ConfigPanel />)
-
-    // Modify the URL by selecting all and typing new value
+    await renderAndWait()
     const urlInput = screen.getByDisplayValue('http://localhost:11434') as HTMLInputElement
     await user.click(urlInput)
-    await user.tripleClick(urlInput) // Select all text
+    await user.tripleClick(urlInput)
     await user.keyboard('http://custom:11434')
 
     const saveButton = screen.getByRole('button', { name: /config.common.save/ })
@@ -252,21 +258,17 @@ describe('ConfigPanel', () => {
   // handleReset tests
   test('should call resetConfig when reset button is clicked', async () => {
     const user = userEvent.setup()
-    render(<ConfigPanel />)
-
+    await renderAndWait()
     const resetButton = screen.getByRole('button', { name: /config.common.reset/ })
     await user.click(resetButton)
-
     expect(mockResetConfig).toHaveBeenCalled()
   })
 
   test('should update config with default values after reset', async () => {
     const user = userEvent.setup()
-    render(<ConfigPanel />)
-
+    await renderAndWait()
     const resetButton = screen.getByRole('button', { name: /config.common.reset/ })
     await user.click(resetButton)
-
     expect(mockSetConfig).toHaveBeenCalledWith(defaultConfig)
   })
 
@@ -274,128 +276,95 @@ describe('ConfigPanel', () => {
   test('should show success message when connection test succeeds', async () => {
     const user = userEvent.setup()
     mockLlmTestConnection.mockResolvedValueOnce(true)
-    render(<ConfigPanel />)
-
+    await renderAndWait()
     const testButton = screen.getByRole('button', { name: /test.connection/ })
     await user.click(testButton)
-
-    // Wait for async operations
     expect(mockLlmInit).toHaveBeenCalled()
     expect(mockLlmTestConnection).toHaveBeenCalled()
-
-    // Check success message
     expect(await screen.findByText('errors.connectionSuccess')).toBeInTheDocument()
   })
 
   test('should show error message when connection test fails', async () => {
     const user = userEvent.setup()
     mockLlmTestConnection.mockResolvedValueOnce(false)
-    render(<ConfigPanel />)
-
+    await renderAndWait()
     const testButton = screen.getByRole('button', { name: /test.connection/ })
     await user.click(testButton)
-
-    // Wait for async operations
     expect(mockLlmInit).toHaveBeenCalled()
     expect(mockLlmTestConnection).toHaveBeenCalled()
-
-    // Check error message
     expect(await screen.findByText('errors.connection')).toBeInTheDocument()
   })
 
   test('should show error message when connection test throws an error', async () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined)
     const user = userEvent.setup()
     mockLlmTestConnection.mockRejectedValueOnce(new Error('Connection refused'))
-    render(<ConfigPanel />)
-
+    await renderAndWait()
     const testButton = screen.getByRole('button', { name: /test.connection/ })
     await user.click(testButton)
-
-    // Check error message
     expect(await screen.findByText('Connection refused')).toBeInTheDocument()
+    consoleErrorSpy.mockRestore()
   })
 
   // Input change tests
   test('should update URL input value', async () => {
     const user = userEvent.setup()
-    render(<ConfigPanel />)
-
+    await renderAndWait()
     const urlInput = screen.getByDisplayValue('http://localhost:11434') as HTMLInputElement
     await user.click(urlInput)
     await user.tripleClick(urlInput)
     await user.keyboard('http://custom:1234')
-
     expect(urlInput.value).toBe('http://custom:1234')
   })
 
   test('should update temperature slider value', async () => {
-    const _user = userEvent.setup()
-    render(<ConfigPanel />)
-
+    await renderAndWait()
     const temperatureSlider = screen.getByRole('slider', { name: /config.common.temperature/ })
-    // Range input - verify it exists and shows correct initial value
     expect(temperatureSlider).toHaveValue('0.7')
   })
 
   test('should update maxTokens input value', async () => {
     const user = userEvent.setup()
-    render(<ConfigPanel />)
-
+    await renderAndWait()
     const maxTokensInput = screen.getByRole('spinbutton', {
       name: /config.common.maxTokens/,
     }) as HTMLInputElement
-    // Select all and type new value
     await user.click(maxTokensInput)
     await user.tripleClick(maxTokensInput)
     await user.keyboard('2000')
-
     expect(maxTokensInput.value).toBe('2000')
   })
 
   test('should update shell selection', async () => {
     const user = userEvent.setup()
-    render(<ConfigPanel />)
-
+    await renderAndWait()
     const shellSelect = screen.getByRole('combobox', { name: /config.terminal.shell/ })
     await user.selectOptions(shellSelect, 'bash')
-
     expect(shellSelect).toHaveValue('bash')
   })
 
   test('should update theme selection', async () => {
     const user = userEvent.setup()
-    render(<ConfigPanel />)
-
+    await renderAndWait()
     const themeSelect = screen.getByRole('combobox', { name: /config.interface.theme/ })
     await user.selectOptions(themeSelect, 'light')
-
     expect(themeSelect).toHaveValue('light')
   })
 
   test('should update provider selection to claude', async () => {
     const user = userEvent.setup()
-    render(<ConfigPanel />)
-
-    // Wait for providers to load
-    await screen.findByRole('combobox', { name: /config.llm.provider/ })
-
+    await renderAndWait()
     const providerSelect = screen.getByRole('combobox', { name: /config.llm.provider/ })
     await user.selectOptions(providerSelect, 'claude')
-
     expect(providerSelect).toHaveValue('claude')
     expect(screen.getByText('config.claude.title')).toBeInTheDocument()
   })
 
   test('should update provider selection to openai', async () => {
     const user = userEvent.setup()
-    render(<ConfigPanel />)
-
-    // Wait for providers to load
-    await screen.findByRole('combobox', { name: /config.llm.provider/ })
-
+    await renderAndWait()
     const providerSelect = screen.getByRole('combobox', { name: /config.llm.provider/ })
     await user.selectOptions(providerSelect, 'openai')
-
     expect(providerSelect).toHaveValue('openai')
     expect(screen.getByText('config.openai.title')).toBeInTheDocument()
   })
@@ -403,102 +372,153 @@ describe('ConfigPanel', () => {
   // Env badge display tests
   test('should show env badge when URL is from environment variable', async () => {
     mockGetConfigEnvSources.mockResolvedValueOnce({
-      ...mockGetConfigEnvSources(),
       url: true,
+      apiKey: false,
+      model: false,
+      temperature: false,
+      maxTokens: false,
+      shell: false,
+      llmProvider: false,
+      claudeApiKey: false,
+      claudeModel: false,
+      openaiApiKey: false,
+      openaiModel: false,
     })
     render(<ConfigPanel />)
-
-    // Wait for env sources to load
     expect(await screen.findAllByText('Environment variable')).toHaveLength(1)
     expect(screen.getByText('TERMAID_OLLAMA_URL')).toBeInTheDocument()
   })
 
   test('should show env badge when model is from environment variable', async () => {
     mockGetConfigEnvSources.mockResolvedValueOnce({
-      ...mockGetConfigEnvSources(),
+      url: false,
+      apiKey: false,
       model: true,
+      temperature: false,
+      maxTokens: false,
+      shell: false,
+      llmProvider: false,
+      claudeApiKey: false,
+      claudeModel: false,
+      openaiApiKey: false,
+      openaiModel: false,
     })
     render(<ConfigPanel />)
-
     expect(await screen.findByText('TERMAID_OLLAMA_MODEL')).toBeInTheDocument()
   })
 
   test('should show env badge when temperature is from environment variable', async () => {
     mockGetConfigEnvSources.mockResolvedValueOnce({
-      ...mockGetConfigEnvSources(),
+      url: false,
+      apiKey: false,
+      model: false,
       temperature: true,
+      maxTokens: false,
+      shell: false,
+      llmProvider: false,
+      claudeApiKey: false,
+      claudeModel: false,
+      openaiApiKey: false,
+      openaiModel: false,
     })
     render(<ConfigPanel />)
-
     expect(await screen.findByText('TERMAID_OLLAMA_TEMPERATURE')).toBeInTheDocument()
   })
 
   test('should show env badge when maxTokens is from environment variable', async () => {
     mockGetConfigEnvSources.mockResolvedValueOnce({
-      ...mockGetConfigEnvSources(),
+      url: false,
+      apiKey: false,
+      model: false,
+      temperature: false,
       maxTokens: true,
+      shell: false,
+      llmProvider: false,
+      claudeApiKey: false,
+      claudeModel: false,
+      openaiApiKey: false,
+      openaiModel: false,
     })
     render(<ConfigPanel />)
-
     expect(await screen.findByText('TERMAID_OLLAMA_MAX_TOKENS')).toBeInTheDocument()
   })
 
   test('should show env badge when shell is from environment variable', async () => {
     mockGetConfigEnvSources.mockResolvedValueOnce({
-      ...mockGetConfigEnvSources(),
+      url: false,
+      apiKey: false,
+      model: false,
+      temperature: false,
+      maxTokens: false,
       shell: true,
+      llmProvider: false,
+      claudeApiKey: false,
+      claudeModel: false,
+      openaiApiKey: false,
+      openaiModel: false,
     })
     render(<ConfigPanel />)
-
     expect(await screen.findByText('TERMAID_SHELL')).toBeInTheDocument()
   })
 
   test('should show env badge when llmProvider is from environment variable', async () => {
     mockGetConfigEnvSources.mockResolvedValueOnce({
-      ...mockGetConfigEnvSources(),
+      url: false,
+      apiKey: false,
+      model: false,
+      temperature: false,
+      maxTokens: false,
+      shell: false,
       llmProvider: true,
+      claudeApiKey: false,
+      claudeModel: false,
+      openaiApiKey: false,
+      openaiModel: false,
     })
     render(<ConfigPanel />)
-
     expect(await screen.findByText('Environment variable')).toBeInTheDocument()
   })
 
   test('should disable input when field is from environment variable', async () => {
     mockGetConfigEnvSources.mockResolvedValueOnce({
-      ...mockGetConfigEnvSources(),
       url: true,
+      apiKey: false,
+      model: false,
+      temperature: false,
+      maxTokens: false,
+      shell: false,
+      llmProvider: false,
+      claudeApiKey: false,
+      claudeModel: false,
+      openaiApiKey: false,
+      openaiModel: false,
     })
     render(<ConfigPanel />)
-
     const urlInput = await screen.findByDisplayValue('http://localhost:11434')
     expect(urlInput).toBeDisabled()
   })
 
   describe('tooltips', () => {
-    test('should have tooltip on close button', () => {
-      render(<ConfigPanel />)
-
+    test('should have tooltip on close button', async () => {
+      await renderAndWait()
       const closeButton = screen.getByRole('button', { name: /config\.common\.close/ })
       expect(closeButton).toHaveAttribute('title', 'config.common.close')
     })
 
-    test('should have tooltip on test connection button', () => {
-      render(<ConfigPanel />)
-
+    test('should have tooltip on test connection button', async () => {
+      await renderAndWait()
       const testButton = screen.getByRole('button', { name: /test\.connection/ })
       expect(testButton).toHaveAttribute('title', 'test.connectionTooltip')
     })
 
-    test('should have tooltip on reset button', () => {
-      render(<ConfigPanel />)
-
+    test('should have tooltip on reset button', async () => {
+      await renderAndWait()
       const resetButton = screen.getByRole('button', { name: /config\.common\.reset/ })
       expect(resetButton).toHaveAttribute('title', 'config.common.resetTooltip')
     })
 
-    test('should have tooltip on save button', () => {
-      render(<ConfigPanel />)
-
+    test('should have tooltip on save button', async () => {
+      await renderAndWait()
       const saveButton = screen.getByRole('button', { name: /config\.common\.save/ })
       expect(saveButton).toHaveAttribute('title', 'config.common.saveTooltip')
     })

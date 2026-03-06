@@ -44,9 +44,11 @@ describe('OllamaProvider', () => {
     })
 
     test('should reject an invalid URL format', () => {
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined)
       expect(() => new OllamaProvider({ ...validConfig, url: 'not-a-url' })).toThrow(
         /Invalid Ollama URL/
       )
+      consoleErrorSpy.mockRestore()
     })
 
     test('should reject a URL with unsupported protocol', () => {

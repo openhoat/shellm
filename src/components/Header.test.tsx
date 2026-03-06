@@ -400,6 +400,7 @@ describe('Header', () => {
     })
 
     test('should handle current export exception', async () => {
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined)
       mockConversationExport.mockRejectedValueOnce(new Error('Network error'))
 
       const user = userEvent.setup()
@@ -415,6 +416,7 @@ describe('Header', () => {
       await user.click(exportCurrentButton)
 
       expect(screen.getByText('Network error')).toBeInTheDocument()
+      consoleErrorSpy.mockRestore()
     })
   })
 
@@ -480,6 +482,7 @@ describe('Header', () => {
     })
 
     test('should handle export all exception', async () => {
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined)
       mockConversationExportAll.mockRejectedValueOnce(new Error('Network error'))
 
       const user = userEvent.setup()
@@ -489,6 +492,7 @@ describe('Header', () => {
       await user.click(exportAllButton)
 
       expect(screen.getByText('Network error')).toBeInTheDocument()
+      consoleErrorSpy.mockRestore()
     })
   })
 

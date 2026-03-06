@@ -48,6 +48,7 @@ describe('LLM Service IPC Handlers', () => {
 
   describe('Error handling on initialization', () => {
     test('should not throw when initial config has invalid Ollama URL', () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
       const invalidConfig = {
         llmProvider: 'ollama' as const,
         ollama: { url: '', model: 'llama2' },
@@ -60,6 +61,7 @@ describe('LLM Service IPC Handlers', () => {
 
       // Should not throw - error is caught internally
       expect(() => createLLMHandlers(getWindow as any, invalidConfig)).not.toThrow()
+      warnSpy.mockRestore()
     })
 
     test('should log warning when initial provider creation fails', () => {

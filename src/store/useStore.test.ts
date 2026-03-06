@@ -95,12 +95,14 @@ describe('useStore', () => {
     })
 
     test('should not throw when llmInit fails during initConfig', async () => {
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
       vi.mocked(window.electronAPI.llmInit).mockRejectedValueOnce(
         new Error('Provider initialization failed')
       )
 
       await expect(useStore.getState().initConfig()).resolves.not.toThrow()
       expect(window.electronAPI.getConfig).toHaveBeenCalled()
+      consoleWarnSpy.mockRestore()
     })
 
     test('should skip llmInit when provider config is incomplete', async () => {
