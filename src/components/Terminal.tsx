@@ -15,6 +15,7 @@ export const Terminal = () => {
   const fitAddonRef = useRef<FitAddon | null>(null)
   const terminalCreatedRef = useRef(false)
   const terminalPidRef = useRef<number | null>(null)
+  const resizeObserverRef = useRef<ResizeObserver | null>(null)
   const { terminalPid, setTerminalPid, appendTerminalOutput } = useStore()
 
   // Keep terminalPidRef in sync with terminalPid
@@ -178,6 +179,15 @@ export const Terminal = () => {
 
       window.addEventListener('resize', handleResize)
 
+      // Use ResizeObserver to detect container size changes (e.g., from Resizer drag)
+      resizeObserverRef.current = new ResizeObserver(() => {
+        handleResize()
+      })
+
+      if (terminalRef.current) {
+        resizeObserverRef.current.observe(terminalRef.current)
+      }
+
       logger.debug('Event handlers attached')
 
       // Now create the PTY
@@ -198,6 +208,10 @@ export const Terminal = () => {
       unsubscribeData?.()
       if (handleResize) {
         window.removeEventListener('resize', handleResize)
+      }
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect()
+        resizeObserverRef.current = null
       }
       if (xtermRef.current) {
         xtermRef.current.dispose()
