@@ -11,7 +11,4 @@
 
 ## 🚧 In Progress
 
-### [06/03/2026 12:00:00] 💡 [IDEA] #perf-stats Add usage statistics dashboard
-- [ ] **[06/03/2026 12:00:00] ✨ [FEAT]** Add usage statistics dashboard: commands executed, success/failure rate, response time per provider
-
 ## ✅ Done

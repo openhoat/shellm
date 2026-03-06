@@ -10,5 +10,9 @@ To view the complete history, use: `git log`
 
 #### 06/03
 
+- **[19:42:27] 🔧 [CHORE]** Start task #perf-stats - add usage statistics dashboard
+- **[19:42:06] ✨ [FEAT]** Add usage statistics dashboard
+- **[19:12:40] 🔧 [CHORE]** Unify task lifecycle and workflows for cline and claude code
+- **[18:58:48] 📝 [DOCS]** Regenerate changelog
 - **[18:56:25] 🔧 [CHORE]** Remove completed import feature from in progress
 - **[18:55:25] 🔧 [CHORE]** Remove completed terminal resize task from in progress
