@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 06/03
 
+- **[10:35:00] 🐛 [FIX]** Await loadConversation before resetting chat state to fix race condition on conversation selection
 - **[10:27:00] 🐛 [FIX]** Restore conversation messages when loading a saved conversation in ChatPanel
 - **[10:14:00] ✨ [FEAT]** Add conversation import feature with JSON validation, schema compatibility, and UI integration
 
