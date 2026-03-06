@@ -33,47 +33,55 @@ Should show `main` or `master`.
 git pull origin main
 ```
 
-### 3. Resolve worktree name
+### 3. Update KANBAN.md
+
+Move task from "In Progress" to "Done", then cleanup according to rules in `task_format.md`.
+
+### 4. Generate CHANGELOG.md
+
+```bash
+npm run changelog
+```
+
+### 5. Commit and Push maintenance
+
+```bash
+git add KANBAN.md CHANGELOG.md
+git commit -m "chore(release): update kanban and changelog post-merge"
+git push origin main
+```
+
+### 6. Resolve worktree name
 
 Parse argument to find worktree:
 - If no `termaid-` prefix, add it
 - If branch name like `feat/feature`, convert to worktree name
 
-### 4. Verify worktree exists
+### 7. Verify worktree exists
 
 ```bash
 git worktree list
 ```
 
-### 5. Check PR status (optional)
-
-```bash
-gh pr view <branch-name> --json state,mergedAt
-```
-
-### 6. Remove worktree
+### 8. Remove worktree
 
 ```bash
 git worktree remove ../termaid-<name>
 ```
 
-If fails with uncommitted changes, warn user.
-
-### 7. Delete branch
+### 9. Delete branch
 
 ```bash
 git branch -d <branch-name>
 ```
 
-If not fully merged, ask for force delete.
-
-### 8. Prune references
+### 10. Prune references
 
 ```bash
 git worktree prune
 ```
 
-### 9. Display success
+### 11. Display success
 
 Show cleanup summary and next steps.
 
@@ -91,6 +99,7 @@ Branch: "feat/keyboard-shortcuts"
 ## Important Rules
 
 - Always in main: Must be in main worktree
-- Verify PR merged: Check PR status before cleanup
+- Verify PR merged: Check PR status before cleanup (usually done by user before calling this)
 - Pull first: Always pull latest changes
+- **Maintenance**: Always update Kanban and Changelog on main after merge
 - Clean references: Prune worktree references after removal

@@ -71,7 +71,25 @@ If pull fails:
 - Check if remote is configured
 - Offer to continue without pull (user can handle later)
 
-### 3. Resolve worktree name
+### 3. Update KANBAN.md
+
+Move task from "In Progress" to "Done", then cleanup according to rules in `task_format.md`.
+
+### 4. Generate CHANGELOG.md
+
+```bash
+npm run changelog
+```
+
+### 5. Commit and Push maintenance
+
+```bash
+git add KANBAN.md CHANGELOG.md
+git commit -m "chore(release): update kanban and changelog post-merge"
+git push origin main
+```
+
+### 6. Resolve worktree name
 
 Parse the argument to find the worktree:
 - If `<name>` doesn't have `termaid-` prefix, add it

@@ -139,19 +139,7 @@ feat: add keyboard shortcuts for quick actions
 - Add configuration for custom shortcuts
 ```
 
-### 5. Generate changelog
-
-```bash
-npm run changelog
-```
-
-Stage and amend:
-```bash
-git add CHANGELOG.md
-git commit --amend --no-edit
-```
-
-### 6. Push to origin
+### 5. Push to origin
 
 ```bash
 git push -u origin <branch-name>

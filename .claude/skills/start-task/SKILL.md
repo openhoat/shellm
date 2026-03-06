@@ -138,7 +138,11 @@ This will:
 
 **Note**: Do NOT create the branch manually before EnterWorktree. The tool creates its own branch.
 
-### 10. Display success message
+### 10. Continue implementation
+
+Continue working immediately in the feature worktree to implement the selected idea.
+
+### 11. Display success message
 
 ```
 ✅ Task Started: #arch-import

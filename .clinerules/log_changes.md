@@ -19,6 +19,8 @@ Summary for CHANGELOG.md:
 
 ## Logging process
 
+**IMPORTANT**: In the unified workflow, the `CHANGELOG.md` is updated ONLY on the `main` branch during the post-merge cleanup phase (`/cleanup-worktree`). Do NOT update `CHANGELOG.md` in feature branches.
+
 ### 1. Identify the modification
 
 Determine the type of modification made:

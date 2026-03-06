@@ -47,21 +47,13 @@ git add <files>
 git commit -m "<type>(<scope>): <subject>"
 ```
 
-### 5. Generate changelog
-
-```bash
-npm run changelog
-git add CHANGELOG.md
-git commit --amend --no-edit
-```
-
-### 6. Push to origin
+### 5. Push to origin
 
 ```bash
 git push -u origin <branch-name>
 ```
 
-### 7. Create Pull Request
+### 6. Create Pull Request
 
 ```bash
 gh pr create --title "<title>" --body "<body>"

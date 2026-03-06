@@ -61,12 +61,20 @@ git branch <branch-name> main
 git worktree add ../termaid-<worktree-name> <branch-name>
 ```
 
-### 8. Display success message
+### 8. Enter worktree automatically
 
-Show worktree path and next steps.
+Switch the session to the new worktree and continue work:
+```bash
+cd ../termaid-<worktree-name>
+```
+
+### 9. Display success message
+
+Show worktree path and confirm automatic continuation.
 
 ## Important Rules
 
 - Always on main: KANBAN.md must be committed on main branch
 - One idea per worktree: Each worktree = one task/PR
 - Commit before worktree: Always commit KANBAN.md first
+- **No interruption**: Continue implementation immediately in the worktree

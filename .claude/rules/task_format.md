@@ -153,7 +153,7 @@ Contains the Kanban board with three sections: Backlog, In Progress, Done
 - Contains **completed tasks** (`- [x]`) temporarily, before they are committed
 - Format: `- [x] **[DD/MM/YYYY HH:mm:ss] Emoji [TAG]** Description`
 - Uses the same emojis and tags as In Progress
-- **Cleanup rule**: After a successful git commit, all committed tasks must be **deleted** from the Done section. The Done section should always be empty after a commit. Completed tasks are tracked in git history and CHANGELOG.md, not in KANBAN.md
+- **Cleanup rule**: After a successful git commit on `main` (post-merge), all committed tasks must be **deleted** from the Done section. The Done section should always be empty after a commit on `main`. Completed tasks are tracked in git history and CHANGELOG.md, not in KANBAN.md
 
 ### CHANGELOG.md
 
@@ -179,7 +179,7 @@ Contains the Kanban board with three sections: Backlog, In Progress, Done
 ## Usage
 
 This rule is imported/used by:
-- `.clauderules/log_changes.md` (to write in CHANGELOG.md)
-- `.clauderules/quality_check.md` (to validate formats)
+- `.claude/rules/log_changes.md` (to write in CHANGELOG.md)
+- `.claude/rules/quality_check.md` (to validate formats)
 
 Any format rule modifications must be made **here only**.

@@ -6,6 +6,8 @@ Ensures every change is logged in `/CHANGELOG.md`.
 
 ## When to execute
 
+**IMPORTANT**: In the unified workflow, the `CHANGELOG.md` is updated ONLY on the `main` branch during the post-merge cleanup phase (`/cleanup-worktree`). Do NOT update `CHANGELOG.md` in feature branches.
+
 After **every successful modification** of the project.
 
 ## Format

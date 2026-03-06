@@ -33,60 +33,33 @@ Defines the workflow for using git native worktrees to work on multiple branches
 
 ## Mandatory Workflow
 
-### 1. Start New Task (main worktree)
+### 1. Unified Task Lifecycle (One-Shot Session)
 
-**ALWAYS use `/start-task` from main worktree:**
+The entire task lifecycle is handled in a single continuous session whenever possible.
 
-```bash
-# From main worktree
-/start-task
-```
+#### Phase 1: Start (on `main`)
+**Run `/start-task` from main worktree:**
+1. Select idea from backlog.
+2. Update `KANBAN.md` (move to "In Progress").
+3. **Commit `KANBAN.md` on `main`** (`chore(kanban): start task #...`).
+4. Create branch and worktree.
+5. **Automatic switch**: Cline/Claude navigates to the new worktree and continues work immediately.
 
-This will:
-- Select idea from backlog
-- Update KANBAN.md on main
-- Commit KANBAN.md on main
-- Create branch (e.g., `feat/conversation-import`)
-- Create worktree at `../termaid-<name>`
-- Return to main branch
+#### Phase 2: Implementation (in worktree)
+1. Implement the requested feature or fix.
+2. **Commit code** (`feat: ...` / `fix: ...`).
+3. **Push and PR**: Use `/complete-task` to validate, commit, push, and create a Pull Request.
+4. **DO NOT generate local CHANGELOG.md** in the feature branch.
 
-**Then manually switch to the worktree:**
-```bash
-cd ../termaid-<name>
-```
-
-### 2. Work in Feature Worktree
-
-After switching to the feature worktree:
-
-```bash
-# Already in the worktree
-# Implement, validate, commit
-npm run validate
-```
-
-### 3. Complete Task (feature worktree)
-
-**ALWAYS use `/complete-task` from feature worktree:**
-
-```bash
-# From feature worktree
-/complete-task
-```
-
-This will:
-- Validate code
-- Commit changes
-- Push to origin
-- Create Pull Request
-
-### 4. Cleanup After Merge (main worktree)
-
-```bash
-cd /home/openhoat/work/termaid
-git pull origin main
-/cleanup-worktree <name>
-```
+#### Phase 3: Completion & Cleanup (on `main`)
+**Run `/cleanup-worktree <name>` from main worktree after PR merge:**
+1. Switch back to `main`.
+2. **Pull remote changes**: `git pull origin main`.
+3. **Post-merge Maintenance**:
+   - Update `KANBAN.md` (move to "Done", then cleanup).
+   - **Generate global `CHANGELOG.md`** using `npm run changelog`.
+   - **Commit and Push to `main`** (`chore(release): update kanban and changelog`).
+4. Remove the worktree and branch.
 
 ## Management Commands
 
@@ -101,10 +74,10 @@ git worktree prune                              # Clean stale references
 
 | Skill | Location | Purpose |
 |-------|----------|---------|
-| `/start-task` | **Main worktree only** | Start Kanban task: update KANBAN.md, create branch and worktree, stay on main |
-| `/complete-task` | **Feature worktree only** | Complete work: validate, commit, push, PR |
-| `/push-and-pr` | **Feature worktree only** | Push and create PR only |
-| `/cleanup-worktree` | **Main worktree only** | Remove worktree after merge |
+| `/start-task` | **Main worktree only** | Start Kanban task: Update/Commit Kanban, Create worktree, **Auto-switch & Continue** |
+| `/complete-task` | **Feature worktree only** | Complete implementation: Validate, Commit Code, Push, PR (No Changelog) |
+| `/push-and-pr` | **Feature worktree only** | Push branch and create PR only |
+| `/cleanup-worktree` | **Main worktree only** | Post-merge: Pull, **Update Kanban & Changelog**, Commit/Push Main, Cleanup |
 
 ## Key Principles
 
@@ -118,10 +91,9 @@ git worktree prune                              # Clean stale references
 ## Workflow Diagram
 
 ```
-STEP 1 (main): Run /start-task → Update KANBAN.md → Commit → Create branch → Create worktree → Return to main
-STEP 2 (main): Manually switch: cd ../termaid-<name>
-STEP 3 (feature): Implement → Validate → Run /complete-task
-STEP 4 (main): Pull → Run /cleanup-worktree
+PHASE 1 (main): /start-task → Update KANBAN.md → Commit → Create worktree & branch → Auto-switch
+PHASE 2 (worktree): Implement → Validate → /complete-task (Push/PR)
+PHASE 3 (main): Pull → /cleanup-worktree (Update Kanban/Changelog, Commit/Push Main)
 ```
 
 ## Prohibited Actions
