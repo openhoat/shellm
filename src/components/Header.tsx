@@ -51,8 +51,8 @@ export const Header = ({ onShowShortcuts }: HeaderProps) => {
     incrementChatResetKey()
   }
 
-  const handleLoadConversation = (id: string) => {
-    loadConversation(id)
+  const handleLoadConversation = async (id: string) => {
+    await loadConversation(id)
     setShowConversationList(false)
     incrementChatResetKey()
   }
