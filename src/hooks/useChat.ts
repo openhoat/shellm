@@ -214,12 +214,27 @@ export function useChat() {
   }, [setError, setAiCommand])
 
   // Reset local chat state when chatResetKey changes (conversation switch/delete)
+  // Then rebuild from persisted messages if a conversation is loaded
   useEffect(() => {
     if (chatResetKey !== prevResetKeyRef.current) {
       prevResetKeyRef.current = chatResetKey
       clearChat()
+
+      // Rebuild local conversation from persisted messages
+      if (currentConversation && currentConversation.messages.length > 0) {
+        const restoredMessages: ChatMessageData[] = currentConversation.messages.map(
+          (msg, idx) => ({
+            id: `msg-restored-${idx}`,
+            type: msg.role === 'user' ? 'user' : 'ai',
+            content: msg.content,
+            interpretation: msg.interpretation,
+          })
+        )
+        setConversation(restoredMessages)
+        setMessageCounter(restoredMessages.length)
+      }
     }
-  }, [chatResetKey, clearChat])
+  }, [chatResetKey, clearChat, currentConversation])
 
   /**
    * Generate AI command from user prompt

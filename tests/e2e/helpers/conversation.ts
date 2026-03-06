@@ -75,6 +75,19 @@ export async function deleteConversation(page: Page, index: number): Promise<voi
 }
 
 /**
+ * Load a conversation by clicking on it in the dropdown
+ */
+export async function loadConversation(page: Page, index: number): Promise<void> {
+  const item = page.locator(SELECTORS.conversationItem).nth(index)
+  await item.click()
+  // Wait for dropdown to close
+  await page.waitForSelector(SELECTORS.conversationDropdown, {
+    state: 'hidden',
+    timeout: TIMEOUTS.standard,
+  })
+}
+
+/**
  * Create a new conversation
  */
 export async function createNewConversation(page: Page): Promise<void> {

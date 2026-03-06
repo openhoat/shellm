@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 06/03
 
+- **[10:27:00] 🐛 [FIX]** Restore conversation messages when loading a saved conversation in ChatPanel
 - **[10:14:00] ✨ [FEAT]** Add conversation import feature with JSON validation, schema compatibility, and UI integration
 
 #### 05/03
