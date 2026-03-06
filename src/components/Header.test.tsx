@@ -28,7 +28,7 @@ declare global {
   // eslint-disable-next-line no-var
   var __APP_VERSION__: string
 }
-globalThis.__APP_VERSION__ = '1.3.5'
+globalThis.__APP_VERSION__ = '1.3.6'
 
 // Mock window.electronAPI
 const mockConversationExport = vi.fn()
@@ -96,7 +96,7 @@ describe('Header', () => {
       render(<Header />)
 
       expect(screen.getByText('Termaid')).toBeInTheDocument()
-      expect(screen.getByText('v1.3.5')).toBeInTheDocument()
+      expect(screen.getByText('v1.3.6')).toBeInTheDocument()
     })
 
     test('should render status indicator with provider and model', () => {
