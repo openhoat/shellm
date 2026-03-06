@@ -73,6 +73,18 @@ export const SELECTORS = {
   // Error states
   error: '.chat-message.ai.error',
   errorMessage: '.chat-message.ai:has-text("Error:")',
+
+  // Stats Panel
+  statsButton: '[data-testid="stats-button"]',
+  statsPanel: '.stats-panel',
+  statsPanelOverlay: '.stats-panel-overlay',
+  statsPanelClose: '.stats-panel .close-button',
+  periodSelector: '.period-selector',
+  periodButton: '.period-selector button',
+  statCard: '.stat-card',
+  providerCard: '.provider-card',
+  exportStatsButton: '.export-button',
+  clearStatsButton: '.clear-button',
 } as const
 
 /**

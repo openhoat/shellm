@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import type { ChatMessageData } from '@/components/chat'
 import { useToast } from '@/hooks/useToast'
 import { hasInjectionPatterns, sanitizeUserInput } from '@/services/commandExecutionService'
+import { CommandTimer } from '@/services/statsService'
 import { useStore } from '@/store/useStore'
 import { Logger } from '@/utils/logger'
 
@@ -75,6 +76,7 @@ export function useChat() {
   const [savedInput, setSavedInput] = useState('') // Save current input when navigating history
 
   const {
+    config,
     aiCommand,
     setAiCommand,
     isLoading,
@@ -274,6 +276,9 @@ export function useChat() {
 
       setIsLoading(true)
 
+      // Start tracking command generation time
+      const timer = new CommandTimer()
+
       try {
         // Generate command using AI with full conversation history
         const response: AICommand = await window.electronAPI.llmGenerateCommand(
@@ -283,6 +288,11 @@ export function useChat() {
         )
 
         setAiCommand(response)
+
+        // Record successful command generation
+        if (response.type === 'command') {
+          timer.record(config, response.command, true)
+        }
 
         // Build full AI response content for display and storage
         let aiContent: string
@@ -347,8 +357,11 @@ export function useChat() {
           } else {
             errorMessage = `${i18n.t('errors.aiGenerationFailed')} (${err.message})`
           }
+          // Record failed command generation
+          timer.record(config, prompt, false, err.message)
         } else {
           errorMessage = i18n.t('errors.unknownError')
+          timer.record(config, prompt, false, errorMessage)
         }
         setError(errorMessage)
         addToast('error', errorMessage)
@@ -379,6 +392,7 @@ export function useChat() {
       addToast,
       i18n.t,
       addToHistory,
+      config,
     ]
   )
 
@@ -422,6 +436,9 @@ export function useChat() {
       setStreamingContent('')
       setStreamingProgress({ type: 'connecting' })
 
+      // Start tracking command generation time
+      const timer = new CommandTimer()
+
       // Add a placeholder AI message for streaming content
       const streamingMessageId = `msg-streaming-${Date.now()}`
       setConversation(prev => [
@@ -454,6 +471,11 @@ export function useChat() {
             // Final update with the complete response
             const response = progress.partialCommand
             setAiCommand(response)
+
+            // Record successful command generation
+            if (response.type === 'command') {
+              timer.record(config, response.command, true)
+            }
 
             let aiContent: string
             if (response.type === 'text') {
@@ -526,6 +548,11 @@ export function useChat() {
         if (result && !streamingProgress?.partialCommand) {
           setAiCommand(result)
 
+          // Record successful command generation
+          if (result.type === 'command') {
+            timer.record(config, result.command, true)
+          }
+
           let aiContent: string
           if (result.type === 'text') {
             aiContent = result.content
@@ -576,8 +603,11 @@ export function useChat() {
         let errorMessage: string
         if (err instanceof Error) {
           errorMessage = `${i18n.t('errors.aiGenerationFailed')} (${err.message})`
+          // Record failed command generation
+          timer.record(config, prompt, false, err.message)
         } else {
           errorMessage = i18n.t('errors.unknownError')
+          timer.record(config, prompt, false, errorMessage)
         }
         setError(errorMessage)
         addToast('error', errorMessage)
@@ -606,6 +636,7 @@ export function useChat() {
       i18n.t,
       addToHistory,
       streamingProgress,
+      config,
     ]
   )
 
