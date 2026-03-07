@@ -2,30 +2,23 @@
 
 ## Workflow Complet
 
-### Phase 1: Start (main worktree)
+### Phase 1: Start & Implement (main worktree)
 
 ```bash
 /start-task [number]
 # → Updates KANBAN.md (move idea to In Progress)
 # → Commits KANBAN.md on main
 # → Creates branch and worktree at /home/openhoat/work/termaid-<name>
-# → User manually navigates: cd ../termaid-<name>
-```
-
-### Phase 2: Implementation (feature worktree)
-
-```bash
-# Work on the feature
-# ...
-
-/complete-task [--draft]
+# → Implements the complete feature automatically
 # → Validates code (npm run validate)
 # → Commits changes
 # → Pushes branch to origin
 # → Creates Pull Request
 ```
 
-### Phase 3: Cleanup (main worktree, after PR merge)
+**Note**: `/start-task` now handles the complete workflow from backlog to PR automatically.
+
+### Phase 2: Cleanup (main worktree, after PR merge)
 
 ```bash
 /cleanup-worktree <name>
@@ -40,9 +33,9 @@
 
 | Command | Location | Purpose |
 |---------|----------|---------|
-| `/start-task [number]` | Main worktree | Start task from backlog |
-| `/complete-task [--draft]` | Feature worktree | Validate, commit, push, PR |
-| `/push-and-pr` | Feature worktree | Push and create PR only |
+| `/start-task [number]` | Main worktree | **Complete automation**: Start task, implement, validate, commit, push, create PR |
+| `/complete-task [--draft]` | Feature worktree | *(Optional)* Validate, commit, push, PR if implementing manually |
+| `/push-and-pr` | Feature worktree | *(Optional)* Push and create PR only |
 | `/cleanup-worktree <name>` | Main worktree | Post-merge cleanup |
 | `/list-worktrees` | Any | List all worktrees |
 
@@ -81,7 +74,7 @@ Examples:
 2. **Never commit directly to main**: Always use PR workflow
 3. **KANBAN updated on main only**: Never modify KANBAN.md in feature worktree
 4. **CHANGELOG auto-generated**: Use `npm run changelog`, never edit manually
-5. **Manual navigation**: After `/start-task`, user must run `cd ../termaid-<name>`
+5. **Full automation**: `/start-task` implements the complete feature from backlog to PR
 
 ## Git Native Worktree Commands
 

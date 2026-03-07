@@ -1,19 +1,21 @@
 ---
 name: start-task
-description: Start a kanban task by creating a worktree. Selects idea from backlog, updates KANBAN.md on main, creates branch and worktree. Use to begin work on a backlog item.
+description: Start and complete a kanban task end-to-end. Selects idea from backlog, updates KANBAN.md, creates worktree, implements the feature, validates, commits, pushes, and creates PR. Complete automation from backlog to PR.
 disable-model-invocation: false
 ---
 
 # Skill: Start Task
 
-Start a Kanban task by selecting an idea from the backlog, updating KANBAN.md on main branch, and creating a worktree for isolated work.
+Start and complete a Kanban task from backlog to Pull Request with full automation.
 
 ## Purpose
 
 - Select task from KANBAN.md backlog
 - Update KANBAN.md and commit on main
 - Create git native worktree for isolated development
-- Prepare for feature implementation
+- **Implement the complete feature/fix**
+- **Validate code quality**
+- **Commit, push, and create Pull Request**
 
 ## Prerequisites
 
@@ -48,7 +50,9 @@ Start a Kanban task by selecting an idea from the backlog, updating KANBAN.md on
    git worktree add ../termaid-<name> <branch-name>
    git checkout main
    ```
-10. **Inform user**: Display success and instruct to navigate with `cd ../termaid-<name>`
+10. **Implement the feature**: Analyze the task description and implement the complete functionality in the worktree directory (using absolute paths like `/home/openhoat/work/termaid-<name>/...`)
+11. **Validate**: Run `npm run validate` in the worktree to ensure code quality
+12. **Complete task**: Run `/complete-task` to commit, push, and create PR
 
 ## Example
 
@@ -71,8 +75,22 @@ Enter number: 1
 📁 Worktree Created: /home/openhoat/work/termaid-conversation-import
    Branch: feat/conversation-import
 
-📋 Next Step:
-   cd ../termaid-conversation-import
+🔨 Implementing feature...
+   - Reading codebase structure
+   - Planning implementation
+   - Creating/modifying files
+   - Running validation
+
+✅ Task Completed
+   📋 Refactor conversation import feature
+
+📋 Summary:
+   - Files: src/services/importService.ts, src/components/ImportDialog.tsx
+   - Validation: ✅ Passed
+   - Commit: def456
+   - PR: https://github.com/user/termaid/pull/42
+
+🎉 Ready for review!
 ```
 
 ## Error Handling
@@ -83,9 +101,9 @@ Enter number: 1
 
 ## Integration
 
-- **Next**: User navigates to worktree manually
-- **To complete**: Use `/complete-task` in feature worktree
-- **After PR merge**: Use `/cleanup-worktree` in main worktree
+- **This skill**: Handles complete automation from backlog to PR
+- **After PR merge**: Use `/cleanup-worktree` in main worktree to cleanup and update CHANGELOG
+- **Manual mode**: If preferred, can stop after worktree creation and implement manually
 
 ## Important Rules
 

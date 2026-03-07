@@ -33,25 +33,25 @@ Defines the workflow for using git native worktrees to work on multiple branches
 
 ## Mandatory Workflow
 
-### 1. Unified Task Lifecycle (One-Shot Session)
+### 1. Unified Task Lifecycle (Fully Automated)
 
-The entire task lifecycle is handled in a single continuous session whenever possible.
+The entire task lifecycle from backlog to Pull Request is now **fully automated** with `/start-task`.
 
-#### Phase 1: Start (on `main`)
+#### Phase 1: Start & Implement (on `main`)
 **Run `/start-task` from main worktree:**
 1. Select idea from backlog.
 2. Update `KANBAN.md` (move to "In Progress").
 3. **Commit `KANBAN.md` on `main`** (`chore(kanban): start task - ...`).
 4. Create branch and worktree with `git worktree add ../termaid-<name> <branch>`.
-5. **Manual switch**: User navigates to worktree with `cd ../termaid-<name>`.
+5. **Automatically implement the feature** based on task description.
+6. **Validate code** with `npm run validate`.
+7. **Commit code** (`feat: ...` / `fix: ...`).
+8. **Push and create PR** automatically.
+9. **DO NOT generate local CHANGELOG.md** in the feature branch.
 
-#### Phase 2: Implementation (in worktree)
-1. Implement the requested feature or fix.
-2. **Commit code** (`feat: ...` / `fix: ...`).
-3. **Push and PR**: Use `/complete-task` to validate, commit, push, and create a Pull Request.
-4. **DO NOT generate local CHANGELOG.md** in the feature branch.
+**Note**: The skill now handles everything automatically. Manual implementation is optional if preferred.
 
-#### Phase 3: Completion & Cleanup (on `main`)
+#### Phase 2: Completion & Cleanup (on `main`)
 **Run `/cleanup-worktree <name>` from main worktree after PR merge:**
 1. Switch back to `main`.
 2. **Pull remote changes**: `git pull origin main`.
@@ -74,9 +74,9 @@ git worktree prune                              # Clean stale references
 
 | Skill | Location | Purpose |
 |-------|----------|---------|
-| `/start-task` | **Main worktree only** | Start Kanban task: Update/Commit Kanban, Create worktree (user must manually cd to worktree) |
-| `/complete-task` | **Feature worktree only** | Complete implementation: Validate, Commit Code, Push, PR (No Changelog) |
-| `/push-and-pr` | **Feature worktree only** | Push branch and create PR only |
+| `/start-task` | **Main worktree only** | **Full automation**: Update/Commit Kanban, Create worktree, Implement feature, Validate, Commit, Push, Create PR |
+| `/complete-task` | **Feature worktree only** | *(Optional)* Complete implementation: Validate, Commit Code, Push, PR (if implementing manually) |
+| `/push-and-pr` | **Feature worktree only** | *(Optional)* Push branch and create PR only |
 | `/cleanup-worktree` | **Main worktree only** | Post-merge: Pull, **Update Kanban & Changelog**, Commit/Push Main, Cleanup |
 
 ## Key Principles
@@ -86,14 +86,13 @@ git worktree prune                              # Clean stale references
 3. **Always create PR**: Never commit directly to main
 4. **KANBAN.md on main only**: Never modify in feature worktree
 5. **No direct commits to main**: All changes must go through PR workflow
-6. **Manual worktree switch**: After `/start-task`, manually switch with `cd`
+6. **Full automation**: `/start-task` now implements the complete feature from backlog to PR
 
 ## Workflow Diagram
 
 ```
-PHASE 1 (main): /start-task → Update KANBAN.md → Commit → Create worktree & branch → User: cd ../termaid-<name>
-PHASE 2 (worktree): Implement → Validate → /complete-task (Push/PR)
-PHASE 3 (main): Pull → /cleanup-worktree (Update Kanban/Changelog, Commit/Push Main)
+PHASE 1 (main): /start-task → Update KANBAN.md → Commit → Create worktree & branch → Auto-implement → Validate → Commit → Push → Create PR
+PHASE 2 (main): Pull → /cleanup-worktree (Update Kanban/Changelog, Commit/Push Main)
 ```
 
 ## Prohibited Actions
