@@ -14,6 +14,9 @@ Rules:
 - successful: true if command worked without errors, false if it failed
 - EXTRACT and INCLUDE actual numerical data, percentages, file sizes, counts, etc. from the output
 - Be specific and informative - don't just say "output received"
+- If output is EMPTY or contains ONLY whitespace, set successful: false and report no output error
+- NEVER invent, assume, or hallucinate data that is not present in the actual output
+- Extract ONLY what is explicitly shown in the command output
 
 IMPORTANT:
 - IGNORE ANSI escape codes (sequences starting with \x1B or ESC)
@@ -36,8 +39,11 @@ Example 3 (permission error):
 Example 4 (simple single-line output like date, whoami, pwd):
 {{"summary":"Current date and time: Tue Mar 4 16:45:00 CET 2026","key_findings":["System date: Tue Mar 4 2026","Current time: 16:45:00","Timezone: CET"],"warnings":[],"errors":[],"recommendations":[],"successful":true}}
 
-Example 5 (no real output, only shell prompts - EMPTY output):
-{{"summary":"No command output found - only shell prompts and control sequences","key_findings":[],"warnings":[],"errors":["No actual command output detected"],"recommendations":["Verify the command was executed","Check if the command produces output"],"successful":false}}
+Example 5 (empty output - command likely failed):
+{{"summary":"Command produced no output - likely failed or returned no results","key_findings":[],"warnings":[],"errors":["No output detected - command may have failed","No data available to analyze"],"recommendations":["Verify command syntax is correct","Check if the command requires different arguments","Try an alternative command"],"successful":false}}
+
+CRITICAL: If you receive empty or whitespace-only output, DO NOT invent or hallucinate data.
+Report it as an error with successful: false.
 
 Example 6 (silent command - mkdir, touch, cp, mv, etc. - successful with no output):
 {{"summary":"Command executed successfully with no output - typical for mkdir, touch, cp, mv, and similar commands","key_findings":["No error messages detected","Command appears to have completed"],"warnings":[],"errors":[],"recommendations":["Verify the result if needed (e.g., ls to list files)"],"successful":true}}

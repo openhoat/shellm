@@ -348,6 +348,29 @@ export abstract class BaseLLMProvider {
   async interpretOutput(output: string, language = 'en'): Promise<CommandInterpretation> {
     const cleanedOutput = cleanTerminalOutput(output)
 
+    // Pre-validate empty output to prevent hallucination
+    if (cleanedOutput.trim().length === 0) {
+      return {
+        summary:
+          language === 'fr'
+            ? 'Commande exécutée sans produire de sortie'
+            : 'Command executed with no output',
+        key_findings: [],
+        warnings: [],
+        errors: [
+          language === 'fr'
+            ? 'Aucune sortie détectée - la commande peut avoir échoué ou ne rien retourner'
+            : 'No output detected - command may have failed or returned nothing',
+        ],
+        recommendations: [
+          language === 'fr'
+            ? 'Vérifiez la syntaxe de la commande ou essayez une commande alternative'
+            : 'Check command syntax or try an alternative command',
+        ],
+        successful: false,
+      }
+    }
+
     const lines = cleanedOutput.split('\n').slice(0, MAX_OUTPUT_LINES).join('\n')
     const systemPrompt = loadPrompt('interpret-output-prompt.md')
 
