@@ -132,20 +132,44 @@ git checkout main
 - This follows the project's native worktree workflow defined in `.claude/rules/worktree.md`
 - Do NOT use `EnterWorktree` tool as it creates worktrees in the wrong location
 
-### 9. Display success message
+### 9. Implement the feature
+
+Analyze the task description and implement the complete functionality:
+
+1. **Read relevant files**: Understand the current codebase structure by reading related files in the worktree directory (using absolute paths like `/home/openhoat/work/termaid-<name>/...`)
+2. **Plan implementation**: Determine what needs to be created/modified based on the task description
+3. **Implement**: Create or modify files as needed to complete the feature
+4. **Test locally**: Verify the implementation works as expected
+
+### 10. Validate code quality
+
+Run validation in the worktree:
+```bash
+cd /home/openhoat/work/termaid-<worktree-name> && npm run validate
+```
+
+If validation fails, fix issues and re-validate.
+
+### 11. Complete the task
+
+Execute `/complete-task` skill to:
+- Commit changes with proper conventional commit message
+- Push the branch to origin
+- Create a Pull Request
+
+### 12. Display completion message
 
 ```
-✅ Task Started: #<task-id>
+✅ Task Completed: #<task-id>
    📋 <description>
 
-📋 Kanban Updated:
-   - Moved idea from Backlog to In Progress
+📋 Implementation Summary:
+   - Files modified: <list>
+   - Validation: ✅ Passed
    - Commit: <commit-hash>
+   - PR: <pr-url>
 
-📁 Worktree Created: ../termaid-<worktree-name>
-
-⚠️ Next Step: Switch to the worktree to start working:
-   cd ../termaid-<worktree-name>
+🎉 Feature is ready for review!
 ```
 
 ## Error Handling
@@ -157,10 +181,9 @@ git checkout main
 
 ## Integration with Other Skills
 
-- **After this**: Switch to worktree manually with `cd ../termaid-<name>`
-- **To complete**: Use `/complete-task` in the feature worktree
-- **To push and create PR**: Use `/push-and-pr` in the feature worktree
-- **After PR merge**: Use `/cleanup-worktree` in the main worktree
+- **This skill**: Handles the complete task lifecycle from backlog to PR
+- **After PR merge**: Use `/cleanup-worktree` in the main worktree to cleanup and update CHANGELOG.md
+- **Manual implementation**: If you prefer to implement manually, stop after step 9 and switch to the worktree with `cd ../termaid-<name>`, then use `/complete-task` when done
 
 ## Flow Diagram
 
@@ -193,8 +216,31 @@ git checkout main
                │
                ▼
 ┌─────────────────────────────────────┐
-│  END: Worktree ready                │
-│  User switches: cd ../termaid-<name>│
+│  Implement feature                  │
+│  - Read codebase                    │
+│  - Plan implementation              │
+│  - Create/modify files              │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│  Validate code quality              │
+│  - npm run validate                 │
+│  - Fix issues if needed             │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│  Complete task                      │
+│  - Commit changes                   │
+│  - Push branch                      │
+│  - Create Pull Request              │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│  END: PR ready for review           │
+│  Feature fully implemented          │
 └─────────────────────────────────────┘
 ```
 
@@ -235,6 +281,20 @@ User selects option #1.
 
 📁 Worktree Created: ../termaid-conversation-import
 
-⚠️ Next Step: Switch to the worktree to start working:
-   cd ../termaid-conversation-import
+🔨 Implementing feature...
+   - Reading codebase structure
+   - Planning implementation
+   - Creating/modifying files
+   - Running validation
+
+✅ Task Completed: #arch-import
+   📋 Implement conversation import feature
+
+📋 Implementation Summary:
+   - Files modified: src/services/importService.ts, src/components/ImportDialog.tsx
+   - Validation: ✅ Passed
+   - Commit: def456
+   - PR: https://github.com/user/termaid/pull/42
+
+🎉 Feature is ready for review!
 ```
