@@ -6,20 +6,21 @@ disable-model-invocation: false
 
 # Skill: Cleanup Worktree
 
-Remove a git worktree and its associated branch after the PR has been merged.
+Remove a git worktree and its associated branch after the PR has been merged. Update KANBAN.md and regenerate CHANGELOG.md on main.
 
 ## Purpose
 
-This skill cleans up the workspace after a PR is merged by:
-- Verifying we're in the main worktree
-- Pulling latest changes from origin
-- Removing the feature worktree
-- Deleting the local branch
+- Pull latest changes from origin/main
+- Update KANBAN.md (move task from In Progress, cleanup)
+- Regenerate CHANGELOG.md from git history
+- Commit and push maintenance to main
+- Remove feature worktree and branch
+- Clean up git references
 
 ## Prerequisites
 
 - Must be in the main worktree (branch: main)
-- PR must be merged (verified by user or checked via gh)
+- PR must be merged on GitHub
 - No uncommitted changes in main
 
 ## Usage
@@ -31,276 +32,95 @@ This skill cleans up the workspace after a PR is merged by:
 
 ## Arguments
 
-- `name`: The worktree name (without `termaid-` prefix) or the full branch name
+- `name`: Worktree name (without `termaid-` prefix) or full branch name
 
 ## Examples
 
 ```
 /cleanup-worktree keyboard-shortcuts
 /cleanup-worktree feat/keyboard-shortcuts
-/cleanup-worktree login-bug
-/cleanup-worktree fix/login-bug
 ```
 
-## Execution Steps
+## Steps
 
-### 1. Verify worktree context
+1. **Verify context**: Check we're in main with `git branch --show-current`
+2. **Pull latest**: `git pull origin main`
+3. **Update KANBAN.md**: Remove task from In Progress section
+4. **Generate CHANGELOG**: `npm run changelog`
+5. **Commit maintenance**:
+   ```bash
+   git add KANBAN.md CHANGELOG.md
+   git commit -m "chore(release): update kanban and changelog post-merge"
+   git push origin main
+   ```
+6. **Resolve names**: Convert argument to worktree path and branch name
+7. **Verify worktree**: Check it exists with `git worktree list`
+8. **Check PR status**: Optionally verify PR is merged with `gh pr view`
+9. **Remove worktree**: `git worktree remove ../termaid-<name>`
+10. **Delete branch**: `git branch -d <branch-name>` (or -D if force needed)
+11. **Prune references**: `git worktree prune`
 
-Check that we are in the main worktree:
-```bash
-git branch --show-current
-```
+## Name Resolution
 
-Should show `main` or `master`.
-
-If not in main worktree, display error:
-```
-❌ Error: Must be in main worktree to cleanup
-   Current branch: <feature-branch>
-   Please switch to main: cd /path/to/termaid
-```
-
-### 2. Pull latest changes
-
-```bash
-git pull origin main
-```
-
-If pull fails:
-- Check network connection
-- Check if remote is configured
-- Offer to continue without pull (user can handle later)
-
-### 3. Update KANBAN.md
-
-Move task from "In Progress" to "Done", then cleanup according to rules in `task_format.md`.
-
-### 4. Generate CHANGELOG.md
-
-```bash
-npm run changelog
-```
-
-### 5. Commit and Push maintenance
-
-```bash
-git add KANBAN.md CHANGELOG.md
-git commit -m "chore(release): update kanban and changelog post-merge"
-git push origin main
-```
-
-### 6. Resolve worktree name
-
-Parse the argument to find the worktree:
-- If `<name>` doesn't have `termaid-` prefix, add it
-- If `<name>` is a branch name like `feat/feature`, convert to worktree name
-
-Name resolution:
 ```
 Input: "keyboard-shortcuts"
-Worktree: "../termaid-keyboard-shortcuts"
+→ Worktree: ../termaid-keyboard-shortcuts
+→ Branch: feat/keyboard-shortcuts (inferred)
 
 Input: "feat/keyboard-shortcuts"
-Worktree: "../termaid-keyboard-shortcuts"
-Branch: "feat/keyboard-shortcuts"
-
-Input: "fix/login-bug"
-Worktree: "../termaid-login-bug"
-Branch: "fix/login-bug"
-```
-
-### 4. Verify worktree exists
-
-```bash
-git worktree list
-```
-
-Check if the worktree exists in the list.
-
-If not found:
-```
-❌ Error: Worktree not found
-   Available worktrees:
-   - /path/to/termaid (main)
-   - /path/to/termaid-<other> (<branch>)
-
-   Did you mean one of these?
-```
-
-### 5. Check PR status (optional)
-
-If `gh` CLI is available and PR exists:
-```bash
-gh pr view <branch-name> --json state,mergedAt
-```
-
-If PR is not merged:
-```
-⚠️ Warning: PR may not be merged yet
-   Branch: <branch-name>
-   Status: <PR state>
-
-   Continue cleanup? (y/n)
-```
-
-Use AskUserQuestion to confirm.
-
-### 6. Remove worktree
-
-```bash
-git worktree remove ../termaid-<name>
-```
-
-If removal fails (e.g., uncommitted changes):
-```
-❌ Error: Cannot remove worktree
-   Reason: <error message>
-
-   Options:
-   - Force removal: git worktree remove --force ../termaid-<name>
-   - Manual cleanup: cd ../termaid-<name> && git status
-```
-
-### 7. Delete branch
-
-```bash
-git branch -d <branch-name>
-```
-
-If branch deletion fails (not fully merged):
-```
-⚠️ Warning: Branch may not be fully merged
-   Force delete? (y/n)
-```
-
-If confirmed:
-```bash
-git branch -D <branch-name>
-```
-
-### 8. Prune worktree references
-
-```bash
-git worktree prune
-```
-
-### 9. Display success message
-
-```
-✅ Cleanup Complete
-
-📁 Worktree Removed: termaid-<name>
-🌿 Branch Deleted: <branch-name>
-🧹 Pruned stale references
-
-📋 Next Steps:
-   - Select a new task: /start-task
-   - Check kanban status: /read-kanban
-```
-
-## Error Handling
-
-- **Not in main**: Abort and suggest switching to main
-- **Worktree not found**: List available worktrees and suggest correct name
-- **PR not merged**: Warn user and ask for confirmation
-- **Uncommitted changes in worktree**: Fail and suggest manual inspection
-- **Branch not merged**: Warn and offer force delete
-
-## Integration with Other Skills
-
-- **After**: Start a new task with `/start-task`
-- **Before**: PR must be created with `/push-and-pr` and merged
-
-## Flow Diagram
-
-```
-┌─────────────────────────────────────┐
-│  START: PR merged, in main worktree │
-│  Run /cleanup-worktree <name>       │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│  Verify context                     │
-│  - In main worktree                 │
-│  - Pull latest changes              │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│  Resolve worktree name              │
-│  - Find worktree                    │
-│  - Find branch                      │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│  Verify PR status (optional)        │
-│  - Check if merged                  │
-│  - Warn if not merged               │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│  Remove worktree                   │
-│  git worktree remove ...           │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│  Delete branch                     │
-│  git branch -d <branch>            │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│  Prune references                  │
-│  git worktree prune                │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│  END: Display success message      │
-│  Show next steps                   │
-└─────────────────────────────────────┘
+→ Worktree: ../termaid-keyboard-shortcuts
+→ Branch: feat/keyboard-shortcuts
 ```
 
 ## Example
 
 ```
-User: /cleanup-worktree keyboard-shortcuts
+/cleanup-worktree keyboard-shortcuts
 
-🔍 Checking context...
-   ✅ In main worktree
-   ✅ Pulling latest changes...
+✅ In main worktree
+✅ Pulling latest changes...
 
-🔍 Finding worktree...
-   Worktree: ../termaid-keyboard-shortcuts
+📋 Updating KANBAN.md...
+   - Removed task from In Progress
+
+📝 Generating CHANGELOG.md...
+   - npm run changelog
+
+✅ Committed maintenance to main
+   - Commit: def5678
+   - Pushed to origin/main
+
+🔍 Worktree: ../termaid-keyboard-shortcuts
    Branch: feat/keyboard-shortcuts
 
-🔍 Checking PR status...
-   ✅ PR #42 merged at 2026-03-05 14:30
+✅ PR #42 merged at 2026-03-05 14:30
 
-🗑️ Removing worktree...
-   ✅ Worktree removed: termaid-keyboard-shortcuts
-
-🌿 Deleting branch...
-   ✅ Branch deleted: feat/keyboard-shortcuts
-
-🧹 Pruning references...
-   ✅ Pruned stale worktree references
+🗑️ Removed worktree: termaid-keyboard-shortcuts
+🌿 Deleted branch: feat/keyboard-shortcuts
+🧹 Pruned stale references
 
 ✅ Cleanup Complete
 
-📋 Next Steps:
-   - Select a new task: /start-task
-   - Check kanban status: /read-kanban
+📋 Next: /start-task
 ```
+
+## Error Handling
+
+- **Not in main**: Abort, suggest switching to main
+- **Worktree not found**: List available worktrees
+- **PR not merged**: Warn and ask for confirmation
+- **Uncommitted changes**: Fail, suggest manual inspection
+- **Branch not merged**: Offer force delete (-D)
+
+## Integration
+
+- **After**: Start new task with `/start-task`
+- **Before**: PR must be created and merged
 
 ## Important Rules
 
-- **Always in main**: Must be in main worktree to cleanup
-- **Verify PR merged**: Check PR status before cleanup
+- **Always in main**: Must be in main worktree
 - **Pull first**: Always pull latest changes
+- **Update KANBAN and CHANGELOG**: Always regenerate on main
 - **Clean references**: Prune worktree references after removal
-- **Ask for confirmation**: If PR status is uncertain
+- **One commit**: Single maintenance commit for KANBAN + CHANGELOG

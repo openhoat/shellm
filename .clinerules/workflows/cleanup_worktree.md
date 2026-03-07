@@ -35,7 +35,9 @@ git pull origin main
 
 ### 3. Update KANBAN.md
 
-Move task from "In Progress" to "Done", then cleanup according to rules in `task_format.md`.
+Remove task from "## 🚧 In Progress" section.
+
+Note: There is no "Done" section - completed tasks are tracked in git history and CHANGELOG.md only.
 
 ### 4. Generate CHANGELOG.md
 

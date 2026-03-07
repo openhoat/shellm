@@ -2,44 +2,44 @@
 
 ## Objective
 
-Ensures every change is logged in `/CHANGELOG.md`.
+Ensures all project changes are tracked in `/CHANGELOG.md`.
 
-## When to execute
+## CHANGELOG.md Generation
 
-**IMPORTANT**: In the unified workflow, the `CHANGELOG.md` is updated ONLY on the `main` branch during the post-merge cleanup phase (`/cleanup-worktree`). Do NOT update `CHANGELOG.md` in feature branches.
+**IMPORTANT**: `CHANGELOG.md` is **ALWAYS auto-generated** using `npm run changelog`. It is **NEVER edited manually**.
 
-After **every successful modification** of the project.
+## When to regenerate
+
+The `CHANGELOG.md` is regenerated **ONLY** on the `main` branch during the post-merge cleanup phase (`/cleanup-worktree`).
+
+**Workflow:**
+1. **Feature branches**: Do NOT generate or modify `CHANGELOG.md`
+2. **After PR merge**: On `main`, run `npm run changelog` to regenerate from git history
+3. **Commit to main**: Include the regenerated `CHANGELOG.md` in the maintenance commit
+
+## Commands
+
+```bash
+# Regenerate CHANGELOG.md from git commit history
+npm run changelog
+
+# Commit the updated changelog
+git add CHANGELOG.md
+git commit -m "chore(release): update kanban and changelog post-merge"
+```
 
 ## Format
 
 See `.claude/rules/task_format.md` for complete tag/emoji definitions.
 
-**Entry format**: `**[HH:MM:SS] Emoji [TAG]** Description`
+The changelog generator automatically creates entries with format:
+`**[HH:MM:SS] Emoji [TAG]** Description`
 
 Common tags: `✨ [FEAT]`, `🐛 [FIX]`, `♻️ [REFACTOR]`, `⚡ [PERF]`, `📝 [DOCS]`, `🎨 [STYLE]`, `✅ [TEST]`, `🔧 [CHORE]`
 
-## Process
+## Important Rules
 
-1. **Identify type**: feat, fix, refactor, perf, docs, style, test, chore
-2. **Create entry**: `**[HH:MM:SS] ✨ [FEAT]** Add UserDashboard component`
-3. **Place in file**:
-   - If date exists: insert after `### DD/MM` header
-   - If date missing: create `### DD/MM` under `## YYYY`
-   - If year missing: create `## YYYY` at top
-
-## Writing rules
-
-- Start with verb (imperative): "Add", "Fix", "Implement"
-- Be concise but informative
-- Mention modified files if relevant
-- Sort entries reverse chronologically
-
-## Exceptions
-
-Do NOT log:
-- File reads for analysis
-- Validation/linting commands
-- Unit tests
-- Temporary/experimental modifications
-- Auto-formatting (Biome fix)
-- Trivial changes (< 3 lines)
+- **DO NOT manually edit CHANGELOG.md** - always use `npm run changelog`
+- **Only regenerate on main branch** after PR merge
+- **Never generate in feature branches**
+- The changelog is derived from git commit messages, so use proper Conventional Commits format

@@ -41,9 +41,9 @@ The entire task lifecycle is handled in a single continuous session whenever pos
 **Run `/start-task` from main worktree:**
 1. Select idea from backlog.
 2. Update `KANBAN.md` (move to "In Progress").
-3. **Commit `KANBAN.md` on `main`** (`chore(kanban): start task #...`).
-4. Create branch and worktree.
-5. **Automatic switch**: Cline/Claude navigates to the new worktree and continues work immediately.
+3. **Commit `KANBAN.md` on `main`** (`chore(kanban): start task - ...`).
+4. Create branch and worktree with `git worktree add ../termaid-<name> <branch>`.
+5. **Manual switch**: User navigates to worktree with `cd ../termaid-<name>`.
 
 #### Phase 2: Implementation (in worktree)
 1. Implement the requested feature or fix.
@@ -74,7 +74,7 @@ git worktree prune                              # Clean stale references
 
 | Skill | Location | Purpose |
 |-------|----------|---------|
-| `/start-task` | **Main worktree only** | Start Kanban task: Update/Commit Kanban, Create worktree, **Auto-switch & Continue** |
+| `/start-task` | **Main worktree only** | Start Kanban task: Update/Commit Kanban, Create worktree (user must manually cd to worktree) |
 | `/complete-task` | **Feature worktree only** | Complete implementation: Validate, Commit Code, Push, PR (No Changelog) |
 | `/push-and-pr` | **Feature worktree only** | Push branch and create PR only |
 | `/cleanup-worktree` | **Main worktree only** | Post-merge: Pull, **Update Kanban & Changelog**, Commit/Push Main, Cleanup |
@@ -91,7 +91,7 @@ git worktree prune                              # Clean stale references
 ## Workflow Diagram
 
 ```
-PHASE 1 (main): /start-task → Update KANBAN.md → Commit → Create worktree & branch → Auto-switch
+PHASE 1 (main): /start-task → Update KANBAN.md → Commit → Create worktree & branch → User: cd ../termaid-<name>
 PHASE 2 (worktree): Implement → Validate → /complete-task (Push/PR)
 PHASE 3 (main): Pull → /cleanup-worktree (Update Kanban/Changelog, Commit/Push Main)
 ```
@@ -100,7 +100,8 @@ PHASE 3 (main): Pull → /cleanup-worktree (Update Kanban/Changelog, Commit/Push
 
 - **Direct commits to main branch**: Always use PR workflow
 - **Modifying KANBAN.md from feature worktree**: Update from main only
-- **Using EnterWorktree tool**: Creates worktrees in wrong location, use `git worktree add` instead
+- **Using EnterWorktree tool**: NEVER use EnterWorktree - always use native `git worktree add` commands
+- **Creating worktrees in .claude/worktrees/**: Worktrees must be created at `/home/openhoat/work/termaid-<name>`
 
 ## Enforcement
 

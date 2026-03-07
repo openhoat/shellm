@@ -43,9 +43,9 @@ The entire task lifecycle is handled in a single continuous session whenever pos
 **Run `/start-task` from main worktree:**
 1. Select idea from backlog.
 2. Update `KANBAN.md` (move to "In Progress").
-3. **Commit `KANBAN.md` on `main`** (`chore(kanban): start task #...`).
-4. Create branch and worktree.
-5. **Automatic switch**: Cline/Claude navigates to the new worktree and continues work immediately.
+3. **Commit `KANBAN.md` on `main`** (`chore(kanban): start task - ...`).
+4. Create branch and worktree with `git worktree add ../termaid-<name> <branch>`.
+5. **Manual switch**: User navigates to worktree with `cd ../termaid-<name>`.
 
 #### Phase 2: Implementation (in worktree)
 1. Implement the requested feature or fix.
@@ -106,7 +106,7 @@ The KANBAN.md file must always be modified on the `main` branch before creating 
 │  PHASE 1: START (on main)                                │
 │  - /start-task: Select idea, Update & Commit Kanban      │
 │  - Create worktree & branch                              │
-│  - AUTOMATIC switch to worktree                          │
+│  - MANUAL switch: User runs cd ../termaid-<name>                          │
 └──────────────┬───────────────────────────────────────────┘
                │
                ▼
@@ -132,7 +132,7 @@ The KANBAN.md file must always be modified on the `main` branch before creating 
 
 | Skill | Location | Purpose |
 |-------|----------|---------|
-| `/start-task` | **Main worktree only** | Start Kanban task: Update/Commit Kanban, Create worktree, **Auto-switch & Continue** |
+| `/start-task` | **Main worktree only** | Start Kanban task: Update/Commit Kanban, Create worktree (user must manually cd to worktree) |
 | `/complete-task` | **Feature worktree only** | Complete implementation: Validate, Commit Code, Push, PR (No Changelog) |
 | `/push-and-pr` | **Feature worktree only** | Push branch and create PR only |
 | `/cleanup-worktree` | **Main worktree only** | Post-merge: Pull, **Update Kanban & Changelog**, Commit/Push Main, Cleanup |

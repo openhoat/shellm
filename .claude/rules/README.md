@@ -6,9 +6,10 @@ This directory contains project rules adapted for Claude Code.
 
 | File | Description |
 |------|-------------|
+| `WORKFLOW.md` | **Quick reference** for the complete git worktree workflow |
 | `commit_messages.md` | Git commit messages in Conventional Commits (English) |
 | `language.md` | All content in English + respond in French to user |
-| `log_changes.md` | Log modifications in CHANGELOG.md |
+| `log_changes.md` | CHANGELOG.md auto-generation with `npm run changelog` |
 | `markdown_formatting.md` | Standard markdown formatting (no consecutive blank lines) |
 | `mcp_intellij.md` | MCP IntelliJ integration for code analysis and navigation |
 | `quality_check.md` | Run `npm run validate` after code modifications |

@@ -4,10 +4,10 @@ Start a Kanban task by selecting an idea from the backlog, updating KANBAN.md on
 
 ## Purpose
 
-Integrates Kanban workflow with git worktrees for:
-- Systematic task selection from backlog
-- KANBAN.md updates committed on main branch
-- Isolated worktrees for each feature/fix
+- Select task from KANBAN.md backlog
+- Update KANBAN.md and commit on main
+- Create git native worktree for isolated development
+- Prepare for feature implementation
 
 ## Prerequisites
 
@@ -19,7 +19,7 @@ Integrates Kanban workflow with git worktrees for:
 
 ### 1. Verify worktree context
 
-Check that we are in the main worktree:
+Check we're in main worktree:
 ```bash
 git worktree list
 ```
@@ -32,49 +32,57 @@ Parse ideas from "## 📝 Backlog" section.
 
 ### 3. Display backlog ideas
 
-Show numbered list and ask user to select.
+Show numbered list of ideas with format:
+```
+#1 [ARCHITECTURE] Description (P2)
+#2 [UX] Description (P3)
+```
 
-### 4. Generate branch name
+Ask user to select an idea number.
+
+### 4. Generate branch and worktree names
 
 Convert idea description to kebab-case:
-- `[ARCHITECTURE]` → `refactor/`
-- `[UX]` → `feat/`
-- `[TEST]` → `test/`
-- `[SECURITY]` → `fix/`
-- `[CONFIG]` → `chore/`
+- Category → branch prefix (feat/, fix/, refactor/, test/, chore/)
+- Description → kebab-case name
+- Examples:
+  - `[ARCHITECTURE]` + "Refactor import" → `feat/refactor-import` + `termaid-refactor-import`
+  - `[UX]` + "Add shortcuts" → `feat/add-shortcuts` + `termaid-add-shortcuts`
 
 ### 5. Update KANBAN.md
 
-Move idea from Backlog to In Progress using `replace_in_file`.
+Move idea from Backlog to In Progress:
+- Remove line from Backlog
+- Add task to In Progress with appropriate tag (FEAT/FIX/etc.)
+- Format: `- [ ] **[TAG]** Description`
+
+Use `replace_in_file` to update.
 
 ### 6. Commit KANBAN.md on main
 
 ```bash
 git add KANBAN.md
-git commit -m "chore(kanban): start task #<id> - <description>"
+git commit -m "chore(kanban): start task - <description>"
 ```
 
 ### 7. Create branch and worktree
 
 ```bash
-git branch <branch-name> main
+git checkout -b <branch-name>
 git worktree add ../termaid-<worktree-name> <branch-name>
+git checkout main
 ```
 
-### 8. Enter worktree automatically
+### 8. Inform user to navigate
 
-Switch the session to the new worktree and continue work:
-```bash
+Display success message and instruct user to manually navigate:
+```
 cd ../termaid-<worktree-name>
 ```
 
-### 9. Display success message
-
-Show worktree path and confirm automatic continuation.
-
 ## Important Rules
 
-- Always on main: KANBAN.md must be committed on main branch
-- One idea per worktree: Each worktree = one task/PR
-- Commit before worktree: Always commit KANBAN.md first
-- **No interruption**: Continue implementation immediately in the worktree
+- **KANBAN.md on main only**: Always commit before creating worktree
+- **Git native worktrees**: Use `git worktree add ../termaid-<name>`
+- **Manual navigation**: User must `cd` to worktree directory
+- **One task per worktree**: Each worktree = one branch = one PR
