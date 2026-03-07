@@ -9,6 +9,7 @@ import { createConversationHandlers } from './ipc-handlers/conversation'
 import { createLLMHandlers } from './ipc-handlers/llm-service'
 import { createTerminalHandlers } from './ipc-handlers/terminal'
 import { createVideoHandlers } from './ipc-handlers/video'
+import { checkForUpdates } from './services/versionCheckService'
 
 interface StoreType {
   get: (key: string) => unknown
@@ -203,6 +204,12 @@ app.whenReady().then(() => {
 
   // Now create the window - handlers are already registered
   createWindow()
+
+  // Check for updates in the background (non-blocking)
+  checkForUpdates().catch(error => {
+    // biome-ignore lint/suspicious/noConsole: Version check error logging
+    console.error('Version check failed:', error)
+  })
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
