@@ -11,6 +11,10 @@ import type {
   StreamingCallback,
 } from '@shared/types'
 import { z } from 'zod'
+import { Logger } from '../../utils/logger'
+
+// Logger instance
+const logger = new Logger('BaseLLMProvider')
 
 // Constants
 const MAX_CONVERSATION_HISTORY = 50
@@ -117,8 +121,7 @@ export abstract class BaseLLMProvider {
         confidence: result.confidence || 0.5,
       }
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for structured output errors
-      console.error('[BaseLLMProvider] Structured output failed, using fallback:', error)
+      logger.error('Structured output failed, using fallback', error)
       let fallbackResponseText: string | null = null
 
       try {
@@ -171,8 +174,7 @@ export abstract class BaseLLMProvider {
           confidence: validated.confidence || 0.5,
         }
       } catch (parseError) {
-        // biome-ignore lint/suspicious/noConsole: Debug logging for command parsing errors
-        console.error('[BaseLLMProvider] Failed to parse fallback JSON response:', parseError)
+        logger.error('Failed to parse fallback JSON response', parseError)
         return { type: 'text', content: fallbackResponseText.trim() }
       }
     }
@@ -315,8 +317,7 @@ export abstract class BaseLLMProvider {
         confidence: validated.confidence || 0.5,
       }
     } catch (parseError) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for command parsing errors
-      console.error('[BaseLLMProvider] Failed to parse JSON response:', parseError)
+      logger.error('Failed to parse JSON response', parseError)
       return { type: 'text', content: responseText.trim() }
     }
   }
@@ -336,8 +337,7 @@ export abstract class BaseLLMProvider {
       const result = await chain.invoke({})
       return result.content as string
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for explain command errors
-      console.error('[BaseLLMProvider] Failed to explain command:', error)
+      logger.error('Failed to explain command', error)
       return 'Unable to explain the command. Please try again.'
     }
   }
@@ -413,8 +413,7 @@ export abstract class BaseLLMProvider {
             successful: validated.successful ?? true,
           }
         } catch (parseError) {
-          // biome-ignore lint/suspicious/noConsole: Debug logging for interpretation parsing errors
-          console.error('[BaseLLMProvider] Failed to parse interpretation JSON:', parseError)
+          logger.error('Failed to parse interpretation JSON', parseError)
         }
       }
 
@@ -515,8 +514,7 @@ export abstract class BaseLLMProvider {
         successful: isSuccessful,
       }
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for output interpretation errors
-      console.error('[BaseLLMProvider] Failed to interpret output:', error)
+      logger.error('Failed to interpret output', error)
       const cleanedFallbackOutput = cleanTerminalOutput(output)
       const hasErrors = /error|fail|permission denied|cannot|no such file/i.test(
         cleanedFallbackOutput

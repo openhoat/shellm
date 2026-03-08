@@ -1,9 +1,13 @@
 import type { AICommand, AppConfig, StreamingProgress } from '@shared/types'
 import { getActiveProvider, getProviderConfig } from '@shared/types'
 import { type BrowserWindow, ipcMain } from 'electron'
+import { Logger } from '../utils/logger'
 import { claudeProviderFactory, ollamaProviderFactory, openaiProviderFactory } from './providers'
 import type { BaseLLMProvider } from './providers/base-provider'
 import { providerRegistry } from './providers/registry'
+
+// Logger instance for LLM service
+const logger = new Logger('LLMService')
 
 // Track active streaming requests for cancellation
 const activeStreams = new Map<string, AbortController>()
@@ -80,8 +84,7 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
         mockErrors = JSON.parse(process.env.TERMAID_E2E_MOCK_ERRORS)
       }
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for mock configuration errors
-      console.error('[LLMService] Failed to parse TERMAID_E2E_MOCK_ERRORS:', error)
+      logger.error('Failed to parse TERMAID_E2E_MOCK_ERRORS', error)
     }
 
     mockConnectionFailed = process.env.TERMAID_E2E_MOCK_CONNECTION_FAILED === 'true'
@@ -91,8 +94,7 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
         mockModels = JSON.parse(process.env.TERMAID_E2E_MOCK_MODELS)
       }
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for mock configuration errors
-      console.error('[LLMService] Failed to parse TERMAID_E2E_MOCK_MODELS:', error)
+      logger.error('Failed to parse TERMAID_E2E_MOCK_MODELS', error)
     }
 
     try {
@@ -101,8 +103,7 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
         mockAIResponses = Array.isArray(parsed) ? parsed : [parsed]
       }
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for mock configuration errors
-      console.error('[LLMService] Failed to parse TERMAID_E2E_MOCK_AI_RESPONSE:', error)
+      logger.error('Failed to parse TERMAID_E2E_MOCK_AI_RESPONSE', error)
     }
 
     try {
@@ -111,8 +112,7 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
         mockInterpretations = Array.isArray(parsed) ? parsed : [parsed]
       }
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for mock configuration errors
-      console.error('[LLMService] Failed to parse TERMAID_E2E_MOCK_INTERPRETATION:', error)
+      logger.error('Failed to parse TERMAID_E2E_MOCK_INTERPRETATION', error)
     }
   }
 
@@ -129,9 +129,8 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
       try {
         service = createProvider(initialConfig)
       } catch (error) {
-        // biome-ignore lint/suspicious/noConsole: Startup error logging for debugging
-        console.warn(
-          'Failed to initialize LLM provider at startup:',
+        logger.warn(
+          'Failed to initialize LLM provider at startup',
           error instanceof Error ? error.message : String(error)
         )
       }
@@ -327,8 +326,7 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
       try {
         return await providerRegistry.testConnection(providerName, config)
       } catch (error) {
-        // biome-ignore lint/suspicious/noConsole: Debug logging for connection test errors
-        console.error(`[LLMService] Provider connection test failed for ${providerName}:`, error)
+        logger.error(`Provider connection test failed for ${providerName}`, error)
         return false
       }
     }
@@ -341,8 +339,7 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
       try {
         return await providerRegistry.listModels(providerName, config)
       } catch (error) {
-        // biome-ignore lint/suspicious/noConsole: Debug logging for model listing errors
-        console.error(`[LLMService] Failed to list models for ${providerName}:`, error)
+        logger.error(`Failed to list models for ${providerName}`, error)
         return []
       }
     }
