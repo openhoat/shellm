@@ -1,5 +1,9 @@
 import type { ErrorInfo, ReactNode } from 'react'
 import { Component } from 'react'
+import { Logger } from '../utils/logger'
+
+// Logger instance for ErrorBoundary
+const logger = new Logger('ErrorBoundary')
 
 interface Props {
   children: ReactNode
@@ -25,8 +29,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo): void {
-    // biome-ignore lint/suspicious/noConsole: Error boundary must log unhandled errors for debugging
-    console.error('[ErrorBoundary] Caught unhandled error:', error, info.componentStack)
+    logger.error('Caught unhandled error', { error, componentStack: info.componentStack })
   }
 
   render(): ReactNode {

@@ -2,7 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import logoSvg from '/logo.svg'
 import { useStore } from '../store/useStore'
+import { Logger } from '../utils/logger'
 import './Header.css'
+
+// Logger instance for Header
+const logger = new Logger('Header')
 
 interface HeaderProps {
   onShowShortcuts?: () => void
@@ -87,8 +91,7 @@ export const Header = ({ onShowShortcuts }: HeaderProps) => {
         setTemporaryExportStatus(result.error || t('header.exportFailed'))
       }
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for export errors
-      console.error('[Header] Failed to export conversation:', error)
+      logger.error('Failed to export conversation', error)
       setTemporaryExportStatus(error instanceof Error ? error.message : t('header.exportFailed'))
     }
   }
@@ -105,8 +108,7 @@ export const Header = ({ onShowShortcuts }: HeaderProps) => {
         setTemporaryExportStatus(result.error)
       }
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for import errors
-      console.error('[Header] Failed to import conversations:', error)
+      logger.error('Failed to import conversations', error)
       setTemporaryExportStatus(error instanceof Error ? error.message : t('header.importFailed'))
     }
   }
@@ -125,8 +127,7 @@ export const Header = ({ onShowShortcuts }: HeaderProps) => {
         setTemporaryExportStatus(result.error || 'Export failed')
       }
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for export errors
-      console.error('[Header] Failed to export all conversations:', error)
+      logger.error('Failed to export all conversations', error)
       setTemporaryExportStatus(error instanceof Error ? error.message : 'Export failed')
     }
   }

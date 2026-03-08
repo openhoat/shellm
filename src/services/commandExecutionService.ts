@@ -1,6 +1,10 @@
 import { type RiskLevel, type ValidationResult, validateCommand } from '@shared/commandValidation'
 import type { ConversationHistory } from '@shared/types'
+import { Logger } from '../utils/logger'
 import { chatService } from './chatService'
+
+// Logger instance for command execution service
+const logger = new Logger('CommandExecution')
 
 export { validateCommand }
 export type { ValidationResult, RiskLevel }
@@ -120,8 +124,7 @@ export async function executeCommand({
     await window.electronAPI.terminalWrite(terminalPid, `${command}\r`)
     return { success: true, blocked: false }
   } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: Debug logging for command execution errors
-    console.error('[CommandExecution] Failed to execute command:', error)
+    logger.error('Failed to execute command', error)
     return {
       success: false,
       blocked: false,

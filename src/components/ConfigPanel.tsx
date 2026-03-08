@@ -4,9 +4,13 @@ import { getActiveProvider } from '@shared/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useStore } from '../store/useStore'
+import { Logger } from '../utils/logger'
 import { LanguageSelector } from './LanguageSelector'
 import { ModelSelector } from './ModelSelector'
 import './ConfigPanel.css'
+
+// Logger instance for ConfigPanel
+const logger = new Logger('ConfigPanel')
 
 export const ConfigPanel = () => {
   const { config, setConfig, toggleConfigPanel } = useStore()
@@ -48,8 +52,7 @@ export const ConfigPanel = () => {
       const sources = await window.electronAPI.getConfigEnvSources()
       setEnvSources(sources)
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for config loading errors
-      console.warn('[ConfigPanel] Failed to load env sources:', error)
+      logger.warn('Failed to load env sources', error)
     }
   }, [])
 
@@ -58,8 +61,7 @@ export const ConfigPanel = () => {
       const providerList = await window.electronAPI.llmListProviders()
       setProviders(providerList)
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for provider loading errors
-      console.warn('[ConfigPanel] Failed to load providers:', error)
+      logger.warn('Failed to load providers', error)
       // Fall back to default providers
       setProviders([
         { name: 'ollama', displayName: 'Ollama', requiresApiKey: false, supportsStreaming: true },
@@ -76,8 +78,7 @@ export const ConfigPanel = () => {
       const models = await window.electronAPI.llmListModels()
       setAvailableModels(models)
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for model loading errors
-      console.warn('[ConfigPanel] Failed to load models:', error)
+      logger.warn('Failed to load models', error)
     } finally {
       setIsLoadingModels(false)
     }
@@ -150,8 +151,7 @@ export const ConfigPanel = () => {
         .then(() => window.electronAPI.llmListModels())
         .then(models => setAvailableModels(models))
         .catch(error => {
-          // biome-ignore lint/suspicious/noConsole: Debug logging for model initialization errors
-          console.warn('[ConfigPanel] Failed to initialize or load models:', error)
+          logger.warn('Failed to initialize or load models', error)
         })
         .finally(() => setIsLoadingModels(false))
     } else if (activeProvider === 'claude') {
@@ -188,8 +188,7 @@ export const ConfigPanel = () => {
         loadModels()
       }
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for connection test errors
-      console.error('[ConfigPanel] Connection test failed:', error)
+      logger.error('Connection test failed', error)
       setTestResult({
         success: false,
         message: error instanceof Error ? error.message : t('errors.connection'),
