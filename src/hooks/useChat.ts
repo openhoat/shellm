@@ -690,7 +690,7 @@ export function useChat() {
 
       try {
         // Start capturing output
-        const _captureStarted = await window.electronAPI.terminalStartCapture(terminalPid)
+        await window.electronAPI.terminalStartCapture(terminalPid)
 
         setExecutionProgress(50)
 

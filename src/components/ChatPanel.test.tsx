@@ -386,7 +386,6 @@ describe('ChatPanel', () => {
   })
 
   test('should not submit when loading', async () => {
-    const _user = userEvent.setup()
     const mockGenerateAICommand = vi.fn()
     vi.mocked(useChat).mockReturnValue({
       ...defaultChatState,
