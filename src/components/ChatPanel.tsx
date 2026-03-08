@@ -201,7 +201,15 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [chat.aiCommand, chat.error, setAiCommand, clearAllConversations, chat, executeCurrentCommand])
+  }, [
+    chat.aiCommand,
+    chat.error,
+    chat.clearChat,
+    chat.setUserInput,
+    setAiCommand,
+    clearAllConversations,
+    executeCurrentCommand,
+  ])
 
   const submitMessage = useCallback(async () => {
     if (!chat.userInput.trim() || chat.isLoading || chat.isStreaming) return
