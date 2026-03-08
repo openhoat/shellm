@@ -1,5 +1,9 @@
 import fs from 'node:fs'
 import { type BrowserWindow, desktopCapturer, dialog, ipcMain } from 'electron'
+import { Logger } from '../utils/logger'
+
+// Logger instance for video handlers
+const logger = new Logger('Video')
 
 type WindowGetter = () => BrowserWindow | null
 
@@ -35,8 +39,7 @@ export function createVideoHandlers(getWindow: WindowGetter): void {
         name: source.name,
       }
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for video source errors
-      console.error('[Video] Failed to get video sources:', error)
+      logger.error('Failed to get video sources', error)
       return {
         error: error instanceof Error ? error.message : 'Unknown error',
       }
@@ -72,8 +75,7 @@ export function createVideoHandlers(getWindow: WindowGetter): void {
 
         return { success: true, filePath: result.filePath }
       } catch (error) {
-        // biome-ignore lint/suspicious/noConsole: Debug logging for video save errors
-        console.error('[Video] Failed to save video:', error)
+        logger.error('Failed to save video', error)
         return {
           error: error instanceof Error ? error.message : 'Unknown error',
         }

@@ -1,6 +1,10 @@
 import { app, dialog, ipcMain } from 'electron'
 import type { Conversation, ConversationMessage } from '../../shared/types'
 import { getConversationService } from '../services/conversationService'
+import { Logger } from '../utils/logger'
+
+// Logger instance for conversation handlers
+const logger = new Logger('Conversation')
 
 /**
  * Create IPC handlers for conversation management
@@ -102,8 +106,7 @@ export function createConversationHandlers(): void {
         skipped: importResult.skipped,
       }
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for import errors
-      console.error('[Conversation] Failed to import conversations:', error)
+      logger.error('Failed to import conversations', error)
       return {
         success: false,
         cancelled: false,
@@ -148,8 +151,7 @@ export function createConversationHandlers(): void {
 
       return { success: false, cancelled: true }
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for export errors
-      console.error('[Conversation] Failed to export conversation:', error)
+      logger.error('Failed to export conversation', error)
       return {
         success: false,
         cancelled: false,
@@ -192,8 +194,7 @@ export function createConversationHandlers(): void {
 
       return { success: false, cancelled: true }
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for export errors
-      console.error('[Conversation] Failed to export all conversations:', error)
+      logger.error('Failed to export all conversations', error)
       return {
         success: false,
         cancelled: false,

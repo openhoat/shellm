@@ -2,7 +2,11 @@ import { ChatPromptTemplate } from '@langchain/core/prompts'
 import { ChatOpenAI } from '@langchain/openai'
 import { OPENAI_MODELS } from '@shared/models'
 import type { LLMProviderFactory, LLMProviderMetadata, OpenAIConfig } from '@shared/types'
+import { Logger } from '../../utils/logger'
 import { BaseLLMProvider } from './base-provider'
+
+// Logger instance for OpenAI provider
+const logger = new Logger('OpenAIProvider')
 
 /**
  * OpenAI LLM provider
@@ -28,8 +32,7 @@ export class OpenAIProvider extends BaseLLMProvider {
       await chain.invoke({})
       return true
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for connection test errors
-      console.error('[OpenAIProvider] Connection test failed:', error)
+      logger.error('Connection test failed', error)
       return false
     }
   }

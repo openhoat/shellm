@@ -2,7 +2,11 @@ import { ChatAnthropic } from '@langchain/anthropic'
 import { ChatPromptTemplate } from '@langchain/core/prompts'
 import { CLAUDE_MODELS } from '@shared/models'
 import type { ClaudeConfig, LLMProviderFactory, LLMProviderMetadata } from '@shared/types'
+import { Logger } from '../../utils/logger'
 import { BaseLLMProvider } from './base-provider'
+
+// Logger instance for Claude provider
+const logger = new Logger('ClaudeProvider')
 
 /**
  * Claude (Anthropic) LLM provider
@@ -28,8 +32,7 @@ export class ClaudeProvider extends BaseLLMProvider {
       await chain.invoke({})
       return true
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for connection test errors
-      console.error('[ClaudeProvider] Connection test failed:', error)
+      logger.error('Connection test failed', error)
       return false
     }
   }

@@ -1,6 +1,10 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import axios from 'axios'
+import { Logger } from '../utils/logger'
+
+// Logger instance for version check service
+const logger = new Logger('VersionCheck')
 
 interface VersionCheckResult {
   currentVersion: string
@@ -47,8 +51,7 @@ export const getLatestVersion = async (): Promise<string | null> => {
     const tagName = response.data.tag_name
     return tagName.startsWith('v') ? tagName.substring(1) : tagName
   } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: Version check logging
-    console.warn('Failed to fetch latest version from GitHub:', error)
+    logger.warn('Failed to fetch latest version from GitHub', error)
     return null
   }
 }
@@ -95,10 +98,11 @@ export const checkForUpdates = async (): Promise<VersionCheckResult> => {
 
     const isUpdateAvailable = isNewerVersion(currentVersion, latestVersion)
 
-    // biome-ignore lint/suspicious/noConsole: Version check logging
-    console.log(
-      `Version check: current=${currentVersion}, latest=${latestVersion}, updateAvailable=${isUpdateAvailable}`
-    )
+    logger.info('Version check completed', {
+      currentVersion,
+      latestVersion,
+      updateAvailable: isUpdateAvailable,
+    })
 
     return {
       currentVersion,

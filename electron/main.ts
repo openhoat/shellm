@@ -10,6 +10,10 @@ import { cleanupActiveStreams, createLLMHandlers } from './ipc-handlers/llm-serv
 import { createTerminalHandlers } from './ipc-handlers/terminal'
 import { createVideoHandlers } from './ipc-handlers/video'
 import { checkForUpdates } from './services/versionCheckService'
+import { Logger } from './utils/logger'
+
+// Logger instance for main process
+const logger = new Logger('Main')
 
 interface StoreType {
   get: (key: string) => unknown
@@ -156,14 +160,12 @@ const createWindow = (): void => {
   mainWindow.webContents.on(
     'did-fail-load',
     (_event, errorCode, errorDescription, validatedURL) => {
-      // biome-ignore lint/suspicious/noConsole: Error logging for debugging
-      console.error('Failed to load:', errorCode, errorDescription, 'URL:', validatedURL)
+      logger.error('Failed to load', { errorCode, errorDescription, validatedURL })
     }
   )
 
   mainWindow.webContents.on('did-finish-load', () => {
-    // biome-ignore lint/suspicious/noConsole: Success logging for debugging
-    console.log('Page loaded successfully')
+    logger.info('Page loaded successfully')
   })
 
   // Add keyboard shortcut to open DevTools (Ctrl+Shift+I or Cmd+Option+I)
@@ -207,8 +209,7 @@ app.whenReady().then(() => {
 
   // Check for updates in the background (non-blocking)
   checkForUpdates().catch(error => {
-    // biome-ignore lint/suspicious/noConsole: Version check error logging
-    console.error('Version check failed:', error)
+    logger.error('Version check failed', error)
   })
 
   app.on('activate', () => {

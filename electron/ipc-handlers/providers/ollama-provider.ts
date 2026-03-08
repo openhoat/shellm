@@ -1,7 +1,11 @@
 import { ChatPromptTemplate } from '@langchain/core/prompts'
 import { ChatOllama } from '@langchain/ollama'
 import type { LLMProviderFactory, LLMProviderMetadata, OllamaConfig } from '@shared/types'
+import { Logger } from '../../utils/logger'
 import { BaseLLMProvider } from './base-provider'
+
+// Logger instance for Ollama provider
+const logger = new Logger('OllamaProvider')
 
 /**
  * Validate Ollama URL format and return an error message if invalid
@@ -20,8 +24,7 @@ function validateOllamaUrl(url: string): string | undefined {
     }
     return undefined
   } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: Debug logging for URL validation errors
-    console.error('[OllamaProvider] URL validation failed:', error)
+    logger.error('URL validation failed', error)
     return `Invalid Ollama URL: "${url}". URL must be a valid HTTP/HTTPS URL (e.g. http://localhost:11434).`
   }
 }
@@ -58,8 +61,7 @@ export class OllamaProvider extends BaseLLMProvider {
       await chain.invoke({})
       return true
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for connection test errors
-      console.error('[OllamaProvider] Connection test failed:', error)
+      logger.error('Connection test failed', error)
       return false
     }
   }
@@ -76,8 +78,7 @@ export class OllamaProvider extends BaseLLMProvider {
       const data = (await response.json()) as { models: { name: string }[] }
       return data.models.map(model => model.name)
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for model listing errors
-      console.error('[OllamaProvider] Failed to list models:', error)
+      logger.error('Failed to list models', error)
       return []
     }
   }
@@ -139,8 +140,7 @@ export const ollamaProviderFactory: LLMProviderFactory<OllamaConfig> = {
       const data = (await response.json()) as { models: { name: string }[] }
       return data.models.map(model => model.name)
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for model listing errors
-      console.error('[OllamaFactory] Failed to list models:', error)
+      logger.error('Factory failed to list models', error)
       return []
     }
   },
