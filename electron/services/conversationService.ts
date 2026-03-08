@@ -1,7 +1,30 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { app } from 'electron'
+import { z } from 'zod'
 import type { Conversation, ConversationMessage, ConversationsList } from '../../shared/types'
+
+// Zod schema for validating imported conversations
+const messageSchema = z.object({
+  role: z.string(),
+  content: z.string(),
+  timestamp: z.number().optional(),
+})
+
+const conversationSchema = z.object({
+  id: z.string().optional(), // ID will be regenerated
+  title: z.string().max(500), // Limit title length to prevent abuse
+  createdAt: z.number(),
+  updatedAt: z.number(),
+  messages: z.array(messageSchema).max(1000), // Limit messages per conversation
+})
+
+const exportDataSchema = z.object({
+  version: z.string().optional(),
+  exportDate: z.string().optional(),
+  $schema: z.string().optional(),
+  conversations: z.array(conversationSchema).max(100), // Limit total conversations
+})
 
 // Cache entry with TTL
 interface CacheEntry<T> {
@@ -19,6 +42,7 @@ class ConversationService {
   private cache: Map<string, CacheEntry<Conversation>> = new Map()
   private listCache: CacheEntry<Conversation[]> | null = null
   private ttlMs: number
+  private cleanupInterval: NodeJS.Timeout
 
   constructor(ttlMs: number = DEFAULT_TTL_MS) {
     const userDataPath = app.getPath('userData')
@@ -26,6 +50,34 @@ class ConversationService {
     this.ttlMs = ttlMs
     // Sync initialization for backward compatibility
     this.ensureFileExistsSync()
+    // Start periodic cache cleanup (every 2 minutes)
+    this.cleanupInterval = setInterval(() => this.cleanupExpiredCache(), this.ttlMs * 2)
+  }
+
+  /**
+   * Cleanup expired cache entries to prevent memory leaks
+   */
+  private cleanupExpiredCache(): void {
+    const now = Date.now()
+    // Clean up individual conversation cache
+    for (const [key, entry] of this.cache.entries()) {
+      if (now >= entry.expiresAt) {
+        this.cache.delete(key)
+      }
+    }
+    // Clean up list cache if expired
+    if (this.listCache && now >= this.listCache.expiresAt) {
+      this.listCache = null
+    }
+  }
+
+  /**
+   * Cleanup resources when service is destroyed
+   */
+  destroy(): void {
+    clearInterval(this.cleanupInterval)
+    this.cache.clear()
+    this.listCache = null
   }
 
   /**
@@ -274,8 +326,14 @@ class ConversationService {
   /**
    * Import conversations from exported JSON data
    * Generates new IDs to avoid conflicts with existing conversations
+   * Uses Zod validation to ensure data integrity and prevent injection attacks
    */
   async importConversations(jsonData: string): Promise<{ imported: number; skipped: number }> {
+    // Limit file size to prevent memory exhaustion (10MB max)
+    if (jsonData.length > 10 * 1024 * 1024) {
+      throw new Error('Import file too large (max 10MB)')
+    }
+
     let parsed: unknown
     try {
       parsed = JSON.parse(jsonData)
@@ -283,46 +341,33 @@ class ConversationService {
       throw new Error('Invalid JSON format')
     }
 
-    const exportData = parsed as {
-      version?: string
-      conversations?: unknown[]
+    // Validate with Zod schema
+    const validationResult = exportDataSchema.safeParse(parsed)
+    if (!validationResult.success) {
+      throw new Error(`Invalid export format: ${validationResult.error.message}`)
     }
 
-    if (!exportData || typeof exportData !== 'object' || !Array.isArray(exportData.conversations)) {
-      throw new Error('Invalid export format: missing conversations array')
-    }
-
+    const exportData = validationResult.data
     const data = await this.read()
     let imported = 0
     let skipped = 0
 
     for (const conv of exportData.conversations) {
-      const c = conv as Record<string, unknown>
-      if (
-        !c ||
-        typeof c !== 'object' ||
-        typeof c.title !== 'string' ||
-        typeof c.createdAt !== 'number' ||
-        typeof c.updatedAt !== 'number' ||
-        !Array.isArray(c.messages)
-      ) {
+      try {
+        const now = Date.now()
+        const newConversation: Conversation = {
+          id: `${now}-${Math.random().toString(36).slice(2, 11)}-import-${imported}`,
+          title: conv.title,
+          createdAt: conv.createdAt,
+          updatedAt: conv.updatedAt,
+          messages: conv.messages as ConversationMessage[],
+        }
+
+        data.conversations.push(newConversation)
+        imported++
+      } catch {
         skipped++
-        continue
       }
-
-      const now = Date.now()
-      const newConversation: Conversation = {
-        id: `${now}-${Math.random().toString(36).slice(2, 11)}-import-${imported}`,
-        title: c.title,
-        createdAt: c.createdAt,
-        updatedAt: c.updatedAt,
-        messages: (c.messages as ConversationMessage[]).filter(
-          m => m && typeof m.role === 'string' && typeof m.content === 'string'
-        ),
-      }
-
-      data.conversations.push(newConversation)
-      imported++
     }
 
     if (imported > 0) {

@@ -6,7 +6,7 @@ import type { AppConfig } from '../shared/types'
 import { createAuditHandlers } from './ipc-handlers/audit'
 import { createConfigHandlers } from './ipc-handlers/config'
 import { createConversationHandlers } from './ipc-handlers/conversation'
-import { createLLMHandlers } from './ipc-handlers/llm-service'
+import { cleanupActiveStreams, createLLMHandlers } from './ipc-handlers/llm-service'
 import { createTerminalHandlers } from './ipc-handlers/terminal'
 import { createVideoHandlers } from './ipc-handlers/video'
 import { checkForUpdates } from './services/versionCheckService'
@@ -222,4 +222,9 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
+})
+
+app.on('before-quit', () => {
+  // Cleanup all active streaming requests
+  cleanupActiveStreams()
 })

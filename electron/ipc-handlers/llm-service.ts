@@ -348,3 +348,14 @@ export function createLLMHandlers(_getWindow: WindowGetter, initialConfig?: AppC
     }
   )
 }
+
+/**
+ * Cleanup all active streaming requests
+ * Should be called when the application is shutting down
+ */
+export function cleanupActiveStreams(): void {
+  for (const [requestId, controller] of activeStreams.entries()) {
+    controller.abort()
+    activeStreams.delete(requestId)
+  }
+}
