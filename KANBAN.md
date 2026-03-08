@@ -9,5 +9,3 @@
 - [ ] **[UX]** Contextual AI suggestions based on current directory, project type detection, and recent commands (P3)
 
 ## 🚧 In Progress
-
-- [ ] **[FEAT]** Implement version check at startup
