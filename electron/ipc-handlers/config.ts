@@ -114,7 +114,6 @@ export function createConfigHandlers(getWindow: WindowGetter, store: StoreType):
     return getEnvSources()
   })
 
-  // Set config
   ipcMain.handle('config:set', async (_event, config: AppConfig) => {
     if (!isAppConfig(config)) {
       throw new Error('Invalid config object')

@@ -31,7 +31,6 @@ export function createConversationHandlers(): void {
     }
   )
 
-  // Update a conversation
   ipcMain.handle(
     'conversation:update',
     async (_event, id: string, updates: Partial<Conversation>) => {
@@ -39,7 +38,6 @@ export function createConversationHandlers(): void {
     }
   )
 
-  // Update a specific message in a conversation
   ipcMain.handle(
     'conversation:update-message',
     async (
