@@ -3,6 +3,9 @@ import path from 'node:path'
 import { app } from 'electron'
 import { z } from 'zod'
 import type { Conversation, ConversationMessage, ConversationsList } from '../../shared/types'
+import { Logger } from '../utils/logger'
+
+const logger = new Logger('ConversationService')
 
 // Zod schema for validating imported conversations
 const messageSchema = z.object({
@@ -122,8 +125,7 @@ class ConversationService {
       const data = await fs.readFile(this.filePath, 'utf-8')
       return JSON.parse(data) as ConversationsList
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Debug logging for conversation read errors
-      console.error('[ConversationService] Failed to read conversations file:', error)
+      logger.error('Failed to read conversations file', { error })
       return { conversations: [] }
     }
   }
