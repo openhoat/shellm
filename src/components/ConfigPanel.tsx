@@ -7,6 +7,7 @@ import { useStore } from '../store/useStore'
 import { Logger } from '../utils/logger'
 import { LanguageSelector } from './LanguageSelector'
 import { ModelSelector } from './ModelSelector'
+import { ProviderConfigField } from './ProviderConfigField'
 import './ConfigPanel.css'
 
 // Logger instance for ConfigPanel
@@ -270,63 +271,71 @@ export const ConfigPanel = () => {
             <div className="config-section">
               <h3>{t('config.ollama.title')}</h3>
 
-              <div className="config-field">
-                <label htmlFor="ollama-url">
-                  {t('config.ollama.url')}
-                  {envSources.url && <span className="env-badge">Environment variable</span>}
-                </label>
-                <input
-                  id="ollama-url"
-                  type="text"
-                  value={localConfig.ollama.url}
-                  onChange={e =>
-                    setLocalConfig({
-                      ...localConfig,
-                      ollama: { ...localConfig.ollama, url: e.target.value },
-                    })
-                  }
-                  placeholder="http://localhost:11434"
-                  disabled={envSources.url}
-                  className={envSources.url ? 'env-readonly' : ''}
-                />
-                {envSources.url && (
-                  <div className="env-hint">
-                    Value set by environment variable <code>TERMAID_OLLAMA_URL</code>
-                  </div>
-                )}
-              </div>
+              <ProviderConfigField
+                id="ollama-url"
+                label={t('config.ollama.url')}
+                value={localConfig.ollama.url}
+                onChange={url =>
+                  setLocalConfig({
+                    ...localConfig,
+                    ollama: { ...localConfig.ollama, url },
+                  })
+                }
+                placeholder="http://localhost:11434"
+                disabled={envSources.url}
+                envBadge={envSources.url}
+                envHint={
+                  envSources.url ? (
+                    <>
+                      Value set by environment variable <code>TERMAID_OLLAMA_URL</code>
+                    </>
+                  ) : undefined
+                }
+              />
 
-              <div className="config-field">
-                <label htmlFor="ollama-api-key">
-                  {t('config.common.apiKeyOptional')}
-                  {envSources.apiKey && <span className="env-badge">Environment variable</span>}
-                </label>
-                <input
-                  id="ollama-api-key"
-                  type="password"
-                  value={localConfig.ollama.apiKey || ''}
-                  onChange={e =>
-                    setLocalConfig({
-                      ...localConfig,
-                      ollama: { ...localConfig.ollama, apiKey: e.target.value },
-                    })
-                  }
-                  placeholder="Your API key"
-                  disabled={envSources.apiKey}
-                  className={envSources.apiKey ? 'env-readonly' : ''}
-                />
-                {envSources.apiKey && (
-                  <div className="env-hint">
-                    Value set by environment variable <code>TERMAID_OLLAMA_API_KEY</code>
-                  </div>
-                )}
-              </div>
+              <ProviderConfigField
+                id="ollama-api-key"
+                label={t('config.common.apiKeyOptional')}
+                value={localConfig.ollama.apiKey || ''}
+                onChange={apiKey =>
+                  setLocalConfig({
+                    ...localConfig,
+                    ollama: { ...localConfig.ollama, apiKey },
+                  })
+                }
+                type="password"
+                placeholder="Your API key"
+                disabled={envSources.apiKey}
+                envBadge={envSources.apiKey}
+                envHint={
+                  envSources.apiKey ? (
+                    <>
+                      Value set by environment variable <code>TERMAID_OLLAMA_API_KEY</code>
+                    </>
+                  ) : undefined
+                }
+              />
 
-              <div className="config-field">
-                <label htmlFor="ollama-model">
-                  {t('config.ollama.model')}
-                  {envSources.model && <span className="env-badge">Environment variable</span>}
-                </label>
+              <ProviderConfigField
+                id="ollama-model"
+                label={t('config.ollama.model')}
+                value={localConfig.ollama.model}
+                onChange={model =>
+                  setLocalConfig({
+                    ...localConfig,
+                    ollama: { ...localConfig.ollama, model },
+                  })
+                }
+                disabled={envSources.model}
+                envBadge={envSources.model}
+                envHint={
+                  envSources.model ? (
+                    <>
+                      Value set by environment variable <code>TERMAID_OLLAMA_MODEL</code>
+                    </>
+                  ) : undefined
+                }
+              >
                 <ModelSelector
                   value={localConfig.ollama.model}
                   onChange={model =>
@@ -342,12 +351,7 @@ export const ConfigPanel = () => {
                   disabled={envSources.model}
                   className={envSources.model ? 'env-readonly' : ''}
                 />
-                {envSources.model && (
-                  <div className="env-hint">
-                    Value set by environment variable <code>TERMAID_OLLAMA_MODEL</code>
-                  </div>
-                )}
-              </div>
+              </ProviderConfigField>
 
               <div className="config-field">
                 <label htmlFor="ollama-temperature">
@@ -412,42 +416,50 @@ export const ConfigPanel = () => {
             <div className="config-section">
               <h3>{t('config.claude.title')}</h3>
 
-              <div className="config-field">
-                <label htmlFor="claude-api-key">
-                  {t('config.claude.apiKey')}
-                  {envSources.claudeApiKey && (
-                    <span className="env-badge">Environment variable</span>
-                  )}
-                </label>
-                <input
-                  id="claude-api-key"
-                  type="password"
-                  value={localConfig.claude.apiKey || ''}
-                  onChange={e =>
-                    setLocalConfig({
-                      ...localConfig,
-                      claude: { ...localConfig.claude, apiKey: e.target.value },
-                    })
-                  }
-                  placeholder="sk-ant-..."
-                  disabled={envSources.claudeApiKey}
-                  className={envSources.claudeApiKey ? 'env-readonly' : ''}
-                />
-                {envSources.claudeApiKey && (
-                  <div className="env-hint">
-                    Value set by environment variable <code>TERMAID_CLAUDE_API_KEY</code> or{' '}
-                    <code>ANTHROPIC_API_KEY</code>
-                  </div>
-                )}
-              </div>
+              <ProviderConfigField
+                id="claude-api-key"
+                label={t('config.claude.apiKey')}
+                value={localConfig.claude.apiKey || ''}
+                onChange={apiKey =>
+                  setLocalConfig({
+                    ...localConfig,
+                    claude: { ...localConfig.claude, apiKey },
+                  })
+                }
+                type="password"
+                placeholder="sk-ant-..."
+                disabled={envSources.claudeApiKey}
+                envBadge={envSources.claudeApiKey}
+                envHint={
+                  envSources.claudeApiKey ? (
+                    <>
+                      Value set by environment variable <code>TERMAID_CLAUDE_API_KEY</code> or{' '}
+                      <code>ANTHROPIC_API_KEY</code>
+                    </>
+                  ) : undefined
+                }
+              />
 
-              <div className="config-field">
-                <label htmlFor="claude-model">
-                  {t('config.claude.model')}
-                  {envSources.claudeModel && (
-                    <span className="env-badge">Environment variable</span>
-                  )}
-                </label>
+              <ProviderConfigField
+                id="claude-model"
+                label={t('config.claude.model')}
+                value={localConfig.claude.model}
+                onChange={model =>
+                  setLocalConfig({
+                    ...localConfig,
+                    claude: { ...localConfig.claude, model },
+                  })
+                }
+                disabled={envSources.claudeModel}
+                envBadge={envSources.claudeModel}
+                envHint={
+                  envSources.claudeModel ? (
+                    <>
+                      Value set by environment variable <code>TERMAID_CLAUDE_MODEL</code>
+                    </>
+                  ) : undefined
+                }
+              >
                 <ModelSelector
                   value={localConfig.claude.model}
                   onChange={model =>
@@ -463,12 +475,7 @@ export const ConfigPanel = () => {
                   disabled={envSources.claudeModel}
                   className={envSources.claudeModel ? 'env-readonly' : ''}
                 />
-                {envSources.claudeModel && (
-                  <div className="env-hint">
-                    Value set by environment variable <code>TERMAID_CLAUDE_MODEL</code>
-                  </div>
-                )}
-              </div>
+              </ProviderConfigField>
 
               <div className="config-field">
                 <label htmlFor="claude-temperature">
@@ -513,41 +520,49 @@ export const ConfigPanel = () => {
             <div className="config-section">
               <h3>{t('config.openai.title')}</h3>
 
-              <div className="config-field">
-                <label htmlFor="openai-api-key">
-                  {t('config.openai.apiKey')}
-                  {envSources.openaiApiKey && (
-                    <span className="env-badge">Environment variable</span>
-                  )}
-                </label>
-                <input
-                  id="openai-api-key"
-                  type="password"
-                  value={localConfig.openai.apiKey || ''}
-                  onChange={e =>
-                    setLocalConfig({
-                      ...localConfig,
-                      openai: { ...localConfig.openai, apiKey: e.target.value },
-                    })
-                  }
-                  placeholder="sk-..."
-                  disabled={envSources.openaiApiKey}
-                  className={envSources.openaiApiKey ? 'env-readonly' : ''}
-                />
-                {envSources.openaiApiKey && (
-                  <div className="env-hint">
-                    Value set by environment variable <code>TERMAID_OPENAI_API_KEY</code>
-                  </div>
-                )}
-              </div>
+              <ProviderConfigField
+                id="openai-api-key"
+                label={t('config.openai.apiKey')}
+                value={localConfig.openai.apiKey || ''}
+                onChange={apiKey =>
+                  setLocalConfig({
+                    ...localConfig,
+                    openai: { ...localConfig.openai, apiKey },
+                  })
+                }
+                type="password"
+                placeholder="sk-..."
+                disabled={envSources.openaiApiKey}
+                envBadge={envSources.openaiApiKey}
+                envHint={
+                  envSources.openaiApiKey ? (
+                    <>
+                      Value set by environment variable <code>TERMAID_OPENAI_API_KEY</code>
+                    </>
+                  ) : undefined
+                }
+              />
 
-              <div className="config-field">
-                <label htmlFor="openai-model">
-                  {t('config.openai.model')}
-                  {envSources.openaiModel && (
-                    <span className="env-badge">Environment variable</span>
-                  )}
-                </label>
+              <ProviderConfigField
+                id="openai-model"
+                label={t('config.openai.model')}
+                value={localConfig.openai.model}
+                onChange={model =>
+                  setLocalConfig({
+                    ...localConfig,
+                    openai: { ...localConfig.openai, model },
+                  })
+                }
+                disabled={envSources.openaiModel}
+                envBadge={envSources.openaiModel}
+                envHint={
+                  envSources.openaiModel ? (
+                    <>
+                      Value set by environment variable <code>TERMAID_OPENAI_MODEL</code>
+                    </>
+                  ) : undefined
+                }
+              >
                 <ModelSelector
                   value={localConfig.openai.model}
                   onChange={model =>
@@ -563,12 +578,7 @@ export const ConfigPanel = () => {
                   disabled={envSources.openaiModel}
                   className={envSources.openaiModel ? 'env-readonly' : ''}
                 />
-                {envSources.openaiModel && (
-                  <div className="env-hint">
-                    Value set by environment variable <code>TERMAID_OPENAI_MODEL</code>
-                  </div>
-                )}
-              </div>
+              </ProviderConfigField>
 
               <div className="config-field">
                 <label htmlFor="openai-temperature">
