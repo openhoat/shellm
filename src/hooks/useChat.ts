@@ -263,10 +263,27 @@ export function useChat() {
       }
 
       // Build conversation history for LLM context
-      const conversationHistory: ConversationMessage[] = conversation.map(msg => ({
-        role: msg.type === 'user' ? 'user' : 'assistant',
-        content: msg.content,
-      }))
+      const conversationHistory: ConversationMessage[] = conversation.map(msg => {
+        const historyMsg: ConversationMessage = {
+          role: msg.type === 'user' ? 'user' : 'assistant',
+          content: msg.content,
+        }
+
+        // Include command, output, and interpretation for assistant messages
+        if (msg.type === 'ai') {
+          if (msg.command?.type === 'command') {
+            historyMsg.command = msg.command.command
+          }
+          if (msg.output) {
+            historyMsg.output = msg.output
+          }
+          if (msg.interpretation) {
+            historyMsg.interpretation = msg.interpretation
+          }
+        }
+
+        return historyMsg
+      })
 
       // Add current user message to history
       conversationHistory.push({ role: 'user', content: prompt })
@@ -419,10 +436,27 @@ export function useChat() {
       }
 
       // Build conversation history for LLM context
-      const conversationHistory: ConversationMessage[] = conversation.map(msg => ({
-        role: msg.type === 'user' ? 'user' : 'assistant',
-        content: msg.content,
-      }))
+      const conversationHistory: ConversationMessage[] = conversation.map(msg => {
+        const historyMsg: ConversationMessage = {
+          role: msg.type === 'user' ? 'user' : 'assistant',
+          content: msg.content,
+        }
+
+        // Include command, output, and interpretation for assistant messages
+        if (msg.type === 'ai') {
+          if (msg.command?.type === 'command') {
+            historyMsg.command = msg.command.command
+          }
+          if (msg.output) {
+            historyMsg.output = msg.output
+          }
+          if (msg.interpretation) {
+            historyMsg.interpretation = msg.interpretation
+          }
+        }
+
+        return historyMsg
+      })
       conversationHistory.push({ role: 'user', content: prompt })
 
       // Save user message to persistent storage
@@ -726,9 +760,11 @@ export function useChat() {
               i18n.language
             )
 
-            // Update local conversation state with interpretation
+            // Update local conversation state with output and interpretation
             setConversation(prev =>
-              prev.map((msg, idx) => (idx === messageIndex ? { ...msg, interpretation } : msg))
+              prev.map((msg, idx) =>
+                idx === messageIndex ? { ...msg, output, interpretation } : msg
+              )
             )
 
             // Persist output and interpretation to storage
