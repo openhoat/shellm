@@ -10,5 +10,4 @@
 
 ## 🚧 In Progress
 
-- [ ] **[FEAT]** Display update notification toast at startup when newer version available on GitHub
-- [ ] **[FEAT]** Add in-app log viewer to display application logs (electron + renderer)
+<!-- Tasks in progress appear here -->
