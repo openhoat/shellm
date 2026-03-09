@@ -91,6 +91,19 @@ const mockConversationExportAll = vi
   .fn()
   .mockResolvedValue({ success: true, filePath: '/test/exports.json' })
 
+// Mock for streaming callbacks
+const mockLlmGenerateCommandStreaming = vi
+  .fn()
+  .mockImplementation(
+    async (_prompt: string, onChunk: (content: string, progress: unknown) => void) => {
+      // Simulate streaming by calling onChunk
+      onChunk('ls -la', { status: 'streaming', progress: 50 })
+      return defaultAICommand
+    }
+  )
+
+const mockLlmCancelStreaming = vi.fn().mockResolvedValue(undefined)
+
 Object.defineProperty(global, 'window', {
   value: {
     ...window,
@@ -129,6 +142,13 @@ Object.defineProperty(global, 'window', {
       conversationExport: mockConversationExport,
       conversationExportAll: mockConversationExportAll,
     },
+    electron: {
+      llm: {
+        generateCommand: mockLlmGenerateCommand,
+        generateCommandStreaming: mockLlmGenerateCommandStreaming,
+        cancelStreaming: mockLlmCancelStreaming,
+      },
+    },
   },
   writable: true,
 })
@@ -145,6 +165,8 @@ export {
   mockOnTerminalData,
   mockOnTerminalExit,
   mockLlmGenerateCommand,
+  mockLlmGenerateCommandStreaming,
+  mockLlmCancelStreaming,
   mockLlmExplainCommand,
   mockLlmInterpretOutput,
   mockLlmTestConnection,
