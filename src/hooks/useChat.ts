@@ -19,6 +19,7 @@ import {
   useSetAiCommand,
   useSetError,
   useSetIsLoading,
+  useStore,
   useTerminalPid,
   useUpdateMessageInConversation,
 } from '@/store/useStore'
@@ -209,15 +210,9 @@ export function useChat() {
       setError(null)
 
       try {
-        // Create conversation if needed
+        // Create conversation if needed (creates empty conversation)
         if (!currentConversation) {
           await createConversation(sanitized)
-        } else {
-          await addMessageToConversation({
-            role: 'user',
-            content: sanitized,
-            timestamp: new Date(),
-          })
         }
 
         // Add user message to local conversation
@@ -226,6 +221,13 @@ export function useChat() {
           id: userMessageId,
           type: 'user',
           content: sanitized,
+        })
+
+        // Save user message to persistent storage (always after creating conversation if needed)
+        await addMessageToConversation({
+          role: 'user',
+          content: sanitized,
+          timestamp: new Date(),
         })
 
         // Build conversation history for context
@@ -245,12 +247,45 @@ export function useChat() {
         if (command) {
           // Add AI command to local conversation
           const messageId = `msg-${Date.now()}`
+          const aiContent = command.type === 'text' ? command.content : command.explanation || ''
+
+          // Calculate index BEFORE adding (index of the message we're about to add)
+          // Use messageCounter which is the current count (= next index)
+          const messageIndex = conversationState.messageCounter
+
           conversationState.addMessage({
             id: messageId,
             type: 'ai',
-            content: command.type === 'text' ? command.content : command.explanation || '',
+            content: aiContent,
             command: command.type === 'command' ? command : undefined,
           })
+
+          // Set current command index to the newly added message (for execution)
+          if (command.type === 'command') {
+            conversationState.setCurrentCommandIndex(messageIndex)
+          }
+
+          // Save AI response to persistent storage
+          // Calculate the persisted index: user message is at length-1, assistant will be at length
+          // Need to get fresh state since currentConversation might be stale in closure
+          const currentState = useStore.getState()
+          const freshConversation = currentState.currentConversation
+          const userMessageIndex = freshConversation ? freshConversation.messages.length - 1 : 0
+          const persistedIndex = userMessageIndex + 1 // Assistant message comes after user message
+
+          const messageToSave: ConversationMessage = {
+            role: 'assistant',
+            content: aiContent,
+          }
+          if (command.type === 'command') {
+            messageToSave.command = command.command
+          }
+          await addMessageToConversation(messageToSave)
+
+          // Store the persisted index for command responses (to update with output/interpretation later)
+          if (command.type === 'command') {
+            conversationState.setPersistedCommandIndex(persistedIndex)
+          }
 
           // Add to input history
           inputHistory.addToHistory(sanitized)
@@ -274,6 +309,9 @@ export function useChat() {
       createConversation,
       addMessageToConversation,
       conversationState.addMessage,
+      conversationState.messageCounter,
+      conversationState.setCurrentCommandIndex,
+      conversationState.setPersistedCommandIndex,
       streaming.startStreaming,
       inputHistory.addToHistory,
       inputHistory.resetNavigation,
@@ -308,16 +346,25 @@ export function useChat() {
       setError(null)
 
       try {
-        // Create conversation if needed
+        // Add user message to local conversation
+        const userMessageId = `msg-user-${Date.now()}`
+        conversationState.addMessage({
+          id: userMessageId,
+          type: 'user',
+          content: sanitized,
+        })
+
+        // Create conversation if needed (creates empty conversation)
         if (!currentConversation) {
           await createConversation(sanitized)
-        } else {
-          await addMessageToConversation({
-            role: 'user',
-            content: sanitized,
-            timestamp: new Date(),
-          })
         }
+
+        // Save user message to persistent storage (always after creating conversation if needed)
+        await addMessageToConversation({
+          role: 'user',
+          content: sanitized,
+          timestamp: new Date(),
+        })
 
         // Build conversation history for context
         const conversationHistory: ConversationMessage[] =
@@ -335,6 +382,47 @@ export function useChat() {
 
         setAiCommand(command)
         setIsLoading(false)
+
+        // Add AI command to local conversation
+        const aiContent = command.type === 'text' ? command.content : command.explanation || ''
+
+        // Calculate index BEFORE adding (index of the message we're about to add)
+        // Use messageCounter which is the current count (= next index)
+        const messageIndex = conversationState.messageCounter
+
+        conversationState.addMessage({
+          id: `msg-${Date.now()}`,
+          type: 'ai',
+          content: aiContent,
+          command: command.type === 'command' ? command : undefined,
+        })
+
+        // Set current command index to the newly added message (for execution)
+        if (command.type === 'command') {
+          conversationState.setCurrentCommandIndex(messageIndex)
+        }
+
+        // Save AI response to persistent storage
+        // Calculate the persisted index: user message is at length-1, assistant will be at length
+        // Need to get fresh state since currentConversation might be stale in closure
+        const currentState = useStore.getState()
+        const freshConversation = currentState.currentConversation
+        const userMessageIndex = freshConversation ? freshConversation.messages.length - 1 : 0
+        const persistedIndex = userMessageIndex + 1 // Assistant message comes after user message
+
+        const messageToSave: ConversationMessage = {
+          role: 'assistant',
+          content: aiContent,
+        }
+        if (command.type === 'command') {
+          messageToSave.command = command.command
+        }
+        await addMessageToConversation(messageToSave)
+
+        // Store the persisted index for command responses (to update with output/interpretation later)
+        if (command.type === 'command') {
+          conversationState.setPersistedCommandIndex(persistedIndex)
+        }
 
         // Add to input history
         inputHistory.addToHistory(sanitized)
@@ -361,6 +449,10 @@ export function useChat() {
       currentConversation,
       createConversation,
       addMessageToConversation,
+      conversationState.addMessage,
+      conversationState.messageCounter,
+      conversationState.setCurrentCommandIndex,
+      conversationState.setPersistedCommandIndex,
       inputHistory.addToHistory,
       inputHistory.resetNavigation,
       addToast,
