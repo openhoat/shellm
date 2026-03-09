@@ -16,6 +16,8 @@ export const Terminal = () => {
   const terminalCreatedRef = useRef(false)
   const terminalPidRef = useRef<number | null>(null)
   const resizeObserverRef = useRef<ResizeObserver | null>(null)
+  const rafIdRef = useRef<number | null>(null)
+  const pendingResizeRef = useRef<boolean>(false)
   const { terminalPid, setTerminalPid, appendTerminalOutput } = useStore()
 
   // Keep terminalPidRef in sync with terminalPid
@@ -160,20 +162,29 @@ export const Terminal = () => {
         }
       })
 
-      // Handle resize
+      // Throttled resize handler using requestAnimationFrame
       handleResize = () => {
-        // Check if terminal is still valid before fitting
-        if (!xtermRef.current || !fitAddonRef.current) {
-          return
-        }
-        try {
-          fitAddon.fit()
-          if (terminalPidRef.current) {
-            window.electronAPI.terminalResize(terminalPidRef.current, xterm.cols, xterm.rows)
-          }
-        } catch (error) {
-          // Ignore resize errors if terminal is being disposed
-          logger.debug('Resize error (terminal may be disposing):', error)
+        pendingResizeRef.current = true
+
+        if (rafIdRef.current === null) {
+          rafIdRef.current = requestAnimationFrame(() => {
+            if (pendingResizeRef.current && xtermRef.current && fitAddonRef.current) {
+              try {
+                fitAddonRef.current.fit()
+                if (terminalPidRef.current) {
+                  window.electronAPI.terminalResize(
+                    terminalPidRef.current,
+                    xtermRef.current.cols,
+                    xtermRef.current.rows
+                  )
+                }
+              } catch (error) {
+                logger.debug('Resize error (terminal may be disposing):', error)
+              }
+              pendingResizeRef.current = false
+            }
+            rafIdRef.current = null
+          })
         }
       }
 
@@ -205,6 +216,12 @@ export const Terminal = () => {
     initializeTerminal()
 
     return () => {
+      // Cancel any pending RAF
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current)
+        rafIdRef.current = null
+      }
+
       unsubscribeData?.()
       if (handleResize) {
         window.removeEventListener('resize', handleResize)

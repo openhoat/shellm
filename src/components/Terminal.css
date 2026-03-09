@@ -45,6 +45,9 @@
   overflow: hidden;
   background-color: #2d2d2d;
   position: relative;
+  /* Performance optimizations for resize */
+  will-change: contents;
+  contain: layout style;
 }
 
 .terminal-content .xterm {
