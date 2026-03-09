@@ -1,3 +1,4 @@
+import type { CommandInterpretation } from '@shared/types'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '@/hooks/useToast'
@@ -140,7 +141,7 @@ export function useCommandExecution(
       command: string,
       _messageIndex: number,
       _persistedCommandIndex: number | null,
-      onInterpretation: (output: string, interpretation: string) => void
+      onInterpretation: (output: string, interpretation: CommandInterpretation) => void
     ): Promise<void> => {
       const output = await executeCommand(command)
 
