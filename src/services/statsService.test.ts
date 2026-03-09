@@ -284,7 +284,7 @@ describe('CommandTimer', () => {
       chatLanguage: 'auto',
     }
 
-    timer.record(mockConfig, 'ls -la', true)
+    timer.end(mockConfig, 'ls -la', true)
 
     const stats = singletonStatsService.getStats()
     expect(stats.totalCommands).toBeGreaterThan(0)

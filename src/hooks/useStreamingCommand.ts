@@ -1,5 +1,7 @@
 import type { AICommand, ConversationMessage, StreamingProgress } from '@shared/types'
 import { useCallback, useRef, useState } from 'react'
+import { CommandTimer } from '@/services/statsService'
+import { useConfig } from '@/store/useStore'
 import { Logger } from '@/utils/logger'
 
 const logger = new Logger('useStreamingCommand')
@@ -39,6 +41,7 @@ export interface UseStreamingCommandResult {
 export function useStreamingCommand(
   options: UseStreamingCommandOptions = {}
 ): UseStreamingCommandResult {
+  const config = useConfig()
   const [isStreaming, setIsStreaming] = useState(false)
   const [streamingContent, setStreamingContent] = useState('')
   const [streamingProgress, setStreamingProgress] = useState<StreamingProgress | null>(null)
@@ -80,6 +83,8 @@ export function useStreamingCommand(
 
       logger.debug('Starting streaming request', { requestId, prompt: prompt.substring(0, 50) })
 
+      const timer = CommandTimer.start()
+
       try {
         // Set up progress listener BEFORE starting the stream
         const unsubscribe = window.electronAPI.onLlmStreamProgress(requestId, progress => {
@@ -120,6 +125,12 @@ export function useStreamingCommand(
           currentRequestIdRef.current = null
 
           logger.debug('Streaming completed successfully', { requestId })
+
+          // Record successful command generation
+          if (result.type === 'command') {
+            timer.end(config, result.command, true)
+          }
+
           options.onStreamComplete?.(result)
           return result
         }
@@ -136,6 +147,10 @@ export function useStreamingCommand(
 
           const err = error instanceof Error ? error : new Error(String(error))
           logger.error('Streaming error:', err)
+
+          // Record failed command generation
+          timer.end(config, prompt, false, err.message)
+
           options.onStreamError?.(err)
           throw err
         }
@@ -143,7 +158,7 @@ export function useStreamingCommand(
         return null
       }
     },
-    [options]
+    [config, options]
   )
 
   return {

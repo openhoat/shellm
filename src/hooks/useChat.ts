@@ -132,7 +132,6 @@ export function useChat() {
    */
   const prevConversationIdRef = useRef<string | null>(null)
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Only trigger when conversation ID changes, not on message updates
   useEffect(() => {
     const conversationId = currentConversation?.id || null
 
@@ -146,6 +145,7 @@ export function useChat() {
             id: `msg-restored-${idx}`,
             type: msg.role === 'user' ? 'user' : 'ai',
             content: msg.content,
+            output: msg.output,
             interpretation: msg.interpretation,
           })
         )
@@ -154,7 +154,12 @@ export function useChat() {
         conversationState.clearConversation()
       }
     }
-  }, [currentConversation?.id])
+  }, [
+    currentConversation?.id,
+    currentConversation,
+    conversationState.restoreMessages,
+    conversationState.clearConversation,
+  ])
 
   /**
    * Auto-hide AI command when user starts typing new content
@@ -367,6 +372,9 @@ export function useChat() {
    */
   const executeCommand = useCallback(
     async (command: string, messageIndex?: number) => {
+      // Hide command actions immediately when execution starts
+      setAiCommand(null)
+
       try {
         if (messageIndex !== undefined && conversationState.persistedCommandIndex !== null) {
           // Execute with interpretation
@@ -391,8 +399,6 @@ export function useChat() {
           // Execute without interpretation
           await execution.executeCommand(command)
         }
-
-        setAiCommand(null)
       } catch (err) {
         logger.error('Command execution failed:', err)
         // Error already handled by execution.onExecutionError
@@ -410,18 +416,17 @@ export function useChat() {
 
   /**
    * Modify an existing AI-generated command
+   * Copies command to input field and hides command actions
    */
-  const modifyCommand = useCallback(
-    (newCommand: string) => {
-      if (!aiCommand) return
+  const modifyCommand = useCallback(() => {
+    if (!aiCommand || aiCommand.type !== 'command') return
 
-      setAiCommand({
-        ...aiCommand,
-        command: newCommand,
-      })
-    },
-    [aiCommand, setAiCommand]
-  )
+    // Copy command to input field for editing
+    setUserInput(aiCommand.command)
+
+    // Hide command actions
+    setAiCommand(null)
+  }, [aiCommand, setAiCommand])
 
   /**
    * Navigate through input history (arrow keys)
