@@ -24,6 +24,9 @@ const defaultAICommand: AICommand = {
 }
 
 const mockLlmGenerateCommand = vi.fn().mockResolvedValue(defaultAICommand)
+const mockLlmStreamCommand = vi.fn().mockResolvedValue(defaultAICommand)
+const mockLlmCancelStream = vi.fn().mockResolvedValue(undefined)
+const mockOnLlmStreamProgress = vi.fn().mockReturnValue(() => undefined) // Returns unsubscribe function
 const mockLlmExplainCommand = vi.fn().mockResolvedValue('This command lists files')
 const mockLlmInterpretOutput = vi.fn().mockResolvedValue({
   summary: 'Command executed successfully',
@@ -91,19 +94,6 @@ const mockConversationExportAll = vi
   .fn()
   .mockResolvedValue({ success: true, filePath: '/test/exports.json' })
 
-// Mock for streaming callbacks
-const mockLlmGenerateCommandStreaming = vi
-  .fn()
-  .mockImplementation(
-    async (_prompt: string, onChunk: (content: string, progress: unknown) => void) => {
-      // Simulate streaming by calling onChunk
-      onChunk('ls -la', { status: 'streaming', progress: 50 })
-      return defaultAICommand
-    }
-  )
-
-const mockLlmCancelStreaming = vi.fn().mockResolvedValue(undefined)
-
 Object.defineProperty(global, 'window', {
   value: {
     ...window,
@@ -126,6 +116,9 @@ Object.defineProperty(global, 'window', {
       // LLM
       llmInit: mockLlmInit,
       llmGenerateCommand: mockLlmGenerateCommand,
+      llmStreamCommand: mockLlmStreamCommand,
+      llmCancelStream: mockLlmCancelStream,
+      onLlmStreamProgress: mockOnLlmStreamProgress,
       llmExplainCommand: mockLlmExplainCommand,
       llmInterpretOutput: mockLlmInterpretOutput,
       llmTestConnection: mockLlmTestConnection,
@@ -141,13 +134,6 @@ Object.defineProperty(global, 'window', {
       conversationClearAll: mockConversationClearAll,
       conversationExport: mockConversationExport,
       conversationExportAll: mockConversationExportAll,
-    },
-    electron: {
-      llm: {
-        generateCommand: mockLlmGenerateCommand,
-        generateCommandStreaming: mockLlmGenerateCommandStreaming,
-        cancelStreaming: mockLlmCancelStreaming,
-      },
     },
   },
   writable: true,
@@ -165,8 +151,9 @@ export {
   mockOnTerminalData,
   mockOnTerminalExit,
   mockLlmGenerateCommand,
-  mockLlmGenerateCommandStreaming,
-  mockLlmCancelStreaming,
+  mockLlmStreamCommand,
+  mockLlmCancelStream,
+  mockOnLlmStreamProgress,
   mockLlmExplainCommand,
   mockLlmInterpretOutput,
   mockLlmTestConnection,
