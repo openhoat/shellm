@@ -132,6 +132,7 @@ export function useChat() {
    */
   const prevConversationIdRef = useRef<string | null>(null)
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Only trigger when conversation ID changes, not on message updates
   useEffect(() => {
     const conversationId = currentConversation?.id || null
 
@@ -153,7 +154,7 @@ export function useChat() {
         conversationState.clearConversation()
       }
     }
-  }, [currentConversation, conversationState])
+  }, [currentConversation?.id])
 
   /**
    * Auto-hide AI command when user starts typing new content
