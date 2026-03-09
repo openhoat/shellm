@@ -223,9 +223,10 @@ export function useChat() {
       currentConversation,
       createConversation,
       addMessageToConversation,
-      conversationState,
-      streaming,
-      inputHistory,
+      conversationState.addMessage,
+      streaming.startStreaming,
+      inputHistory.addToHistory,
+      inputHistory.resetNavigation,
       addToast,
     ]
   )
@@ -302,7 +303,8 @@ export function useChat() {
       currentConversation,
       createConversation,
       addMessageToConversation,
-      inputHistory,
+      inputHistory.addToHistory,
+      inputHistory.resetNavigation,
       addToast,
     ]
   )
@@ -343,7 +345,14 @@ export function useChat() {
         // Error already handled by execution.onExecutionError
       }
     },
-    [execution, conversationState, setAiCommand, updateMessageInConversation]
+    [
+      execution.executeCommand,
+      execution.executeWithInterpretation,
+      conversationState.persistedCommandIndex,
+      conversationState.updateMessage,
+      setAiCommand,
+      updateMessageInConversation,
+    ]
   )
 
   /**
@@ -369,7 +378,7 @@ export function useChat() {
       const newInput = inputHistory.navigateHistory(direction, userInput)
       setUserInput(newInput)
     },
-    [inputHistory, userInput]
+    [inputHistory.navigateHistory, userInput]
   )
 
   /**
@@ -381,7 +390,7 @@ export function useChat() {
     setError(null)
     setUserInput('')
     inputHistory.resetNavigation()
-  }, [conversationState, setAiCommand, setError, inputHistory])
+  }, [conversationState.clearConversation, setAiCommand, setError, inputHistory.resetNavigation])
 
   return {
     // State
