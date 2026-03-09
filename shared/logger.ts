@@ -90,11 +90,8 @@ class Logger {
   }
 
   #getLogLevelFromEnv(): LogLevel {
-    // Support both Vite (import.meta.env.MODE) and Node.js (process.env.NODE_ENV)
-    const env =
-      (typeof import.meta !== 'undefined' && import.meta.env?.MODE) ||
-      (typeof process !== 'undefined' && process.env?.NODE_ENV) ||
-      'development'
+    // Use process.env.NODE_ENV which works in both Vite and Node.js
+    const env = process.env.NODE_ENV || 'development'
     if (env === 'production') {
       return LogLevel.ERROR
     }
