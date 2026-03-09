@@ -128,6 +128,23 @@ export function useChat() {
   }, [loadConversations])
 
   /**
+   * Restore conversation messages when currentConversation changes
+   */
+  useEffect(() => {
+    if (currentConversation && currentConversation.messages.length > 0) {
+      const restoredMessages: ChatMessageData[] = currentConversation.messages.map((msg, idx) => ({
+        id: `msg-restored-${idx}`,
+        type: msg.role === 'user' ? 'user' : 'ai',
+        content: msg.content,
+        interpretation: msg.interpretation,
+      }))
+      conversationState.restoreMessages(restoredMessages)
+    } else {
+      conversationState.clearConversation()
+    }
+  }, [currentConversation, conversationState])
+
+  /**
    * Auto-hide AI command when user starts typing new content
    */
   const prevDebouncedInputRef = useRef<string>('')
@@ -187,7 +204,9 @@ export function useChat() {
         }
 
         // Add user message to local conversation
+        const userMessageId = `msg-user-${Date.now()}`
         conversationState.addMessage({
+          id: userMessageId,
           type: 'user',
           content: sanitized,
         })
@@ -208,11 +227,12 @@ export function useChat() {
 
         if (command) {
           // Add AI command to local conversation
+          const messageId = `msg-${Date.now()}`
           conversationState.addMessage({
-            type: 'ai-command',
-            command: command.command,
-            explanation: command.explanation,
-            confidence: command.confidence,
+            id: messageId,
+            type: 'ai',
+            content: command.type === 'text' ? command.content : command.explanation || '',
+            command: command.type === 'command' ? command : undefined,
           })
 
           // Add to input history
