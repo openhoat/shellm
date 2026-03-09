@@ -144,8 +144,8 @@ export function useChat() {
   /**
    * Handle user input changes
    */
-  const handleInputChange = useCallback((value: string) => {
-    setUserInput(value)
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setUserInput(e.target.value)
   }, [])
 
   /**
@@ -163,7 +163,8 @@ export function useChat() {
 
       // Sanitize input
       const sanitized = sanitizeUserInput(prompt)
-      if (hasInjectionPatterns(sanitized)) {
+      const injectionCheck = hasInjectionPatterns(sanitized)
+      if (injectionCheck.hasInjection) {
         const errorMsg = i18n.t('errors.dangerousInput')
         setError(errorMsg)
         addToast('error', errorMsg)
@@ -258,7 +259,8 @@ export function useChat() {
 
       // Sanitize input
       const sanitized = sanitizeUserInput(prompt)
-      if (hasInjectionPatterns(sanitized)) {
+      const injectionCheck = hasInjectionPatterns(sanitized)
+      if (injectionCheck.hasInjection) {
         const errorMsg = i18n.t('errors.dangerousInput')
         setError(errorMsg)
         addToast('error', errorMsg)
