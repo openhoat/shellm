@@ -12,6 +12,7 @@ export interface UseConversationStateResult {
   // Actions
   addMessage: (message: ChatMessageData) => void
   updateMessage: (index: number, updates: Partial<ChatMessageData>) => void
+  restoreMessages: (messages: ChatMessageData[]) => void
   clearConversation: () => void
   setCurrentCommandIndex: (index: number | null) => void
   setPersistedCommandIndex: (index: number | null) => void
@@ -58,6 +59,14 @@ export function useConversationState(): UseConversationStateResult {
   }, [])
 
   /**
+   * Restore messages (for loading saved conversations)
+   */
+  const restoreMessages = useCallback((messages: ChatMessageData[]) => {
+    setConversation(messages)
+    setMessageCounter(messages.length)
+  }, [])
+
+  /**
    * Clear all conversation state
    */
   const clearConversation = useCallback(() => {
@@ -74,6 +83,7 @@ export function useConversationState(): UseConversationStateResult {
     persistedCommandIndex,
     addMessage,
     updateMessage,
+    restoreMessages,
     clearConversation,
     setCurrentCommandIndex,
     setPersistedCommandIndex,
