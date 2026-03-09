@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { ChatMessageData } from '@/components/chat'
 import { useChatResetKey } from '@/store/useStore'
 
@@ -45,27 +45,27 @@ export function useConversationState(): UseConversationStateResult {
   /**
    * Add a new message to the conversation
    */
-  const addMessage = (message: ChatMessageData) => {
+  const addMessage = useCallback((message: ChatMessageData) => {
     setConversation(prev => [...prev, message])
     setMessageCounter(prev => prev + 1)
-  }
+  }, [])
 
   /**
    * Update an existing message by index
    */
-  const updateMessage = (index: number, updates: Partial<ChatMessageData>) => {
+  const updateMessage = useCallback((index: number, updates: Partial<ChatMessageData>) => {
     setConversation(prev => prev.map((msg, i) => (i === index ? { ...msg, ...updates } : msg)))
-  }
+  }, [])
 
   /**
    * Clear all conversation state
    */
-  const clearConversation = () => {
+  const clearConversation = useCallback(() => {
     setConversation([])
     setMessageCounter(0)
     setCurrentCommandIndex(null)
     setPersistedCommandIndex(null)
-  }
+  }, [])
 
   return {
     conversation,
