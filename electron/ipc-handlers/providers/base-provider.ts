@@ -13,6 +13,131 @@ import type {
 import { z } from 'zod'
 import { Logger } from '../../utils/logger'
 
+// ============================================================================
+// Provider Interfaces
+// ============================================================================
+
+/**
+ * Result of configuration validation
+ */
+export interface ValidationResult {
+  /** Whether the configuration is valid */
+  valid: boolean
+  /** Error message if validation failed */
+  error?: string
+}
+
+/**
+ * Generic factory interface for creating LLM providers
+ * @template TConfig - The provider-specific configuration type
+ */
+export interface IProviderFactory<TConfig> {
+  /** Unique identifier for this provider */
+  readonly name: string
+  /** Metadata describing the provider */
+  readonly metadata: {
+    name: string
+    displayName: string
+    description?: string
+    version?: string
+    requiresApiKey: boolean
+    supportsStreaming: boolean
+    websiteUrl?: string
+    icon?: string
+  }
+  /**
+   * Create a new provider instance
+   * @param config - Provider-specific configuration
+   */
+  create(config: TConfig): ILLMProvider
+  /**
+   * Validate the configuration for this provider
+   * @param config - Configuration to validate
+   * @returns Type predicate indicating if config is valid
+   */
+  validateConfig(config: unknown): config is TConfig
+  /**
+   * Get the default configuration for this provider
+   * @returns Default configuration object
+   */
+  getDefaultConfig(): TConfig
+  /**
+   * List available models for this provider
+   * @param config - Provider configuration
+   * @returns List of model identifiers
+   */
+  listModels(config: TConfig): Promise<string[]>
+  /**
+   * Test connection to the provider
+   * @param config - Provider configuration
+   * @returns True if connection successful
+   */
+  testConnection(config: TConfig): Promise<boolean>
+}
+
+/**
+ * Interface for LLM provider implementations
+ * Defines the core operations all providers must support
+ */
+export interface ILLMProvider {
+  /**
+   * Generate a shell command from natural language description
+   * @param prompt - Natural language description of desired command
+   * @param conversationHistory - Previous conversation messages for context
+   * @param language - User interface language (default: 'en')
+   * @returns Generated AI command with metadata
+   */
+  generateCommand(
+    prompt: string,
+    conversationHistory?: ConversationMessage[],
+    language?: string
+  ): Promise<AICommand>
+
+  /**
+   * Stream a shell command generation with progress callbacks
+   * @param prompt - Natural language description of desired command
+   * @param conversationHistory - Previous conversation messages for context
+   * @param language - User interface language
+   * @param onProgress - Callback for streaming progress updates
+   * @param signal - AbortSignal for cancellation
+   * @returns Generated AI command with metadata
+   */
+  streamCommand(
+    prompt: string,
+    conversationHistory: ConversationMessage[] | undefined,
+    language: string,
+    onProgress: StreamingCallback,
+    signal?: AbortSignal
+  ): Promise<AICommand>
+
+  /**
+   * Explain a shell command in natural language
+   * @param command - Shell command to explain
+   * @returns Human-readable explanation
+   */
+  explainCommand(command: string): Promise<string>
+
+  /**
+   * Interpret terminal output and provide insights
+   * @param output - Raw terminal output to interpret
+   * @param language - User interface language (default: 'en')
+   * @returns Structured interpretation with summary, findings, and recommendations
+   */
+  interpretOutput(output: string, language?: string): Promise<CommandInterpretation>
+
+  /**
+   * Test connection to LLM provider
+   * @returns True if connection successful
+   */
+  testConnection(): Promise<boolean>
+
+  /**
+   * List available models from LLM provider
+   * @returns Array of model identifiers
+   */
+  listModels(): Promise<string[]>
+}
+
 // Logger instance
 const logger = new Logger('BaseLLMProvider')
 
@@ -51,7 +176,7 @@ function loadPrompt(filename: string): string {
  * Abstract base class for LLM providers
  * Contains shared logic for command generation, explanation, and output interpretation
  */
-export abstract class BaseLLMProvider {
+export abstract class BaseLLMProvider implements ILLMProvider {
   protected model!: BaseChatModel
   protected temperature: number
   protected maxTokens: number

@@ -1,10 +1,11 @@
 import type { LLMProviderFactory, LLMProviderMetadata, ProviderInfo } from '@shared/types'
+import type { IProviderFactory } from './base-provider'
 
 /**
  * Type alias for any provider factory regardless of config type
  * Using unknown allows us to store factories with different config types
  */
-type AnyProviderFactory = LLMProviderFactory<unknown>
+type AnyProviderFactory = IProviderFactory<unknown> & LLMProviderFactory<unknown>
 
 /**
  * Registry for LLM providers
@@ -15,14 +16,15 @@ export class ProviderRegistry {
 
   /**
    * Register a new provider factory
+   * @template TConfig - The provider-specific configuration type
    * @param factory - The provider factory to register
    * @throws Error if a provider with the same name is already registered
    */
-  register(factory: AnyProviderFactory): void {
+  register<TConfig>(factory: IProviderFactory<TConfig> & LLMProviderFactory<TConfig>): void {
     if (this.providers.has(factory.name)) {
       throw new Error(`Provider "${factory.name}" is already registered`)
     }
-    this.providers.set(factory.name, factory)
+    this.providers.set(factory.name, factory as AnyProviderFactory)
   }
 
   /**
@@ -36,11 +38,16 @@ export class ProviderRegistry {
 
   /**
    * Get a provider factory by name
+   * @template TConfig - The provider-specific configuration type
    * @param name - The provider name
    * @returns The provider factory, or undefined if not found
    */
-  get(name: string): AnyProviderFactory | undefined {
-    return this.providers.get(name)
+  get<TConfig = unknown>(
+    name: string
+  ): (IProviderFactory<TConfig> & LLMProviderFactory<TConfig>) | undefined {
+    return this.providers.get(name) as
+      | (IProviderFactory<TConfig> & LLMProviderFactory<TConfig>)
+      | undefined
   }
 
   /**

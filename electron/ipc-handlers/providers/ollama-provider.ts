@@ -2,7 +2,7 @@ import { ChatPromptTemplate } from '@langchain/core/prompts'
 import { ChatOllama } from '@langchain/ollama'
 import type { LLMProviderFactory, LLMProviderMetadata, OllamaConfig } from '@shared/types'
 import { Logger } from '../../utils/logger'
-import { BaseLLMProvider } from './base-provider'
+import { BaseLLMProvider, type IProviderFactory } from './base-provider'
 
 // Logger instance for Ollama provider
 const logger = new Logger('OllamaProvider')
@@ -111,7 +111,8 @@ const DEFAULT_OLLAMA_CONFIG: OllamaConfig = {
 /**
  * Ollama provider factory
  */
-export const ollamaProviderFactory: LLMProviderFactory<OllamaConfig> = {
+export const ollamaProviderFactory: IProviderFactory<OllamaConfig> &
+  LLMProviderFactory<OllamaConfig> = {
   name: 'ollama',
   metadata: ollamaProviderMetadata,
 
