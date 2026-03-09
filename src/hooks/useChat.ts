@@ -128,19 +128,30 @@ export function useChat() {
   }, [loadConversations])
 
   /**
-   * Restore conversation messages when currentConversation changes
+   * Restore conversation messages when conversation ID changes (loading a different conversation)
    */
+  const prevConversationIdRef = useRef<string | null>(null)
+
   useEffect(() => {
-    if (currentConversation && currentConversation.messages.length > 0) {
-      const restoredMessages: ChatMessageData[] = currentConversation.messages.map((msg, idx) => ({
-        id: `msg-restored-${idx}`,
-        type: msg.role === 'user' ? 'user' : 'ai',
-        content: msg.content,
-        interpretation: msg.interpretation,
-      }))
-      conversationState.restoreMessages(restoredMessages)
-    } else {
-      conversationState.clearConversation()
+    const conversationId = currentConversation?.id || null
+
+    // Only restore when conversation ID actually changes (loading a new conversation)
+    if (conversationId !== prevConversationIdRef.current) {
+      prevConversationIdRef.current = conversationId
+
+      if (currentConversation && currentConversation.messages.length > 0) {
+        const restoredMessages: ChatMessageData[] = currentConversation.messages.map(
+          (msg, idx) => ({
+            id: `msg-restored-${idx}`,
+            type: msg.role === 'user' ? 'user' : 'ai',
+            content: msg.content,
+            interpretation: msg.interpretation,
+          })
+        )
+        conversationState.restoreMessages(restoredMessages)
+      } else if (!currentConversation) {
+        conversationState.clearConversation()
+      }
     }
   }, [currentConversation, conversationState])
 
