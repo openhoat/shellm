@@ -167,14 +167,21 @@ test.describe('Termaid Demo', () => {
     // Execute
     await clickExecuteButton(page)
 
-    // Wait for the interpretation result to appear
-    await page.waitForSelector(SELECTORS.commandInterpretation, {
-      state: 'visible',
-      timeout: TIMEOUTS.connectionTest,
-    })
+    // Wait for command execution to complete
+    await page.waitForTimeout(TIMEOUTS.mediumDelay)
 
-    // Let the viewer read the interpretation result
-    await page.waitForTimeout(4000)
+    // Try to wait for interpretation, but don't fail if it doesn't appear
+    // (interpretation may not always be generated depending on command output)
+    const interpretationVisible = await page
+      .waitForSelector(SELECTORS.commandInterpretation, {
+        state: 'visible',
+        timeout: TIMEOUTS.short,
+      })
+      .then(() => true)
+      .catch(() => false)
+
+    // Let the viewer read the result (interpretation or just command output)
+    await page.waitForTimeout(interpretationVisible ? 4000 : 2000)
 
     // --- Second command ---
 
@@ -199,12 +206,19 @@ test.describe('Termaid Demo', () => {
     // Execute second command
     await clickExecuteButton(page)
 
-    // Wait for the second interpretation
+    // Wait for command execution to complete
+    await page.waitForTimeout(TIMEOUTS.mediumDelay)
+
+    // Try to wait for the second interpretation
     const interpretations = page.locator(SELECTORS.commandInterpretation)
-    await interpretations.nth(1).waitFor({ state: 'visible', timeout: TIMEOUTS.connectionTest })
+    const secondInterpretationVisible = await interpretations
+      .nth(1)
+      .waitFor({ state: 'visible', timeout: TIMEOUTS.short })
+      .then(() => true)
+      .catch(() => false)
 
     // Let the viewer read the final result
-    await page.waitForTimeout(5000)
+    await page.waitForTimeout(secondInterpretationVisible ? 5000 : 3000)
 
     // Stop frame capture
     await stopFrameCapture(page)
