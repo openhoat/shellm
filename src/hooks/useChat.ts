@@ -155,6 +155,12 @@ export function useChat() {
     async (prompt: string) => {
       logger.debug('streamAICommand called with:', prompt)
 
+      // Guard against concurrent calls
+      if (!prompt.trim() || isLoading || streaming.isStreaming) {
+        logger.debug('streamAICommand: skipping - already loading or streaming')
+        return
+      }
+
       // Sanitize input
       const sanitized = sanitizeUserInput(prompt)
       if (hasInjectionPatterns(sanitized)) {
@@ -217,6 +223,8 @@ export function useChat() {
       }
     },
     [
+      isLoading,
+      streaming.isStreaming,
       i18n,
       setIsLoading,
       setError,
@@ -237,6 +245,12 @@ export function useChat() {
   const generateAICommand = useCallback(
     async (prompt: string) => {
       logger.debug('generateAICommand called (non-streaming):', prompt)
+
+      // Guard against concurrent calls
+      if (!prompt.trim() || isLoading) {
+        logger.debug('generateAICommand: skipping - already loading')
+        return
+      }
 
       // Sanitize input
       const sanitized = sanitizeUserInput(prompt)
@@ -296,6 +310,7 @@ export function useChat() {
       }
     },
     [
+      isLoading,
       i18n,
       setIsLoading,
       setError,
