@@ -68,7 +68,6 @@ export const Header = ({ onShowShortcuts }: HeaderProps) => {
   const handleLoadConversation = async (id: string) => {
     await loadConversation(id)
     setShowConversationList(false)
-    incrementChatResetKey()
   }
 
   const handleDeleteConversation = async (id: string, e: MouseEvent) => {

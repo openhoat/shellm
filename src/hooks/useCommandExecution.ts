@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '@/hooks/useToast'
 import { CommandTimer } from '@/services/statsService'
-import { useTerminalPid } from '@/store/useStore'
+import { useConfig, useTerminalPid } from '@/store/useStore'
 import { Logger } from '@/utils/logger'
 
 const logger = new Logger('useCommandExecution')
@@ -40,6 +40,7 @@ export function useCommandExecution(
   const [executionProgress, setExecutionProgress] = useState(0)
   const [isInterpreting, setIsInterpreting] = useState(false)
 
+  const config = useConfig()
   const terminalPid = useTerminalPid()
   const { addToast } = useToast()
 
@@ -106,13 +107,13 @@ export function useCommandExecution(
 
         setExecutionProgress(90)
 
-        timer.end()
+        timer.end(config, command, true)
         options.onExecutionComplete?.(command, output)
 
         return output
       } catch (error) {
-        timer.end()
         const err = error instanceof Error ? error : new Error(String(error))
+        timer.end(config, command, false, err.message)
         logger.error('Command execution error:', err)
 
         addToast('error', err.message)
@@ -124,7 +125,7 @@ export function useCommandExecution(
         setExecutionProgress(0)
       }
     },
-    [terminalPid, i18n, addToast, options]
+    [config, terminalPid, i18n, addToast, options]
   )
 
   /**

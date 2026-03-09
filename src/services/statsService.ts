@@ -245,14 +245,21 @@ export const statsService = new StatsService()
 export class CommandTimer {
   private startTime: number
 
-  constructor() {
+  private constructor() {
     this.startTime = Date.now()
+  }
+
+  /**
+   * Start a new command timer
+   */
+  static start(): CommandTimer {
+    return new CommandTimer()
   }
 
   /**
    * Record the execution result
    */
-  record(config: AppConfig, command: string, success: boolean, error?: string): void {
+  end(config: AppConfig, command: string, success: boolean, error?: string): void {
     const responseTime = Date.now() - this.startTime
 
     statsService.recordExecution({

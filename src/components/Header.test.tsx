@@ -296,7 +296,6 @@ describe('Header', () => {
       await user.click(conversationItem)
 
       expect(mockLoadConversation).toHaveBeenCalledWith('1')
-      expect(mockIncrementChatResetKey).toHaveBeenCalled()
     })
 
     test('should load conversation with Enter key', async () => {
@@ -315,7 +314,6 @@ describe('Header', () => {
       await user.type(conversationButton!, '{Enter}')
 
       expect(mockLoadConversation).toHaveBeenCalledWith('1')
-      expect(mockIncrementChatResetKey).toHaveBeenCalled()
     })
 
     test('should load conversation with Space key', async () => {
@@ -334,7 +332,6 @@ describe('Header', () => {
       await user.type(conversationButton!, ' ')
 
       expect(mockLoadConversation).toHaveBeenCalledWith('1')
-      expect(mockIncrementChatResetKey).toHaveBeenCalled()
     })
   })
 
