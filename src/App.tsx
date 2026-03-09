@@ -3,13 +3,16 @@ import { ChatPanel } from './components/ChatPanel'
 import { ConfigPanel } from './components/ConfigPanel'
 import { Header } from './components/Header'
 import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal'
+import { LogViewer } from './components/LogViewer'
 import { Resizer } from './components/Resizer'
 import { StatsPanel } from './components/StatsPanel'
 import { Terminal } from './components/Terminal'
 import {
   useInitConfig,
   useShowConfigPanel,
+  useShowLogViewer,
   useShowStatsPanel,
+  useToggleLogViewer,
   useToggleStatsPanel,
 } from './store/useStore'
 import './App.css'
@@ -19,6 +22,8 @@ export const App = () => {
   const showConfigPanel = useShowConfigPanel()
   const showStatsPanel = useShowStatsPanel()
   const toggleStatsPanel = useToggleStatsPanel()
+  const showLogViewer = useShowLogViewer()
+  const toggleLogViewer = useToggleLogViewer()
   const [splitPosition, setSplitPosition] = useState(600) // Initial split position in pixels
   const [showShortcutsModal, setShowShortcutsModal] = useState(false)
 
@@ -49,10 +54,15 @@ export const App = () => {
           toggleShortcutsModal()
         }
       }
+      // Ctrl+Shift+L to toggle log viewer
+      if (e.ctrlKey && e.shiftKey && (e.key === 'L' || e.key === 'l')) {
+        e.preventDefault()
+        toggleLogViewer()
+      }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [toggleShortcutsModal])
+  }, [toggleShortcutsModal, toggleLogViewer])
 
   useEffect(() => {
     void initConfig()
@@ -80,6 +90,7 @@ export const App = () => {
       </div>
       {showConfigPanel && <ConfigPanel />}
       {showStatsPanel && <StatsPanel onClose={toggleStatsPanel} />}
+      {showLogViewer && <LogViewer onClose={toggleLogViewer} />}
       {showShortcutsModal && (
         <KeyboardShortcutsModal onClose={() => setShowShortcutsModal(false)} />
       )}

@@ -60,6 +60,8 @@ const selectShowConfigPanel = (state: AppState) => state.showConfigPanel
 const selectToggleConfigPanel = (state: AppState) => state.toggleConfigPanel
 const selectShowStatsPanel = (state: AppState) => state.showStatsPanel
 const selectToggleStatsPanel = (state: AppState) => state.toggleStatsPanel
+const selectShowLogViewer = (state: AppState) => state.showLogViewer
+const selectToggleLogViewer = (state: AppState) => state.toggleLogViewer
 const selectSelectedCommand = (state: AppState) => state.selectedCommand
 const selectSetSelectedCommand = (state: AppState) => state.setSelectedCommand
 
@@ -112,6 +114,8 @@ export const useShowConfigPanel = () => useStore(selectShowConfigPanel)
 export const useToggleConfigPanel = () => useStore(selectToggleConfigPanel)
 export const useShowStatsPanel = () => useStore(selectShowStatsPanel)
 export const useToggleStatsPanel = () => useStore(selectToggleStatsPanel)
+export const useShowLogViewer = () => useStore(selectShowLogViewer)
+export const useToggleLogViewer = () => useStore(selectToggleLogViewer)
 export const useSelectedCommand = () => useStore(selectSelectedCommand)
 export const useSetSelectedCommand = () => useStore(selectSetSelectedCommand)
 
@@ -182,6 +186,8 @@ interface AppState {
   toggleConfigPanel: () => void
   showStatsPanel: boolean
   toggleStatsPanel: () => void
+  showLogViewer: boolean
+  toggleLogViewer: () => void
   selectedCommand: string | null
   setSelectedCommand: (command: string | null) => void
 }
@@ -389,6 +395,8 @@ export const useStore = create<AppState>((set, _get) => ({
   toggleConfigPanel: () => set(state => ({ showConfigPanel: !state.showConfigPanel })),
   showStatsPanel: false,
   toggleStatsPanel: () => set(state => ({ showStatsPanel: !state.showStatsPanel })),
+  showLogViewer: false,
+  toggleLogViewer: () => set(state => ({ showLogViewer: !state.showLogViewer })),
   selectedCommand: null,
   setSelectedCommand: command => set({ selectedCommand: command }),
 }))

@@ -72,6 +72,12 @@ export const KEYBOARD_SHORTCUTS: ShortcutGroup[] = [
         labelKey: 'shortcuts.actions.resizePanel',
         key: '← / →',
       },
+      {
+        labelKey: 'shortcuts.actions.showLogs',
+        key: 'L',
+        ctrl: true,
+        shift: true,
+      },
     ],
   },
   {

@@ -82,6 +82,7 @@ vi.mock('../store/useStore', () => ({
   useConfig: vi.fn(),
   useToggleConfigPanel: vi.fn(),
   useToggleStatsPanel: vi.fn(),
+  useToggleLogViewer: vi.fn(),
   useConversations: vi.fn(),
   useCurrentConversationId: vi.fn(),
   useLoadConversation: vi.fn(),
@@ -101,6 +102,7 @@ import {
   useLoadConversation,
   useStartNewConversation,
   useToggleConfigPanel,
+  useToggleLogViewer,
   useToggleStatsPanel,
 } from '../store/useStore'
 
@@ -110,6 +112,7 @@ const configureMocks = (overrides = {}) => {
   vi.mocked(useConfig).mockReturnValue(mockStore.config)
   vi.mocked(useToggleConfigPanel).mockReturnValue(mockStore.toggleConfigPanel)
   vi.mocked(useToggleStatsPanel).mockReturnValue(mockStore.toggleStatsPanel || vi.fn())
+  vi.mocked(useToggleLogViewer).mockReturnValue(mockStore.toggleLogViewer || vi.fn())
   vi.mocked(useConversations).mockReturnValue(mockStore.conversations)
   vi.mocked(useCurrentConversationId).mockReturnValue(mockStore.currentConversationId)
   vi.mocked(useLoadConversation).mockReturnValue(mockStore.loadConversation)
