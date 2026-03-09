@@ -4,6 +4,11 @@
       "title": "Termaid",
       "subtitle": "スマートAIターミナル"
     },
+    "update": {
+      "available": "アップデートが利用可能です：v{{currentVersion}} → v{{latestVersion}}。クリックしてダウンロード。",
+      "viewRelease": "バージョンを見る",
+      "checkFailed": "アップデートの確認に失敗しました"
+    },
     "header": {
       "models": "モデル",
       "config": "設定",

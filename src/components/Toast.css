@@ -43,6 +43,32 @@
   line-height: 1.4;
 }
 
+.toast-link {
+  display: inline-block;
+  margin-left: 8px;
+  color: var(--toast-link, #60a5fa);
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.toast-link:hover {
+  color: var(--toast-link-hover, #93c5fd);
+}
+
+.toast-link {
+  display: inline-block;
+  margin-left: 8px;
+  color: var(--toast-link, #60a5fa);
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.toast-link:hover {
+  color: var(--toast-link-hover, #93c5fd);
+}
+
 .toast-dismiss {
   background: none;
   border: none;

@@ -4,6 +4,11 @@
       "title": "Termaid",
       "subtitle": "Terminal intelligent avec IA"
     },
+    "update": {
+      "available": "Mise à jour disponible : v{{currentVersion}} → v{{latestVersion}}. Cliquez pour télécharger.",
+      "viewRelease": "Voir la version",
+      "checkFailed": "Impossible de vérifier les mises à jour"
+    },
     "header": {
       "models": "Modèles",
       "config": "Configuration",

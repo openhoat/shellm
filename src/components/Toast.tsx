@@ -52,7 +52,14 @@ export const Toast = ({ toast, onDismiss }: ToastProps) => {
       aria-live="polite"
     >
       <span className="toast-icon">{icon}</span>
-      <span className="toast-message">{toast.message}</span>
+      <span className="toast-message">
+        {toast.message}
+        {toast.link && (
+          <a href={toast.link.url} target="_blank" rel="noopener noreferrer" className="toast-link">
+            {toast.link.label}
+          </a>
+        )}
+      </span>
       <button
         type="button"
         className="toast-dismiss"

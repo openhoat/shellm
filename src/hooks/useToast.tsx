@@ -6,7 +6,12 @@ import type { Toast, ToastType as ToastTypeEnum } from '@/types/toast'
  */
 interface ToastContextType {
   toasts: Toast[]
-  addToast: (type: ToastTypeEnum, message: string, duration?: number) => void
+  addToast: (
+    type: ToastTypeEnum,
+    message: string,
+    duration?: number,
+    link?: { url: string; label: string }
+  ) => void
   removeToast: (id: string) => void
   clearToasts: () => void
 }
@@ -37,12 +42,18 @@ function generateToastId(): string {
 export const ToastProvider = ({ children }: ToastProviderProps) => {
   const [toasts, setToasts] = useState<Toast[]>([])
 
-  const addToast = (type: ToastTypeEnum, message: string, duration?: number) => {
+  const addToast = (
+    type: ToastTypeEnum,
+    message: string,
+    duration?: number,
+    link?: { url: string; label: string }
+  ) => {
     const newToast: Toast = {
       id: generateToastId(),
       type,
       message,
       duration,
+      link,
     }
     setToasts(prev => [...prev, newToast])
   }
