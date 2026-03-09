@@ -279,29 +279,26 @@ describe('Logger', () => {
     })
 
     test('should use ERROR level when no level provided in production', () => {
-      vi.stubEnv('MODE', 'production')
+      vi.stubEnv('NODE_ENV', 'production')
       const testLogger = new Logger('my-context')
       expect(testLogger.getLevel()).toBe(LogLevel.ERROR)
       vi.unstubAllEnvs()
     })
 
-    test('should use DEBUG level when MODE is undefined', () => {
-      const originalEnv = import.meta.env.MODE
-      // @ts-expect-error - Testing undefined MODE
-      import.meta.env.MODE = undefined
+    test('should use DEBUG level when NODE_ENV is undefined', () => {
+      const originalEnv = process.env.NODE_ENV
+      delete process.env.NODE_ENV
       const testLogger = new Logger('my-context')
       expect(testLogger.getLevel()).toBe(LogLevel.DEBUG)
-      // @ts-expect-error - Restoring MODE
-      import.meta.env.MODE = originalEnv
+      process.env.NODE_ENV = originalEnv
     })
 
-    test('should use DEBUG level when MODE is undefined', () => {
-      const originalMode = import.meta.env.MODE
-      // @ts-expect-error - testing undefined MODE
-      import.meta.env.MODE = undefined
+    test('should use DEBUG level when NODE_ENV is development', () => {
+      const originalEnv = process.env.NODE_ENV
+      process.env.NODE_ENV = 'development'
       const testLogger = new Logger('my-context')
       expect(testLogger.getLevel()).toBe(LogLevel.DEBUG)
-      import.meta.env.MODE = originalMode
+      process.env.NODE_ENV = originalEnv
     })
   })
 
