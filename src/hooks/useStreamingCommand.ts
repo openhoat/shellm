@@ -90,6 +90,14 @@ export function useStreamingCommand(
             if (progress.type === 'receiving' && progress.content) {
               setStreamingContent(progress.content)
             }
+
+            // Log completion for debugging
+            if (progress.type === 'complete') {
+              logger.debug('Received complete event via listener', {
+                requestId,
+                hasCommand: !!progress.partialCommand,
+              })
+            }
           }
         })
 
