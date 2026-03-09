@@ -199,7 +199,11 @@ export function useChat() {
           })) || []
 
         // Stream AI command
-        const command = await streaming.startStreaming(sanitized, conversationHistory)
+        const command = await streaming.startStreaming(
+          sanitized,
+          conversationHistory,
+          i18n.language
+        )
 
         if (command) {
           // Add AI command to local conversation

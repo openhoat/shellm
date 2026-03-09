@@ -14,6 +14,7 @@ function generateRequestId(): string {
 export interface UseStreamingCommandOptions {
   onStreamComplete?: (command: AICommand) => void
   onStreamError?: (error: Error) => void
+  language?: string
 }
 
 export interface UseStreamingCommandResult {
@@ -25,13 +26,14 @@ export interface UseStreamingCommandResult {
   // Actions
   startStreaming: (
     prompt: string,
-    conversationHistory?: ConversationMessage[]
+    conversationHistory?: ConversationMessage[],
+    language?: string
   ) => Promise<AICommand | null>
   cancelStreaming: () => void
 }
 
 /**
- * Custom hook for managing AI command streaming
+ * Custom hook for managing AI command streaming using the real electronAPI
  * Handles streaming state, progress tracking, and cancellation
  */
 export function useStreamingCommand(
@@ -45,9 +47,9 @@ export function useStreamingCommand(
   /**
    * Cancel the current streaming operation
    */
-  const cancelStreaming = useCallback(() => {
+  const cancelStreaming = useCallback(async () => {
     if (currentRequestIdRef.current) {
-      window.electron.llm.cancelStreaming(currentRequestIdRef.current)
+      await window.electronAPI.llmCancelStream(currentRequestIdRef.current)
       currentRequestIdRef.current = null
       setIsStreaming(false)
       setStreamingContent('')
@@ -60,34 +62,47 @@ export function useStreamingCommand(
    * Start streaming a command from the AI
    * @param prompt - The user's prompt
    * @param conversationHistory - Optional conversation history for context
+   * @param language - Optional language override
    * @returns The generated command or null if cancelled
    */
   const startStreaming = useCallback(
     async (
       prompt: string,
-      conversationHistory?: ConversationMessage[]
+      conversationHistory?: ConversationMessage[],
+      language?: string
     ): Promise<AICommand | null> => {
       const requestId = generateRequestId()
       currentRequestIdRef.current = requestId
 
       setIsStreaming(true)
       setStreamingContent('')
-      setStreamingProgress({ status: 'connecting', requestId })
+      setStreamingProgress({ type: 'connecting' })
 
       logger.debug('Starting streaming request', { requestId, prompt: prompt.substring(0, 50) })
 
       try {
-        const result = await window.electron.llm.generateCommandStreaming(
-          prompt,
-          (content, progress) => {
-            // Only update if this is still the current request (not cancelled)
-            if (currentRequestIdRef.current === requestId) {
-              setStreamingContent(content)
-              setStreamingProgress(progress)
+        // Set up progress listener BEFORE starting the stream
+        const unsubscribe = window.electronAPI.onLlmStreamProgress(requestId, progress => {
+          // Only update if this is still the current request (not cancelled)
+          if (currentRequestIdRef.current === requestId) {
+            setStreamingProgress(progress)
+
+            if (progress.type === 'receiving' && progress.content) {
+              setStreamingContent(progress.content)
             }
-          },
-          conversationHistory
+          }
+        })
+
+        // Start the streaming command
+        const result = await window.electronAPI.llmStreamCommand(
+          requestId,
+          prompt,
+          conversationHistory,
+          language || options.language
         )
+
+        // Unsubscribe from progress events
+        unsubscribe()
 
         // Check if request was not cancelled
         if (currentRequestIdRef.current === requestId) {
