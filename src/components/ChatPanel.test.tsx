@@ -12,7 +12,10 @@ vi.mock('react-i18next', () => ({
   }),
 }))
 vi.mock('@/hooks/useChat')
-vi.mock('@/store/useStore')
+vi.mock('@/store/useStore', () => ({
+  useSetAiCommand: vi.fn(),
+  useClearAllConversations: vi.fn(),
+}))
 vi.mock('@/utils/logger', () => {
   class MockLogger {
     debug = vi.fn()
@@ -28,7 +31,7 @@ vi.mock('./chat', () => ({
 }))
 
 import { useChat } from '@/hooks/useChat'
-import { useStore } from '@/store/useStore'
+import { useClearAllConversations, useSetAiCommand } from '@/store/useStore'
 import { ChatPanel } from './ChatPanel'
 
 // Store for event listeners to enable keyboard shortcut tests
@@ -101,10 +104,8 @@ describe('ChatPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(useChat).mockReturnValue({ ...defaultChatState })
-    vi.mocked(useStore).mockReturnValue({
-      setAiCommand: mockSetAiCommand,
-      clearAllConversations: mockClearAllConversations,
-    } as ReturnType<typeof useStore>)
+    vi.mocked(useSetAiCommand).mockReturnValue(mockSetAiCommand)
+    vi.mocked(useClearAllConversations).mockReturnValue(mockClearAllConversations)
   })
 
   test('should render the AI Assistant heading', () => {

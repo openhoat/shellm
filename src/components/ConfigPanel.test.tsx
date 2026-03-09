@@ -4,7 +4,11 @@ import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 // Mock modules before imports
-vi.mock('../store/useStore')
+vi.mock('../store/useStore', () => ({
+  useConfig: vi.fn(),
+  useSetConfig: vi.fn(),
+  useToggleConfigPanel: vi.fn(),
+}))
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key,
@@ -21,7 +25,7 @@ vi.mock('./ModelSelector', () => ({
   ),
 }))
 
-import { useStore } from '../store/useStore'
+import { useConfig, useSetConfig, useToggleConfigPanel } from '../store/useStore'
 import { ConfigPanel } from './ConfigPanel'
 
 const defaultConfig: AppConfig = {
@@ -111,11 +115,9 @@ describe('ConfigPanel', () => {
       { name: 'claude', displayName: 'Claude', requiresApiKey: true, supportsStreaming: true },
       { name: 'openai', displayName: 'OpenAI', requiresApiKey: true, supportsStreaming: true },
     ])
-    vi.mocked(useStore).mockReturnValue({
-      config: defaultConfig,
-      setConfig: mockSetConfig,
-      toggleConfigPanel: mockToggleConfigPanel,
-    } as ReturnType<typeof useStore>)
+    vi.mocked(useConfig).mockReturnValue(defaultConfig)
+    vi.mocked(useSetConfig).mockReturnValue(mockSetConfig)
+    vi.mocked(useToggleConfigPanel).mockReturnValue(mockToggleConfigPanel)
   })
 
   // Helper to render and wait for async effects
@@ -194,21 +196,17 @@ describe('ConfigPanel', () => {
   })
 
   test('should show claude section when provider is claude', async () => {
-    vi.mocked(useStore).mockReturnValue({
-      config: { ...defaultConfig, llmProvider: 'claude' },
-      setConfig: mockSetConfig,
-      toggleConfigPanel: mockToggleConfigPanel,
-    } as ReturnType<typeof useStore>)
+    vi.mocked(useConfig).mockReturnValue({ ...defaultConfig, llmProvider: 'claude' })
+    vi.mocked(useSetConfig).mockReturnValue(mockSetConfig)
+    vi.mocked(useToggleConfigPanel).mockReturnValue(mockToggleConfigPanel)
     await renderAndWait()
     expect(screen.getByText('config.claude.title')).toBeInTheDocument()
   })
 
   test('should show openai section when provider is openai', async () => {
-    vi.mocked(useStore).mockReturnValue({
-      config: { ...defaultConfig, llmProvider: 'openai' },
-      setConfig: mockSetConfig,
-      toggleConfigPanel: mockToggleConfigPanel,
-    } as ReturnType<typeof useStore>)
+    vi.mocked(useConfig).mockReturnValue({ ...defaultConfig, llmProvider: 'openai' })
+    vi.mocked(useSetConfig).mockReturnValue(mockSetConfig)
+    vi.mocked(useToggleConfigPanel).mockReturnValue(mockToggleConfigPanel)
     await renderAndWait()
     expect(screen.getByText('config.openai.title')).toBeInTheDocument()
   })
