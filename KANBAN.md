@@ -9,3 +9,6 @@
 - [ ] **[UX]** Contextual AI suggestions based on current directory, project type detection, and recent commands (P3)
 
 ## 🚧 In Progress
+
+- [ ] **[FEAT]** Display update notification toast at startup when newer version available on GitHub
+- [ ] **[FEAT]** Add in-app log viewer to display application logs (electron + renderer)
