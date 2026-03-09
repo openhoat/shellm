@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 09/03
 
+- **[17:15:19] 🔧 [CHORE]** Update kanban and changelog post-merge
 - **[17:14:27] ♻️ [REFACTOR]** Extract use chat into modular specialized hooks
 - **[17:14:27] ✅ [TEST]** Add window.electron.llm mocks for new hooks
 - **[17:14:27] 🐛 [FIX]** Memoize callbacks to prevent infinite re-render loops
