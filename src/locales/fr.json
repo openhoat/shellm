@@ -9,6 +9,7 @@
       "config": "Configuration",
       "settings": "Paramètres",
       "statistics": "Statistiques d'utilisation",
+      "logs": "Logs de l'application",
       "newConversation": "Nouvelle conversation",
       "conversations": "Conversations",
       "conversationsTitle": "Conversations",
@@ -240,7 +241,25 @@
         "historyNext": "Suivant dans l'historique",
         "navigateConversations": "Naviguer dans les conversations",
         "resizePanel": "Redimensionner le panneau",
-        "showShortcuts": "Afficher les raccourcis clavier"
+        "showShortcuts": "Afficher les raccourcis clavier",
+        "showLogs": "Afficher les logs de l'application"
+      }
+    },
+    "logs": {
+      "title": "Logs de l'application",
+      "confirmClear": "Êtes-vous sûr de vouloir effacer tous les logs ?",
+      "empty": "Aucun log à afficher",
+      "search": "Rechercher dans les logs...",
+      "autoScroll": "Défilement auto",
+      "count": "{{count}} logs",
+      "export": "Exporter les logs",
+      "clear": "Effacer les logs",
+      "levels": {
+        "all": "Tous",
+        "error": "Erreur",
+        "warn": "Avertissement",
+        "info": "Info",
+        "debug": "Debug"
       }
     }
   }
