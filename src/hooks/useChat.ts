@@ -1,14 +1,15 @@
-import type { AICommand, ConversationMessage, StreamingProgress } from '@shared/types'
+import type { ConversationMessage } from '@shared/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { ChatMessageData } from '@/components/chat'
+import { useCommandExecution } from '@/hooks/useCommandExecution'
+import { useConversationState } from '@/hooks/useConversationState'
+import { useInputHistory } from '@/hooks/useInputHistory'
+import { useStreamingCommand } from '@/hooks/useStreamingCommand'
 import { useToast } from '@/hooks/useToast'
 import { hasInjectionPatterns, sanitizeUserInput } from '@/services/commandExecutionService'
-import { CommandTimer } from '@/services/statsService'
 import {
   useAddMessageToConversation,
   useAiCommand,
-  useChatResetKey,
   useConfig,
   useCreateConversation,
   useCurrentConversation,
@@ -27,15 +28,6 @@ const logger = new Logger('useChat')
 
 // Constants
 const DEBOUNCE_MS = 300 // Debounce delay for user input
-const INPUT_HISTORY_KEY = 'termaid-chat-input-history'
-const MAX_HISTORY_SIZE = 50
-
-/**
- * Generate a unique request ID for streaming
- */
-function generateRequestId(): string {
-  return `stream-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
-}
 
 /**
  * Simple debounce hook
@@ -58,40 +50,14 @@ function useDebounce<T>(value: T, delay: number): T {
 
 /**
  * Custom hook for managing chat logic
- * Manages chat state, AI command generation, command execution, and command modification
+ * Orchestrates specialized hooks for input history, streaming, execution, and conversation state
  */
 export function useChat() {
   const { i18n } = useTranslation()
   const [userInput, setUserInput] = useState('')
-  const [currentCommandIndex, setCurrentCommandIndex] = useState<number | null>(null)
-  const [persistedCommandIndex, setPersistedCommandIndex] = useState<number | null>(null)
-  const [isInterpreting, setIsInterpreting] = useState(false)
-  const [isExecuting, setIsExecuting] = useState(false)
-  const [executionProgress, setExecutionProgress] = useState(0)
-  const [conversation, setConversation] = useState<ChatMessageData[]>([])
-  const [messageCounter, setMessageCounter] = useState(0)
 
-  // Streaming state
-  const [isStreaming, setIsStreaming] = useState(false)
-  const [streamingContent, setStreamingContent] = useState('')
-  const [streamingProgress, setStreamingProgress] = useState<StreamingProgress | null>(null)
-  const currentRequestIdRef = useRef<string | null>(null)
-
-  // Input history for up/down arrow navigation
-  const [inputHistory, setInputHistory] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem(INPUT_HISTORY_KEY)
-      return saved ? JSON.parse(saved) : []
-    } catch (error) {
-      logger.warn('Failed to load input history from localStorage:', error)
-      return []
-    }
-  })
-  const [historyIndex, setHistoryIndex] = useState(-1) // -1 means not navigating history
-  const [savedInput, setSavedInput] = useState('') // Save current input when navigating history
-
-  // Use individual selector hooks to prevent unnecessary re-renders
-  const config = useConfig()
+  // Global store state (using individual selector hooks)
+  const _config = useConfig()
   const aiCommand = useAiCommand()
   const setAiCommand = useSetAiCommand()
   const isLoading = useIsLoading()
@@ -104,15 +70,37 @@ export function useChat() {
   const addMessageToConversation = useAddMessageToConversation()
   const updateMessageInConversation = useUpdateMessageInConversation()
   const loadConversations = useLoadConversations()
-  const chatResetKey = useChatResetKey()
 
   const { addToast } = useToast()
 
-  // Track chatResetKey to reset local state when conversation changes
-  const prevResetKeyRef = useRef(chatResetKey)
-
   // Debounced user input for auto-hiding AI command
   const debouncedUserInput = useDebounce(userInput, DEBOUNCE_MS)
+
+  // Specialized hooks
+  const inputHistory = useInputHistory()
+  const conversationState = useConversationState()
+
+  const streaming = useStreamingCommand({
+    onStreamComplete: command => {
+      setAiCommand(command)
+      setIsLoading(false)
+      logger.info('AI command generated:', command.command)
+    },
+    onStreamError: err => {
+      setError(err.message)
+      setIsLoading(false)
+      addToast('error', err.message)
+    },
+  })
+
+  const execution = useCommandExecution({
+    onExecutionComplete: (_command, _output) => {
+      logger.info('Command executed successfully')
+    },
+    onExecutionError: err => {
+      addToast('error', err.message)
+    },
+  })
 
   /**
    * Load conversations on mount
@@ -122,9 +110,7 @@ export function useChat() {
   }, [loadConversations])
 
   /**
-   * Auto-hide AI command when user starts typing new content.
-   * Only reacts to debouncedUserInput changes (not aiCommand changes)
-   * to avoid clearing a freshly-set command before the debounce settles.
+   * Auto-hide AI command when user starts typing new content
    */
   const prevDebouncedInputRef = useRef<string>('')
 
@@ -138,744 +124,264 @@ export function useChat() {
   }, [debouncedUserInput, aiCommand, setAiCommand])
 
   /**
-   * Persist input history to localStorage
+   * Handle user input changes
    */
-  useEffect(() => {
-    try {
-      localStorage.setItem(INPUT_HISTORY_KEY, JSON.stringify(inputHistory))
-    } catch (error) {
-      logger.warn('Failed to save input history to localStorage:', error)
-    }
-  }, [inputHistory])
-
-  /**
-   * Save input history to localStorage
-   */
-  const saveHistoryToStorage = useCallback((history: string[]) => {
-    try {
-      localStorage.setItem(INPUT_HISTORY_KEY, JSON.stringify(history))
-    } catch (error) {
-      logger.warn('Failed to save input history to localStorage:', error)
-    }
+  const handleInputChange = useCallback((value: string) => {
+    setUserInput(value)
   }, [])
 
   /**
-   * Add input to history (called when user submits)
-   */
-  const addToHistory = useCallback(
-    (input: string) => {
-      if (!input.trim()) return
-
-      setInputHistory(prev => {
-        // Don't add duplicates of the most recent entry
-        if (prev[0] === input.trim()) return prev
-
-        // Add to beginning, limit size
-        const newHistory = [input.trim(), ...prev].slice(0, MAX_HISTORY_SIZE)
-        saveHistoryToStorage(newHistory)
-        return newHistory
-      })
-      // Reset history navigation
-      setHistoryIndex(-1)
-    },
-    [saveHistoryToStorage]
-  )
-
-  /**
-   * Navigate through input history
-   * direction: 'up' = older (previous), 'down' = newer (next)
-   */
-  const navigateHistory = useCallback(
-    (direction: 'up' | 'down') => {
-      if (inputHistory.length === 0) return
-
-      if (direction === 'up') {
-        // Going up means older entries (higher index in array)
-        if (historyIndex < inputHistory.length - 1) {
-          // Save current input before navigating
-          if (historyIndex === -1) {
-            setSavedInput(userInput)
-          }
-          const newIndex = historyIndex + 1
-          setHistoryIndex(newIndex)
-          setUserInput(inputHistory[newIndex] ?? '')
-        }
-      } else {
-        // Going down means newer entries (lower index in array)
-        if (historyIndex > 0) {
-          const newIndex = historyIndex - 1
-          setHistoryIndex(newIndex)
-          setUserInput(inputHistory[newIndex] ?? '')
-        } else if (historyIndex === 0) {
-          // Return to the saved input
-          setHistoryIndex(-1)
-          setUserInput(savedInput)
-        }
-      }
-    },
-    [inputHistory, historyIndex, userInput, savedInput]
-  )
-
-  /**
-   * Clear all local chat state (used by Ctrl+K)
-   */
-  const clearChat = useCallback(() => {
-    setConversation([])
-    setMessageCounter(0)
-    setCurrentCommandIndex(null)
-    setPersistedCommandIndex(null)
-    setUserInput('')
-    setError(null)
-    setAiCommand(null)
-  }, [setError, setAiCommand])
-
-  // Reset local chat state when chatResetKey changes (conversation switch/delete)
-  // Then rebuild from persisted messages if a conversation is loaded
-  useEffect(() => {
-    if (chatResetKey !== prevResetKeyRef.current) {
-      prevResetKeyRef.current = chatResetKey
-      clearChat()
-
-      // Rebuild local conversation from persisted messages
-      if (currentConversation && currentConversation.messages.length > 0) {
-        const restoredMessages: ChatMessageData[] = currentConversation.messages.map(
-          (msg, idx) => ({
-            id: `msg-restored-${idx}`,
-            type: msg.role === 'user' ? 'user' : 'ai',
-            content: msg.content,
-            interpretation: msg.interpretation,
-          })
-        )
-        setConversation(restoredMessages)
-        setMessageCounter(restoredMessages.length)
-      }
-    }
-  }, [chatResetKey, clearChat, currentConversation])
-
-  /**
-   * Generate AI command from user prompt
-   */
-  const generateAICommand = useCallback(
-    async (prompt: string) => {
-      if (!prompt.trim() || isLoading) return
-
-      setError(null)
-
-      // Add to input history
-      addToHistory(prompt)
-
-      // Add user message to local conversation state with unique ID
-      setConversation(prev => [
-        ...prev,
-        { id: `msg-${messageCounter}`, type: 'user', content: prompt },
-      ])
-      setMessageCounter(prev => prev + 1)
-
-      // Create new conversation if none exists
-      if (!currentConversation) {
-        await createConversation(prompt)
-      }
-
-      // Build conversation history for LLM context
-      const conversationHistory: ConversationMessage[] = conversation.map(msg => {
-        const historyMsg: ConversationMessage = {
-          role: msg.type === 'user' ? 'user' : 'assistant',
-          content: msg.content,
-        }
-
-        // Include command, output, and interpretation for assistant messages
-        if (msg.type === 'ai') {
-          if (msg.command?.type === 'command') {
-            historyMsg.command = msg.command.command
-          }
-          if (msg.output) {
-            historyMsg.output = msg.output
-          }
-          if (msg.interpretation) {
-            historyMsg.interpretation = msg.interpretation
-          }
-        }
-
-        return historyMsg
-      })
-
-      // Add current user message to history
-      conversationHistory.push({ role: 'user', content: prompt })
-
-      // Save user message to persistent storage
-      await addMessageToConversation({ role: 'user', content: prompt })
-
-      setIsLoading(true)
-
-      // Start tracking command generation time
-      const timer = new CommandTimer()
-
-      try {
-        // Generate command using AI with full conversation history
-        const response: AICommand = await window.electronAPI.llmGenerateCommand(
-          prompt,
-          conversationHistory,
-          i18n.language
-        )
-
-        setAiCommand(response)
-
-        // Record successful command generation
-        if (response.type === 'command') {
-          timer.record(config, response.command, true)
-        }
-
-        // Build full AI response content for display and storage
-        let aiContent: string
-        if (response.type === 'text') {
-          aiContent = response.content
-        } else {
-          // For command responses, include both explanation and command details
-          aiContent = `${response.explanation}\n\nCommand: ${response.command}`
-        }
-
-        setConversation(prev => {
-          const messageId = `msg-${messageCounter}`
-          setMessageCounter(prev => prev + 1)
-          const newMessage: ChatMessageData = {
-            id: messageId,
-            type: 'ai',
-            content: aiContent,
-            command: response.type === 'command' ? response : undefined,
-          }
-          const newConversation = [...prev, newMessage]
-          // Store the index of the newly added AI message if it's a command
-          if (response.type === 'command') {
-            setCurrentCommandIndex(newConversation.length - 1)
-          }
-          return newConversation
-        })
-
-        // Save AI response to persistent storage
-        // Track the index in the persisted conversation for command responses
-        // NOTE: Calculate the index BEFORE adding, but account for the message we just added
-        // The user message was added at index N, so the assistant message will be at index N+1
-        const userMessageIndex = currentConversation ? currentConversation.messages.length : 0
-        const persistedIndex = userMessageIndex + 1 // Assistant message comes after user message
-        // Include command info for command-type responses
-        const messageToSave: ConversationMessage = {
-          role: 'assistant',
-          content: aiContent,
-        }
-        if (response.type === 'command') {
-          messageToSave.command = response.command
-        }
-        await addMessageToConversation(messageToSave)
-
-        // Store the persisted message index for command responses
-        // This will be used later to update the message with command output and interpretation
-        if (response.type === 'command') {
-          setPersistedCommandIndex(persistedIndex)
-        }
-      } catch (err) {
-        let errorMessage: string
-        if (err instanceof Error) {
-          // Provide specific error messages based on error type
-          if (
-            err.message.includes('fetch') ||
-            err.message.includes('network') ||
-            err.message.includes('ECONNREFUSED')
-          ) {
-            errorMessage = i18n.t('errors.aiGenerationFailedOffline')
-          } else if (err.message.includes('timeout')) {
-            errorMessage =
-              "Le service Ollama ne répond pas. Vérifiez que le serveur est en cours d'exécution et que l'URL est correcte."
-          } else {
-            errorMessage = `${i18n.t('errors.aiGenerationFailed')} (${err.message})`
-          }
-          // Record failed command generation
-          timer.record(config, prompt, false, err.message)
-        } else {
-          errorMessage = i18n.t('errors.unknownError')
-          timer.record(config, prompt, false, errorMessage)
-        }
-        setError(errorMessage)
-        addToast('error', errorMessage)
-        setConversation(prev => [
-          ...prev,
-          {
-            id: `msg-${messageCounter}`,
-            type: 'ai',
-            content: `Error: ${errorMessage}`,
-          },
-        ])
-        setMessageCounter(prev => prev + 1)
-      } finally {
-        setIsLoading(false)
-      }
-    },
-    [
-      messageCounter,
-      isLoading,
-      currentConversation,
-      conversation,
-      i18n.language,
-      addMessageToConversation,
-      setAiCommand,
-      setIsLoading,
-      createConversation,
-      setError,
-      addToast,
-      i18n.t,
-      addToHistory,
-      config,
-    ]
-  )
-
-  /**
-   * Stream AI command generation with real-time progress updates
+   * Generate AI command from user prompt (streaming)
    */
   const streamAICommand = useCallback(
     async (prompt: string) => {
-      if (!prompt.trim() || isLoading || isStreaming) return
+      logger.debug('streamAICommand called with:', prompt)
 
-      setError(null)
-      addToHistory(prompt)
-
-      // Add user message to local conversation state
-      setConversation(prev => [
-        ...prev,
-        { id: `msg-${messageCounter}`, type: 'user', content: prompt },
-      ])
-      setMessageCounter(prev => prev + 1)
-
-      // Create new conversation if none exists
-      if (!currentConversation) {
-        await createConversation(prompt)
+      // Sanitize input
+      const sanitized = sanitizeUserInput(prompt)
+      if (hasInjectionPatterns(sanitized)) {
+        const errorMsg = i18n.t('errors.dangerousInput')
+        setError(errorMsg)
+        addToast('error', errorMsg)
+        return
       }
 
-      // Build conversation history for LLM context
-      const conversationHistory: ConversationMessage[] = conversation.map(msg => {
-        const historyMsg: ConversationMessage = {
-          role: msg.type === 'user' ? 'user' : 'assistant',
-          content: msg.content,
-        }
-
-        // Include command, output, and interpretation for assistant messages
-        if (msg.type === 'ai') {
-          if (msg.command?.type === 'command') {
-            historyMsg.command = msg.command.command
-          }
-          if (msg.output) {
-            historyMsg.output = msg.output
-          }
-          if (msg.interpretation) {
-            historyMsg.interpretation = msg.interpretation
-          }
-        }
-
-        return historyMsg
-      })
-      conversationHistory.push({ role: 'user', content: prompt })
-
-      // Save user message to persistent storage
-      await addMessageToConversation({ role: 'user', content: prompt })
-
-      // Generate unique request ID for this streaming session
-      const requestId = generateRequestId()
-      currentRequestIdRef.current = requestId
-
-      setIsStreaming(true)
-      setStreamingContent('')
-      setStreamingProgress({ type: 'connecting' })
-
-      // Start tracking command generation time
-      const timer = new CommandTimer()
-
-      // Add a placeholder AI message for streaming content
-      const streamingMessageId = `msg-streaming-${Date.now()}`
-      setConversation(prev => [
-        ...prev,
-        {
-          id: streamingMessageId,
-          type: 'ai',
-          content: '',
-          isStreaming: true,
-        },
-      ])
+      setIsLoading(true)
+      setError(null)
 
       try {
-        // Set up progress listener
-        const unsubscribe = window.electronAPI.onLlmStreamProgress(requestId, async progress => {
-          setStreamingProgress(progress)
+        // Create conversation if needed
+        if (!currentConversation) {
+          await createConversation(sanitized)
+        } else {
+          await addMessageToConversation({
+            role: 'user',
+            content: sanitized,
+            timestamp: new Date(),
+          })
+        }
 
-          if (progress.type === 'receiving' && progress.content) {
-            setStreamingContent(progress.content)
-
-            // Update the streaming message in conversation
-            setConversation(prev =>
-              prev.map(msg =>
-                msg.id === streamingMessageId ? { ...msg, content: progress.content || '' } : msg
-              )
-            )
-          }
-
-          if (progress.type === 'complete' && progress.partialCommand) {
-            // Final update with the complete response
-            const response = progress.partialCommand
-            setAiCommand(response)
-
-            // Record successful command generation
-            if (response.type === 'command') {
-              timer.record(config, response.command, true)
-            }
-
-            let aiContent: string
-            if (response.type === 'text') {
-              aiContent = response.content
-            } else {
-              aiContent = `${response.explanation}\n\nCommand: ${response.command}`
-            }
-
-            // Update the message with final content and set the command index
-            setConversation(prev => {
-              const updated = prev.map(msg =>
-                msg.id === streamingMessageId
-                  ? {
-                      ...msg,
-                      content: aiContent,
-                      command: response.type === 'command' ? response : undefined,
-                      isStreaming: false,
-                    }
-                  : msg
-              )
-              // Set command index to the streaming message's position
-              if (response.type === 'command') {
-                const msgIndex = updated.findIndex(msg => msg.id === streamingMessageId)
-                if (msgIndex !== -1) {
-                  setCurrentCommandIndex(msgIndex)
-                }
-              }
-              return updated
-            })
-
-            // Save AI response to persistent storage
-            // Track the index in the persisted conversation for command responses
-            // NOTE: Calculate the index BEFORE adding, but account for the message we just added
-            // The user message was added at index N, so the assistant message will be at index N+1
-            const userMessageIndex = currentConversation ? currentConversation.messages.length : 0
-            const persistedIndex = userMessageIndex + 1 // Assistant message comes after user message
-            const messageToSave: ConversationMessage = {
-              role: 'assistant',
-              content: aiContent,
-            }
-            if (response.type === 'command') {
-              messageToSave.command = response.command
-            }
-            await addMessageToConversation(messageToSave)
-
-            // Store the persisted message index for command responses
-            // This will be used later to update the message with command output and interpretation
-            if (response.type === 'command') {
-              setPersistedCommandIndex(persistedIndex)
-            }
-          }
-
-          if (progress.type === 'error') {
-            setError(progress.error || 'Streaming failed')
-          }
+        // Add user message to local conversation
+        conversationState.addMessage({
+          type: 'user',
+          content: sanitized,
         })
 
-        // Start the streaming request
-        const result = await window.electronAPI.llmStreamCommand(
-          requestId,
-          prompt,
-          conversationHistory,
-          i18n.language
-        )
+        // Build conversation history for context
+        const conversationHistory: ConversationMessage[] =
+          currentConversation?.messages.map(m => ({
+            role: m.role as 'user' | 'assistant',
+            content: m.content,
+          })) || []
 
-        // Clean up listener
-        unsubscribe()
+        // Stream AI command
+        const command = await streaming.startStreaming(sanitized, conversationHistory)
 
-        // Handle the result if it came through the invoke response
-        if (result && !streamingProgress?.partialCommand) {
-          setAiCommand(result)
-
-          // Record successful command generation
-          if (result.type === 'command') {
-            timer.record(config, result.command, true)
-          }
-
-          let aiContent: string
-          if (result.type === 'text') {
-            aiContent = result.content
-          } else {
-            aiContent = `${result.explanation}\n\nCommand: ${result.command}`
-          }
-
-          setConversation(prev => {
-            const updated = prev.map(msg =>
-              msg.id === streamingMessageId
-                ? {
-                    ...msg,
-                    content: aiContent,
-                    command: result.type === 'command' ? result : undefined,
-                    isStreaming: false,
-                  }
-                : msg
-            )
-            // Set command index to the streaming message's position
-            if (result.type === 'command') {
-              const msgIndex = updated.findIndex(msg => msg.id === streamingMessageId)
-              if (msgIndex !== -1) {
-                setCurrentCommandIndex(msgIndex)
-              }
-            }
-            return updated
+        if (command) {
+          // Add AI command to local conversation
+          conversationState.addMessage({
+            type: 'ai-command',
+            command: command.command,
+            explanation: command.explanation,
+            confidence: command.confidence,
           })
 
-          // Persist the assistant message to storage
-          // NOTE: The user message was added at index N, so assistant message will be at index N+1
-          const userMessageIndex = currentConversation ? currentConversation.messages.length : 0
-          const persistedIndex = userMessageIndex + 1 // Assistant message comes after user message
-          const messageToSave: ConversationMessage = {
-            role: 'assistant',
-            content: aiContent,
-          }
-          if (result.type === 'command') {
-            messageToSave.command = result.command
-          }
-          await addMessageToConversation(messageToSave)
+          // Add to input history
+          inputHistory.addToHistory(sanitized)
+          inputHistory.resetNavigation()
 
-          // Store the persisted message index for command responses
-          if (result.type === 'command') {
-            setPersistedCommandIndex(persistedIndex)
-          }
+          // Clear user input
+          setUserInput('')
         }
       } catch (err) {
-        let errorMessage: string
-        if (err instanceof Error) {
-          errorMessage = `${i18n.t('errors.aiGenerationFailed')} (${err.message})`
-          // Record failed command generation
-          timer.record(config, prompt, false, err.message)
-        } else {
-          errorMessage = i18n.t('errors.unknownError')
-          timer.record(config, prompt, false, errorMessage)
-        }
-        setError(errorMessage)
-        addToast('error', errorMessage)
-
-        // Remove the streaming placeholder on error
-        setConversation(prev => prev.filter(msg => msg.id !== streamingMessageId))
-      } finally {
-        setIsStreaming(false)
-        setStreamingContent('')
-        setStreamingProgress(null)
-        currentRequestIdRef.current = null
+        logger.error('Failed to generate AI command:', err)
+        // Error already handled by streaming.onStreamError
       }
     },
     [
-      messageCounter,
-      isLoading,
-      isStreaming,
-      currentConversation,
-      conversation,
-      i18n.language,
-      addMessageToConversation,
-      setAiCommand,
-      createConversation,
+      i18n,
+      setIsLoading,
       setError,
+      currentConversation,
+      createConversation,
+      addMessageToConversation,
+      conversationState,
+      streaming,
+      inputHistory,
       addToast,
-      i18n.t,
-      addToHistory,
-      streamingProgress,
-      config,
     ]
   )
 
   /**
-   * Cancel an active streaming request
+   * Generate AI command from user prompt (non-streaming, legacy)
    */
-  const cancelStreaming = useCallback(async () => {
-    if (currentRequestIdRef.current) {
-      await window.electronAPI.llmCancelStream(currentRequestIdRef.current)
-      currentRequestIdRef.current = null
-      setIsStreaming(false)
-      setStreamingContent('')
-      setStreamingProgress(null)
-    }
-  }, [])
+  const generateAICommand = useCallback(
+    async (prompt: string) => {
+      logger.debug('generateAICommand called (non-streaming):', prompt)
+
+      // Sanitize input
+      const sanitized = sanitizeUserInput(prompt)
+      if (hasInjectionPatterns(sanitized)) {
+        const errorMsg = i18n.t('errors.dangerousInput')
+        setError(errorMsg)
+        addToast('error', errorMsg)
+        return
+      }
+
+      setIsLoading(true)
+      setError(null)
+
+      try {
+        // Create conversation if needed
+        if (!currentConversation) {
+          await createConversation(sanitized)
+        } else {
+          await addMessageToConversation({
+            role: 'user',
+            content: sanitized,
+            timestamp: new Date(),
+          })
+        }
+
+        // Build conversation history for context
+        const conversationHistory: ConversationMessage[] =
+          currentConversation?.messages.map(m => ({
+            role: m.role as 'user' | 'assistant',
+            content: m.content,
+          })) || []
+
+        // Generate command (non-streaming)
+        const command = await window.electron.llm.generateCommand(
+          sanitized,
+          conversationHistory,
+          i18n.language
+        )
+
+        setAiCommand(command)
+        setIsLoading(false)
+
+        // Add to input history
+        inputHistory.addToHistory(sanitized)
+        inputHistory.resetNavigation()
+
+        // Clear user input
+        setUserInput('')
+
+        logger.info('AI command generated:', command.command)
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error(String(err))
+        setError(error.message)
+        setIsLoading(false)
+        addToast('error', error.message)
+        logger.error('Failed to generate AI command:', error)
+      }
+    },
+    [
+      i18n,
+      setIsLoading,
+      setError,
+      setAiCommand,
+      currentConversation,
+      createConversation,
+      addMessageToConversation,
+      inputHistory,
+      addToast,
+    ]
+  )
 
   /**
    * Execute a command in the terminal
    */
   const executeCommand = useCallback(
     async (command: string, messageIndex?: number) => {
-      logger.debug('executeCommand called with:', command)
-      logger.debug('Current terminalPid:', terminalPid)
-
-      setIsExecuting(true)
-      setExecutionProgress(10)
-
-      // Wait for terminal to be ready with retry mechanism
-      const maxRetries = 20 // 10 seconds total (20 * 500ms)
-      let retries = 0
-
-      while (!terminalPid && retries < maxRetries) {
-        logger.debug(`Waiting for terminal... (${retries + 1}/${maxRetries})`)
-        await new Promise(resolve => setTimeout(resolve, 500))
-        retries++
-      }
-
-      setExecutionProgress(30)
-
-      if (!terminalPid) {
-        logger.error('Terminal not ready after retries')
-        const errorMessage = i18n.t('errors.terminalNotReady')
-        setError(errorMessage)
-        addToast('error', errorMessage)
-        setIsExecuting(false)
-        setExecutionProgress(0)
-        return
-      }
-
-      logger.info('Terminal is ready, PID:', terminalPid)
-
       try {
-        // Start capturing output
-        await window.electronAPI.terminalStartCapture(terminalPid)
+        if (messageIndex !== undefined && conversationState.persistedCommandIndex !== null) {
+          // Execute with interpretation
+          await execution.executeWithInterpretation(
+            command,
+            messageIndex,
+            conversationState.persistedCommandIndex,
+            (output, interpretation) => {
+              // Update local conversation
+              conversationState.updateMessage(messageIndex, { output, interpretation })
 
-        setExecutionProgress(50)
-
-        // Execute command in terminal
-        logger.debug('Writing command to terminal:', command)
-        await window.electronAPI.terminalWrite(terminalPid, `${command}\r`)
-        logger.info('Command written successfully')
-        setAiCommand(null)
-
-        setExecutionProgress(70)
-
-        // Wait for command completion using server-side prompt detection
-        // This correctly polls the output buffer without clearing it
-        const result = await window.electronAPI.terminalWaitForPrompt(terminalPid)
-        const output = result.output
-
-        if (result.detected) {
-          logger.debug('Prompt detected, command finished')
-        } else {
-          logger.warn('Prompt not detected within timeout, proceeding anyway')
-        }
-
-        setExecutionProgress(90)
-
-        // Always call interpretation, even with empty output
-        // Many successful commands (mkdir, touch, cp) produce no output
-        if (messageIndex !== undefined) {
-          try {
-            setIsInterpreting(true)
-            setExecutionProgress(95)
-            const interpretation = await window.electronAPI.llmInterpretOutput(
-              output,
-              i18n.language
-            )
-
-            // Update local conversation state with output and interpretation
-            setConversation(prev =>
-              prev.map((msg, idx) =>
-                idx === messageIndex ? { ...msg, output, interpretation } : msg
-              )
-            )
-
-            // Persist output and interpretation to storage
-            if (persistedCommandIndex !== null) {
-              await updateMessageInConversation(persistedCommandIndex, {
-                output,
-                interpretation,
-              })
+              // Persist to storage
+              if (conversationState.persistedCommandIndex !== null) {
+                updateMessageInConversation(conversationState.persistedCommandIndex, {
+                  output,
+                  interpretation,
+                })
+              }
             }
-          } catch (error) {
-            logger.error('Error interpreting output:', error)
-            const errorMessage = `${i18n.t('errors.outputInterpretationFailed')} ${error instanceof Error ? `(${error.message})` : ''}`
-            setError(errorMessage)
-            addToast('error', errorMessage)
-          } finally {
-            setIsInterpreting(false)
-          }
+          )
         } else {
-          logger.warn('Message index undefined, skipping interpretation')
+          // Execute without interpretation
+          await execution.executeCommand(command)
         }
-      } catch (error) {
-        logger.error('Error executing command:', error)
-        const errorMessage = `${i18n.t('errors.commandExecutionFailed')} ${error instanceof Error ? `(${error.message})` : ''}`
-        setError(errorMessage)
-        addToast('error', errorMessage)
-      } finally {
-        setIsExecuting(false)
-        setExecutionProgress(0)
+
+        setAiCommand(null)
+      } catch (err) {
+        logger.error('Command execution failed:', err)
+        // Error already handled by execution.onExecutionError
       }
     },
-    [
-      terminalPid,
-      setAiCommand,
-      setError,
-      i18n.language,
-      addToast,
-      i18n.t,
-      persistedCommandIndex,
-      updateMessageInConversation,
-    ]
+    [execution, conversationState, setAiCommand, updateMessageInConversation]
   )
 
   /**
-   * Modify the current AI command
-   * Allows user to edit the command with sanitization
+   * Modify an existing AI-generated command
    */
-  const modifyCommand = useCallback(() => {
-    if (aiCommand && aiCommand.type === 'command') {
-      const sanitized = sanitizeUserInput(aiCommand.command)
-      const injectionCheck = hasInjectionPatterns(aiCommand.command)
+  const modifyCommand = useCallback(
+    (newCommand: string) => {
+      if (!aiCommand) return
 
-      if (injectionCheck.hasInjection) {
-        const warningMessage = i18n.t('errors.injectionWarning', {
-          patterns: injectionCheck.patterns.join(', '),
-        })
-        setError(warningMessage)
-        addToast('warning', warningMessage)
-      }
-
-      setUserInput(sanitized)
-      setAiCommand(null)
-    }
-  }, [aiCommand, setError, setAiCommand, addToast, i18n.t])
+      setAiCommand({
+        ...aiCommand,
+        command: newCommand,
+      })
+    },
+    [aiCommand, setAiCommand]
+  )
 
   /**
-   * Handle input change in the chat textarea
-   * Updates user input state and resets history navigation
+   * Navigate through input history (arrow keys)
    */
-  const handleInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setUserInput(e.target.value)
-      // Reset history navigation when user types
-      if (historyIndex !== -1) {
-        setHistoryIndex(-1)
-        setSavedInput('')
-      }
+  const navigateHistory = useCallback(
+    (direction: 'up' | 'down') => {
+      const newInput = inputHistory.navigateHistory(direction, userInput)
+      setUserInput(newInput)
     },
-    [historyIndex]
+    [inputHistory, userInput]
   )
+
+  /**
+   * Clear conversation and reset state
+   */
+  const clearChat = useCallback(() => {
+    conversationState.clearConversation()
+    setAiCommand(null)
+    setError(null)
+    setUserInput('')
+    inputHistory.resetNavigation()
+  }, [conversationState, setAiCommand, setError, inputHistory])
 
   return {
     // State
     userInput,
-    conversation,
-    currentCommandIndex,
-    isInterpreting,
-    isExecuting,
-    executionProgress,
+    conversation: conversationState.conversation,
+    currentCommandIndex: conversationState.currentCommandIndex,
+    isInterpreting: false, // Managed internally by execution hook
+    isExecuting: execution.isExecuting,
+    executionProgress: execution.executionProgress,
 
     // Streaming state
-    isStreaming,
-    streamingContent,
-    streamingProgress,
+    isStreaming: streaming.isStreaming,
+    streamingContent: streaming.streamingContent,
+    streamingProgress: streaming.streamingProgress,
 
     // Global state from store
     aiCommand,
-    isLoading,
+    isLoading: isLoading || streaming.isStreaming,
     error,
     terminalPid,
 
@@ -884,10 +390,10 @@ export function useChat() {
     handleInputChange,
     generateAICommand,
     streamAICommand,
-    cancelStreaming,
+    cancelStreaming: streaming.cancelStreaming,
     executeCommand,
     modifyCommand,
-    addToHistory,
+    addToHistory: inputHistory.addToHistory,
     navigateHistory,
     clearChat,
   }
