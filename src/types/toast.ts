@@ -11,4 +11,9 @@ export interface Toast {
   type: ToastType
   message: string
   duration?: number
+  /** Optional link to display in the toast */
+  link?: {
+    url: string
+    label: string
+  }
 }

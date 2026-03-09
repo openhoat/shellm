@@ -6,6 +6,7 @@ import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal'
 import { Resizer } from './components/Resizer'
 import { StatsPanel } from './components/StatsPanel'
 import { Terminal } from './components/Terminal'
+import { useUpdateCheck } from './hooks/useUpdateCheck'
 import {
   useInitConfig,
   useShowConfigPanel,
@@ -21,6 +22,9 @@ export const App = () => {
   const toggleStatsPanel = useToggleStatsPanel()
   const [splitPosition, setSplitPosition] = useState(600) // Initial split position in pixels
   const [showShortcutsModal, setShowShortcutsModal] = useState(false)
+
+  // Check for application updates at startup
+  useUpdateCheck()
 
   const handleResize = useCallback((newPosition: number) => {
     const containerWidth = document.querySelector('.app-content')?.getBoundingClientRect().width

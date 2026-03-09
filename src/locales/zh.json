@@ -4,6 +4,11 @@
       "title": "Termaid",
       "subtitle": "智能AI终端"
     },
+    "update": {
+      "available": "有可用更新：v{{currentVersion}} → v{{latestVersion}}。点击下载。",
+      "viewRelease": "查看版本",
+      "checkFailed": "检查更新失败"
+    },
     "header": {
       "models": "模型",
       "config": "配置",

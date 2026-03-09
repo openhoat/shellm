@@ -4,6 +4,11 @@
       "title": "Termaid",
       "subtitle": "Smart AI Terminal"
     },
+    "update": {
+      "available": "Update available: v{{currentVersion}} → v{{latestVersion}}. Click to download.",
+      "viewRelease": "View release",
+      "checkFailed": "Failed to check for updates"
+    },
     "header": {
       "models": "Models",
       "config": "Configuration",
