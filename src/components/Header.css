@@ -260,10 +260,6 @@
   background-color: #0e639c;
 }
 
-.conversation-item.active .conversation-title {
-  color: #ffffff;
-}
-
 .conversation-title {
   flex: 1 1 0%;
   min-width: 0;
@@ -272,6 +268,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.conversation-item.active .conversation-title {
+  color: #ffffff;
 }
 
 .conversation-delete {

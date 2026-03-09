@@ -119,18 +119,13 @@
   border-bottom-color: rgba(57, 255, 20, 0.1);
 }
 
-/* Sidebar active link */
-.VPSidebarItem.is-active > .item > .link > .text {
+/* Badge/version in nav */
+.VPNavBarMenuGroup .text {
+  color: var(--termaid-neon-soft);
+}
+
+.dark .VPNavBarMenuGroup .text {
   color: var(--termaid-neon);
-}
-
-.dark .VPSidebarItem.is-active > .item > .link > .text {
-  text-shadow: 0 0 3px rgba(57, 255, 20, 0.15);
-}
-
-/* Code blocks */
-.dark [class*="language-"] code {
-  text-shadow: none;
 }
 
 /* Inline code */
@@ -142,6 +137,20 @@
 
 .dark .vp-doc :not(pre) > code {
   color: var(--termaid-neon);
+}
+
+/* Code blocks */
+.dark [class*="language-"] code {
+  text-shadow: none;
+}
+
+/* Sidebar active link */
+.VPSidebarItem.is-active > .item > .link > .text {
+  color: var(--termaid-neon);
+}
+
+.dark .VPSidebarItem.is-active > .item > .link > .text {
+  text-shadow: 0 0 3px rgba(57, 255, 20, 0.15);
 }
 
 /* Tip custom block */
@@ -166,15 +175,6 @@
 .VPFooter {
   background: var(--vp-c-bg);
   border-top-color: rgba(57, 255, 20, 0.1);
-}
-
-/* Badge/version in nav */
-.VPNavBarMenuGroup .text {
-  color: var(--termaid-neon-soft);
-}
-
-.dark .VPNavBarMenuGroup .text {
-  color: var(--termaid-neon);
 }
 
 /* ============================================

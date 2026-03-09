@@ -30,8 +30,8 @@ export const CommandInterpretation = memo(
           <div className="interpretation-section">
             <strong>{t('chat.interpretation.keyFindings')}</strong>
             <ul>
-              {interpretation.key_findings.map((finding, index) => (
-                <li key={`${index}-${finding}`}>{finding}</li>
+              {interpretation.key_findings.map(finding => (
+                <li key={finding}>{finding}</li>
               ))}
             </ul>
           </div>
@@ -40,8 +40,8 @@ export const CommandInterpretation = memo(
           <div className="interpretation-section warnings">
             <strong>⚠️ {t('chat.interpretation.warnings')}</strong>
             <ul>
-              {interpretation.warnings.map((warning, index) => (
-                <li key={`${index}-warning-${warning}`}>{warning}</li>
+              {interpretation.warnings.map(warning => (
+                <li key={warning}>{warning}</li>
               ))}
             </ul>
           </div>
@@ -50,8 +50,8 @@ export const CommandInterpretation = memo(
           <div className="interpretation-section errors">
             <strong>❌ {t('chat.interpretation.errors')}</strong>
             <ul>
-              {interpretation.errors.map((error, index) => (
-                <li key={`${index}-error-${error}`}>{error}</li>
+              {interpretation.errors.map(error => (
+                <li key={error}>{error}</li>
               ))}
             </ul>
           </div>
@@ -60,8 +60,8 @@ export const CommandInterpretation = memo(
           <div className="interpretation-section">
             <strong>💡 {t('chat.interpretation.recommendations')}</strong>
             <ul>
-              {interpretation.recommendations.map((rec, index) => (
-                <li key={`${index}-rec-${rec}`}>{rec}</li>
+              {interpretation.recommendations.map(rec => (
+                <li key={rec}>{rec}</li>
               ))}
             </ul>
           </div>
