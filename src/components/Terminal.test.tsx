@@ -24,7 +24,11 @@ vi.mock('xterm-addon-fit', () => {
 
 vi.mock('xterm/css/xterm.css', () => ({}))
 
-vi.mock('../store/useStore')
+vi.mock('../store/useStore', () => ({
+  useTerminalPid: vi.fn(),
+  useSetTerminalPid: vi.fn(),
+  useAppendTerminalOutput: vi.fn(),
+}))
 
 vi.mock('../utils/logger', () => {
   class MockLogger {
@@ -36,7 +40,7 @@ vi.mock('../utils/logger', () => {
   return { Logger: MockLogger }
 })
 
-import { useStore } from '../store/useStore'
+import { useAppendTerminalOutput, useSetTerminalPid, useTerminalPid } from '../store/useStore'
 import { Terminal } from './Terminal'
 
 // Restore window event listener methods lost when setup.ts replaces window
@@ -81,11 +85,9 @@ Object.defineProperty(window, 'electronAPI', {
 describe('Terminal', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useStore).mockReturnValue({
-      terminalPid: null,
-      setTerminalPid: mockSetTerminalPid,
-      appendTerminalOutput: mockAppendTerminalOutput,
-    } as ReturnType<typeof useStore>)
+    vi.mocked(useTerminalPid).mockReturnValue(null)
+    vi.mocked(useSetTerminalPid).mockReturnValue(mockSetTerminalPid)
+    vi.mocked(useAppendTerminalOutput).mockReturnValue(mockAppendTerminalOutput)
   })
 
   test('should render the terminal container', () => {
@@ -146,11 +148,9 @@ describe('Terminal', () => {
 
   // handleTerminalData and ANSI filtering tests
   test('should write data to terminal when PID matches', async () => {
-    vi.mocked(useStore).mockReturnValue({
-      terminalPid: 12345,
-      setTerminalPid: mockSetTerminalPid,
-      appendTerminalOutput: mockAppendTerminalOutput,
-    } as ReturnType<typeof useStore>)
+    vi.mocked(useTerminalPid).mockReturnValue(12345)
+    vi.mocked(useSetTerminalPid).mockReturnValue(mockSetTerminalPid)
+    vi.mocked(useAppendTerminalOutput).mockReturnValue(mockAppendTerminalOutput)
 
     render(<Terminal />)
 
@@ -172,11 +172,9 @@ describe('Terminal', () => {
   })
 
   test('should ignore data when PID does not match', async () => {
-    vi.mocked(useStore).mockReturnValue({
-      terminalPid: 12345,
-      setTerminalPid: mockSetTerminalPid,
-      appendTerminalOutput: mockAppendTerminalOutput,
-    } as ReturnType<typeof useStore>)
+    vi.mocked(useTerminalPid).mockReturnValue(12345)
+    vi.mocked(useSetTerminalPid).mockReturnValue(mockSetTerminalPid)
+    vi.mocked(useAppendTerminalOutput).mockReturnValue(mockAppendTerminalOutput)
 
     render(<Terminal />)
 
@@ -194,11 +192,9 @@ describe('Terminal', () => {
   })
 
   test('should filter out ANSI codes from terminal output', async () => {
-    vi.mocked(useStore).mockReturnValue({
-      terminalPid: 12345,
-      setTerminalPid: mockSetTerminalPid,
-      appendTerminalOutput: mockAppendTerminalOutput,
-    } as ReturnType<typeof useStore>)
+    vi.mocked(useTerminalPid).mockReturnValue(12345)
+    vi.mocked(useSetTerminalPid).mockReturnValue(mockSetTerminalPid)
+    vi.mocked(useAppendTerminalOutput).mockReturnValue(mockAppendTerminalOutput)
 
     render(<Terminal />)
 
@@ -217,11 +213,9 @@ describe('Terminal', () => {
   })
 
   test('should filter out OSC sequences from terminal output', async () => {
-    vi.mocked(useStore).mockReturnValue({
-      terminalPid: 12345,
-      setTerminalPid: mockSetTerminalPid,
-      appendTerminalOutput: mockAppendTerminalOutput,
-    } as ReturnType<typeof useStore>)
+    vi.mocked(useTerminalPid).mockReturnValue(12345)
+    vi.mocked(useSetTerminalPid).mockReturnValue(mockSetTerminalPid)
+    vi.mocked(useAppendTerminalOutput).mockReturnValue(mockAppendTerminalOutput)
 
     render(<Terminal />)
 
@@ -240,11 +234,9 @@ describe('Terminal', () => {
   })
 
   test('should filter out bash prompts from terminal output', async () => {
-    vi.mocked(useStore).mockReturnValue({
-      terminalPid: 12345,
-      setTerminalPid: mockSetTerminalPid,
-      appendTerminalOutput: mockAppendTerminalOutput,
-    } as ReturnType<typeof useStore>)
+    vi.mocked(useTerminalPid).mockReturnValue(12345)
+    vi.mocked(useSetTerminalPid).mockReturnValue(mockSetTerminalPid)
+    vi.mocked(useAppendTerminalOutput).mockReturnValue(mockAppendTerminalOutput)
 
     render(<Terminal />)
 
@@ -262,11 +254,9 @@ describe('Terminal', () => {
   })
 
   test('should filter out empty lines from terminal output', async () => {
-    vi.mocked(useStore).mockReturnValue({
-      terminalPid: 12345,
-      setTerminalPid: mockSetTerminalPid,
-      appendTerminalOutput: mockAppendTerminalOutput,
-    } as ReturnType<typeof useStore>)
+    vi.mocked(useTerminalPid).mockReturnValue(12345)
+    vi.mocked(useSetTerminalPid).mockReturnValue(mockSetTerminalPid)
+    vi.mocked(useAppendTerminalOutput).mockReturnValue(mockAppendTerminalOutput)
 
     render(<Terminal />)
 
@@ -285,11 +275,9 @@ describe('Terminal', () => {
 
   // handleTerminalExit tests
   test('should clear terminal PID on exit with matching PID', async () => {
-    vi.mocked(useStore).mockReturnValue({
-      terminalPid: 12345,
-      setTerminalPid: mockSetTerminalPid,
-      appendTerminalOutput: mockAppendTerminalOutput,
-    } as ReturnType<typeof useStore>)
+    vi.mocked(useTerminalPid).mockReturnValue(12345)
+    vi.mocked(useSetTerminalPid).mockReturnValue(mockSetTerminalPid)
+    vi.mocked(useAppendTerminalOutput).mockReturnValue(mockAppendTerminalOutput)
 
     render(<Terminal />)
 
@@ -306,11 +294,9 @@ describe('Terminal', () => {
   })
 
   test('should not clear terminal PID on exit with different PID', async () => {
-    vi.mocked(useStore).mockReturnValue({
-      terminalPid: 12345,
-      setTerminalPid: mockSetTerminalPid,
-      appendTerminalOutput: mockAppendTerminalOutput,
-    } as ReturnType<typeof useStore>)
+    vi.mocked(useTerminalPid).mockReturnValue(12345)
+    vi.mocked(useSetTerminalPid).mockReturnValue(mockSetTerminalPid)
+    vi.mocked(useAppendTerminalOutput).mockReturnValue(mockAppendTerminalOutput)
 
     render(<Terminal />)
 
@@ -332,11 +318,9 @@ describe('Terminal', () => {
 
   // Resize handling tests
   test('should call terminalResize when window is resized', async () => {
-    vi.mocked(useStore).mockReturnValue({
-      terminalPid: 12345,
-      setTerminalPid: mockSetTerminalPid,
-      appendTerminalOutput: mockAppendTerminalOutput,
-    } as ReturnType<typeof useStore>)
+    vi.mocked(useTerminalPid).mockReturnValue(12345)
+    vi.mocked(useSetTerminalPid).mockReturnValue(mockSetTerminalPid)
+    vi.mocked(useAppendTerminalOutput).mockReturnValue(mockAppendTerminalOutput)
 
     render(<Terminal />)
 

@@ -77,18 +77,53 @@ const createMockStore = (overrides = {}) => ({
   ...overrides,
 })
 
-// Mock useStore
+// Mock useStore hooks
 vi.mock('../store/useStore', () => ({
-  useStore: vi.fn(),
+  useConfig: vi.fn(),
+  useToggleConfigPanel: vi.fn(),
+  useToggleStatsPanel: vi.fn(),
+  useConversations: vi.fn(),
+  useCurrentConversationId: vi.fn(),
+  useLoadConversation: vi.fn(),
+  useDeleteConversation: vi.fn(),
+  useImportConversations: vi.fn(),
+  useStartNewConversation: vi.fn(),
+  useIncrementChatResetKey: vi.fn(),
 }))
 
-import { useStore } from '../store/useStore'
+import {
+  useConfig,
+  useConversations,
+  useCurrentConversationId,
+  useDeleteConversation,
+  useImportConversations,
+  useIncrementChatResetKey,
+  useLoadConversation,
+  useStartNewConversation,
+  useToggleConfigPanel,
+  useToggleStatsPanel,
+} from '../store/useStore'
+
+// Helper to configure individual hook mocks
+const configureMocks = (overrides = {}) => {
+  const mockStore = createMockStore(overrides)
+  vi.mocked(useConfig).mockReturnValue(mockStore.config)
+  vi.mocked(useToggleConfigPanel).mockReturnValue(mockStore.toggleConfigPanel)
+  vi.mocked(useToggleStatsPanel).mockReturnValue(mockStore.toggleStatsPanel || vi.fn())
+  vi.mocked(useConversations).mockReturnValue(mockStore.conversations)
+  vi.mocked(useCurrentConversationId).mockReturnValue(mockStore.currentConversationId)
+  vi.mocked(useLoadConversation).mockReturnValue(mockStore.loadConversation)
+  vi.mocked(useDeleteConversation).mockReturnValue(mockStore.deleteConversation)
+  vi.mocked(useImportConversations).mockReturnValue(mockStore.importConversations || vi.fn())
+  vi.mocked(useStartNewConversation).mockReturnValue(mockStore.startNewConversation || vi.fn())
+  vi.mocked(useIncrementChatResetKey).mockReturnValue(mockStore.incrementChatResetKey)
+}
 
 describe('Header', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockConfirm.mockReturnValue(true)
-    vi.mocked(useStore).mockReturnValue(createMockStore())
+    configureMocks()
   })
 
   describe('rendering', () => {
@@ -115,19 +150,17 @@ describe('Header', () => {
 
   describe('provider status', () => {
     test('should show Claude provider status', () => {
-      vi.mocked(useStore).mockReturnValue(
-        createMockStore({
-          config: {
-            llmProvider: 'claude',
-            ollama: { url: 'http://localhost:11434', apiKey: '', model: 'llama2' },
-            claude: { apiKey: 'test-key', model: 'claude-3-opus' },
-            openai: { apiKey: '', model: 'gpt-4' },
-            theme: 'dark',
-            fontSize: 14,
-            shell: 'auto',
-          },
-        })
-      )
+      configureMocks({
+        config: {
+          llmProvider: 'claude',
+          ollama: { url: 'http://localhost:11434', apiKey: '', model: 'llama2' },
+          claude: { apiKey: 'test-key', model: 'claude-3-opus' },
+          openai: { apiKey: '', model: 'gpt-4' },
+          theme: 'dark',
+          fontSize: 14,
+          shell: 'auto',
+        },
+      })
 
       render(<Header />)
 
@@ -135,19 +168,17 @@ describe('Header', () => {
     })
 
     test('should show OpenAI provider status', () => {
-      vi.mocked(useStore).mockReturnValue(
-        createMockStore({
-          config: {
-            llmProvider: 'openai',
-            ollama: { url: 'http://localhost:11434', apiKey: '', model: 'llama2' },
-            claude: { apiKey: '', model: 'claude-3' },
-            openai: { apiKey: 'test-key', model: 'gpt-4-turbo' },
-            theme: 'dark',
-            fontSize: 14,
-            shell: 'auto',
-          },
-        })
-      )
+      configureMocks({
+        config: {
+          llmProvider: 'openai',
+          ollama: { url: 'http://localhost:11434', apiKey: '', model: 'llama2' },
+          claude: { apiKey: '', model: 'claude-3' },
+          openai: { apiKey: 'test-key', model: 'gpt-4-turbo' },
+          theme: 'dark',
+          fontSize: 14,
+          shell: 'auto',
+        },
+      })
 
       render(<Header />)
 
@@ -155,19 +186,17 @@ describe('Header', () => {
     })
 
     test('should show Ollama with custom URL', () => {
-      vi.mocked(useStore).mockReturnValue(
-        createMockStore({
-          config: {
-            llmProvider: 'ollama',
-            ollama: { url: 'http://custom-server:11434', apiKey: '', model: 'llama2' },
-            claude: { apiKey: '', model: 'claude-3' },
-            openai: { apiKey: '', model: 'gpt-4' },
-            theme: 'dark',
-            fontSize: 14,
-            shell: 'auto',
-          },
-        })
-      )
+      configureMocks({
+        config: {
+          llmProvider: 'ollama',
+          ollama: { url: 'http://custom-server:11434', apiKey: '', model: 'llama2' },
+          claude: { apiKey: '', model: 'claude-3' },
+          openai: { apiKey: '', model: 'gpt-4' },
+          theme: 'dark',
+          fontSize: 14,
+          shell: 'auto',
+        },
+      })
 
       render(<Header />)
 
@@ -235,11 +264,9 @@ describe('Header', () => {
     })
 
     test('should show empty state when no conversations', async () => {
-      vi.mocked(useStore).mockReturnValue(
-        createMockStore({
-          conversations: [],
-        })
-      )
+      configureMocks({
+        conversations: [],
+      })
 
       const user = userEvent.setup()
       render(<Header />)
@@ -335,11 +362,9 @@ describe('Header', () => {
 
     // eslint-disable-next-line test/no-disabled-tests
     test.skip('should show status when no active conversation', async () => {
-      vi.mocked(useStore).mockReturnValue(
-        createMockStore({
-          currentConversationId: null,
-        })
-      )
+      configureMocks({
+        currentConversationId: null,
+      })
 
       const user = userEvent.setup()
       render(<Header />)
@@ -664,12 +689,10 @@ describe('Header', () => {
     test('should render conversation with very long title', async () => {
       const veryLongTitle =
         'This is a very long conversation title that should be truncated with ellipsis when displayed in the dropdown list to prevent layout issues'
-      vi.mocked(useStore).mockReturnValue(
-        createMockStore({
-          conversations: [{ id: '1', title: veryLongTitle }],
-          currentConversationId: '1',
-        })
-      )
+      configureMocks({
+        conversations: [{ id: '1', title: veryLongTitle }],
+        currentConversationId: '1',
+      })
 
       const user = userEvent.setup()
       render(<Header />)
@@ -687,12 +710,10 @@ describe('Header', () => {
     test('should show delete button for conversation with long title', async () => {
       const veryLongTitle =
         'Another extremely long conversation title that demonstrates the delete button should remain visible and clickable regardless of title length'
-      vi.mocked(useStore).mockReturnValue(
-        createMockStore({
-          conversations: [{ id: '1', title: veryLongTitle }],
-          currentConversationId: '1',
-        })
-      )
+      configureMocks({
+        conversations: [{ id: '1', title: veryLongTitle }],
+        currentConversationId: '1',
+      })
 
       const user = userEvent.setup()
       render(<Header />)
@@ -714,12 +735,10 @@ describe('Header', () => {
     test('should delete conversation with long title when clicking delete button', async () => {
       const veryLongTitle =
         'Long title conversation to test delete functionality works correctly with extended text that would normally cause layout problems'
-      vi.mocked(useStore).mockReturnValue(
-        createMockStore({
-          conversations: [{ id: 'long-id', title: veryLongTitle }],
-          currentConversationId: 'long-id',
-        })
-      )
+      configureMocks({
+        conversations: [{ id: 'long-id', title: veryLongTitle }],
+        currentConversationId: 'long-id',
+      })
 
       const user = userEvent.setup()
       render(<Header />)
@@ -739,23 +758,21 @@ describe('Header', () => {
     })
 
     test('should handle multiple conversations with varying title lengths', async () => {
-      vi.mocked(useStore).mockReturnValue(
-        createMockStore({
-          conversations: [
-            { id: '1', title: 'Short' },
-            {
-              id: '2',
-              title: 'Medium length title that is longer but not extremely long',
-            },
-            {
-              id: '3',
-              title:
-                'This is an extremely long conversation title that demonstrates the UI should handle all title lengths gracefully without breaking the layout or hiding the delete button',
-            },
-          ],
-          currentConversationId: '1',
-        })
-      )
+      configureMocks({
+        conversations: [
+          { id: '1', title: 'Short' },
+          {
+            id: '2',
+            title: 'Medium length title that is longer but not extremely long',
+          },
+          {
+            id: '3',
+            title:
+              'This is an extremely long conversation title that demonstrates the UI should handle all title lengths gracefully without breaking the layout or hiding the delete button',
+          },
+        ],
+        currentConversationId: '1',
+      })
 
       const user = userEvent.setup()
       render(<Header />)

@@ -6,20 +6,20 @@ import { useToast } from '@/hooks/useToast'
 import { hasInjectionPatterns, sanitizeUserInput } from '@/services/commandExecutionService'
 import { CommandTimer } from '@/services/statsService'
 import {
-  useConfig,
-  useAiCommand,
-  useSetAiCommand,
-  useIsLoading,
-  useSetIsLoading,
-  useError,
-  useSetError,
-  useTerminalPid,
-  useCurrentConversation,
-  useCreateConversation,
   useAddMessageToConversation,
-  useUpdateMessageInConversation,
-  useLoadConversations,
+  useAiCommand,
   useChatResetKey,
+  useConfig,
+  useCreateConversation,
+  useCurrentConversation,
+  useError,
+  useIsLoading,
+  useLoadConversations,
+  useSetAiCommand,
+  useSetError,
+  useSetIsLoading,
+  useTerminalPid,
+  useUpdateMessageInConversation,
 } from '@/store/useStore'
 import { Logger } from '@/utils/logger'
 

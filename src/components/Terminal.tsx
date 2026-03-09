@@ -3,7 +3,7 @@ import { Terminal as XTerm } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import 'xterm/css/xterm.css'
 import { stripAnsiCodes, stripOscSequences } from '@shared/ansi'
-import { useTerminalPid, useSetTerminalPid, useAppendTerminalOutput } from '../store/useStore'
+import { useAppendTerminalOutput, useSetTerminalPid, useTerminalPid } from '../store/useStore'
 import { Logger } from '../utils/logger'
 import './Terminal.css'
 
