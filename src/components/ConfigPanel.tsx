@@ -3,7 +3,7 @@ import type { AppConfig, LLMProviderMetadata } from '@shared/types'
 import { getActiveProvider } from '@shared/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useStore } from '../store/useStore'
+import { useConfig, useSetConfig, useToggleConfigPanel } from '../store/useStore'
 import { Logger } from '../utils/logger'
 import { LanguageSelector } from './LanguageSelector'
 import { ModelSelector } from './ModelSelector'
@@ -14,7 +14,9 @@ import './ConfigPanel.css'
 const logger = new Logger('ConfigPanel')
 
 export const ConfigPanel = () => {
-  const { config, setConfig, toggleConfigPanel } = useStore()
+  const config = useConfig()
+  const setConfig = useSetConfig()
+  const toggleConfigPanel = useToggleConfigPanel()
   const { t } = useTranslation()
   const panelRef = useRef<HTMLDivElement>(null)
   const [localConfig, setLocalConfig] = useState<AppConfig>(config)

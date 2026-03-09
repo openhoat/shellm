@@ -6,11 +6,19 @@ import { KeyboardShortcutsModal } from './components/KeyboardShortcutsModal'
 import { Resizer } from './components/Resizer'
 import { StatsPanel } from './components/StatsPanel'
 import { Terminal } from './components/Terminal'
-import { useStore } from './store/useStore'
+import {
+  useInitConfig,
+  useShowConfigPanel,
+  useShowStatsPanel,
+  useToggleStatsPanel,
+} from './store/useStore'
 import './App.css'
 
 export const App = () => {
-  const { initConfig, showConfigPanel, showStatsPanel, toggleStatsPanel } = useStore()
+  const initConfig = useInitConfig()
+  const showConfigPanel = useShowConfigPanel()
+  const showStatsPanel = useShowStatsPanel()
+  const toggleStatsPanel = useToggleStatsPanel()
   const [splitPosition, setSplitPosition] = useState(600) // Initial split position in pixels
   const [showShortcutsModal, setShowShortcutsModal] = useState(false)
 
