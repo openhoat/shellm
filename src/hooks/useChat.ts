@@ -80,26 +80,44 @@ export function useChat() {
   const inputHistory = useInputHistory()
   const conversationState = useConversationState()
 
-  const streaming = useStreamingCommand({
-    onStreamComplete: command => {
+  // Memoize callbacks to prevent re-renders
+  const handleStreamComplete = useCallback(
+    command => {
       setAiCommand(command)
       setIsLoading(false)
       logger.info('AI command generated:', command.command)
     },
-    onStreamError: err => {
+    [setAiCommand, setIsLoading]
+  )
+
+  const handleStreamError = useCallback(
+    err => {
       setError(err.message)
       setIsLoading(false)
       addToast('error', err.message)
     },
+    [setError, setIsLoading, addToast]
+  )
+
+  const handleExecutionComplete = useCallback((_command, _output) => {
+    logger.info('Command executed successfully')
+  }, [])
+
+  const handleExecutionError = useCallback(
+    err => {
+      addToast('error', err.message)
+    },
+    [addToast]
+  )
+
+  const streaming = useStreamingCommand({
+    onStreamComplete: handleStreamComplete,
+    onStreamError: handleStreamError,
   })
 
   const execution = useCommandExecution({
-    onExecutionComplete: (_command, _output) => {
-      logger.info('Command executed successfully')
-    },
-    onExecutionError: err => {
-      addToast('error', err.message)
-    },
+    onExecutionComplete: handleExecutionComplete,
+    onExecutionError: handleExecutionError,
   })
 
   /**
