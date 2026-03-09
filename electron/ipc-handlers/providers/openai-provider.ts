@@ -3,7 +3,7 @@ import { ChatOpenAI } from '@langchain/openai'
 import { OPENAI_MODELS } from '@shared/models'
 import type { LLMProviderFactory, LLMProviderMetadata, OpenAIConfig } from '@shared/types'
 import { Logger } from '../../utils/logger'
-import { BaseLLMProvider } from './base-provider'
+import { BaseLLMProvider, type IProviderFactory } from './base-provider'
 
 // Logger instance for OpenAI provider
 const logger = new Logger('OpenAIProvider')
@@ -72,7 +72,8 @@ const DEFAULT_OPENAI_CONFIG: OpenAIConfig = {
 /**
  * OpenAI provider factory
  */
-export const openaiProviderFactory: LLMProviderFactory<OpenAIConfig> = {
+export const openaiProviderFactory: IProviderFactory<OpenAIConfig> &
+  LLMProviderFactory<OpenAIConfig> = {
   name: 'openai',
   metadata: openaiProviderMetadata,
 

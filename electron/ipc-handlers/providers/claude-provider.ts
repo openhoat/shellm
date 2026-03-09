@@ -3,7 +3,7 @@ import { ChatPromptTemplate } from '@langchain/core/prompts'
 import { CLAUDE_MODELS } from '@shared/models'
 import type { ClaudeConfig, LLMProviderFactory, LLMProviderMetadata } from '@shared/types'
 import { Logger } from '../../utils/logger'
-import { BaseLLMProvider } from './base-provider'
+import { BaseLLMProvider, type IProviderFactory } from './base-provider'
 
 // Logger instance for Claude provider
 const logger = new Logger('ClaudeProvider')
@@ -72,7 +72,8 @@ const DEFAULT_CLAUDE_CONFIG: ClaudeConfig = {
 /**
  * Claude provider factory
  */
-export const claudeProviderFactory: LLMProviderFactory<ClaudeConfig> = {
+export const claudeProviderFactory: IProviderFactory<ClaudeConfig> &
+  LLMProviderFactory<ClaudeConfig> = {
   name: 'claude',
   metadata: claudeProviderMetadata,
 
