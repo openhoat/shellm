@@ -1,41 +1,119 @@
-import type { AICommand, AppConfig, Conversation, ConversationMessage } from '@shared/types'
+import type {
+  AICommand,
+  AppConfig,
+  Conversation,
+  ConversationMessage,
+  ValidationResult,
+} from '@shared/types'
 import { create } from 'zustand'
 import { useShallow } from 'zustand/react/shallow'
 import { Logger } from '@/utils/logger'
 
 const logger = new Logger('useStore')
 
-// Selectors for optimized re-renders (available for use but components keep using useStore)
+// Selectors for optimized re-renders
+// Config
 const selectConfig = (state: AppState) => state.config
 const selectSetConfig = (state: AppState) => state.setConfig
+const selectInitConfig = (state: AppState) => state.initConfig
+
+// Terminal
 const selectTerminalPid = (state: AppState) => state.terminalPid
 const selectSetTerminalPid = (state: AppState) => state.setTerminalPid
+const selectTerminalOutput = (state: AppState) => state.terminalOutput
+const selectSetTerminalOutput = (state: AppState) => state.setTerminalOutput
 const selectAppendTerminalOutput = (state: AppState) => state.appendTerminalOutput
+const selectClearTerminalOutput = (state: AppState) => state.clearTerminalOutput
+
+// AI
 const selectAiCommand = (state: AppState) => state.aiCommand
 const selectSetAiCommand = (state: AppState) => state.setAiCommand
+const selectIsLoading = (state: AppState) => state.isLoading
+const selectSetIsLoading = (state: AppState) => state.setIsLoading
+const selectError = (state: AppState) => state.error
+const selectSetError = (state: AppState) => state.setError
+
+// Conversations
 const selectConversations = (state: AppState) => state.conversations
 const selectCurrentConversationId = (state: AppState) => state.currentConversationId
+const selectCurrentConversation = (state: AppState) => state.currentConversation
+const selectLoadConversations = (state: AppState) => state.loadConversations
+const selectLoadConversation = (state: AppState) => state.loadConversation
+const selectCreateConversation = (state: AppState) => state.createConversation
+const selectAddMessageToConversation = (state: AppState) => state.addMessageToConversation
+const selectUpdateMessageInConversation = (state: AppState) => state.updateMessageInConversation
+const selectDeleteConversation = (state: AppState) => state.deleteConversation
+const selectClearAllConversations = (state: AppState) => state.clearAllConversations
+const selectImportConversations = (state: AppState) => state.importConversations
+const selectStartNewConversation = (state: AppState) => state.startNewConversation
+
+// Chat reset
+const selectChatResetKey = (state: AppState) => state.chatResetKey
+const selectIncrementChatResetKey = (state: AppState) => state.incrementChatResetKey
+
+// Command validation
+const selectPendingCommandValidation = (state: AppState) => state.pendingCommandValidation
+const selectSetPendingCommandValidation = (state: AppState) => state.setPendingCommandValidation
+
+// UI
 const selectShowConfigPanel = (state: AppState) => state.showConfigPanel
 const selectToggleConfigPanel = (state: AppState) => state.toggleConfigPanel
 const selectShowStatsPanel = (state: AppState) => state.showStatsPanel
 const selectToggleStatsPanel = (state: AppState) => state.toggleStatsPanel
-const selectClearAllConversations = (state: AppState) => state.clearAllConversations
+const selectSelectedCommand = (state: AppState) => state.selectedCommand
+const selectSetSelectedCommand = (state: AppState) => state.setSelectedCommand
 
-// Optimized hooks - available for future use
+// Optimized hooks - use these instead of useStore() destructuring to prevent unnecessary re-renders
+// Config
 export const useConfig = () => useStore(selectConfig, useShallow)
 export const useSetConfig = () => useStore(selectSetConfig)
+export const useInitConfig = () => useStore(selectInitConfig)
+
+// Terminal
 export const useTerminalPid = () => useStore(selectTerminalPid)
 export const useSetTerminalPid = () => useStore(selectSetTerminalPid)
+export const useTerminalOutput = () => useStore(selectTerminalOutput, useShallow)
+export const useSetTerminalOutput = () => useStore(selectSetTerminalOutput)
 export const useAppendTerminalOutput = () => useStore(selectAppendTerminalOutput)
+export const useClearTerminalOutput = () => useStore(selectClearTerminalOutput)
+
+// AI
 export const useAiCommand = () => useStore(selectAiCommand)
 export const useSetAiCommand = () => useStore(selectSetAiCommand)
+export const useIsLoading = () => useStore(selectIsLoading)
+export const useSetIsLoading = () => useStore(selectSetIsLoading)
+export const useError = () => useStore(selectError)
+export const useSetError = () => useStore(selectSetError)
+
+// Conversations
 export const useConversations = () => useStore(selectConversations, useShallow)
 export const useCurrentConversationId = () => useStore(selectCurrentConversationId)
+export const useCurrentConversation = () => useStore(selectCurrentConversation)
+export const useLoadConversations = () => useStore(selectLoadConversations)
+export const useLoadConversation = () => useStore(selectLoadConversation)
+export const useCreateConversation = () => useStore(selectCreateConversation)
+export const useAddMessageToConversation = () => useStore(selectAddMessageToConversation)
+export const useUpdateMessageInConversation = () => useStore(selectUpdateMessageInConversation)
+export const useDeleteConversation = () => useStore(selectDeleteConversation)
+export const useClearAllConversations = () => useStore(selectClearAllConversations)
+export const useImportConversations = () => useStore(selectImportConversations)
+export const useStartNewConversation = () => useStore(selectStartNewConversation)
+
+// Chat reset
+export const useChatResetKey = () => useStore(selectChatResetKey)
+export const useIncrementChatResetKey = () => useStore(selectIncrementChatResetKey)
+
+// Command validation
+export const usePendingCommandValidation = () => useStore(selectPendingCommandValidation)
+export const useSetPendingCommandValidation = () => useStore(selectSetPendingCommandValidation)
+
+// UI
 export const useShowConfigPanel = () => useStore(selectShowConfigPanel)
 export const useToggleConfigPanel = () => useStore(selectToggleConfigPanel)
 export const useShowStatsPanel = () => useStore(selectShowStatsPanel)
 export const useToggleStatsPanel = () => useStore(selectToggleStatsPanel)
-export const useClearAllConversations = () => useStore(selectClearAllConversations)
+export const useSelectedCommand = () => useStore(selectSelectedCommand)
+export const useSetSelectedCommand = () => useStore(selectSetSelectedCommand)
 
 interface AppState {
   // Config

@@ -3,7 +3,7 @@ import { Terminal as XTerm } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import 'xterm/css/xterm.css'
 import { stripAnsiCodes, stripOscSequences } from '@shared/ansi'
-import { useStore } from '../store/useStore'
+import { useTerminalPid, useSetTerminalPid, useAppendTerminalOutput } from '../store/useStore'
 import { Logger } from '../utils/logger'
 import './Terminal.css'
 
@@ -18,7 +18,9 @@ export const Terminal = () => {
   const resizeObserverRef = useRef<ResizeObserver | null>(null)
   const rafIdRef = useRef<number | null>(null)
   const pendingResizeRef = useRef<boolean>(false)
-  const { terminalPid, setTerminalPid, appendTerminalOutput } = useStore()
+  const terminalPid = useTerminalPid()
+  const setTerminalPid = useSetTerminalPid()
+  const appendTerminalOutput = useAppendTerminalOutput()
 
   // Keep terminalPidRef in sync with terminalPid
   useEffect(() => {

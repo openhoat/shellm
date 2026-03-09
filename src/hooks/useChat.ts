@@ -5,7 +5,22 @@ import type { ChatMessageData } from '@/components/chat'
 import { useToast } from '@/hooks/useToast'
 import { hasInjectionPatterns, sanitizeUserInput } from '@/services/commandExecutionService'
 import { CommandTimer } from '@/services/statsService'
-import { useStore } from '@/store/useStore'
+import {
+  useConfig,
+  useAiCommand,
+  useSetAiCommand,
+  useIsLoading,
+  useSetIsLoading,
+  useError,
+  useSetError,
+  useTerminalPid,
+  useCurrentConversation,
+  useCreateConversation,
+  useAddMessageToConversation,
+  useUpdateMessageInConversation,
+  useLoadConversations,
+  useChatResetKey,
+} from '@/store/useStore'
 import { Logger } from '@/utils/logger'
 
 const logger = new Logger('useChat')
@@ -75,22 +90,21 @@ export function useChat() {
   const [historyIndex, setHistoryIndex] = useState(-1) // -1 means not navigating history
   const [savedInput, setSavedInput] = useState('') // Save current input when navigating history
 
-  const {
-    config,
-    aiCommand,
-    setAiCommand,
-    isLoading,
-    setIsLoading,
-    error,
-    setError,
-    terminalPid,
-    currentConversation,
-    createConversation,
-    addMessageToConversation,
-    updateMessageInConversation,
-    loadConversations,
-    chatResetKey,
-  } = useStore()
+  // Use individual selector hooks to prevent unnecessary re-renders
+  const config = useConfig()
+  const aiCommand = useAiCommand()
+  const setAiCommand = useSetAiCommand()
+  const isLoading = useIsLoading()
+  const setIsLoading = useSetIsLoading()
+  const error = useError()
+  const setError = useSetError()
+  const terminalPid = useTerminalPid()
+  const currentConversation = useCurrentConversation()
+  const createConversation = useCreateConversation()
+  const addMessageToConversation = useAddMessageToConversation()
+  const updateMessageInConversation = useUpdateMessageInConversation()
+  const loadConversations = useLoadConversations()
+  const chatResetKey = useChatResetKey()
 
   const { addToast } = useToast()
 

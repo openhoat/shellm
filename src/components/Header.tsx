@@ -1,7 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import logoSvg from '/logo.svg'
-import { useStore } from '../store/useStore'
+import {
+  useConfig,
+  useToggleConfigPanel,
+  useToggleStatsPanel,
+  useConversations,
+  useCurrentConversationId,
+  useLoadConversation,
+  useDeleteConversation,
+  useImportConversations,
+  useStartNewConversation,
+  useIncrementChatResetKey,
+} from '../store/useStore'
 import { Logger } from '../utils/logger'
 import './Header.css'
 
@@ -13,18 +24,16 @@ interface HeaderProps {
 }
 
 export const Header = ({ onShowShortcuts }: HeaderProps) => {
-  const {
-    config,
-    toggleConfigPanel,
-    toggleStatsPanel,
-    conversations,
-    currentConversationId,
-    loadConversation,
-    deleteConversation,
-    importConversations,
-    startNewConversation,
-    incrementChatResetKey,
-  } = useStore()
+  const config = useConfig()
+  const toggleConfigPanel = useToggleConfigPanel()
+  const toggleStatsPanel = useToggleStatsPanel()
+  const conversations = useConversations()
+  const currentConversationId = useCurrentConversationId()
+  const loadConversation = useLoadConversation()
+  const deleteConversation = useDeleteConversation()
+  const importConversations = useImportConversations()
+  const startNewConversation = useStartNewConversation()
+  const incrementChatResetKey = useIncrementChatResetKey()
   const { t } = useTranslation()
   const [showConversationList, setShowConversationList] = useState(false)
   const [exportStatus, setExportStatus] = useState<string | null>(null)

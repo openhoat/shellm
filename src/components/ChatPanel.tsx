@@ -5,7 +5,7 @@ import { type FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CommandWarningModal } from '@/components/CommandWarningModal'
 import { useChat } from '@/hooks/useChat'
-import { useStore } from '@/store/useStore'
+import { useSetAiCommand, useClearAllConversations } from '@/store/useStore'
 import { Logger } from '@/utils/logger'
 import { ChatMessage } from './chat'
 import './ChatPanel.css'
@@ -26,7 +26,8 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
   const chat = useChat()
 
   // Use setAiCommand from store directly for the cancel button
-  const { setAiCommand, clearAllConversations } = useStore()
+  const setAiCommand = useSetAiCommand()
+  const clearAllConversations = useClearAllConversations()
 
   // State for command warning modal
   const [_pendingCommand, _setPendingCommand] = useState<{
