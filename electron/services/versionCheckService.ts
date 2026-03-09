@@ -47,7 +47,7 @@ export const getLatestVersion = async (): Promise<string | null> => {
       }
     )
 
-    // Extract version from tag_name (e.g., "v1.3.7" -> "1.3.7")
+    // Extract version from tag_name (e.g., "v1.3.8" -> "1.3.8")
     const tagName = response.data.tag_name
     return tagName.startsWith('v') ? tagName.substring(1) : tagName
   } catch (error) {

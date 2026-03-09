@@ -75,23 +75,23 @@ describe('versionCheckService', () => {
 
   describe('isNewerVersion', () => {
     test('should return true when remote version is newer (major)', () => {
-      expect(isNewerVersion('1.3.7', '2.0.0')).toBe(true)
+      expect(isNewerVersion('1.3.8', '2.0.0')).toBe(true)
     })
 
     test('should return true when remote version is newer (minor)', () => {
-      expect(isNewerVersion('1.3.7', '1.4.0')).toBe(true)
+      expect(isNewerVersion('1.3.8', '1.4.0')).toBe(true)
     })
 
     test('should return true when remote version is newer (patch)', () => {
-      expect(isNewerVersion('1.3.7', '1.3.8')).toBe(true)
+      expect(isNewerVersion('1.3.8', '1.3.9')).toBe(true)
     })
 
     test('should return false when versions are equal', () => {
-      expect(isNewerVersion('1.3.7', '1.3.7')).toBe(false)
+      expect(isNewerVersion('1.3.8', '1.3.8')).toBe(false)
     })
 
     test('should return false when remote version is older', () => {
-      expect(isNewerVersion('1.4.0', '1.3.7')).toBe(false)
+      expect(isNewerVersion('1.4.0', '1.3.8')).toBe(false)
     })
 
     test('should handle version with different lengths', () => {
