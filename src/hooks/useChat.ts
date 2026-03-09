@@ -85,10 +85,10 @@ export function useChat() {
   const handleStreamComplete = useCallback(
     command => {
       setAiCommand(command)
-      setIsLoading(false)
+      // Note: setIsLoading(false) is called after DB save in streamAICommand
       logger.info('AI command generated:', command.command)
     },
-    [setAiCommand, setIsLoading]
+    [setAiCommand]
   )
 
   const handleStreamError = useCallback(
@@ -293,9 +293,13 @@ export function useChat() {
 
           // Clear user input
           setUserInput('')
+
+          // Mark as complete after all DB operations are done
+          setIsLoading(false)
         }
       } catch (err) {
         logger.error('Failed to generate AI command:', err)
+        setIsLoading(false)
         // Error already handled by streaming.onStreamError
       }
     },
@@ -381,7 +385,7 @@ export function useChat() {
         )
 
         setAiCommand(command)
-        setIsLoading(false)
+        // Note: setIsLoading(false) is called after DB save
 
         // Add AI command to local conversation
         const aiContent = command.type === 'text' ? command.content : command.explanation || ''
@@ -430,6 +434,9 @@ export function useChat() {
 
         // Clear user input
         setUserInput('')
+
+        // Mark as complete after all DB operations are done
+        setIsLoading(false)
 
         logger.info('AI command generated:', command.command)
       } catch (err) {
