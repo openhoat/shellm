@@ -10,6 +10,23 @@ To view the complete history, use: `git log`
 
 #### 09/03
 
+- **[17:14:27] ♻️ [REFACTOR]** Extract use chat into modular specialized hooks
+- **[17:14:27] ✅ [TEST]** Add window.electron.llm mocks for new hooks
+- **[17:14:27] 🐛 [FIX]** Memoize callbacks to prevent infinite re-render loops
+- **[17:14:27] 🐛 [FIX]** Memoize all functions in use conversation state to prevent re-renders
+- **[17:14:27] 🐛 [FIX]** Use individual functions in dependencies instead of hook objects
+- **[17:14:27] 🐛 [FIX]** Add guard against concurrent calls in stream and generate commands
+- **[17:14:27] 🐛 [FIX]** Use correct electronapi for streaming commands
+- **[17:14:27] 🐛 [FIX]** Correct handleinputchange signature and injection check
+- **[17:14:27] 🐛 [FIX]** Restore conversation messages when loading saved conversations
+- **[17:14:27] 🐛 [FIX]** Prevent infinite loop in conversation restore
+- **[17:14:27] 🐛 [FIX]** Prevent excessive re-renders in conversation restore
+- **[17:14:27] 🐛 [FIX]** Resolve multiple e2e test failures (65→73 passing)
+- **[17:14:27] 🐛 [FIX]** User message persistence and command interpretation in refactored hooks
+- **[17:14:27] 🐛 [FIX]** Resolve race condition in message persistence timing
+- **[17:14:27] 🐛 [FIX]** Make demo.test.ts interpretation wait non-blocking
+- **[11:33:50] 🔧 [CHORE]** Start task - refactor use chat into modular hooks
+- **[11:29:46] 🔧 [CHORE]** Update changelog post-merge
 - **[11:27:52] ⚡ [PERF]** Adopt zustand selectors to reduce re-renders
 - **[11:27:52] ✅ [TEST]** Fix all component test mocks to use individual selector hooks
 - **[10:19:34] ✨ [FEAT]** Add typescript interfaces for llm providers
