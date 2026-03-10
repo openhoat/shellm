@@ -50,9 +50,26 @@ Start and complete a Kanban task from backlog to Pull Request with full automati
    git worktree add ../termaid-<name> <branch-name>
    git checkout main
    ```
-10. **Implement the feature**: Analyze the task description and implement the complete functionality in the worktree directory (using absolute paths like `/home/openhoat/work/termaid-<name>/...`)
-11. **Validate**: Run `npm run validate` in the worktree to ensure code quality
-12. **Complete task**: Run `/complete-task` to commit, push, and create PR
+10. **Copy local files**: Sync files from `.worktree-sync` to the new worktree:
+    ```bash
+    if [ -f ".worktree-sync" ]; then
+      while IFS= read -r file; do
+        # Skip comments and empty lines
+        [[ "$file" =~ ^#.*$ ]] && continue
+        [[ -z "$file" ]] && continue
+        
+        if [ -f "$file" ]; then
+          # Create directory structure if needed
+          mkdir -p "../termaid-<name>/$(dirname "$file")"
+          cp "$file" "../termaid-<name>/$file"
+          echo "✓ Copied $file to worktree"
+        fi
+      done < .worktree-sync
+    fi
+    ```
+11. **Implement the feature**: Analyze the task description and implement the complete functionality in the worktree directory (using absolute paths like `/home/openhoat/work/termaid-<name>/...`)
+12. **Validate**: Run `npm run validate` in the worktree to ensure code quality
+13. **Complete task**: Run `/complete-task` to commit, push, and create PR
 
 ## Example
 
