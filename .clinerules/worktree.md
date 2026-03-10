@@ -79,6 +79,34 @@ git worktree remove ../termaid-<name>
 git worktree prune
 ```
 
+## Local Files Synchronization
+
+When creating a new worktree, local files listed in `.worktree-sync` are automatically copied from the main worktree. This ensures consistent development environment across all worktrees.
+
+### Files synchronized
+
+The `.worktree-sync` file lists files to copy:
+```
+# Environment configuration
+.envrc
+.env.local
+.env.development.local
+
+# Claude Code local settings
+.claude/settings.local.json
+```
+
+### How it works
+
+1. When `/start-task` creates a worktree, it reads `.worktree-sync`
+2. For each file listed, it copies from main worktree to the new worktree
+3. Directory structure is created automatically if needed
+4. Files are only copied if they exist in the main worktree
+
+### Adding new files to sync
+
+Edit `.worktree-sync` and add one file per line. Comments start with `#`.
+
 ## Integration with Other Rules
 
 - Follow **Language Rule**: All commits and PRs in English

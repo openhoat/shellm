@@ -73,7 +73,28 @@ git worktree add ../termaid-<worktree-name> <branch-name>
 git checkout main
 ```
 
-### 8. Inform user to navigate
+### 8. Copy local files to new worktree
+
+Copy files listed in `.worktree-sync` from main worktree to the new worktree:
+
+```bash
+if [ -f ".worktree-sync" ]; then
+  while IFS= read -r file; do
+    # Skip comments and empty lines
+    [[ "$file" =~ ^#.*$ ]] && continue
+    [[ -z "$file" ]] && continue
+    
+    if [ -f "$file" ]; then
+      # Create directory structure if needed
+      mkdir -p "../termaid-<worktree-name>/$(dirname "$file")"
+      cp "$file" "../termaid-<worktree-name>/$file"
+      echo "✓ Copied $file to worktree"
+    fi
+  done < .worktree-sync
+fi
+```
+
+### 9. Inform user to navigate
 
 Display success message and instruct user to manually navigate:
 ```

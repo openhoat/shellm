@@ -9,6 +9,7 @@
 # → Updates KANBAN.md (move idea to In Progress)
 # → Commits KANBAN.md on main
 # → Creates branch and worktree at /home/openhoat/work/termaid-<name>
+# → Copies local files from .worktree-sync to new worktree
 # → User manually navigates: cd ../termaid-<name>
 ```
 
