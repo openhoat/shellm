@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 09/03
 
+- **[19:29:23] 🐛 [FIX]** Remove duplicate log viewer button in header
 - **[19:25:24] ✨ [FEAT]** Add update notification toast at startup
 - **[19:25:12] 🔧 [CHORE]** Start tasks - update notification toast, in-app log viewer
 - **[19:25:12] ✨ [FEAT]** Add in-app log viewer component
