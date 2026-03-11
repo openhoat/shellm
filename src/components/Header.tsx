@@ -15,6 +15,7 @@ import {
   useToggleStatsPanel,
 } from '../store/useStore'
 import { Logger } from '../utils/logger'
+import { CheckpointPanel } from './CheckpointPanel'
 import './Header.css'
 
 // Logger instance for Header
@@ -38,6 +39,7 @@ export const Header = ({ onShowShortcuts }: HeaderProps) => {
   const incrementChatResetKey = useIncrementChatResetKey()
   const { t } = useTranslation()
   const [showConversationList, setShowConversationList] = useState(false)
+  const [showCheckpointPanel, setShowCheckpointPanel] = useState(false)
   const [exportStatus, setExportStatus] = useState<string | null>(null)
   const exportTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -427,6 +429,27 @@ export const Header = ({ onShowShortcuts }: HeaderProps) => {
         <button
           type="button"
           className="icon-button"
+          onClick={() => setShowCheckpointPanel(!showCheckpointPanel)}
+          title={t('header.checkpoints', 'Conversation Checkpoints')}
+          data-testid="checkpoints-button"
+          aria-expanded={showCheckpointPanel}
+          aria-haspopup="dialog"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <title>{t('header.checkpoints', 'Conversation Checkpoints')}</title>
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          className="icon-button"
           onClick={toggleLogViewer}
           title={t('header.logs', 'Application Logs')}
           data-testid="logs-button"
@@ -466,6 +489,7 @@ export const Header = ({ onShowShortcuts }: HeaderProps) => {
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
           </svg>
         </button>
+        {showCheckpointPanel && <CheckpointPanel onClose={() => setShowCheckpointPanel(false)} />}
         {exportStatus && <div className="export-status">{exportStatus}</div>}
       </div>
     </header>

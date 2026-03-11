@@ -2,7 +2,13 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { app } from 'electron'
 import { z } from 'zod'
-import type { Conversation, ConversationMessage, ConversationsList } from '../../shared/types'
+import type {
+  Checkpoint,
+  CheckpointMetadata,
+  Conversation,
+  ConversationMessage,
+  ConversationsList,
+} from '../../shared/types'
 import { Logger } from '../utils/logger'
 
 const logger = new Logger('ConversationService')
@@ -394,6 +400,157 @@ class ConversationService {
     }
 
     return JSON.stringify(exportData, null, 2)
+  }
+
+  // ============================================================================
+  // Checkpoint Management
+  // ============================================================================
+
+  /**
+   * Get the path to the checkpoints file for a conversation
+   */
+  private getCheckpointsFilePath(conversationId: string): string {
+    const userDataPath = app.getPath('userData')
+    return path.join(userDataPath, 'checkpoints', `${conversationId}.json`)
+  }
+
+  /**
+   * Ensure the checkpoints directory exists
+   */
+  private async ensureCheckpointsDir(): Promise<void> {
+    const userDataPath = app.getPath('userData')
+    const checkpointsDir = path.join(userDataPath, 'checkpoints')
+    await fs.mkdir(checkpointsDir, { recursive: true })
+  }
+
+  /**
+   * Read checkpoints for a conversation
+   */
+  private async readCheckpoints(conversationId: string): Promise<Checkpoint[]> {
+    try {
+      const filePath = this.getCheckpointsFilePath(conversationId)
+      const data = await fs.readFile(filePath, 'utf-8')
+      return JSON.parse(data) as Checkpoint[]
+    } catch {
+      return []
+    }
+  }
+
+  /**
+   * Save checkpoints for a conversation
+   */
+  private async saveCheckpoints(conversationId: string, checkpoints: Checkpoint[]): Promise<void> {
+    await this.ensureCheckpointsDir()
+    const filePath = this.getCheckpointsFilePath(conversationId)
+    await fs.writeFile(filePath, JSON.stringify(checkpoints, null, 2), 'utf-8')
+  }
+
+  /**
+   * Create a checkpoint from the current conversation state
+   */
+  async createCheckpoint(conversationId: string, name: string): Promise<Checkpoint> {
+    const conversation = await this.getConversation(conversationId)
+    if (!conversation) {
+      throw new Error(`Conversation with id ${conversationId} not found`)
+    }
+
+    const now = Date.now()
+    const checkpoint: Checkpoint = {
+      id: `${now}-${Math.random().toString(36).slice(2, 11)}`,
+      conversationId,
+      name,
+      createdAt: now,
+      messageCount: conversation.messages.length,
+      messages: [...conversation.messages],
+    }
+
+    const checkpoints = await this.readCheckpoints(conversationId)
+    checkpoints.push(checkpoint)
+    await this.saveCheckpoints(conversationId, checkpoints)
+
+    return checkpoint
+  }
+
+  /**
+   * Get all checkpoints for a conversation (metadata only, without messages)
+   */
+  async getCheckpoints(conversationId: string): Promise<CheckpointMetadata[]> {
+    const checkpoints = await this.readCheckpoints(conversationId)
+    return checkpoints.map(cp => ({
+      id: cp.id,
+      conversationId: cp.conversationId,
+      name: cp.name,
+      createdAt: cp.createdAt,
+      messageCount: cp.messageCount,
+    }))
+  }
+
+  /**
+   * Get a specific checkpoint with full message data
+   */
+  async getCheckpoint(conversationId: string, checkpointId: string): Promise<Checkpoint | null> {
+    const checkpoints = await this.readCheckpoints(conversationId)
+    return checkpoints.find(cp => cp.id === checkpointId) || null
+  }
+
+  /**
+   * Restore a conversation from a checkpoint
+   */
+  async restoreCheckpoint(
+    conversationId: string,
+    checkpointId: string
+  ): Promise<Conversation | null> {
+    const checkpoint = await this.getCheckpoint(conversationId, checkpointId)
+    if (!checkpoint) {
+      throw new Error(`Checkpoint with id ${checkpointId} not found`)
+    }
+
+    const conversation = await this.getConversation(conversationId)
+    if (!conversation) {
+      throw new Error(`Conversation with id ${conversationId} not found`)
+    }
+
+    // Restore the conversation messages from the checkpoint
+    conversation.messages = [...checkpoint.messages]
+    conversation.updatedAt = Date.now()
+
+    const data = await this.read()
+    const index = data.conversations.findIndex(conv => conv.id === conversationId)
+    if (index !== -1) {
+      data.conversations[index] = conversation
+      await this.save(data)
+      this.invalidateCache(conversationId)
+    }
+
+    return conversation
+  }
+
+  /**
+   * Delete a checkpoint
+   */
+  async deleteCheckpoint(conversationId: string, checkpointId: string): Promise<boolean> {
+    const checkpoints = await this.readCheckpoints(conversationId)
+    const initialLength = checkpoints.length
+    const filtered = checkpoints.filter(cp => cp.id !== checkpointId)
+
+    if (filtered.length < initialLength) {
+      await this.saveCheckpoints(conversationId, filtered)
+      return true
+    }
+
+    return false
+  }
+
+  /**
+   * Delete all checkpoints for a conversation
+   */
+  async deleteAllCheckpoints(conversationId: string): Promise<void> {
+    const filePath = this.getCheckpointsFilePath(conversationId)
+    try {
+      await fs.unlink(filePath)
+    } catch {
+      // File doesn't exist, ignore
+    }
   }
 }
 

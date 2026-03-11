@@ -287,6 +287,25 @@ export interface ConversationsList {
   conversations: Conversation[]
 }
 
+// Checkpoint de conversation pour exploration de chemins alternatifs
+export interface Checkpoint {
+  id: string
+  conversationId: string
+  name: string
+  createdAt: number
+  messageCount: number
+  messages: ConversationMessage[]
+}
+
+// Métadonnées de checkpoint pour l'affichage en liste
+export interface CheckpointMetadata {
+  id: string
+  conversationId: string
+  name: string
+  createdAt: number
+  messageCount: number
+}
+
 // Streaming progress callback
 export interface StreamingProgress {
   type: 'connecting' | 'receiving' | 'processing' | 'complete' | 'error'

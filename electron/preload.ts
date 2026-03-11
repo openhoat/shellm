@@ -1,5 +1,6 @@
 import type {
   AppConfig,
+  CheckpointMetadata,
   Conversation,
   ConversationMessage,
   LLMProviderMetadata,
@@ -121,6 +122,52 @@ contextBridge.exposeInMainWorld('electronAPI', {
   conversationExport: (id: string) => ipcRenderer.invoke('conversation:export', id),
   conversationExportAll: () => ipcRenderer.invoke('conversation:export-all'),
   conversationImport: () => ipcRenderer.invoke('conversation:import'),
+
+  // Conversation Checkpoints
+  conversationCreateCheckpoint: (conversationId: string, name: string) =>
+    ipcRenderer.invoke('conversation:create-checkpoint', conversationId, name),
+  conversationGetCheckpoints: (conversationId: string) =>
+    ipcRenderer.invoke('conversation:get-checkpoints', conversationId) as Promise<{
+      success: boolean
+      checkpoints: CheckpointMetadata[]
+    }>,
+  conversationGetCheckpoint: (conversationId: string, checkpointId: string) =>
+    ipcRenderer.invoke('conversation:get-checkpoint', conversationId, checkpointId),
+  conversationRestoreCheckpoint: (conversationId: string, checkpointId: string) =>
+    ipcRenderer.invoke('conversation:restore-checkpoint', conversationId, checkpointId),
+  conversationDeleteCheckpoint: (conversationId: string, checkpointId: string) =>
+    ipcRenderer.invoke('conversation:delete-checkpoint', conversationId, checkpointId),
+  conversationDeleteAllCheckpoints: (conversationId: string) =>
+    ipcRenderer.invoke('conversation:delete-all-checkpoints', conversationId),
+
+  // Checkpoints
+  checkpointCreate: (conversationId: string, name: string) =>
+    ipcRenderer.invoke('conversation:create-checkpoint', conversationId, name) as Promise<{
+      success: boolean
+      checkpoint?: CheckpointMetadata
+      error?: string
+    }>,
+  checkpointGetAll: (conversationId: string) =>
+    ipcRenderer.invoke('conversation:get-checkpoints', conversationId) as Promise<{
+      success: boolean
+      checkpoints: CheckpointMetadata[]
+    }>,
+  checkpointGet: (conversationId: string, checkpointId: string) =>
+    ipcRenderer.invoke('conversation:get-checkpoint', conversationId, checkpointId),
+  checkpointRestore: (conversationId: string, checkpointId: string) =>
+    ipcRenderer.invoke('conversation:restore-checkpoint', conversationId, checkpointId) as Promise<{
+      success: boolean
+      conversation?: Conversation
+      error?: string
+    }>,
+  checkpointDelete: (conversationId: string, checkpointId: string) =>
+    ipcRenderer.invoke('conversation:delete-checkpoint', conversationId, checkpointId) as Promise<{
+      success: boolean
+    }>,
+  checkpointDeleteAll: (conversationId: string) =>
+    ipcRenderer.invoke('conversation:delete-all-checkpoints', conversationId) as Promise<{
+      success: boolean
+    }>,
 
   // Audit Logs
   auditGetLogs: (query?: {

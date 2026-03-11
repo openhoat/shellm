@@ -202,4 +202,95 @@ export function createConversationHandlers(): void {
       }
     }
   })
+
+  // ============================================================================
+  // Checkpoint Handlers
+  // ============================================================================
+
+  // Create a checkpoint for a conversation
+  ipcMain.handle(
+    'conversation:create-checkpoint',
+    async (_event, conversationId: string, name: string) => {
+      try {
+        const checkpoint = await conversationService.createCheckpoint(conversationId, name)
+        return { success: true, checkpoint }
+      } catch (error) {
+        logger.error('Failed to create checkpoint', error)
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        }
+      }
+    }
+  )
+
+  // Get all checkpoints for a conversation
+  ipcMain.handle('conversation:get-checkpoints', async (_event, conversationId: string) => {
+    try {
+      const checkpoints = await conversationService.getCheckpoints(conversationId)
+      return { success: true, checkpoints }
+    } catch (error) {
+      logger.error('Failed to get checkpoints', error)
+      return { success: false, checkpoints: [] }
+    }
+  })
+
+  // Get a specific checkpoint with full message data
+  ipcMain.handle(
+    'conversation:get-checkpoint',
+    async (_event, conversationId: string, checkpointId: string) => {
+      try {
+        const checkpoint = await conversationService.getCheckpoint(conversationId, checkpointId)
+        return { success: true, checkpoint }
+      } catch (error) {
+        logger.error('Failed to get checkpoint', error)
+        return { success: false, checkpoint: null }
+      }
+    }
+  )
+
+  // Restore a conversation from a checkpoint
+  ipcMain.handle(
+    'conversation:restore-checkpoint',
+    async (_event, conversationId: string, checkpointId: string) => {
+      try {
+        const conversation = await conversationService.restoreCheckpoint(
+          conversationId,
+          checkpointId
+        )
+        return { success: true, conversation }
+      } catch (error) {
+        logger.error('Failed to restore checkpoint', error)
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        }
+      }
+    }
+  )
+
+  // Delete a checkpoint
+  ipcMain.handle(
+    'conversation:delete-checkpoint',
+    async (_event, conversationId: string, checkpointId: string) => {
+      try {
+        const deleted = await conversationService.deleteCheckpoint(conversationId, checkpointId)
+        return { success: deleted }
+      } catch (error) {
+        logger.error('Failed to delete checkpoint', error)
+        return { success: false }
+      }
+    }
+  )
+
+  // Delete all checkpoints for a conversation
+  ipcMain.handle('conversation:delete-all-checkpoints', async (_event, conversationId: string) => {
+    try {
+      await conversationService.deleteAllCheckpoints(conversationId)
+      return { success: true }
+    } catch (error) {
+      logger.error('Failed to delete all checkpoints', error)
+      return { success: false }
+    }
+  })
 }

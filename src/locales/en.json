@@ -29,7 +29,8 @@
       "exportFailed": "Export failed",
       "importConversations": "Import conversations",
       "importSuccess": "Successfully imported {{count}} conversation(s)",
-      "importFailed": "Import failed"
+      "importFailed": "Import failed",
+      "checkpoints": "Conversation Checkpoints"
     },
     "chat": {
       "title": "AI Chat",
@@ -221,6 +222,23 @@
         "resizePanel": "Resize panel",
         "showShortcuts": "Show keyboard shortcuts"
       }
+    },
+    "checkpoints": {
+      "title": "Conversation Checkpoints",
+      "namePlaceholder": "Checkpoint name...",
+      "create": "Save",
+      "creating": "Saving...",
+      "restore": "Restore",
+      "delete": "Delete",
+      "none": "No checkpoints saved yet",
+      "noConversation": "Start a conversation first",
+      "loading": "Loading checkpoints...",
+      "messageCount": "{{count}} messages",
+      "loadError": "Failed to load checkpoints",
+      "createError": "Failed to create checkpoint",
+      "restoreError": "Failed to restore checkpoint",
+      "deleteError": "Failed to delete checkpoint",
+      "help": "Save conversation state to explore alternative paths"
     }
   }
 }

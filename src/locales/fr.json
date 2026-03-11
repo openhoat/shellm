@@ -31,7 +31,8 @@
       "exportFailed": "Échec de l'export",
       "importConversations": "Importer des conversations",
       "importSuccess": "{{count}} conversation(s) importée(s) avec succès",
-      "importFailed": "Échec de l'import"
+      "importFailed": "Échec de l'import",
+      "checkpoints": "Points de contrôle de conversation"
     },
     "stats": {
       "title": "Statistiques d'utilisation",
@@ -266,6 +267,23 @@
         "info": "Info",
         "debug": "Debug"
       }
+    },
+    "checkpoints": {
+      "title": "Points de contrôle",
+      "namePlaceholder": "Nom du point de contrôle...",
+      "create": "Sauvegarder",
+      "creating": "Sauvegarde...",
+      "restore": "Restaurer",
+      "delete": "Supprimer",
+      "none": "Aucun point de contrôle sauvegardé",
+      "noConversation": "Commencez d'abord une conversation",
+      "loading": "Chargement des points de contrôle...",
+      "messageCount": "{{count}} messages",
+      "loadError": "Échec du chargement des points de contrôle",
+      "createError": "Échec de la création du point de contrôle",
+      "restoreError": "Échec de la restauration du point de contrôle",
+      "deleteError": "Échec de la suppression du point de contrôle",
+      "help": "Sauvegardez l'état de la conversation pour explorer des chemins alternatifs"
     }
   }
 }
