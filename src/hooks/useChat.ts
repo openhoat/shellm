@@ -1,6 +1,7 @@
 import type { ConversationMessage } from '@shared/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import type { ChatMessageData } from '@/components/chat'
 import { useCommandExecution } from '@/hooks/useCommandExecution'
 import { useConversationState } from '@/hooks/useConversationState'
 import { useInputHistory } from '@/hooks/useInputHistory'
@@ -132,13 +133,19 @@ export function useChat() {
    * Restore conversation messages when conversation ID changes (loading a different conversation)
    */
   const prevConversationIdRef = useRef<string | null>(null)
+  const prevMessagesLengthRef = useRef<number>(0)
 
   useEffect(() => {
     const conversationId = currentConversation?.id || null
+    const messagesLength = currentConversation?.messages.length || 0
 
-    // Only restore when conversation ID actually changes (loading a new conversation)
-    if (conversationId !== prevConversationIdRef.current) {
+    // Restore when conversation ID changes OR when messages length decreases (checkpoint restore)
+    if (
+      conversationId !== prevConversationIdRef.current ||
+      (prevMessagesLengthRef.current > 0 && messagesLength < prevMessagesLengthRef.current)
+    ) {
       prevConversationIdRef.current = conversationId
+      prevMessagesLengthRef.current = messagesLength
 
       if (currentConversation && currentConversation.messages.length > 0) {
         const restoredMessages: ChatMessageData[] = currentConversation.messages.map(
@@ -154,6 +161,9 @@ export function useChat() {
       } else if (!currentConversation) {
         conversationState.clearConversation()
       }
+    } else if (messagesLength > prevMessagesLengthRef.current) {
+      // Update length when messages are added
+      prevMessagesLengthRef.current = messagesLength
     }
   }, [
     currentConversation?.id,
