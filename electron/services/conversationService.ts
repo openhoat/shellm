@@ -327,6 +327,39 @@ class ConversationService {
   }
 
   /**
+   * Truncate messages after a given index (for checkpoint restore)
+   * Returns the truncated messages and updates the conversation
+   */
+  async truncateMessages(
+    conversationId: string,
+    messageIndex: number
+  ): Promise<ConversationMessage[] | null> {
+    const data = await this.read()
+    const conversation = data.conversations.find(conv => conv.id === conversationId)
+
+    if (!conversation) {
+      logger.warn(`Conversation not found: ${conversationId}`)
+      return null
+    }
+
+    if (messageIndex < 0 || messageIndex >= conversation.messages.length) {
+      logger.warn(`Invalid message index: ${messageIndex}`)
+      return null
+    }
+
+    // Keep messages up to and including the specified index
+    const truncatedMessages = conversation.messages.slice(0, messageIndex + 1)
+    conversation.messages = truncatedMessages
+    conversation.updatedAt = Date.now()
+
+    await this.save(data)
+    this.invalidateCache(conversationId)
+
+    logger.info(`Truncated conversation ${conversationId} to ${truncatedMessages.length} messages`)
+    return truncatedMessages
+  }
+
+  /**
    * Clear all conversations and their checkpoints
    */
   async clearAllConversations(): Promise<void> {
