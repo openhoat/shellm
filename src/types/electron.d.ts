@@ -1,6 +1,7 @@
 import type {
   AICommand,
   AppConfig,
+  CheckpointMetadata,
   Conversation,
   ConversationMessage,
   LLMProviderMetadata,
@@ -142,6 +143,29 @@ export interface ElectronAPI {
     cancelled?: boolean
     imported?: number
     skipped?: number
+    error?: string
+  }>
+
+  // Checkpoints
+  checkpointGetAll: (conversationId: string) => Promise<{
+    success: boolean
+    checkpoints?: CheckpointMetadata[]
+    error?: string
+  }>
+  checkpointGet: (
+    conversationId: string,
+    checkpointId: string
+  ) => Promise<{
+    success: boolean
+    checkpoint?: ConversationMessage[]
+    error?: string
+  }>
+  checkpointRestore: (
+    conversationId: string,
+    checkpointId: string
+  ) => Promise<{
+    success: boolean
+    messages?: ConversationMessage[]
     error?: string
   }>
 }

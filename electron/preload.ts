@@ -122,6 +122,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
   conversationExportAll: () => ipcRenderer.invoke('conversation:export-all'),
   conversationImport: () => ipcRenderer.invoke('conversation:import'),
 
+  // Checkpoints
+  checkpointGetAll: (conversationId: string) =>
+    ipcRenderer.invoke('checkpoint:get-all', conversationId),
+  checkpointGet: (conversationId: string, checkpointId: string) =>
+    ipcRenderer.invoke('checkpoint:get', conversationId, checkpointId),
+  checkpointRestore: (conversationId: string, checkpointId: string) =>
+    ipcRenderer.invoke('checkpoint:restore', conversationId, checkpointId),
+
   // Audit Logs
   auditGetLogs: (query?: {
     result?: 'success' | 'blocked' | 'cancelled' | 'error' | 'sandboxed'

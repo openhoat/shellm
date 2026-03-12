@@ -163,6 +163,9 @@ interface AppState {
   }>
   startNewConversation: () => void
 
+  // Checkpoints
+  restoreCheckpoint: (checkpointId: string) => Promise<void>
+
   // Chat reset
   chatResetKey: number
   incrementChatResetKey: () => void
@@ -384,6 +387,27 @@ export const useStore = create<AppState>((set, _get) => ({
       currentConversationId: null,
       currentConversation: null,
     })
+  },
+
+  // Checkpoints
+  restoreCheckpoint: async (checkpointId: string) => {
+    const { currentConversationId } = _get()
+    if (!currentConversationId) return
+
+    try {
+      const result = await window.electronAPI.checkpointRestore(currentConversationId, checkpointId)
+      if (result.success && result.messages) {
+        // Update the current conversation with the restored messages
+        const restoredMessages = result.messages
+        set(state => ({
+          currentConversation: state.currentConversation
+            ? { ...state.currentConversation, messages: restoredMessages }
+            : null,
+        }))
+      }
+    } catch (error) {
+      logger.error('Failed to restore checkpoint:', error)
+    }
   },
 
   // Chat reset

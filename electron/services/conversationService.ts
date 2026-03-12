@@ -4,6 +4,7 @@ import { app } from 'electron'
 import { z } from 'zod'
 import type { Conversation, ConversationMessage, ConversationsList } from '../../shared/types'
 import { Logger } from '../utils/logger'
+import { getCheckpointService } from './checkpointService'
 
 const logger = new Logger('ConversationService')
 
@@ -210,6 +211,7 @@ class ConversationService {
 
   /**
    * Add a message to a conversation
+   * Automatically creates a checkpoint after user messages
    */
   async addMessage(
     conversationId: string,
@@ -227,6 +229,23 @@ class ConversationService {
 
     await this.save(data)
     this.invalidateCache(conversationId)
+
+    // Create checkpoint automatically after user message
+    if (message.role === 'user') {
+      try {
+        const checkpointService = getCheckpointService()
+        await checkpointService.createCheckpoint(
+          conversationId,
+          conversation.messages.length - 1,
+          conversation.messages
+        )
+        logger.debug(`Auto-created checkpoint for conversation ${conversationId}`)
+      } catch (error) {
+        // Don't fail the message if checkpoint creation fails
+        logger.warn('Failed to create checkpoint', { error })
+      }
+    }
+
     return conversation
   }
 
@@ -282,7 +301,7 @@ class ConversationService {
   }
 
   /**
-   * Delete a conversation
+   * Delete a conversation and its associated checkpoints
    */
   async deleteConversation(id: string): Promise<boolean> {
     const data = await this.read()
@@ -292,6 +311,15 @@ class ConversationService {
     if (data.conversations.length < initialLength) {
       await this.save(data)
       this.invalidateCache(id)
+
+      // Also delete all checkpoints for this conversation
+      try {
+        const checkpointService = getCheckpointService()
+        await checkpointService.deleteCheckpointsForConversation(id)
+      } catch (error) {
+        logger.warn('Failed to delete checkpoints for conversation', { error })
+      }
+
       return true
     }
 
@@ -299,11 +327,19 @@ class ConversationService {
   }
 
   /**
-   * Clear all conversations (for testing or reset)
+   * Clear all conversations and their checkpoints
    */
   async clearAllConversations(): Promise<void> {
     await this.save({ conversations: [] })
     this.invalidateCache()
+
+    // Clear all checkpoints
+    try {
+      const checkpointService = getCheckpointService()
+      await checkpointService.clearAll()
+    } catch (error) {
+      logger.warn('Failed to clear all checkpoints', { error })
+    }
   }
 
   /**

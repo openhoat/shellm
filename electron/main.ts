@@ -4,6 +4,7 @@ import Store from 'electron-store'
 import { DEFAULT_CONFIG, mergeConfig } from '../shared/config'
 import type { AppConfig } from '../shared/types'
 import { createAuditHandlers } from './ipc-handlers/audit'
+import { createCheckpointHandlers } from './ipc-handlers/checkpoint'
 import { createConfigHandlers } from './ipc-handlers/config'
 import { createConversationHandlers } from './ipc-handlers/conversation'
 import { cleanupActiveStreams, createLLMHandlers } from './ipc-handlers/llm-service'
@@ -193,6 +194,7 @@ app.whenReady().then(() => {
   // The handlers use getMainWindow() to get the window when needed
   createTerminalHandlers(getMainWindow)
   createConversationHandlers()
+  createCheckpointHandlers()
   createAuditHandlers(getMainWindow)
 
   // Get initial config and merge with environment variables

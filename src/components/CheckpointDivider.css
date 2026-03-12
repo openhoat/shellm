@@ -1,0 +1,117 @@
+/* CheckpointDivider - Visual divider with restore capability */
+
+.checkpoint-divider {
+  height: 1px;
+  background: var(--border-color, #333);
+  margin: 8px 0;
+  opacity: 0.3;
+}
+
+.checkpoint-divider-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 0;
+  margin: 8px 0;
+  min-height: 24px;
+}
+
+.checkpoint-divider-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--border-color, #444) 20%,
+    var(--border-color, #444) 80%,
+    transparent
+  );
+  opacity: 0.5;
+}
+
+.checkpoint-actions {
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.checkpoint-divider-container:hover .checkpoint-actions {
+  opacity: 1;
+}
+
+.checkpoint-restore-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: var(--bg-secondary, #2a2a2a);
+  border: 1px solid var(--border-color, #444);
+  border-radius: 16px;
+  color: var(--text-secondary, #aaa);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.checkpoint-restore-btn:hover {
+  background: var(--bg-tertiary, #333);
+  border-color: var(--accent-color, #6b7280);
+  color: var(--text-primary, #fff);
+}
+
+.checkpoint-restore-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.checkpoint-icon {
+  font-size: 14px;
+}
+
+.checkpoint-label {
+  font-weight: 500;
+}
+
+.checkpoint-time {
+  color: var(--text-muted, #666);
+  font-size: 11px;
+}
+
+.checkpoint-loading {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.checkpoint-preview {
+  position: absolute;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  color: var(--text-muted, #555);
+  padding: 2px 8px;
+  background: var(--bg-primary, #1e1e1e);
+  border-radius: 4px;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.checkpoint-divider-container:hover .checkpoint-preview {
+  opacity: 0;
+}

@@ -78,6 +78,11 @@
         "cancel": "Cancel",
         "cancelCommand": "Cancel the proposed command",
         "cancelStream": "Cancel streaming response"
+      },
+      "checkpoint": {
+        "restore": "Restore",
+        "restoreTooltip": "Restore conversation to this point",
+        "restoring": "Restoring..."
       }
     },
     "terminal": {
