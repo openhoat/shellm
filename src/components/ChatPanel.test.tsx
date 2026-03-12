@@ -15,6 +15,8 @@ vi.mock('@/hooks/useChat')
 vi.mock('@/store/useStore', () => ({
   useSetAiCommand: vi.fn(),
   useClearAllConversations: vi.fn(),
+  useCurrentConversationId: vi.fn(() => null),
+  useRestoreCheckpoint: vi.fn(() => vi.fn()),
 }))
 vi.mock('@/utils/logger', () => {
   class MockLogger {

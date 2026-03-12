@@ -129,6 +129,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.invoke('checkpoint:get', conversationId, checkpointId),
   checkpointRestore: (conversationId: string, checkpointId: string) =>
     ipcRenderer.invoke('checkpoint:restore', conversationId, checkpointId),
+  checkpointRestoreByIndex: (conversationId: string, messageIndex: number) =>
+    ipcRenderer.invoke('checkpoint:restore-by-index', conversationId, messageIndex),
 
   // Audit Logs
   auditGetLogs: (query?: {
