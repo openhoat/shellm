@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron'
 import type { CheckpointMetadata, ConversationMessage } from '../../shared/types'
 import { getCheckpointService } from '../services/checkpointService'
+import { getConversationService } from '../services/conversationService'
 import { Logger } from '../utils/logger'
 
 const logger = new Logger('Checkpoint')
@@ -10,6 +11,7 @@ const logger = new Logger('Checkpoint')
  */
 export function createCheckpointHandlers(): void {
   const checkpointService = getCheckpointService()
+  const conversationService = getConversationService()
 
   // Get all checkpoints for a conversation
   ipcMain.handle('checkpoint:get-all', async (_event, conversationId: string) => {
@@ -47,16 +49,42 @@ export function createCheckpointHandlers(): void {
     }
   )
 
-  // Restore a checkpoint by message index (returns messages)
+  // Restore by message index - works even without pre-existing checkpoint
+  // Truncates the conversation to the specified message index
   ipcMain.handle(
     'checkpoint:restore-by-index',
     async (_event, conversationId: string, messageIndex: number) => {
       try {
-        const messages = await checkpointService.restoreCheckpointByIndex(
+        // First try to find a pre-existing checkpoint
+        const checkpointMessages = await checkpointService.restoreCheckpointByIndex(
           conversationId,
           messageIndex
         )
-        return { success: true, messages }
+
+        if (checkpointMessages) {
+          // Found a checkpoint, use it
+          // Also need to truncate the persisted conversation
+          await conversationService.truncateMessages(conversationId, messageIndex)
+          return { success: true, messages: checkpointMessages }
+        }
+
+        // No checkpoint found, truncate directly from conversation
+        logger.info(
+          `No checkpoint found for index ${messageIndex}, truncating conversation ${conversationId}`
+        )
+        const truncatedMessages = await conversationService.truncateMessages(
+          conversationId,
+          messageIndex
+        )
+
+        if (!truncatedMessages) {
+          return {
+            success: false,
+            error: 'Failed to truncate conversation',
+          }
+        }
+
+        return { success: true, messages: truncatedMessages }
       } catch (error) {
         logger.error('Failed to restore checkpoint by index', {
           conversationId,
