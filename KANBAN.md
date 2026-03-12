@@ -24,7 +24,3 @@
 ## 🚧 In Progress
 
 <!-- Tasks in progress appear here -->
-- [ ] **[FEAT]** Add conversation checkpoints - ability to save and restore conversation states for exploring alternative discussion paths
-  - Started: 11/03/2026
-- [ ] **[FEAT]** Add conversation checkpoints - ability to save and restore conversation states for exploring alternative discussion paths
-  - Started: 11/03/2026
