@@ -297,5 +297,38 @@ export interface StreamingProgress {
 
 export type StreamingCallback = (progress: StreamingProgress) => void
 
+// ============================================================================
+// Checkpoint Types
+// ============================================================================
+
+/**
+ * A checkpoint saves the state of a conversation at a specific point
+ * Created automatically after each user message for easy restoration
+ */
+export interface Checkpoint {
+  /** Unique identifier */
+  id: string
+  /** Conversation this checkpoint belongs to */
+  conversationId: string
+  /** Index of the message in the conversation (after this message) */
+  messageIndex: number
+  /** Snapshot of messages at this checkpoint */
+  messages: ConversationMessage[]
+  /** Timestamp when checkpoint was created */
+  createdAt: number
+}
+
+/**
+ * Lightweight checkpoint metadata for listing in UI
+ */
+export interface CheckpointMetadata {
+  id: string
+  conversationId: string
+  messageIndex: number
+  createdAt: number
+  /** First 50 chars of the last user message for context */
+  preview: string
+}
+
 // Configuration par défaut et fonctions utilitaires
 export { DEFAULT_CONFIG, getEnvConfig, getEnvSources, mergeConfig } from './config'
