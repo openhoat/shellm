@@ -10,6 +10,7 @@ To view the complete history, use: `git log`
 
 #### 12/03
 
+- **[16:38:35] 🔧 [CHORE]** Update kanban and changelog post-merge
 - **[16:35:26] 🔧 [CHORE]** Start task - add conversation checkpoints
 - **[16:35:26] ✨ [FEAT]** Add automatic conversation checkpoints (cline-style)
 - **[16:35:26] ✨ [FEAT]** Integrate checkpoint divider into chat panel
