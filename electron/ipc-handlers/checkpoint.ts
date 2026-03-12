@@ -67,27 +67,6 @@ export function createCheckpointHandlers(): void {
       }
     }
   )
-
-  // Restore a checkpoint by message index (returns messages)
-  ipcMain.handle(
-    'checkpoint:restore-by-index',
-    async (_event, conversationId: string, messageIndex: number) => {
-      try {
-        const messages = await checkpointService.restoreCheckpointByIndex(
-          conversationId,
-          messageIndex
-        )
-        return { success: true, messages }
-      } catch (error) {
-        logger.error('Failed to restore checkpoint by index', {
-          conversationId,
-          messageIndex,
-          error,
-        })
-        return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
-      }
-    }
-  )
 }
 
 /**
