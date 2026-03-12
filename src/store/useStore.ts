@@ -46,6 +46,7 @@ const selectDeleteConversation = (state: AppState) => state.deleteConversation
 const selectClearAllConversations = (state: AppState) => state.clearAllConversations
 const selectImportConversations = (state: AppState) => state.importConversations
 const selectStartNewConversation = (state: AppState) => state.startNewConversation
+const selectRestoreCheckpoint = (state: AppState) => state.restoreCheckpoint
 
 // Chat reset
 const selectChatResetKey = (state: AppState) => state.chatResetKey
@@ -100,6 +101,9 @@ export const useDeleteConversation = () => useStore(selectDeleteConversation)
 export const useClearAllConversations = () => useStore(selectClearAllConversations)
 export const useImportConversations = () => useStore(selectImportConversations)
 export const useStartNewConversation = () => useStore(selectStartNewConversation)
+
+// Checkpoints
+export const useRestoreCheckpoint = () => useStore(selectRestoreCheckpoint)
 
 // Chat reset
 export const useChatResetKey = () => useStore(selectChatResetKey)
@@ -395,7 +399,14 @@ export const useStore = create<AppState>((set, _get) => ({
     if (!currentConversationId) return
 
     try {
-      const result = await window.electronAPI.checkpointRestore(currentConversationId, checkpointId)
+      // checkpointId is expected to be in format "conversationId-messageIndex"
+      // Extract messageIndex from checkpointId
+      const messageIndex = parseInt(checkpointId.split('-').pop() || '0', 10)
+
+      const result = await window.electronAPI.checkpointRestoreByIndex(
+        currentConversationId,
+        messageIndex
+      )
       if (result.success && result.messages) {
         // Update the current conversation with the restored messages
         const restoredMessages = result.messages

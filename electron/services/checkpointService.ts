@@ -162,6 +162,31 @@ class CheckpointService {
   }
 
   /**
+   * Restore conversation to a checkpoint by message index (returns messages)
+   */
+  async restoreCheckpointByIndex(
+    conversationId: string,
+    messageIndex: number
+  ): Promise<ConversationMessage[] | null> {
+    const allCheckpoints = await this.readAll()
+    const checkpoints = allCheckpoints[conversationId] || []
+
+    // Find checkpoint for this message index
+    const checkpoint = checkpoints.find(cp => cp.messageIndex === messageIndex)
+    if (!checkpoint) {
+      logger.warn(
+        `No checkpoint found for message index ${messageIndex} in conversation ${conversationId}`
+      )
+      return null
+    }
+
+    logger.info(
+      `Restoring checkpoint for message index ${messageIndex} in conversation ${conversationId}`
+    )
+    return [...checkpoint.messages]
+  }
+
+  /**
    * Delete all checkpoints for a conversation (called when conversation is deleted)
    */
   async deleteCheckpointsForConversation(conversationId: string): Promise<void> {

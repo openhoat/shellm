@@ -1,11 +1,17 @@
 import type { ValidationResult } from '@shared/commandValidation'
 import { validateCommand } from '@shared/commandValidation'
 import type { CSSProperties } from 'react'
-import { type FormEvent, useCallback, useEffect, useRef, useState } from 'react'
+import { type FormEvent, Fragment, useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { CheckpointDivider } from '@/components/CheckpointDivider'
 import { CommandWarningModal } from '@/components/CommandWarningModal'
 import { useChat } from '@/hooks/useChat'
-import { useClearAllConversations, useSetAiCommand } from '@/store/useStore'
+import {
+  useClearAllConversations,
+  useCurrentConversationId,
+  useRestoreCheckpoint,
+  useSetAiCommand,
+} from '@/store/useStore'
 import { Logger } from '@/utils/logger'
 import { ChatMessage } from './chat'
 import './ChatPanel.css'
@@ -28,6 +34,8 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
   // Use setAiCommand from store directly for the cancel button
   const setAiCommand = useSetAiCommand()
   const clearAllConversations = useClearAllConversations()
+  const currentConversationId = useCurrentConversationId()
+  const restoreCheckpoint = useRestoreCheckpoint()
 
   // State for command warning modal
   const [_pendingCommand, _setPendingCommand] = useState<{
@@ -284,8 +292,25 @@ export const ChatPanel = ({ style }: { style?: CSSProperties }) => {
 
         {chat.conversation
           .filter(msg => !msg.isStreaming)
-          .map(msg => (
-            <ChatMessage key={msg.id} id={msg.id} message={msg} />
+          .map((msg, index) => (
+            <Fragment key={msg.id}>
+              <ChatMessage id={msg.id} message={msg} />
+              {msg.type === 'user' && currentConversationId && (
+                <CheckpointDivider
+                  checkpoint={{
+                    id: `${currentConversationId}-${index}`,
+                    conversationId: currentConversationId,
+                    messageIndex: index,
+                    createdAt: Date.now(),
+                    preview: msg.content.slice(0, 50) + (msg.content.length > 50 ? '...' : ''),
+                  }}
+                  onRestore={async (checkpointId: string) => {
+                    await restoreCheckpoint(checkpointId)
+                  }}
+                  isLoading={chat.isLoading}
+                />
+              )}
+            </Fragment>
           ))}
 
         {!isAtBottom && (

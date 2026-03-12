@@ -168,6 +168,14 @@ export interface ElectronAPI {
     messages?: ConversationMessage[]
     error?: string
   }>
+  checkpointRestoreByIndex: (
+    conversationId: string,
+    messageIndex: number
+  ) => Promise<{
+    success: boolean
+    messages?: ConversationMessage[]
+    error?: string
+  }>
 }
 
 declare global {
