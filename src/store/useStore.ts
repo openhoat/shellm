@@ -395,7 +395,7 @@ export const useStore = create<AppState>((set, _get) => ({
 
   // Checkpoints
   restoreCheckpoint: async (checkpointId: string) => {
-    const { currentConversationId } = _get()
+    const { currentConversationId, currentConversation } = _get()
     if (!currentConversationId) return
 
     try {
@@ -408,12 +408,17 @@ export const useStore = create<AppState>((set, _get) => ({
         messageIndex
       )
       if (result.success && result.messages) {
-        // Update the current conversation with the restored messages
+        // Update both currentConversation and conversations list
         const restoredMessages = result.messages
+        const updatedConversation = currentConversation
+          ? { ...currentConversation, messages: restoredMessages }
+          : null
+
         set(state => ({
-          currentConversation: state.currentConversation
-            ? { ...state.currentConversation, messages: restoredMessages }
-            : null,
+          currentConversation: updatedConversation,
+          conversations: state.conversations.map(conv =>
+            conv.id === currentConversationId && updatedConversation ? updatedConversation : conv
+          ),
         }))
       }
     } catch (error) {
